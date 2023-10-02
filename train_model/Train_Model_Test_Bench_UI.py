@@ -10,10 +10,11 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import QStyleFactory
 
 # from train_model import TrainModel
 from Train_Model_UI import Ui_TrainModel_MainUI
-
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class Ui_TrainModel_TestBench(object):
 
