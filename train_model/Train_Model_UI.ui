@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>679</width>
-    <height>568</height>
+    <height>569</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -720,7 +720,7 @@ border: 1px solid black;
     </property>
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>274</y>
       <width>25</width>
       <height>17</height>
@@ -747,8 +747,8 @@ background-color: rgb(170, 0, 0);</string>
    <widget class="QLabel" name="engine_fail_off">
     <property name="geometry">
      <rect>
-      <x>596</x>
-      <y>302</y>
+      <x>600</x>
+      <y>300</y>
       <width>25</width>
       <height>17</height>
      </rect>
@@ -774,7 +774,7 @@ background-color: rgb(170, 0, 0);</string>
    <widget class="QLabel" name="brake_fail_off">
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>328</y>
       <width>25</width>
       <height>17</height>
@@ -801,7 +801,7 @@ background-color: rgb(170, 0, 0);</string>
    <widget class="QLabel" name="signal_fail_off">
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>352</y>
       <width>25</width>
       <height>17</height>
@@ -1130,7 +1130,7 @@ border: 1px solid black;
     </property>
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>462</y>
       <width>25</width>
       <height>17</height>
@@ -1190,7 +1190,7 @@ background-color: rgb(0, 170, 0);</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>488</y>
       <width>25</width>
       <height>17</height>
@@ -1280,7 +1280,7 @@ background-color: rgb(0, 170, 0);</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>542</x>
+      <x>546</x>
       <y>410</y>
       <width>53</width>
       <height>17</height>
@@ -1340,7 +1340,7 @@ background-color: rgb(0, 170, 0);</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>542</x>
+      <x>546</x>
       <y>436</y>
       <width>53</width>
       <height>17</height>
@@ -1370,7 +1370,7 @@ background-color: rgb(170, 0, 0);</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>514</y>
       <width>25</width>
       <height>17</height>
@@ -1529,7 +1529,7 @@ background-color: rgb(0, 170, 0);</string>
     </property>
     <property name="geometry">
      <rect>
-      <x>596</x>
+      <x>600</x>
       <y>540</y>
       <width>25</width>
       <height>17</height>
