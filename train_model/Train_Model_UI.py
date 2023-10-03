@@ -735,6 +735,9 @@ class Ui_TrainModel_MainUI(object):
                 # Force
                 self.force_info_label_2.setText(str(self.train_model.get_force()))
 
+                # Mass
+                self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
+
                 # Passenger Count
                 self.passenger_label.setText(str("Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
 
@@ -754,6 +757,9 @@ class Ui_TrainModel_MainUI(object):
 
                 # Force
                 self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)))
+
+                # Mass
+                self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))

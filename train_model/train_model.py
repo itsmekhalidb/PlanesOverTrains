@@ -18,6 +18,8 @@ class TrainModel(object):
         self._max_passenger_count = 222 # combine max standing & seating passengers
         self._prev_passenger_count = 0 # previous passenger count for the train
         self._passenger_mass = 0.0 # mass of the passengers on the train
+        self._train_mass = 40900.0 # mass of the train empty
+        self._total_mass = 0.0 # total mass of the train with passengers
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -57,6 +59,12 @@ class TrainModel(object):
         # Actual Power
         # TODO: change get_actual_power to get_actual_power from train controller signals
         self.set_actual_power(float(self.get_actual_power()))  # Pass input from test UI text box
+
+        # Passenger Mass
+        self.set_passenger_mass(self.get_curr_passenger_count())
+
+        # Total Mass
+        self.set_total_mass()
 
         #################
         # Failure Modes #
@@ -174,6 +182,26 @@ class TrainModel(object):
     def get_force(self) -> float:
         return round(self._actual_power/self._cmd_power,3)
 
+    # passenger count
+    def set_curr_passenger_count(self, _curr_passenger_count: int):
+        self._curr_passenger_count = _curr_passenger_count
+
+    def get_curr_passenger_count(self) -> int:
+        return self._curr_passenger_count
+
+    # passenger mass
+    def set_passenger_mass(self, _curr_passenger_count: float):
+        self._passenger_mass = self._curr_passenger_count * 150 # kg
+
+    def get_passenger_mass(self) -> float:
+        return self._passenger_mass
+
+    # train mass
+    def set_total_mass(self):
+        self._total_mass = self._train_mass + self._passenger_mass
+
+    def get_total_mass(self) -> float:
+        return self._total_mass
 
     # Failure Modes
     # ebrake failure
@@ -246,17 +274,3 @@ class TrainModel(object):
 
     def get_service_brake(self) -> bool:
         return self._service_brake
-
-    # passenger count
-    def set_curr_passenger_count(self, _curr_passenger_count: int):
-        self._curr_passenger_count = _curr_passenger_count
-
-    def get_curr_passenger_count(self) -> int:
-        return self._curr_passenger_count
-
-    # passenger mass
-    def set_passenger_mass(self, _curr_passenger_count: float):
-        self._passenger_mass = self._curr_passenger_count * 150 # kg
-
-    def get_passenger_mass(self) -> float:
-        return self._passenger_mass

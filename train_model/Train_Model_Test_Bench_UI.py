@@ -933,14 +933,17 @@ class Ui_TrainModel_TestBench(object):
                 self.retranslateUi(TrainModel_TestBench)
                 QtCore.QMetaObject.connectSlotsByName(TrainModel_TestBench)
 
-
-
                 self._handler()  # start the timer
 
                 # Set Default Values for Text Boxes
                 self.force_info_label.setText(str(self.train_model.get_force()))
+
+                # Power
                 self.cmd_pwr_edit.setText(str(self.train_model.get_cmd_power()))
                 self.acc_pwr_edit.setText(str(self.train_model.get_actual_power()))
+
+                # Mass
+                self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
                 # Set Default Values for Spin Boxes
                 self.passenger_spnbx.setValue(self.train_model.get_curr_passenger_count())
@@ -980,6 +983,9 @@ class Ui_TrainModel_TestBench(object):
 
                 # Force
                 self.force_info_label.setText(str(round(self.train_model.get_force(), 3)))
+
+                # Mass
+                self.mass_label.setText(str("Mass: " + str(round(self.train_model.get_total_mass(), 3)) + " kg"))
 
                 # Failure Modes
                 # Emergency Brake Failure
@@ -1036,10 +1042,14 @@ class Ui_TrainModel_TestBench(object):
                 # send the acc power to the train model
                 self.train_model.set_actual_power(float(powerAcc))
 
-                # update the passenger count
+                # update the passenger count and mass
                 pass_count = self.passenger_spnbx.value()
                 # send the passenger count to the train model
                 self.train_model.set_curr_passenger_count(int(pass_count))
+                self.train_model.set_passenger_mass(int(pass_count))
+
+                # update the train mass
+                self.train_model.set_total_mass()
 
         def temperature_spnbx_ctrl(self):
                 temp = self.temperature_spnbx.value()
