@@ -10,22 +10,21 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QStyleFactory
-
-# from train_model import TrainModel
+# from PyQt5 import uic
+from PyQt5.QtWidgets import *
+from train_model import TrainModel
 from Train_Model_UI import Ui_TrainModel_MainUI
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class Ui_TrainModel_TestBench(object):
 
-        # def __init__(self, train_model: TrainModel):
-        #     super().__init__()
-        #     self.train_model = train_model
-
-        # Open the Train Model UI
+        def __init__(self, train_model: TrainModel):
+            super().__init__()
+            self.train_model = train_model
         def open_window(self):
                 self.window = QtWidgets.QMainWindow()
-                self.ui = Ui_TrainModel_MainUI()
+                # self.ui = Ui_TrainModel_MainUI()
+                self.ui = Ui_TrainModel_MainUI(self.train_model)  # Pass the TrainModel instance to the new UI
                 self.ui.setupUi(self.window)
                 self.window.show()
         def setupUi(self, TrainModel_TestBench):
@@ -33,9 +32,9 @@ class Ui_TrainModel_TestBench(object):
                 TrainModel_TestBench.resize(679, 690)
                 self.Test_Bench = QtWidgets.QWidget(TrainModel_TestBench)
                 self.Test_Bench.setObjectName("Test_Bench")
-                self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.Test_Bench)
-                self.system_speed_spnbx.setGeometry(QtCore.QRect(602, 12, 62, 22))
-                self.system_speed_spnbx.setObjectName("system_speed_spnbx")
+                # self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.Test_Bench)
+                # self.system_speed_spnbx.setGeometry(QtCore.QRect(602, 12, 62, 22))
+                # self.system_speed_spnbx.setObjectName("system_speed_spnbx")
                 self.engine_fail_off = QtWidgets.QLabel(self.Test_Bench)
                 self.engine_fail_off.setGeometry(QtCore.QRect(598, 300, 25, 17))
                 font = QtGui.QFont()
@@ -218,17 +217,17 @@ class Ui_TrainModel_TestBench(object):
                 "background-color: rgb(0, 170, 0);")
                 self.engine_fail_on.setAlignment(QtCore.Qt.AlignCenter)
                 self.engine_fail_on.setObjectName("engine_fail_on")
-                self.system_speed_label = QtWidgets.QLabel(self.Test_Bench)
-                self.system_speed_label.setGeometry(QtCore.QRect(500, 8, 169, 31))
-                font = QtGui.QFont()
-                font.setPointSize(10)
-                font.setBold(True)
-                font.setWeight(75)
-                self.system_speed_label.setFont(font)
-                self.system_speed_label.setAutoFillBackground(False)
-                self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                "border: 1px solid black;")
-                self.system_speed_label.setObjectName("system_speed_label")
+                # self.system_speed_label = QtWidgets.QLabel(self.Test_Bench)
+                # self.system_speed_label.setGeometry(QtCore.QRect(500, 8, 169, 31))
+                # font = QtGui.QFont()
+                # font.setPointSize(10)
+                # font.setBold(True)
+                # font.setWeight(75)
+                # self.system_speed_label.setFont(font)
+                # self.system_speed_label.setAutoFillBackground(False)
+                # self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                # "border: 1px solid black;")
+                # self.system_speed_label.setObjectName("system_speed_label")
                 self.right_door_closed = QtWidgets.QLabel(self.Test_Bench)
                 self.right_door_closed.setEnabled(True)
                 self.right_door_closed.setGeometry(QtCore.QRect(544, 410, 53, 17))
@@ -494,16 +493,16 @@ class Ui_TrainModel_TestBench(object):
                 "")
                 self.next_station_label.setAlignment(QtCore.Qt.AlignCenter)
                 self.next_station_label.setObjectName("next_station_label")
-                self.sys_time_label = QtWidgets.QLabel(self.Test_Bench)
-                self.sys_time_label.setGeometry(QtCore.QRect(404, 8, 83, 31))
-                font = QtGui.QFont()
-                font.setPointSize(12)
-                font.setBold(True)
-                font.setWeight(75)
-                self.sys_time_label.setFont(font)
-                self.sys_time_label.setStyleSheet("border: 1px solid black;\n"
-                "background-color: rgb(255, 255, 255);")
-                self.sys_time_label.setObjectName("sys_time_label")
+                # self.sys_time_label = QtWidgets.QLabel(self.Test_Bench)
+                # self.sys_time_label.setGeometry(QtCore.QRect(404, 8, 83, 31))
+                # font = QtGui.QFont()
+                # font.setPointSize(12)
+                # font.setBold(True)
+                # font.setWeight(75)
+                # self.sys_time_label.setFont(font)
+                # self.sys_time_label.setStyleSheet("border: 1px solid black;\n"
+                # "background-color: rgb(255, 255, 255);")
+                # self.sys_time_label.setObjectName("sys_time_label")
                 self.test_bench_btn = QtWidgets.QPushButton(self.Test_Bench, clicked=lambda: self.open_window())
                 self.test_bench_btn.setGeometry(QtCore.QRect(292, 10, 101, 27))
                 font = QtGui.QFont()
@@ -512,6 +511,14 @@ class Ui_TrainModel_TestBench(object):
                 font.setWeight(75)
                 self.test_bench_btn.setFont(font)
                 self.test_bench_btn.setObjectName("test_bench_btn")
+                self.calc_btn = QtWidgets.QPushButton(self.Test_Bench, clicked=lambda: self.calculate())
+                self.calc_btn.setGeometry(QtCore.QRect(562, 580, 101, 27))
+                font = QtGui.QFont()
+                font.setPointSize(10)
+                font.setBold(True)
+                font.setWeight(75)
+                self.calc_btn.setFont(font)
+                self.calc_btn.setObjectName("calc_btn")
                 self.signal_fail_label = QtWidgets.QLabel(self.Test_Bench)
                 self.signal_fail_label.setGeometry(QtCore.QRect(456, 348, 198, 27))
                 font = QtGui.QFont()
@@ -834,8 +841,10 @@ class Ui_TrainModel_TestBench(object):
                 self.signal_fail_label.raise_()
                 self.internal_lights_label.raise_()
                 self.ebrake_fail_on.raise_()
+                self.ebrake_fail_on.hide() # default ebrake is off
                 self.vacc_info_label.raise_()
                 self.left_door_open.raise_()
+                self.left_door_open.hide() # default left door is closed
                 self.engine_fail_off.raise_()
                 self.temperature_spnbx.raise_()
                 self.signal_fail_chkbx.raise_()
@@ -850,22 +859,29 @@ class Ui_TrainModel_TestBench(object):
                 self.signal_fail_off.raise_()
                 self.accel_info_label.raise_()
                 self.signal_fail_on.raise_()
+                self.signal_fail_on.hide() # default signal is on
                 self.title_label.raise_()
                 self.internal_lights_on.raise_()
+                self.internal_lights_on.hide() # default internal lights is off
                 self.external_lights_on.raise_()
+                self.external_lights_on.hide() # default external lights is off
                 self.ebrake_fail_off.raise_()
                 self.height_label.raise_()
                 self.right_door_open.raise_()
+                self.right_door_open.hide() # default right door is closed
                 self.next_station_label.raise_()
                 self.engine_fail_chkbx.raise_()
                 self.ebrake_fail_chkbx.raise_()
-                self.sys_time_label.raise_()
+                # self.sys_time_label.raise_()
                 self.force_info_label.raise_()
                 self.acceleration_label.raise_()
                 self.ebrake_on.raise_()
+                self.ebrake_on.hide() # default ebrake is off
                 self.length_label.raise_()
                 self.brake_fail_on.raise_()
+                self.brake_fail_on.hide() # default brake is off
                 self.engine_fail_on.raise_()
+                self.engine_fail_on.hide() # default engine is not failed
                 self.controls_label.raise_()
                 self.mass_label.raise_()
                 self.ebrake_off.raise_()
@@ -876,16 +892,18 @@ class Ui_TrainModel_TestBench(object):
                 self.external_lights_off.raise_()
                 self.width_label.raise_()
                 self.test_bench_btn.raise_()
+                self.calc_btn.raise_()
                 self.train_info_label.raise_()
                 self.ad_view1.raise_()
-                self.system_speed_label.raise_()
-                self.system_speed_spnbx.raise_()
+                # self.system_speed_label.raise_()
+                # self.system_speed_spnbx.raise_()
                 self.external_lights_chkbx.raise_()
                 self.right_door_chkbx.raise_()
                 self.left_door_chkbx.raise_()
                 self.internal_lights_chkbx.raise_()
                 self.ebrake_chkbx.raise_()
                 self.service_brake_on.raise_()
+                self.service_brake_on.hide() # default service brake is off
                 self.service_brake_off.raise_()
                 self.service_brake_chkbx.raise_()
                 self.line.raise_()
@@ -915,16 +933,113 @@ class Ui_TrainModel_TestBench(object):
                 self.retranslateUi(TrainModel_TestBench)
                 QtCore.QMetaObject.connectSlotsByName(TrainModel_TestBench)
 
+
+
                 self._handler()  # start the timer
 
-                # def update(self):
-                #
+                # Set Default Values for Text Boxes
+                self.force_info_label.setText(str(self.train_model.get_force()))
+                self.cmd_pwr_edit.setText(str(self.train_model.get_cmd_power()))
+                self.acc_pwr_edit.setText(str(self.train_model.get_actual_power()))
+
+                # Set Default Values for Spin Boxes
+                self.passenger_spnbx.setValue(self.train_model.get_curr_passenger_count())
+
+                # Set Default Values for Check Boxes
+                # Failure Modes
+                self.ebrake_fail_chkbx.toggled.connect(
+                        lambda: self.train_model.set_ebrake_failure(self.ebrake_fail_chkbx.isChecked()))
+                self.engine_fail_chkbx.toggled.connect(
+                        lambda: self.train_model.set_engine_failure(self.engine_fail_chkbx.isChecked()))
+                self.brake_fail_chkbx.toggled.connect(
+                        lambda: self.train_model.set_sbrake_failure(self.brake_fail_chkbx.isChecked()))
+                self.signal_fail_chkbx.toggled.connect(
+                        lambda: self.train_model.set_signal_failure(self.signal_fail_chkbx.isChecked()))
+                # Controls
+                self.right_door_chkbx.toggled.connect(
+                        lambda: self.train_model.set_right_door(self.right_door_chkbx.isChecked()))
+                self.left_door_chkbx.toggled.connect(
+                        lambda: self.train_model.set_left_door(self.left_door_chkbx.isChecked()))
+                self.internal_lights_chkbx.toggled.connect(
+                        lambda: self.train_model.set_int_lights(self.internal_lights_chkbx.isChecked()))
+                self.external_lights_chkbx.toggled.connect(
+                        lambda: self.train_model.set_ext_lights(self.external_lights_chkbx.isChecked()))
+                self.ebrake_chkbx.toggled.connect(
+                        lambda: self.train_model.set_emergency_brake(self.ebrake_chkbx.isChecked()))
+                self.service_brake_chkbx.toggled.connect(
+                        lambda: self.train_model.set_service_brake(self.service_brake_chkbx.isChecked()))
 
         def _handler(self):
                 self.timer = QTimer()
                 self.timer.setInterval(100)  # 100ms update rate
-                # self.timer.timeout.connect(self.update)
+                self.timer.timeout.connect(self.update)
                 self.timer.start()
+
+        def update(self):
+                _translate = QtCore.QCoreApplication.translate
+
+                # Force
+                self.force_info_label.setText(str(round(self.train_model.get_force(), 3)))
+
+                # Failure Modes
+                # Emergency Brake Failure
+                self.ebrake_fail_on.setVisible(bool(self.train_model.get_ebrake_failure()))
+                self.ebrake_fail_off.setVisible(not bool(self.train_model.get_ebrake_failure()))
+
+                # Engine Failure
+                self.engine_fail_on.setVisible(bool(self.train_model.get_engine_failure()))
+                self.engine_fail_off.setVisible(not bool(self.train_model.get_engine_failure()))
+
+                # Service Brake Failure
+                self.brake_fail_on.setVisible(bool(self.train_model.get_sbrake_failure()))
+                self.brake_fail_off.setVisible(not bool(self.train_model.get_sbrake_failure()))
+
+                # Signal Failure
+                self.signal_fail_on.setVisible(bool(self.train_model.get_signal_failure()))
+                self.signal_fail_off.setVisible(not bool(self.train_model.get_signal_failure()))
+
+                # Controls
+                # Right Door
+                self.right_door_open.setVisible(bool(self.train_model.get_right_door()))
+                self.right_door_closed.setVisible(not bool(self.train_model.get_right_door()))
+
+                # Left Door
+                self.left_door_open.setVisible(bool(self.train_model.get_left_door()))
+                self.left_door_closed.setVisible(not bool(self.train_model.get_left_door()))
+
+                # Internal Lights
+                self.internal_lights_on.setVisible(bool(self.train_model.get_int_lights()))
+                self.internal_lights_off.setVisible(not bool(self.train_model.get_int_lights()))
+
+                # External Lights
+                self.external_lights_on.setVisible(bool(self.train_model.get_ext_lights()))
+                self.external_lights_off.setVisible(not bool(self.train_model.get_ext_lights()))
+
+                # E-Brake
+                self.ebrake_on.setVisible(bool(self.train_model.get_emergency_brake()))
+                self.ebrake_off.setVisible(not bool(self.train_model.get_emergency_brake()))
+
+                # Service Brake
+                self.service_brake_on.setVisible(bool(self.train_model.get_service_brake()))
+                self.service_brake_off.setVisible(not bool(self.train_model.get_service_brake()))
+
+        def calculate(self):
+                # read input from text box in the test UI and send it to the train model
+
+                # update the cmd power
+                powerCmd = self.cmd_pwr_edit.toPlainText()
+                # send the commanded power to the train model
+                self.train_model.set_cmd_power(float(powerCmd))
+
+                # update the acc power
+                powerAcc = self.acc_pwr_edit.toPlainText()
+                # send the acc power to the train model
+                self.train_model.set_actual_power(float(powerAcc))
+
+                # update the passenger count
+                pass_count = self.passenger_spnbx.value()
+                # send the passenger count to the train model
+                self.train_model.set_curr_passenger_count(self.passenger_spnbx.value())
 
         def temperature_spnbx_ctrl(self):
                 temp = self.temperature_spnbx.value()
@@ -939,7 +1054,7 @@ class Ui_TrainModel_TestBench(object):
         # def signal_fail_chk(self):
         def retranslateUi(self, TrainModel_TestBench):
                 _translate = QtCore.QCoreApplication.translate
-                TrainModel_TestBench.setWindowTitle(_translate("TrainModel_TestBench", "MainWindow"))
+                TrainModel_TestBench.setWindowTitle(_translate("TrainModel_TestBench", "Train Model Test Bench"))
                 self.engine_fail_off.setText(_translate("TrainModel_TestBench", "OFF"))
                 self.external_lights_off.setText(_translate("TrainModel_TestBench", "OFF"))
                 self.ebrake_on.setText(_translate("TrainModel_TestBench", "ON"))
@@ -958,7 +1073,7 @@ class Ui_TrainModel_TestBench(object):
                 self.accel_info_label.setText(_translate("TrainModel_TestBench", "a = F/M"))
                 self.internal_lights_label.setText(_translate("TrainModel_TestBench", "Internal Lights"))
                 self.engine_fail_on.setText(_translate("TrainModel_TestBench", "ON"))
-                self.system_speed_label.setText(_translate("TrainModel_TestBench", " System Speed"))
+                # self.system_speed_label.setText(_translate("TrainModel_TestBench", " System Speed"))
                 self.right_door_closed.setText(_translate("TrainModel_TestBench", "CLOSED"))
                 self.right_door_open.setText(_translate("TrainModel_TestBench", "OPEN"))
                 self.ebrake_label.setText(_translate("TrainModel_TestBench", "E-Brake"))
@@ -981,8 +1096,9 @@ class Ui_TrainModel_TestBench(object):
                 self.vacc_info_label.setText(_translate("TrainModel_TestBench", "Vacc = laplace(Vacc)"))
                 self.force_label.setText(_translate("TrainModel_TestBench", "Force (N)"))
                 self.next_station_label.setText(_translate("TrainModel_TestBench", "Next Station Information"))
-                self.sys_time_label.setText(_translate("TrainModel_TestBench", "13:24:55"))
+                # self.sys_time_label.setText(_translate("TrainModel_TestBench", "13:24:55"))
                 self.test_bench_btn.setText(_translate("TrainModel_TestBench", "Main UI"))
+                self.calc_btn.setText(_translate("TrainModel_TestBench", "Calculate"))
                 self.signal_fail_label.setText(_translate("TrainModel_TestBench", "Signal Pickup Failure"))
                 self.external_lights_label.setText(_translate("TrainModel_TestBench", "External Lights"))
                 self.external_lights_on.setText(_translate("TrainModel_TestBench", "ON"))
@@ -1008,11 +1124,13 @@ class Ui_TrainModel_TestBench(object):
                 self.occupancy_label.setText(_translate("TrainModel_TestBench", "Occupancy"))
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    TrainModel_TestBench = QtWidgets.QMainWindow()
-    ui = Ui_TrainModel_TestBench()
-    ui.setupUi(TrainModel_TestBench)
-    TrainModel_TestBench.show()
-    sys.exit(app.exec_())
+if __name__ == '__main__':
+        import sys
+
+        app = QApplication(sys.argv)
+        TrainModel_TestBench = QtWidgets.QMainWindow()
+        tm = TrainModel()
+        ui = Ui_TrainModel_TestBench(tm)
+        ui.setupUi(TrainModel_TestBench)
+        TrainModel_TestBench.show()
+        sys.exit(app.exec_())
