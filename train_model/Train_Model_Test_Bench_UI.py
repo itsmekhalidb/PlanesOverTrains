@@ -1039,7 +1039,7 @@ class Ui_TrainModel_TestBench(object):
                 # update the passenger count
                 pass_count = self.passenger_spnbx.value()
                 # send the passenger count to the train model
-                self.train_model.set_curr_passenger_count(self.passenger_spnbx.value())
+                self.train_model.set_curr_passenger_count(int(pass_count))
 
         def temperature_spnbx_ctrl(self):
                 temp = self.temperature_spnbx.value()
