@@ -20,6 +20,13 @@ class TrainModel(object):
         self._passenger_mass = 0.0 # mass of the passengers on the train
         self._train_mass = 40900.0 # mass of the train empty
         self._total_mass = 0.0 # total mass of the train with passengers
+        self._temp_sp = 0.0 # internal temperature set point
+        self._temperature = 0.0 # internal temperature of the train
+        self._local_time = 0
+        self._time = [0]
+        self._block = 0 # current block the train is on
+        self._beacon = "" # beacon information
+        self._line = "[COLOR]" # line the train is on
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -35,20 +42,10 @@ class TrainModel(object):
         self._emergency_brake = False  # emergency brake
         self._service_brake = False # service brake
 
-        # self._temp_sp = 0.0 # internal temperature set point
-        # self._temperature = 0.0 # internal temperature of the train
-        # self._local_time = 0
-        # self._time = 0
-
         # -- Run the Update Function -- #
         self.update()
 
     def update(self, thread=False):
-        """
-        Updates the train model
-        Inputs: Train Controller, Track Model
-        Outputs: Train Controller, Track Model
-        """
         ##################################
         # Input Train Controller Signals #
         ##################################
@@ -59,12 +56,6 @@ class TrainModel(object):
         # Actual Power
         # TODO: change get_actual_power to get_actual_power from train controller signals
         self.set_actual_power(float(self.get_actual_power()))  # Pass input from test UI text box
-
-        # Passenger Mass
-        self.set_passenger_mass(self.get_curr_passenger_count())
-
-        # Total Mass
-        self.set_total_mass()
 
         #################
         # Failure Modes #
@@ -119,6 +110,22 @@ class TrainModel(object):
         # TODO: change get_curr_passenger_count to get_curr_passenger_count from track model signals
         self.set_curr_passenger_count(int(self.get_curr_passenger_count()))  # Pass input from test UI text box
 
+        # Time
+        # TODO: change get_time to get_time from track model signals
+        self.set_time(self.get_time())
+
+        # Beacon
+        # TODO: change get_beacon to get_beacon from track model signals
+        self.set_beacon(self.get_beacon())
+
+        # Line
+        # TODO: change get_line to get_line from track model signals
+        self.set_line(self.get_line())
+
+        # Block
+        # TODO: change get_block to get_block from track model signals
+        self.set_block(self.get_block())
+
         ##############################
         # Output to Train Controller #
         ##############################
@@ -134,31 +141,63 @@ class TrainModel(object):
         # TODO: Fix get_force to calculate force based on Newton's Laws
         self.set_force(float(self.get_force()))  # Pass input from test UI text box
 
+        # Passenger Mass
+        self.set_passenger_mass(self.get_curr_passenger_count())
+
+        # Total Mass
+        self.set_total_mass()
+
+        # Internal Temperature
+        self.set_temperature(self.get_temperature())
+
     #     # Temperature
     #     self.set_temperature(self._temp_sp)
     #
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
-    #
-    # def set_temperature(self, temp:float):
-    #     """
-    #     Sets the temperature of the train
-    #     Inputs: Temperature Setpoint
-    #     Outputs: Temperature
-    #     """
-    #     # Calculate the temperature
-    #     if self._temp_sp != temp:
-    #         self._local_time = self._time[0]
-    #         self._temp_sp = temp
-    #     self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time[0] - self._local_time))), 0)
-    # def get_temperature(self):
-    #     """
-    #     Gets the temperature of the train
-    #     Inputs: None
-    #     Outputs: Temperature
-    #     """
-    #     return self._temperature
+
+    # -- Getters and Setters -- #
+    # beacon
+    def set_beacon(self, _beacon: str):
+        self._beacon = _beacon
+
+    def get_beacon(self) -> str:
+        return self._beacon
+
+    # line
+    def set_line(self, _line: str):
+        self._line = _line
+
+    def get_line(self) -> str:
+        return self._line
+
+    # block
+    def set_block(self, _block: int):
+        self._block = _block
+
+    def get_block(self) -> int:
+        return self._block
+
+    # time
+    # TODO: Confirm if this needs to be a list or int (_time[0])
+    def set_time(self, _time: list):
+        self._time = _time
+
+    # TODO: Confirm if this needs to be a list or int (_time[0])
+    def get_time(self) -> list:
+        return self._time
+
+    # temperature
+    # TODO: Fix get_temperature to calculate temp based on elapsed time
+    def set_temperature(self, temp:float):
+        if self._temp_sp != temp:
+            self._local_time = self._time[0]
+            self._temp_sp = temp
+        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time[0] - self._local_time))), 0)
+        print(self._temperature, self._temp_sp, self._time[0] - self._local_time)
+    def get_temperature(self) -> float:
+        return self._temperature
 
     # commanded power
     def set_cmd_power(self, _cmd_power: float):
@@ -191,7 +230,7 @@ class TrainModel(object):
 
     # passenger mass
     def set_passenger_mass(self, _curr_passenger_count: float):
-        self._passenger_mass = self._curr_passenger_count * 150 # kg
+        self._passenger_mass = self._curr_passenger_count * 150 * 0.453592 # lbs to kg
 
     def get_passenger_mass(self) -> float:
         return self._passenger_mass

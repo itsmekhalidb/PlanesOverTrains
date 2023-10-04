@@ -936,7 +936,11 @@ class Ui_TrainModel_TestBench(object):
                 self._handler()  # start the timer
 
                 # Set Default Values for Text Boxes
+                # Force
                 self.force_info_label.setText(str(self.train_model.get_force()))
+
+                # Title
+                self.title_label.setText(str(self.train_model.get_line() + " Line"))
 
                 # Power
                 self.cmd_pwr_edit.setText(str(self.train_model.get_cmd_power()))
@@ -984,8 +988,14 @@ class Ui_TrainModel_TestBench(object):
                 # Force
                 self.force_info_label.setText(str(round(self.train_model.get_force(), 3)))
 
+                # Title
+                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+
                 # Mass
                 self.mass_label.setText(str("Mass: " + str(round(self.train_model.get_total_mass(), 3)) + " kg"))
+
+                # Temperature
+                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
                 # Failure Modes
                 # Emergency Brake Failure
@@ -1051,9 +1061,14 @@ class Ui_TrainModel_TestBench(object):
                 # update the train mass
                 self.train_model.set_total_mass()
 
-        def temperature_spnbx_ctrl(self):
+                # update the temperature
                 temp = self.temperature_spnbx.value()
-                # self.train_model.set_temperature(float(temp))
+                self.train_model.set_temperature(float(temp))
+
+                # update the beacon info
+                # title
+                line = self.train_line_edit.toPlainText()
+                self.train_model.set_line(str(line))
 
         # def update_line_info(self):
         #
@@ -1115,7 +1130,7 @@ class Ui_TrainModel_TestBench(object):
                 self.ebrake_off.setText(_translate("TrainModel_TestBench", "OFF"))
                 self.signal_fail_off.setText(_translate("TrainModel_TestBench", "OFF"))
                 self.engine_fail_label.setText(_translate("TrainModel_TestBench", "Train Engine Failure"))
-                self.temperature_label.setText(_translate("TrainModel_TestBench", "Internal Temperature"))
+                self.temperature_label.setText(_translate("TrainModel_TestBench", "Car Temp.: 72°F      SP:"))
                 self.controls_label.setText(_translate("TrainModel_TestBench", "Controls"))
                 self.failure_mode_label.setText(_translate("TrainModel_TestBench", "Failure Modes"))
                 self.internal_lights_off.setText(_translate("TrainModel_TestBench", "OFF"))

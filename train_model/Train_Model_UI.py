@@ -735,11 +735,17 @@ class Ui_TrainModel_MainUI(object):
                 # Force
                 self.force_info_label_2.setText(str(self.train_model.get_force()))
 
+                # Title
+                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+
                 # Mass
                 self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(str("Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
+
+                # Temperature
+                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
                 # Set Default Values for Check Boxes
                 # Failure Modes
@@ -758,11 +764,17 @@ class Ui_TrainModel_MainUI(object):
                 # Force
                 self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)))
 
+                # Title
+                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+
                 # Mass
                 self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
+
+                # Temperature
+                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
                 # Failure Modes
                 # Emergency Brake Failure
@@ -824,7 +836,7 @@ class Ui_TrainModel_MainUI(object):
                 self.width_label.setText(_translate("TrainModel_MainUI", "Width: 8.7 ft"))
                 self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: 40900 Kg"))
                 self.height_label.setText(_translate("TrainModel_MainUI", "Height: 11.2 ft"))
-                self.temperature_label.setText(_translate("TrainModel_MainUI", "Internal Temperature"))
+                self.temperature_label.setText(_translate("TrainModel_MainUI", "Car Temp.: 72°F      SP:"))
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
                 self.force_label.setText(_translate("TrainModel_MainUI", "Force (N)"))
                 self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
