@@ -949,7 +949,11 @@ class Ui_TrainModel_TestBench(object):
                 # Mass
                 self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
-                # Set Default Values for Spin Boxes
+                # Commanded Velocity
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
+                self.vcmd_edit.setText(str(self.train_model.get_cmd_speed()))
+
+                # Passenger Count
                 self.passenger_spnbx.setValue(self.train_model.get_curr_passenger_count())
 
                 # Set Default Values for Check Boxes
@@ -996,6 +1000,9 @@ class Ui_TrainModel_TestBench(object):
 
                 # Temperature
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
+
+                # Commanded Velocity
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
 
                 # Failure Modes
                 # Emergency Brake Failure
@@ -1065,10 +1072,15 @@ class Ui_TrainModel_TestBench(object):
                 temp = self.temperature_spnbx.value()
                 self.train_model.set_temperature(float(temp))
 
+                # update the cmd speed
+                speedCmd = self.vcmd_edit.toPlainText()
+                self.train_model.set_cmd_speed(float(speedCmd))
+
                 # update the beacon info
                 # title
                 line = self.train_line_edit.toPlainText()
                 self.train_model.set_line(str(line))
+
 
         # def update_line_info(self):
         #

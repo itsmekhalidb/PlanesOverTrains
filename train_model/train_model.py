@@ -27,6 +27,7 @@ class TrainModel(object):
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "[COLOR]" # line the train is on
+        self._cmd_speed = 0.0 # commanded speed
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -126,6 +127,10 @@ class TrainModel(object):
         # TODO: change get_block to get_block from track model signals
         self.set_block(self.get_block())
 
+        # Commanded Speed
+        # TODO: change get_cmd_speed to get_cmd_speed from track model signals
+        self.set_cmd_speed(float(self.get_cmd_speed()))
+
         ##############################
         # Output to Train Controller #
         ##############################
@@ -150,14 +155,18 @@ class TrainModel(object):
         # Internal Temperature
         self.set_temperature(self.get_temperature())
 
-    #     # Temperature
-    #     self.set_temperature(self._temp_sp)
-    #
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
+    # commanded speed
+    def set_cmd_speed(self, _cmd_speed: float):
+        self._cmd_speed = _cmd_speed
+
+    def get_cmd_speed(self) -> float:
+        return self._cmd_speed
+
     # beacon
     def set_beacon(self, _beacon: str):
         self._beacon = _beacon

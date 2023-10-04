@@ -747,6 +747,9 @@ class Ui_TrainModel_MainUI(object):
                 # Temperature
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
+                # Commanded Velocity
+                self.vcmd_info_label.setText(str(self.train_model.get_cmd_speed()))
+
                 # Set Default Values for Check Boxes
                 # Failure Modes
                 self.ebrake_fail_chkbx.toggled.connect(
@@ -775,6 +778,9 @@ class Ui_TrainModel_MainUI(object):
 
                 # Temperature
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
+
+                # Commanded Velocity
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
 
                 # Failure Modes
                 # Emergency Brake Failure
