@@ -234,19 +234,26 @@ class Ui_TrainModel_MainUI(object):
                 self.vcmd_info_label.setAlignment(QtCore.Qt.AlignCenter)
                 self.vcmd_info_label.setObjectName("vcmd_info_label")
                 self.ad_view1 = QtWidgets.QGraphicsView(self.centralwidget)
-                self.ad_view1.setGeometry(QtCore.QRect(12, 434, 435, 129))
+                self.ad_view1.setGeometry(QtCore.QRect(12, 444, 435, 119))
                 self.ad_view1.setObjectName("ad_view1")
-                self.next_station_infobox = QtWidgets.QTextBrowser(self.centralwidget)
-                self.next_station_infobox.setGeometry(QtCore.QRect(12, 366, 435, 61))
+                self.next_station_infobox = QtWidgets.QTableWidget(self.centralwidget)
+                self.next_station_infobox.setGeometry(QtCore.QRect(12, 366, 435, 73))
+                self.next_station_infobox.setColumnCount(4)
+                self.next_station_infobox.setRowCount(3)
+                new_row_height = 5  # Adjust the row height as needed
+                for row in range(self.next_station_infobox.rowCount()):
+                        self.next_station_infobox.verticalHeader().resizeSection(row, new_row_height)
+                self.next_station_infobox.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
                 font = QtGui.QFont()
-                font.setPointSize(10)
+                font.setPointSize(9)
                 font.setBold(True)
                 font.setWeight(75)
                 self.next_station_infobox.setFont(font)
-                self.next_station_infobox.setStyleSheet("background-color: rgb(202, 202, 202);\n"
-                "border: 1px solid black;\n"
-                "")
-                self.next_station_infobox.setObjectName("next_station_infobox")
+                self.next_station_infobox.horizontalHeader().setVisible(False)
+                self.next_station_infobox.verticalHeader().setVisible(False)
+                self.next_station_infobox.verticalScrollBar().setVisible(False)
+                self.next_station_infobox.resizeRowsToContents()
+                self.next_station_infobox.setObjectName("next_station_table")
                 self.next_station_label = QtWidgets.QLabel(self.centralwidget)
                 self.next_station_label.setGeometry(QtCore.QRect(12, 332, 435, 35))
                 font = QtGui.QFont()
@@ -783,8 +790,21 @@ class Ui_TrainModel_MainUI(object):
                 self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
 
                 # Next Station Info
-                self.next_station_infobox.setText(str("Next Station: " + str(self.train_model.get_beacon() + "\n"
-                                                    "Test a new line here"                      )))
+                # Row 1
+                self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Next Station:"))
+                self.next_station_infobox.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_beacon())))
+                self.next_station_infobox.setItem(0, 2, QtWidgets.QTableWidgetItem("Authority:"))
+                self.next_station_infobox.setItem(0, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_authority())))
+                # Row 2
+                self.next_station_infobox.setItem(1, 0, QtWidgets.QTableWidgetItem("Speed Limit:"))
+                self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_speed_limit())))
+                self.next_station_infobox.setItem(1, 2, QtWidgets.QTableWidgetItem("Underground:"))
+                self.next_station_infobox.setItem(1, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_underground())))
+                # Row 3
+                self.next_station_infobox.setItem(2, 0, QtWidgets.QTableWidgetItem("Grade:"))
+                self.next_station_infobox.setItem(2, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_grade())))
+                self.next_station_infobox.setItem(2, 2, QtWidgets.QTableWidgetItem("Elevation:"))
+                self.next_station_infobox.setItem(2, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_elevation())))
 
                 # Failure Modes
                 # Emergency Brake Failure
@@ -855,11 +875,11 @@ class Ui_TrainModel_MainUI(object):
                 self.accel_info_label.setText(_translate("TrainModel_MainUI", "a = F/M"))
                 self.acceleration_label.setText(_translate("TrainModel_MainUI", "Acceleration (m/s²)"))
                 self.vcmd_info_label.setText(_translate("TrainModel_MainUI", "Vcmd = 100 m/s"))
-                self.next_station_infobox.setHtml(_translate("TrainModel_MainUI", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-        "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-        "p, li { white-space: pre-wrap; }\n"
-        "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:600; font-style:normal;\">\n"
-        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">You are arriving at DORMONT STATION in 59 minutes.</span></p></body></html>"))
+        #         self.next_station_infobox.setHtml(_translate("TrainModel_MainUI", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        # "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+        # "p, li { white-space: pre-wrap; }\n"
+        # "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:600; font-style:normal;\">\n"
+        # "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">You are arriving at DORMONT STATION in 59 minutes.</span></p></body></html>"))
                 self.next_station_label.setText(_translate("TrainModel_MainUI", "Next Station Information"))
                 self.emergency_mode_label.setText(_translate("TrainModel_MainUI", "Emergency & Failure Modes"))
                 self.engine_fail_label.setText(_translate("TrainModel_MainUI", "Train Engine Failure"))
