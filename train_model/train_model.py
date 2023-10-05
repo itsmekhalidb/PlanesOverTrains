@@ -43,6 +43,8 @@ class TrainModel(object):
         self._gravity = 9.81 # m/s^2
         self._grade = 0.0 # grade of the track
         self._elevation = 0.0 # elevation of the track
+        self._underground = False # underground or above ground
+        self._station_side = "" # station side the train is on
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -145,9 +147,33 @@ class TrainModel(object):
         # TODO: change get_line to get_line from track model signals
         self.set_line(self.get_line())
 
+        # Station Side
+        # TODO: change get_station_side to get_station_side from track model signals
+        self.set_station_side(self.get_station_side())
+
         # Block
         # TODO: change get_block to get_block from track model signals
         self.set_block(self.get_block())
+
+        # Authority
+        # TODO: change get_authority to get_authority from track model signals
+        self.set_authority(float(self.get_authority()))
+
+        # Speed Limit
+        # TODO: change get_speed_limit to get_speed_limit from track model signals
+        self.set_speed_limit(float(self.get_speed_limit()))
+
+        # Elevation
+        # TODO: change get_elevation to get_elevation from track model signals
+        self.set_elevation(float(self.get_elevation()))
+
+        # Grade
+        # TODO: change get_grade to get_grade from track model signals
+        self.set_grade(float(self.get_grade()))
+
+        # Underground
+        # TODO: change get_underground to get_underground from track model signals
+        self.set_underground(bool(self.get_underground()))
 
         # Commanded Speed
         # TODO: change get_cmd_speed to get_cmd_speed from track model signals
@@ -156,10 +182,12 @@ class TrainModel(object):
         ##############################
         # Output to Train Controller #
         ##############################
+        # TODO: Add output to train controller
 
         #########################
         # Output to Track Model #
         #########################
+        # TODO: Add output to track model
 
         #####################################
         # Internal Train Model Calculations #
@@ -182,34 +210,88 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Simulation -- #
+    # TODO: Remove Simulate Function during integration
     def beacon_simulate(self):
-        if self._line == "[COLOR]":
+        if self._line == "":
             self.set_line("GREEN")
         if self._line == "GREEN":
             # Set:
             # Station Name (Beacon)
+            self.set_beacon("PIONEER")
+            # print(self.get_beacon())  # TODO: Remove print statement
             # Authority
+            self.set_authority(700)
             # Speed Limit
+            self.set_speed_limit(45)
             # Elevation
+            self.set_elevation(1)
             # Grade
+            self.set_grade(0.01)
             # Underground
+            self.set_underground(False)
             # Occupancy (Block)
-
-            self.set_beacon("DORMONT")
-
-            pass
+            self.set_block(2)
         if self._line == "RED":
             # Set:
             # Station Name (Beacon)
+            self.set_beacon("SHADYSIDE")
+            # print(self.get_beacon()) # TODO: Remove print statement
             # Authority
+            self.set_authority(615)
             # Speed Limit
+            self.set_speed_limit(40)
             # Elevation
+            self.set_elevation(0.38)
             # Grade
+            self.set_grade(0.005)
             # Underground
+            self.set_underground(False)
             # Occupancy (Block)
-            pass
+            self.set_block(7)
 
     # -- Getters and Setters -- #
+    # station side
+    def set_station_side(self, _station_side: str):
+        self._station_side = _station_side
+
+    def get_station_side(self) -> str:
+        return self._station_side
+
+    # authority
+    def set_authority(self, _authority: float):
+        self._authority = _authority
+
+    def get_authority(self) -> float:
+        return self._authority
+
+    # speed limit
+    def set_speed_limit(self, _speed_limit: float):
+        self._speed_limit = _speed_limit
+
+    def get_speed_limit(self) -> float:
+        return self._speed_limit
+
+    # elevation
+    def set_elevation(self, _elevation: float):
+        self._elevation = _elevation
+
+    def get_elevation(self) -> float:
+        return self._elevation
+
+    # grade
+    def set_grade(self, _grade: float):
+        self._grade = _grade
+
+    def get_grade(self) -> float:
+        return self._grade
+
+    # underground
+    def set_underground(self, _underground: bool):
+        self._underground = _underground
+
+    def get_underground(self) -> bool:
+        return self._underground
+
     # commanded speed
     def set_cmd_speed(self, _cmd_speed: float):
         self._cmd_speed = _cmd_speed

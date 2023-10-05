@@ -74,7 +74,7 @@ class Ui_TrainModel_TestBench(object):
                 self.next_station_infobox = QtWidgets.QTextBrowser(self.Test_Bench)
                 self.next_station_infobox.setGeometry(QtCore.QRect(10, 366, 435, 61))
                 font = QtGui.QFont()
-                font.setPointSize(12)
+                font.setPointSize(10)
                 font.setBold(True)
                 font.setWeight(75)
                 self.next_station_infobox.setFont(font)
@@ -1004,6 +1004,10 @@ class Ui_TrainModel_TestBench(object):
 
                 # Commanded Velocity
                 self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
+
+                # Next Station Info
+                self.next_station_infobox.setText(str("Next Station: " + str(self.train_model.get_beacon() + "\n"
+                                                      "Test a new line here" + "\n")))
 
                 # Failure Modes
                 # Emergency Brake Failure
