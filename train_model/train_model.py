@@ -13,12 +13,14 @@ class TrainModel(object):
         # -- Train Model Variables -- #
         self._cmd_power = 0.01 # commanded power
         self._actual_power = 0.00 # actual power
+        self._max_power = 120000.0 # max power of the train from data sheet
         self._force = 0.0 # force
+        self._net_force = 0.0 # net force
         self._curr_passenger_count = 0 # passenger count currently on the train
-        self._max_passenger_count = 222 # combine max standing & seating passengers
+        self._max_passenger_count = 222 # combine max standing & seating passengers from data sheet
         self._prev_passenger_count = 0 # previous passenger count for the train
         self._passenger_mass = 0.0 # mass of the passengers on the train
-        self._train_mass = 40900.0 # mass of the train empty
+        self._train_mass = 40900.0 # mass of the train empty from data sheet
         self._total_mass = 0.0 # total mass of the train with passengers
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
@@ -28,6 +30,19 @@ class TrainModel(object):
         self._beacon = "" # beacon information
         self._line = "[COLOR]" # line the train is on
         self._cmd_speed = 0.0 # commanded speed
+        self._acceleration = 0.0 # acceleration of the train
+        self._actual_velocity = 0.0 # actual velocity of the train
+        self._theta = 0.0 # arctan(grade) of the train
+        self._mgcos_theta = 0.0 # m*g*cos(theta) of the train
+        self._mgsin_theta = 0.0 # m*g*sin(theta) of the train
+        self._authority = 0.0 # authority of the train
+        self._speed_limit = 0.0 # speed limit of the train
+        self._accel_limit = 0.5 # m/s^2 from data sheet
+        self._decel_limit = -1.2 # m/s^2 from data sheet
+        self._ebrake_decel_limit = -2.73 # m/s^2 from data sheet
+        self._gravity = 9.81 # m/s^2
+        self._grade = 0.0 # grade of the track
+        self._elevation = 0.0 # elevation of the track
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -38,10 +53,17 @@ class TrainModel(object):
         # -- Controls -- #
         self._right_door = False # right door
         self._left_door = False # left door
+        self._doors = False # either door
         self._int_lights = False # internal lights
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
         self._service_brake = False # service brake
+
+        # -- Get Data from Other Modules -- #
+        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller signals
+        self._train_ctrl_signals = None # train controller signals
+        # TODO: change _track_model_signals to _track_model_signals from track model signals
+        self._track_model_signals = None # track model signals
 
         # -- Run the Update Function -- #
         self.update()
@@ -158,6 +180,34 @@ class TrainModel(object):
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
+
+    # -- Simulation -- #
+    def beacon_simulate(self):
+        if self._line == "[COLOR]":
+            self.set_line("GREEN")
+        if self._line == "GREEN":
+            # Set:
+            # Station Name (Beacon)
+            # Authority
+            # Speed Limit
+            # Elevation
+            # Grade
+            # Underground
+            # Occupancy (Block)
+
+            self.set_beacon("DORMONT")
+
+            pass
+        if self._line == "RED":
+            # Set:
+            # Station Name (Beacon)
+            # Authority
+            # Speed Limit
+            # Elevation
+            # Grade
+            # Underground
+            # Occupancy (Block)
+            pass
 
     # -- Getters and Setters -- #
     # commanded speed

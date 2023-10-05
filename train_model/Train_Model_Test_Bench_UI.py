@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import *
 from train_model import TrainModel
 from Train_Model_UI import Ui_TrainModel_MainUI
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+import time
 
 class Ui_TrainModel_TestBench(object):
 
@@ -1080,6 +1081,10 @@ class Ui_TrainModel_TestBench(object):
                 # title
                 line = self.train_line_edit.toPlainText()
                 self.train_model.set_line(str(line))
+
+                # TODO: update the beacon info before calling simulate in update()
+                # simulate
+                self.train_model.beacon_simulate()
 
 
         # def update_line_info(self):
