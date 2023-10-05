@@ -7,6 +7,8 @@ import threading
 # from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
 import threading
 
+# TODO: Make an orange juice ad
+
 class TrainModel(object):
     def __init__(self):
 
@@ -28,7 +30,7 @@ class TrainModel(object):
         self._time = [0]
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
-        self._line = "[COLOR]" # line the train is on
+        self._line = "" # line the train is on
         self._cmd_speed = 0.0 # commanded speed
         self._acceleration = 0.0 # acceleration of the train
         self._actual_velocity = 0.0 # actual velocity of the train
@@ -250,6 +252,13 @@ class TrainModel(object):
             self.set_block(7)
 
     # -- Getters and Setters -- #
+    # acceleration
+    def set_acceleration(self, _acceleration: float):
+        self._acceleration = _acceleration
+
+    def get_acceleration(self) -> float:
+        return self._acceleration
+
     # station side
     def set_station_side(self, _station_side: str):
         self._station_side = _station_side
@@ -331,6 +340,7 @@ class TrainModel(object):
 
     # temperature
     # TODO: Fix get_temperature to calculate temp based on elapsed time
+    # TODO: Make Temperature just update immediately
     def set_temperature(self, temp:float):
         if self._temp_sp != temp:
             self._local_time = self._time[0]

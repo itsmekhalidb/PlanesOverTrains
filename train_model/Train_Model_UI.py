@@ -739,8 +739,11 @@ class Ui_TrainModel_MainUI(object):
                 self._handler()
 
                 # Set Default Values for Labels
+                # Acceleration
+                self.accel_info_label.setText(str(self.train_model.get_acceleration()) + " m/s^2")
+
                 # Force
-                self.force_info_label_2.setText(str(self.train_model.get_force()))
+                self.force_info_label_2.setText(str(self.train_model.get_force()) + " N")
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -771,8 +774,11 @@ class Ui_TrainModel_MainUI(object):
         def update(self):
                 _translate = QtCore.QCoreApplication.translate
 
+                # Acceleration
+                self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
+
                 # Force
-                self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)))
+                self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N")
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))

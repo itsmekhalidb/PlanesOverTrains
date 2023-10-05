@@ -944,8 +944,32 @@ class Ui_TrainModel_TestBench(object):
                 self._handler()  # start the timer
 
                 # Set Default Values for Text Boxes
+                # Acceleration
+                self.accel_info_label.setText(str(self.train_model.get_acceleration()) + " m/s^2")
+
                 # Force
-                self.force_info_label.setText(str(self.train_model.get_force()))
+                self.force_info_label.setText(str(self.train_model.get_force()) + " N")
+
+                # Authority
+                self.authority_edit.setText(str(self.train_model.get_authority()))
+
+                # Train Line
+                self.train_line_edit.setText(str(self.train_model.get_line()))
+
+                # Speed Limit
+                self.speed_limit_edit.setText(str(self.train_model.get_speed_limit()))
+
+                # Underground
+                self.underground_edit.setText(str(self.train_model.get_underground()))
+
+                # Grade
+                self.grade_edit.setText(str(self.train_model.get_grade()))
+
+                # Elevation
+                self.elevation_edit.setText(str(self.train_model.get_elevation()))
+
+                # Occupancy
+                self.occupancy_edit.setText(str(self.train_model.get_block()))
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -997,8 +1021,32 @@ class Ui_TrainModel_TestBench(object):
         def update(self):
                 _translate = QtCore.QCoreApplication.translate
 
+                # Acceleration
+                self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
+
                 # Force
-                self.force_info_label.setText(str(round(self.train_model.get_force(), 3)))
+                self.force_info_label.setText(str(round(self.train_model.get_force(), 3)) + " N")
+
+                # Authority
+                self.authority_edit.setText(str(self.train_model.get_authority()))
+
+                # Train Line
+                # self.train_line_edit.setText(str(self.train_model.get_line()))
+
+                # Speed Limit
+                self.speed_limit_edit.setText(str(self.train_model.get_speed_limit()))
+
+                # Underground
+                self.underground_edit.setText(str(self.train_model.get_underground()))
+
+                # Grade
+                self.grade_edit.setText(str(self.train_model.get_grade()))
+
+                # Elevation
+                self.elevation_edit.setText(str(self.train_model.get_elevation()))
+
+                # Occupancy
+                self.occupancy_edit.setText(str(self.train_model.get_block()))
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -1101,12 +1149,11 @@ class Ui_TrainModel_TestBench(object):
                 speedCmd = self.vcmd_edit.toPlainText()
                 self.train_model.set_cmd_speed(float(speedCmd))
 
-                # update the beacon info
                 # title
                 line = self.train_line_edit.toPlainText()
                 self.train_model.set_line(str(line))
 
-                # TODO: update the beacon info before calling simulate in update()
+                # TODO: remove this from implementation, well who cares its just a test bench
                 # simulate
                 self.train_model.beacon_simulate()
 
