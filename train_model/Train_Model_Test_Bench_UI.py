@@ -1153,7 +1153,6 @@ class Ui_TrainModel_TestBench(object):
                 line = self.train_line_edit.toPlainText()
                 self.train_model.set_line(str(line))
 
-                # TODO: remove this from implementation, well who cares its just a test bench
                 # simulate
                 self.train_model.beacon_simulate()
 

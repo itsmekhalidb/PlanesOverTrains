@@ -28,6 +28,8 @@ class TrainModel(object):
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
         self._time = [0]
+        self._current_time = self._time[0]
+        self._prev_time = self._current_time
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "" # line the train is on
@@ -213,10 +215,11 @@ class TrainModel(object):
 
     # -- Simulation -- #
     # TODO: Remove Simulate Function during integration
+    # TODO: Add BLUE line simulation
     def beacon_simulate(self):
         if self._line == "":
             self.set_line("GREEN")
-        if self._line == "GREEN":
+        if self._line.lower() == "green":
             # Set:
             # Station Name (Beacon)
             self.set_beacon("PIONEER")
@@ -233,7 +236,7 @@ class TrainModel(object):
             self.set_underground(False)
             # Occupancy (Block)
             self.set_block(2)
-        if self._line == "RED":
+        if self._line.lower() == "red":
             # Set:
             # Station Name (Beacon)
             self.set_beacon("SHADYSIDE")
@@ -250,6 +253,23 @@ class TrainModel(object):
             self.set_underground(False)
             # Occupancy (Block)
             self.set_block(7)
+        if self._line.lower() == "blue":
+            # Set:
+            # Station Name (Beacon)
+            self.set_beacon("Station B")
+            # print(self.get_beacon()) # TODO: Remove print statement
+            # Authority
+            self.set_authority(250)
+            # Speed Limit
+            self.set_speed_limit(50)
+            # Elevation
+            self.set_elevation(0.0)
+            # Grade
+            self.set_grade(0.0)
+            # Underground
+            self.set_underground(False)
+            # Occupancy (Block)
+            self.set_block(10)
 
     # -- Getters and Setters -- #
     # acceleration
@@ -258,6 +278,27 @@ class TrainModel(object):
 
     def get_acceleration(self) -> float:
         return self._acceleration
+
+    def calc_acceleration(self):
+        # calc based on force and mass (Newton's Laws)
+        self.set_acceleration(self.get_force() / self.get_total_mass())
+        # max limit
+        if self.get_acceleration() > self._accel_limit:
+            self.set_acceleration(self._accel_limit)
+        # ebrake min limit
+        if self.get_acceleration() < self._ebrake_decel_limit:
+            self.set_acceleration(self._ebrake_decel_limit)
+        # sbrake min limit
+        if self._ebrake_decel_limit < self.get_acceleration() < self._decel_limit:
+            self.set_acceleration(self._decel_limit)
+        # faults
+        if self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure():
+            self.set_acceleration(0)
+        # service brake or emergency brake
+        if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
+            self.set_acceleration(0)
+        # round for UI
+        self.set_acceleration(round(self.get_acceleration(), 3))
 
     # station side
     def set_station_side(self, _station_side: str):
@@ -340,13 +381,13 @@ class TrainModel(object):
 
     # temperature
     # TODO: Fix get_temperature to calculate temp based on elapsed time
-    # TODO: Make Temperature just update immediately
     def set_temperature(self, temp:float):
-        if self._temp_sp != temp:
-            self._local_time = self._time[0]
-            self._temp_sp = temp
-        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time[0] - self._local_time))), 0)
-        print(self._temperature, self._temp_sp, self._time[0] - self._local_time)
+        # if self._temp_sp != temp:
+        #     self._local_time = self._time[0]
+        #     self._temp_sp = temp
+        # self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time[0] - self._local_time))), 0)
+        # print(self._temperature, self._temp_sp, self._time[0] - self._local_time)
+        self._temperature = temp
     def get_temperature(self) -> float:
         return self._temperature
 
@@ -356,6 +397,29 @@ class TrainModel(object):
 
     def get_cmd_power(self) -> float:
         return self._cmd_power
+
+    # actual velocity
+    def set_actual_velocity(self, _actual_velocity: float):
+        self._actual_velocity = _actual_velocity
+
+    def get_actual_velocity(self) -> float:
+        return self._actual_velocity
+
+    def calc_actual_velocity(self):
+        # v = integrate acceleration over time
+        # calculating dt
+        self._current_time = self._time[0]
+        dt = self._current_time - self._prev_time
+        # check if time difference is greater than zero
+        if dt < 0:
+            return 0
+        # calculate actual velocity according to change in acceleration over time
+        v = self.get_actual_velocity()
+        v += self.get_acceleration() * dt
+        self.set_actual_velocity(v)
+        self._prev_time = self._current_time
+        if self.get_acceleration() < 0 and self.get_actual_velocity() < 0:
+            self.set_actual_velocity(0)
 
     # actual power
     def set_actual_power(self, _actual_power: float):
@@ -368,9 +432,14 @@ class TrainModel(object):
     def set_force(self, _force: float):
         self._force = _force
 
-    # TODO: calculate force based on Newton's Laws
     def get_force(self) -> float:
-        return round(self._actual_power/self._cmd_power,3)
+        return self._force
+
+    # TODO: calculate force based on Newton's Laws
+    def calc_force(self):
+        # calc based on power and velocity
+        self.set_force(self.get_cmd_power() / self.get_actual_velocity())
+        # continue this function
 
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
