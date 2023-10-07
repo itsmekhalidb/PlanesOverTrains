@@ -947,6 +947,9 @@ class Ui_TrainModel_TestBench(object):
                 # Acceleration
                 self.accel_info_label.setText(str(self.train_model.get_acceleration()) + " m/s^2")
 
+                # Velocity
+                self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
+
                 # Force
                 self.force_info_label.setText(str(self.train_model.get_force()) + " N")
 
@@ -1023,6 +1026,9 @@ class Ui_TrainModel_TestBench(object):
 
                 # Acceleration
                 self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
+
+                # Velocity
+                self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
 
                 # Force
                 self.force_info_label.setText(str(round(self.train_model.get_force(), 3)) + " N")

@@ -8,16 +8,17 @@ import threading
 import threading
 
 # TODO: Make an orange juice ad
+# TODO: Fix Force Updates, probably need to print some stuff to the console
 
 class TrainModel(object):
     def __init__(self):
 
         # -- Train Model Variables -- #
+        self._friction_coeff = 0.006 # friction coefficient for rails
         self._cmd_power = 0.01 # commanded power
         self._actual_power = 0.00 # actual power
         self._max_power = 120000.0 # max power of the train from data sheet
         self._force = 0.0 # force
-        self._net_force = 0.0 # net force
         self._curr_passenger_count = 0 # passenger count currently on the train
         self._max_passenger_count = 222 # combine max standing & seating passengers from data sheet
         self._prev_passenger_count = 0 # previous passenger count for the train
@@ -28,17 +29,13 @@ class TrainModel(object):
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
         self._time = [0]
-        self._current_time = self._time[0]
-        self._prev_time = self._current_time
+        self._prev_time = self._time[0]
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "" # line the train is on
         self._cmd_speed = 0.0 # commanded speed
         self._acceleration = 0.0 # acceleration of the train
         self._actual_velocity = 0.0 # actual velocity of the train
-        self._theta = 0.0 # arctan(grade) of the train
-        self._mgcos_theta = 0.0 # m*g*cos(theta) of the train
-        self._mgsin_theta = 0.0 # m*g*sin(theta) of the train
         self._authority = 0.0 # authority of the train
         self._speed_limit = 0.0 # speed limit of the train
         self._accel_limit = 0.5 # m/s^2 from data sheet
@@ -208,6 +205,15 @@ class TrainModel(object):
 
         # Internal Temperature
         self.set_temperature(self.get_temperature())
+
+        # Force
+        self.calc_force()
+
+        # Acceleration
+        self.calc_acceleration()
+
+        # Actual Velocity
+        self.calc_actual_velocity()
 
         # Enable Threading
         if thread:
@@ -408,38 +414,76 @@ class TrainModel(object):
     def calc_actual_velocity(self):
         # v = integrate acceleration over time
         # calculating dt
-        self._current_time = self._time[0]
-        dt = self._current_time - self._prev_time
-        # check if time difference is greater than zero
+        dt = self._time[0] - self._prev_time
+        # check if time difference is less than zero
         if dt < 0:
             return 0
         # calculate actual velocity according to change in acceleration over time
-        v = self.get_actual_velocity()
-        v += self.get_acceleration() * dt
-        self.set_actual_velocity(v)
-        self._prev_time = self._current_time
+        self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
+        self._prev_time = self._time[0]
         if self.get_acceleration() < 0 and self.get_actual_velocity() < 0:
             self.set_actual_velocity(0)
 
     # actual power
     def set_actual_power(self, _actual_power: float):
-        self._actual_power = _actual_power
+        self._actual_power = round(_actual_power,3)
 
     def get_actual_power(self) -> float:
         return self._actual_power
 
     # force
     def set_force(self, _force: float):
-        self._force = _force
+        self._force = round(_force,3)
 
     def get_force(self) -> float:
         return self._force
 
     # TODO: calculate force based on Newton's Laws
     def calc_force(self):
-        # calc based on power and velocity
-        self.set_force(self.get_cmd_power() / self.get_actual_velocity())
-        # continue this function
+        # Max power limit
+        if self.get_cmd_power() > self._max_power:
+            self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
+        # Flat track
+        if self.get_grade() == 0 and self.get_elevation() == 0:
+            # Train not moving
+            if self.get_actual_velocity() == 0:
+                # commanded power is < 0 therefore train is braking
+                if self.get_cmd_power() < 0:
+                    # TODO: Determine if we need _decel_limit or _ebrake_decel_limit
+                    self.set_force(self.get_total_mass() * self._decel_limit * self._friction_coeff)
+                # commanded power is > 0 therefore train is accelerating
+                elif self.get_cmd_power() > 0:
+                    self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
+                # TODO: What about when cmd_power = 0?
+            # Train is moving
+            else:
+                self.set_force(abs(self.get_cmd_power() / self.get_actual_velocity()) - self._friction_coeff * self.get_total_mass())
+        # Track is not flat
+        else:
+            # Calculate theta (angle of track)
+            theta = math.atan(self.get_grade())
+            mg_sin_theta = self.get_total_mass() * self._gravity * math.sin(theta * (3.14/180)) # Radians (pi/180)
+            mg_cos_theta = self.get_total_mass() * self._gravity * math.cos(theta * (3.14/180))
+            net_force = mg_sin_theta - self._friction_coeff * mg_cos_theta
+            # Train not moving
+            if self.get_actual_velocity() == 0:
+                # commanded power is < 0 therefore train is braking
+                if self.get_cmd_power() < 0:
+                    self.set_force(net_force + self.get_total_mass() * self._decel_limit)
+                # commanded power is > 0 therefore train is accelerating
+                elif self.get_cmd_power() > 0:
+                    self.set_force(self.get_cmd_power() - net_force)
+            # Train is moving
+            else:
+                self.set_force(self.get_cmd_power() / self.get_actual_velocity() - net_force)
+        # Brakes are Pulled
+        if self.get_service_brake():
+            self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit)
+        elif self.get_emergency_brake():
+            self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
+        # Faults
+        if self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
+            self.set_force(0)
 
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
