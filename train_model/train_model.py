@@ -1,5 +1,6 @@
 # -- Imports -- #
 import math
+import time
 import random as rand
 import numpy as np
 import threading
@@ -15,7 +16,7 @@ class TrainModel(object):
 
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
-        self._cmd_power = 0.01 # commanded power
+        self._cmd_power = 0.0 # commanded power
         self._actual_power = 0.00 # actual power
         self._max_power = 120000.0 # max power of the train from data sheet
         self._force = 0.0 # force
@@ -28,8 +29,9 @@ class TrainModel(object):
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
-        self._time = [0]
-        self._prev_time = self._time[0]
+        self._time = time.time()
+        self._current_time = self._time
+        self._prev_time = self._time
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "" # line the train is on
@@ -406,7 +408,7 @@ class TrainModel(object):
 
     # actual velocity
     def set_actual_velocity(self, _actual_velocity: float):
-        self._actual_velocity = _actual_velocity
+        self._actual_velocity = round(_actual_velocity,3)
 
     def get_actual_velocity(self) -> float:
         return self._actual_velocity
@@ -414,13 +416,15 @@ class TrainModel(object):
     def calc_actual_velocity(self):
         # v = integrate acceleration over time
         # calculating dt
-        dt = self._time[0] - self._prev_time
+        self._current_time = self._time
+        self._time = time.time()
+        dt = self._current_time - self._prev_time
         # check if time difference is less than zero
         if dt < 0:
             return 0
         # calculate actual velocity according to change in acceleration over time
         self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
-        self._prev_time = self._time[0]
+        self._prev_time =  self._current_time
         if self.get_acceleration() < 0 and self.get_actual_velocity() < 0:
             self.set_actual_velocity(0)
 

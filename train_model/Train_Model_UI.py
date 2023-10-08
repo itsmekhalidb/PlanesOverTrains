@@ -799,7 +799,7 @@ class Ui_TrainModel_MainUI(object):
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
 
                 # Next Station Info
                 # Row 1

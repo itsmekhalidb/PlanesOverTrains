@@ -985,7 +985,7 @@ class Ui_TrainModel_TestBench(object):
                 self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
                 self.vcmd_edit.setText(str(self.train_model.get_cmd_speed()))
 
                 # Passenger Count
@@ -1064,7 +1064,7 @@ class Ui_TrainModel_TestBench(object):
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed())))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
 
                 # Next Station Info
                 # Row 1
@@ -1162,6 +1162,14 @@ class Ui_TrainModel_TestBench(object):
                 # simulate
                 self.train_model.beacon_simulate()
 
+                # Force Calculation
+                self.train_model.calc_force()
+
+                # Acceleration Calculation
+                self.train_model.calc_acceleration()
+
+                # Velocity Calculation
+                self.train_model.calc_actual_velocity()
 
         # def update_line_info(self):
         #
