@@ -140,7 +140,7 @@ class TrainModel(object):
 
         # Time
         # TODO: change get_time to get_time from track model signals
-        self.set_time(self.get_time())
+        self.set_time()
 
         # Beacon
         # TODO: change get_beacon to get_beacon from track model signals
@@ -207,9 +207,6 @@ class TrainModel(object):
 
         # Internal Temperature
         self.set_temperature(self.get_temperature())
-
-        # Time
-        self.set_time(self._time)
 
         # Force
         self.calc_force()
@@ -278,15 +275,11 @@ class TrainModel(object):
             # Grade
             self.set_grade(0.0)
             # Underground
-            self.set_underground(False)
+            self.set_underground(True)
             # Occupancy (Block)
             self.set_block(10)
 
     # -- Getters and Setters -- #
-    # time
-    def set_time(self):
-        self._time = time.time()
-
     # acceleration
     def set_acceleration(self, _acceleration: float):
         self._acceleration = _acceleration
@@ -307,7 +300,7 @@ class TrainModel(object):
         if self._ebrake_decel_limit < self.get_acceleration() < self._decel_limit:
             self.set_acceleration(self._decel_limit)
         # faults
-        if self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure():
+        if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
         # service brake or emergency brake
         if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
@@ -387,22 +380,22 @@ class TrainModel(object):
 
     # time
     # TODO: Confirm if this needs to be a list or int (_time[0])
-    def set_time(self, _time: list):
-        self._time = _time
+    # def set_time(self, _time: list):
+    #     self._time = _time
+    def set_time(self):
+        self._time = time.time()
 
-    # TODO: Confirm if this needs to be a list or int (_time[0])
-    def get_time(self) -> list:
+    # TODO: Confirm if this needs to be a float, list or int (_time[0])
+    def get_time(self) -> float:
         return self._time
 
     # temperature
-    # TODO: Fix get_temperature to calculate temp based on elapsed time
     def set_temperature(self, temp:float):
-        # if self._temp_sp != temp:
-        #     self._local_time = self._time[0]
-        #     self._temp_sp = temp
-        # self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time[0] - self._local_time))), 0)
-        # print(self._temperature, self._temp_sp, self._time[0] - self._local_time)
-        self._temperature = temp
+        if self._temp_sp != temp:
+            self._local_time = self._time
+            self._temp_sp = temp
+        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time - self._local_time))), 0)
+
     def get_temperature(self) -> float:
         return self._temperature
 
@@ -424,7 +417,7 @@ class TrainModel(object):
         # v = integrate acceleration over time
         # calculating dt
         self._current_time = self._time
-        self._time = time.time()
+        self.set_time()
         dt = self._current_time - self._prev_time
         # check if time difference is less than zero
         if dt < 0:
@@ -434,6 +427,9 @@ class TrainModel(object):
         self._prev_time =  self._current_time
         if self.get_acceleration() < 0 and self.get_actual_velocity() < 0:
             self.set_actual_velocity(0)
+        # print("prev time: ", self._prev_time)
+        # print("current time: ", self._current_time)
+        # print("dt: ", dt)
 
     # actual power
     def set_actual_power(self, _actual_power: float):
@@ -487,14 +483,12 @@ class TrainModel(object):
             # Train is moving
             else:
                 self.set_force(self.get_cmd_power() / self.get_actual_velocity() - net_force)
-        # Brakes are Pulled
+        # Service Brakes are Pulled
         if self.get_service_brake():
             self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit)
-        elif self.get_emergency_brake():
+        # Emergency Brakes or Failures
+        elif self.get_emergency_brake() or self.get_engine_failure() or self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
             self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
-        # Faults
-        if self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
-            self.set_force(0)
 
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):

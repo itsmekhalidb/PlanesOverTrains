@@ -1036,9 +1036,6 @@ class Ui_TrainModel_TestBench(object):
                 # Authority
                 self.authority_edit.setText(str(self.train_model.get_authority()))
 
-                # Train Line
-                # self.train_line_edit.setText(str(self.train_model.get_line()))
-
                 # Speed Limit
                 self.speed_limit_edit.setText(str(self.train_model.get_speed_limit()))
 
@@ -1061,7 +1058,7 @@ class Ui_TrainModel_TestBench(object):
                 self.mass_label.setText(str("Mass: " + str(round(self.train_model.get_total_mass(), 3)) + " kg"))
 
                 # Temperature
-                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
+                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F"))
 
                 # Commanded Velocity
                 self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
@@ -1110,10 +1107,14 @@ class Ui_TrainModel_TestBench(object):
                 self.left_door_closed.setVisible(not bool(self.train_model.get_left_door()))
 
                 # Internal Lights
+                # if self.train_model.get_underground(): self.train_model.set_int_lights(True)
+                # else: self.train_model.set_int_lights(False)
                 self.internal_lights_on.setVisible(bool(self.train_model.get_int_lights()))
                 self.internal_lights_off.setVisible(not bool(self.train_model.get_int_lights()))
 
                 # External Lights
+                # if self.train_model.get_underground(): self.train_model.set_ext_lights(True)
+                # else: self.train_model.set_ext_lights(False)
                 self.external_lights_on.setVisible(bool(self.train_model.get_ext_lights()))
                 self.external_lights_off.setVisible(not bool(self.train_model.get_ext_lights()))
 
@@ -1125,6 +1126,20 @@ class Ui_TrainModel_TestBench(object):
                 self.service_brake_on.setVisible(bool(self.train_model.get_service_brake()))
                 self.service_brake_off.setVisible(not bool(self.train_model.get_service_brake()))
 
+                # Force Calculation
+                self.train_model.calc_force()
+
+                # Acceleration Calculation
+                self.train_model.calc_acceleration()
+
+                # Velocity Calculation
+                self.train_model.calc_actual_velocity()
+
+                # update the temperature on from Main UI
+                self.temperature_spnbx.setValue(int(self.train_model.get_temperature()))
+                # temp = self.temperature_spnbx.value()
+                # self.train_model.set_temperature(float(temp))
+
         def calculate(self):
                 # read input from text box in the test UI and send it to the train model
 
@@ -1132,11 +1147,6 @@ class Ui_TrainModel_TestBench(object):
                 powerCmd = self.cmd_pwr_edit.toPlainText()
                 # send the commanded power to the train model
                 self.train_model.set_cmd_power(float(powerCmd))
-
-                # update the acc power
-                powerAcc = self.acc_pwr_edit.toPlainText()
-                # send the acc power to the train model
-                self.train_model.set_actual_power(float(powerAcc))
 
                 # update the passenger count and mass
                 pass_count = self.passenger_spnbx.value()
@@ -1146,10 +1156,6 @@ class Ui_TrainModel_TestBench(object):
 
                 # update the train mass
                 self.train_model.set_total_mass()
-
-                # update the temperature
-                temp = self.temperature_spnbx.value()
-                self.train_model.set_temperature(float(temp))
 
                 # update the cmd speed
                 speedCmd = self.vcmd_edit.toPlainText()
@@ -1162,22 +1168,6 @@ class Ui_TrainModel_TestBench(object):
                 # simulate
                 self.train_model.beacon_simulate()
 
-                # Force Calculation
-                self.train_model.calc_force()
-
-                # Acceleration Calculation
-                self.train_model.calc_acceleration()
-
-                # Velocity Calculation
-                self.train_model.calc_actual_velocity()
-
-        # def update_line_info(self):
-        #
-        # def engine_fail_chk(self):
-        #
-        # def brake_fail_chk(self):
-        #
-        # def signal_fail_chk(self):
         def retranslateUi(self, TrainModel_TestBench):
                 _translate = QtCore.QCoreApplication.translate
                 TrainModel_TestBench.setWindowTitle(_translate("TrainModel_TestBench", "Train Model Test Bench"))

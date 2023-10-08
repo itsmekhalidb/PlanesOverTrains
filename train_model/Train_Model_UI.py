@@ -796,7 +796,7 @@ class Ui_TrainModel_MainUI(object):
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
 
                 # Temperature
-                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F      SP:"))
+                self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F"))
 
                 # Commanded Velocity
                 self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
@@ -860,6 +860,18 @@ class Ui_TrainModel_MainUI(object):
                 self.service_brake_on.setVisible(bool(self.train_model.get_service_brake()))
                 self.service_brake_off.setVisible(not bool(self.train_model.get_service_brake()))
 
+                # Force Calculation
+                self.train_model.calc_force()
+
+                # Acceleration Calculation
+                self.train_model.calc_acceleration()
+
+                # Velocity Calculation
+                self.train_model.calc_actual_velocity()
+
+                # update the temperature
+                temp = self.temperature_spnbx.value()
+                self.train_model.set_temperature(float(temp))
 
         def _handler(self):
                 self.timer = QTimer()
