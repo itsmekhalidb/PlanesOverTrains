@@ -208,6 +208,9 @@ class TrainModel(object):
         # Internal Temperature
         self.set_temperature(self.get_temperature())
 
+        # Time
+        self.set_time(self._time)
+
         # Force
         self.calc_force()
 
@@ -280,6 +283,10 @@ class TrainModel(object):
             self.set_block(10)
 
     # -- Getters and Setters -- #
+    # time
+    def set_time(self):
+        self._time = time.time()
+
     # acceleration
     def set_acceleration(self, _acceleration: float):
         self._acceleration = _acceleration
