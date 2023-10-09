@@ -906,6 +906,21 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    #     # start code here
+    #     self._handler() #start the timer
+    #
+    #
+    # def _handler(self):
+    #     self.timer = QTimer()
+    #     self.timer.setInterval(100) # 100ms
+    #     self.timer.timeout.connect(self.update)
+    #     self.timer.start()
+    #
+    # def update(self)
+    #     _translate = QtCore.QCoreApplication.translate
+    #
+    #     self.object_name.setText(self.train_controller.get_anthying())
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
