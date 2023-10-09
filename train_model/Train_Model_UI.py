@@ -233,9 +233,8 @@ class Ui_TrainModel_MainUI(object):
                 "")
                 self.vcmd_info_label.setAlignment(QtCore.Qt.AlignCenter)
                 self.vcmd_info_label.setObjectName("vcmd_info_label")
-                self.ad_view1 = QtWidgets.QGraphicsView(self.centralwidget)
-                self.ad_view1.setGeometry(QtCore.QRect(12, 444, 435, 119))
-                self.ad_view1.setObjectName("ad_view1")
+                self.ad_view1 = QLabel(self.centralwidget)
+                self.ad_view1.setGeometry(10, 444, 435, 119)
                 self.next_station_infobox = QtWidgets.QTableWidget(self.centralwidget)
                 self.next_station_infobox.setGeometry(QtCore.QRect(12, 366, 435, 73))
                 self.next_station_infobox.setColumnCount(4)
@@ -817,6 +816,9 @@ class Ui_TrainModel_MainUI(object):
                 self.next_station_infobox.setItem(2, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_grade())))
                 self.next_station_infobox.setItem(2, 2, QtWidgets.QTableWidgetItem("Elevation:"))
                 self.next_station_infobox.setItem(2, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_elevation())))
+
+                # Advertisements
+                self.ad_view1.setPixmap(QtGui.QPixmap(self.train_model.get_advertisement()))
 
                 # Failure Modes
                 # Emergency Brake Failure

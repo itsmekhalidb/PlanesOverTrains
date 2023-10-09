@@ -1,5 +1,7 @@
 # -- Imports -- #
 import math
+import os
+import random
 import time
 import random as rand
 import numpy as np
@@ -46,6 +48,17 @@ class TrainModel(object):
         self._elevation = 0.0 # elevation of the track
         self._underground = False # underground or above ground
         self._station_side = "" # station side the train is on
+        self._ad_poll_attempts = 0 # number of attempts to poll for an advertisement
+        self._ad_poll_rate = 5000 # milliseconds between advertisement changes
+        self._dir_path = os.path.dirname(os.path.realpath(__file__))
+        self._image_files = [
+            self._dir_path + "/tropicana.jpg",
+            self._dir_path + "/coca_cola.jpg",
+            self._dir_path + "/pitt_logo.jpg",
+            self._dir_path + "/station_ad.jpg",
+            self._dir_path + "/jazz_train.png",
+            ]
+        self._current_ad = self._image_files[0]
 
         # -- Failure Modes -- #
         self._ebrake_failure = False # ebrake failure
@@ -275,7 +288,14 @@ class TrainModel(object):
 
     # -- Getters and Setters -- #
     def get_advertisement(self):
-        return r"C:\Users\14845\Documents\PlanesOverTrains\train_model\tropicana"
+        # Choose a random image file from the list
+        if self._ad_poll_attempts < self._ad_poll_rate:
+            self._ad_poll_attempts += 100
+            return self._current_ad
+        else:
+            self._ad_poll_attempts = 0
+            self._current_ad = random.choice(self._image_files)
+            return self._current_ad
 
     # acceleration
     def set_acceleration(self, _acceleration: float):
@@ -302,7 +322,7 @@ class TrainModel(object):
         # service brake or emergency brake
         if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
-        # round for UI
+
         self.set_acceleration(self.get_acceleration())
 
     # station side

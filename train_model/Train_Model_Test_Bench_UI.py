@@ -634,13 +634,8 @@ class Ui_TrainModel_TestBench(object):
                 "")
                 self.failure_mode_label.setAlignment(QtCore.Qt.AlignCenter)
                 self.failure_mode_label.setObjectName("failure_mode_label")
-                # self.ad_view1 = QtWidgets.QGraphicsView(self.Test_Bench)
-                # self.ad_view1.setGeometry(QtCore.QRect(10, 444, 435, 119))
-                # self.ad_view1.setObjectName("ad_view1")
-
-                self.ad_view1 = QGraphicsScene()
-                self.ad_view1.setSceneRect(10, 444, 435, 119)
-
+                self.ad_view1 = QLabel(self.Test_Bench)
+                self.ad_view1.setGeometry(10, 444, 435, 119)
                 self.internal_lights_off = QtWidgets.QLabel(self.Test_Bench)
                 self.internal_lights_off.setEnabled(True)
                 self.internal_lights_off.setGeometry(QtCore.QRect(598, 462, 25, 17))
@@ -895,7 +890,7 @@ class Ui_TrainModel_TestBench(object):
                 self.test_bench_btn.raise_()
                 self.calc_btn.raise_()
                 self.train_info_label.raise_()
-                # self.ad_view1.raise_()
+                self.ad_view1.raise_()
                 # self.system_speed_label.raise_()
                 # self.system_speed_spnbx.raise_()
                 self.external_lights_chkbx.raise_()
@@ -1071,10 +1066,7 @@ class Ui_TrainModel_TestBench(object):
                 self.next_station_infobox.setItem(2, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_elevation())))
 
                 # Advertisement
-                image_qt = QtGui.QImage(self.train_model.get_advertisement())
-                pic = QGraphicsPixmapItem()
-                pic.setPixmap(QtGui.QPixmap.fromImage(image_qt))
-                self.ad_view1.addItem(pic)
+                self.ad_view1.setPixmap(QtGui.QPixmap(self.train_model.get_advertisement()))
 
                 # Failure Modes
                 # Emergency Brake Failure
