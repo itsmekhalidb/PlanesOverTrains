@@ -9,7 +9,6 @@ import threading
 import threading
 
 # TODO: Make an orange juice ad
-# TODO: Fix Force Updates, probably need to print some stuff to the console
 
 class TrainModel(object):
     def __init__(self):
@@ -275,6 +274,9 @@ class TrainModel(object):
             self.set_block(10)
 
     # -- Getters and Setters -- #
+    def get_advertisement(self):
+        return r"C:\Users\14845\Documents\PlanesOverTrains\train_model\tropicana"
+
     # acceleration
     def set_acceleration(self, _acceleration: float):
         self._acceleration = _acceleration
