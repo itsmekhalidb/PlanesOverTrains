@@ -781,7 +781,7 @@ class Ui_TrainModel_MainUI(object):
                 self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
 
                 # Velocity
-                self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
+                self.vacc_info_label.setText(str("Vacc = " + str(round(self.train_model.get_actual_velocity(),3)) + " m/s"))
 
                 # Force
                 self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N")

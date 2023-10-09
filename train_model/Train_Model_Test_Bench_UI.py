@@ -764,17 +764,6 @@ class Ui_TrainModel_TestBench(object):
                 self.underground_edit = QtWidgets.QTextEdit(self.Test_Bench)
                 self.underground_edit.setGeometry(QtCore.QRect(270, 616, 65, 31))
                 self.underground_edit.setObjectName("underground_edit")
-                self.acc_pwr_label = QtWidgets.QLabel(self.Test_Bench)
-                self.acc_pwr_label.setGeometry(QtCore.QRect(372, 620, 87, 19))
-                font = QtGui.QFont()
-                font.setPointSize(9)
-                font.setBold(True)
-                font.setWeight(75)
-                self.acc_pwr_label.setFont(font)
-                self.acc_pwr_label.setObjectName("acc_pwr_label")
-                self.acc_pwr_edit = QtWidgets.QTextEdit(self.Test_Bench)
-                self.acc_pwr_edit.setGeometry(QtCore.QRect(456, 616, 65, 31))
-                self.acc_pwr_edit.setObjectName("acc_pwr_edit")
                 self.cmd_pwr_edit = QtWidgets.QTextEdit(self.Test_Bench)
                 self.cmd_pwr_edit.setGeometry(QtCore.QRect(456, 582, 65, 31))
                 self.cmd_pwr_edit.setObjectName("cmd_pwr_edit")
@@ -806,7 +795,7 @@ class Ui_TrainModel_TestBench(object):
                 self.elevation_label.setFont(font)
                 self.elevation_label.setObjectName("elevation_label")
                 self.occupancy_edit = QtWidgets.QTextEdit(self.Test_Bench)
-                self.occupancy_edit.setGeometry(QtCore.QRect(604, 614, 65, 31))
+                self.occupancy_edit.setGeometry(QtCore.QRect(456, 616, 65, 31))
                 self.occupancy_edit.setObjectName("occupancy_edit")
                 self.vcmd_label = QtWidgets.QLabel(self.Test_Bench)
                 self.vcmd_label.setGeometry(QtCore.QRect(378, 650, 79, 29))
@@ -822,7 +811,7 @@ class Ui_TrainModel_TestBench(object):
                 self.elevation_edit.setGeometry(QtCore.QRect(270, 650, 65, 31))
                 self.elevation_edit.setObjectName("elevation_edit")
                 self.occupancy_label = QtWidgets.QLabel(self.Test_Bench)
-                self.occupancy_label.setGeometry(QtCore.QRect(534, 618, 71, 19))
+                self.occupancy_label.setGeometry(QtCore.QRect(372, 620, 87, 19))
                 font = QtGui.QFont()
                 font.setPointSize(9)
                 font.setBold(True)
@@ -923,8 +912,6 @@ class Ui_TrainModel_TestBench(object):
                 self.underground_label.raise_()
                 self.speed_limit_edit.raise_()
                 self.underground_edit.raise_()
-                self.acc_pwr_label.raise_()
-                self.acc_pwr_edit.raise_()
                 self.cmd_pwr_edit.raise_()
                 self.cmd_pwr_label.raise_()
                 self.grade_label.raise_()
@@ -979,7 +966,6 @@ class Ui_TrainModel_TestBench(object):
 
                 # Power
                 self.cmd_pwr_edit.setText(str(self.train_model.get_cmd_power()))
-                self.acc_pwr_edit.setText(str(self.train_model.get_actual_power()))
 
                 # Mass
                 self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
@@ -1028,7 +1014,7 @@ class Ui_TrainModel_TestBench(object):
                 self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
 
                 # Velocity
-                self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
+                self.vacc_info_label.setText(str("Vacc = " + str(round(self.train_model.get_actual_velocity(),3)) + " m/s"))
 
                 # Force
                 self.force_info_label.setText(str(round(self.train_model.get_force(), 3)) + " N")
@@ -1232,7 +1218,6 @@ class Ui_TrainModel_TestBench(object):
                 self.train_line_label.setText(_translate("TrainModel_TestBench", "Train Line"))
                 self.speed_limit_label.setText(_translate("TrainModel_TestBench", "Speed Limit"))
                 self.underground_label.setText(_translate("TrainModel_TestBench", "Underground"))
-                self.acc_pwr_label.setText(_translate("TrainModel_TestBench", "Actual Power"))
                 self.cmd_pwr_label.setText(_translate("TrainModel_TestBench", "Commanded Power"))
                 self.grade_label.setText(_translate("TrainModel_TestBench", "Grade"))
                 self.elevation_label.setText(_translate("TrainModel_TestBench", "Elevation"))

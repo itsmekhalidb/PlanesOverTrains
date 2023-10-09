@@ -17,7 +17,6 @@ class TrainModel(object):
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
         self._cmd_power = 0.0 # commanded power
-        self._actual_power = 0.00 # actual power
         self._max_power = 120000.0 # max power of the train from data sheet
         self._force = 0.0 # force
         self._curr_passenger_count = 0 # passenger count currently on the train
@@ -80,10 +79,6 @@ class TrainModel(object):
         # Commanded Power
         # TODO: change get_cmd_power to get_cmd_power from train controller signals
         self.set_cmd_power(float(self.get_cmd_power()))  # Pass input from test UI text box
-
-        # Actual Power
-        # TODO: change get_actual_power to get_actual_power from train controller signals
-        self.set_actual_power(float(self.get_actual_power()))  # Pass input from test UI text box
 
         #################
         # Failure Modes #
@@ -306,7 +301,7 @@ class TrainModel(object):
         if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
         # round for UI
-        self.set_acceleration(round(self.get_acceleration(), 3))
+        self.set_acceleration(self.get_acceleration())
 
     # station side
     def set_station_side(self, _station_side: str):
@@ -408,7 +403,7 @@ class TrainModel(object):
 
     # actual velocity
     def set_actual_velocity(self, _actual_velocity: float):
-        self._actual_velocity = round(_actual_velocity,3)
+        self._actual_velocity = _actual_velocity
 
     def get_actual_velocity(self) -> float:
         return self._actual_velocity
@@ -425,33 +420,26 @@ class TrainModel(object):
         # calculate actual velocity according to change in acceleration over time
         self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
         self._prev_time =  self._current_time
-        if self.get_acceleration() < 0 and self.get_actual_velocity() < 0:
+        if self.get_acceleration() < 0.0 and self.get_actual_velocity() < 0.0:
             self.set_actual_velocity(0)
         # print("prev time: ", self._prev_time)
         # print("current time: ", self._current_time)
         # print("dt: ", dt)
 
-    # actual power
-    def set_actual_power(self, _actual_power: float):
-        self._actual_power = round(_actual_power,3)
-
-    def get_actual_power(self) -> float:
-        return self._actual_power
-
     # force
     def set_force(self, _force: float):
-        self._force = round(_force,3)
+        self._force = _force
 
     def get_force(self) -> float:
         return self._force
 
-    # TODO: calculate force based on Newton's Laws
+    # TODO: Why does velocity not increase when grade and elevation are 0?
     def calc_force(self):
         # Max power limit
         if self.get_cmd_power() > self._max_power:
             self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
         # Flat track
-        if self.get_grade() == 0 and self.get_elevation() == 0:
+        if self.get_grade() == 0.0 and self.get_elevation() == 0.0:
             # Train not moving
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
@@ -461,7 +449,6 @@ class TrainModel(object):
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
                     self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
-                # TODO: What about when cmd_power = 0?
             # Train is moving
             else:
                 self.set_force(abs(self.get_cmd_power() / self.get_actual_velocity()) - self._friction_coeff * self.get_total_mass())
