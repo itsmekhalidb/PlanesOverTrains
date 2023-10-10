@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="train_image">
+    <file>CTC_resources/train.png</file>
+    <file>CTC_resources/station.png</file>
+    <file>CTC_resources/track.png</file>
+  </qresource>
+</RCC>
