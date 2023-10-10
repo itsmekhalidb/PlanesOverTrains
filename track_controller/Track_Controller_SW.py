@@ -9,11 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
+from PyQt5.QtCore import *
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+import sys
 
 
-class Ui_Frame(object):
+class Ui_TrackController(object):
     def setupUi(self, Frame):
-        Frame.setObjectName("Frame")
+        Frame.setObjectName("Track Controller")
         Frame.resize(987, 610)
         self.wayside_ctrl_comboBox = QtWidgets.QComboBox(Frame)
         self.wayside_ctrl_comboBox.setGeometry(QtCore.QRect(380, 60, 191, 31))
@@ -21,9 +26,6 @@ class Ui_Frame(object):
         font.setPointSize(14)
         self.wayside_ctrl_comboBox.setFont(font)
         self.wayside_ctrl_comboBox.setObjectName("wayside_ctrl_comboBox")
-        self.wayside_ctrl_comboBox.addItem("")
-        self.wayside_ctrl_comboBox.addItem("")
-        self.wayside_ctrl_comboBox.addItem("")
         self.wayside_ctrl_comboBox.addItem("")
         self.testbench = QtWidgets.QPushButton(Frame)
         self.testbench.setGeometry(QtCore.QRect(586, 10, 82, 28))
@@ -97,7 +99,7 @@ class Ui_Frame(object):
         self.system_speed_spinBox.setGeometry(QtCore.QRect(886, 13, 62, 22))
         self.system_speed_spinBox.setObjectName("system_speed_spinBox")
         self.light_color = QtWidgets.QTextBrowser(Frame)
-        self.light_color.setGeometry(QtCore.QRect(331, 126, 301, 457))
+        self.light_color.setGeometry(QtCore.QRect(349, 126, 242, 457))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.light_color.setFont(font)
@@ -115,7 +117,7 @@ class Ui_Frame(object):
         self.light_color_label.setObjectName("light_color_label")
         self.traffic_light_green = QtWidgets.QLabel(Frame)
         self.traffic_light_green.setEnabled(True)
-        self.traffic_light_green.setGeometry(QtCore.QRect(574, 142, 42, 26))
+        self.traffic_light_green.setGeometry(QtCore.QRect(532, 142, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -127,7 +129,7 @@ class Ui_Frame(object):
         self.traffic_light_green.setObjectName("traffic_light_green")
         self.traffic_light_red = QtWidgets.QLabel(Frame)
         self.traffic_light_red.setEnabled(True)
-        self.traffic_light_red.setGeometry(QtCore.QRect(524, 142, 35, 26))
+        self.traffic_light_red.setGeometry(QtCore.QRect(482, 142, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -226,7 +228,7 @@ class Ui_Frame(object):
         self.traffic_light_label_10.setFont(font)
         self.traffic_light_label_10.setObjectName("traffic_light_label_10")
         self.railway_crossing_checkBox = QtWidgets.QCheckBox(Frame)
-        self.railway_crossing_checkBox.setGeometry(QtCore.QRect(25, 277, 140, 16))
+        self.railway_crossing_checkBox.setGeometry(QtCore.QRect(25, 277, 140, 22))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.railway_crossing_checkBox.setFont(font)
@@ -370,7 +372,7 @@ class Ui_Frame(object):
         self.PLC_output.setObjectName("PLC_output")
         self.traffic_light_red_2 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_2.setEnabled(True)
-        self.traffic_light_red_2.setGeometry(QtCore.QRect(524, 182, 35, 26))
+        self.traffic_light_red_2.setGeometry(QtCore.QRect(482, 182, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -382,7 +384,7 @@ class Ui_Frame(object):
         self.traffic_light_red_2.setObjectName("traffic_light_red_2")
         self.traffic_light_green_2 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_2.setEnabled(True)
-        self.traffic_light_green_2.setGeometry(QtCore.QRect(574, 182, 42, 26))
+        self.traffic_light_green_2.setGeometry(QtCore.QRect(532, 182, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -394,7 +396,7 @@ class Ui_Frame(object):
         self.traffic_light_green_2.setObjectName("traffic_light_green_2")
         self.traffic_light_red_3 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_3.setEnabled(True)
-        self.traffic_light_red_3.setGeometry(QtCore.QRect(524, 222, 35, 26))
+        self.traffic_light_red_3.setGeometry(QtCore.QRect(482, 222, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -406,7 +408,7 @@ class Ui_Frame(object):
         self.traffic_light_red_3.setObjectName("traffic_light_red_3")
         self.traffic_light_green_3 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_3.setEnabled(True)
-        self.traffic_light_green_3.setGeometry(QtCore.QRect(574, 222, 42, 26))
+        self.traffic_light_green_3.setGeometry(QtCore.QRect(532, 222, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -418,7 +420,7 @@ class Ui_Frame(object):
         self.traffic_light_green_3.setObjectName("traffic_light_green_3")
         self.traffic_light_green_4 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_4.setEnabled(True)
-        self.traffic_light_green_4.setGeometry(QtCore.QRect(574, 262, 42, 26))
+        self.traffic_light_green_4.setGeometry(QtCore.QRect(532, 262, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -430,7 +432,7 @@ class Ui_Frame(object):
         self.traffic_light_green_4.setObjectName("traffic_light_green_4")
         self.traffic_light_red_4 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_4.setEnabled(True)
-        self.traffic_light_red_4.setGeometry(QtCore.QRect(524, 262, 35, 26))
+        self.traffic_light_red_4.setGeometry(QtCore.QRect(482, 262, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -442,7 +444,7 @@ class Ui_Frame(object):
         self.traffic_light_red_4.setObjectName("traffic_light_red_4")
         self.traffic_light_green_5 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_5.setEnabled(True)
-        self.traffic_light_green_5.setGeometry(QtCore.QRect(574, 302, 42, 26))
+        self.traffic_light_green_5.setGeometry(QtCore.QRect(532, 302, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -454,7 +456,7 @@ class Ui_Frame(object):
         self.traffic_light_green_5.setObjectName("traffic_light_green_5")
         self.traffic_light_red_5 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_5.setEnabled(True)
-        self.traffic_light_red_5.setGeometry(QtCore.QRect(524, 302, 35, 26))
+        self.traffic_light_red_5.setGeometry(QtCore.QRect(482, 302, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -466,7 +468,7 @@ class Ui_Frame(object):
         self.traffic_light_red_5.setObjectName("traffic_light_red_5")
         self.traffic_light_green_6 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_6.setEnabled(True)
-        self.traffic_light_green_6.setGeometry(QtCore.QRect(574, 342, 42, 26))
+        self.traffic_light_green_6.setGeometry(QtCore.QRect(532, 342, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -478,7 +480,7 @@ class Ui_Frame(object):
         self.traffic_light_green_6.setObjectName("traffic_light_green_6")
         self.traffic_light_red_6 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_6.setEnabled(True)
-        self.traffic_light_red_6.setGeometry(QtCore.QRect(524, 342, 35, 26))
+        self.traffic_light_red_6.setGeometry(QtCore.QRect(482, 342, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -490,7 +492,7 @@ class Ui_Frame(object):
         self.traffic_light_red_6.setObjectName("traffic_light_red_6")
         self.traffic_light_green_7 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_7.setEnabled(True)
-        self.traffic_light_green_7.setGeometry(QtCore.QRect(574, 382, 42, 26))
+        self.traffic_light_green_7.setGeometry(QtCore.QRect(532, 382, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -502,7 +504,7 @@ class Ui_Frame(object):
         self.traffic_light_green_7.setObjectName("traffic_light_green_7")
         self.traffic_light_red_7 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_7.setEnabled(True)
-        self.traffic_light_red_7.setGeometry(QtCore.QRect(524, 382, 35, 26))
+        self.traffic_light_red_7.setGeometry(QtCore.QRect(482, 382, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -514,7 +516,7 @@ class Ui_Frame(object):
         self.traffic_light_red_7.setObjectName("traffic_light_red_7")
         self.traffic_light_green_8 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_8.setEnabled(True)
-        self.traffic_light_green_8.setGeometry(QtCore.QRect(574, 422, 42, 26))
+        self.traffic_light_green_8.setGeometry(QtCore.QRect(532, 422, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -526,7 +528,7 @@ class Ui_Frame(object):
         self.traffic_light_green_8.setObjectName("traffic_light_green_8")
         self.traffic_light_red_8 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_8.setEnabled(True)
-        self.traffic_light_red_8.setGeometry(QtCore.QRect(524, 422, 35, 26))
+        self.traffic_light_red_8.setGeometry(QtCore.QRect(482, 422, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -538,7 +540,7 @@ class Ui_Frame(object):
         self.traffic_light_red_8.setObjectName("traffic_light_red_8")
         self.traffic_light_green_9 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_9.setEnabled(True)
-        self.traffic_light_green_9.setGeometry(QtCore.QRect(574, 462, 42, 26))
+        self.traffic_light_green_9.setGeometry(QtCore.QRect(532, 462, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -550,7 +552,7 @@ class Ui_Frame(object):
         self.traffic_light_green_9.setObjectName("traffic_light_green_9")
         self.traffic_light_red_9 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_9.setEnabled(True)
-        self.traffic_light_red_9.setGeometry(QtCore.QRect(524, 462, 35, 26))
+        self.traffic_light_red_9.setGeometry(QtCore.QRect(482, 462, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -562,7 +564,7 @@ class Ui_Frame(object):
         self.traffic_light_red_9.setObjectName("traffic_light_red_9")
         self.traffic_light_green_10 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_10.setEnabled(True)
-        self.traffic_light_green_10.setGeometry(QtCore.QRect(574, 502, 42, 26))
+        self.traffic_light_green_10.setGeometry(QtCore.QRect(532, 502, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -574,7 +576,7 @@ class Ui_Frame(object):
         self.traffic_light_green_10.setObjectName("traffic_light_green_10")
         self.traffic_light_red_10 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_10.setEnabled(True)
-        self.traffic_light_red_10.setGeometry(QtCore.QRect(524, 502, 35, 26))
+        self.traffic_light_red_10.setGeometry(QtCore.QRect(482, 502, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -586,7 +588,7 @@ class Ui_Frame(object):
         self.traffic_light_red_10.setObjectName("traffic_light_red_10")
         self.traffic_light_green_11 = QtWidgets.QLabel(Frame)
         self.traffic_light_green_11.setEnabled(True)
-        self.traffic_light_green_11.setGeometry(QtCore.QRect(574, 542, 42, 26))
+        self.traffic_light_green_11.setGeometry(QtCore.QRect(532, 542, 42, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -598,7 +600,7 @@ class Ui_Frame(object):
         self.traffic_light_green_11.setObjectName("traffic_light_green_11")
         self.traffic_light_red_11 = QtWidgets.QLabel(Frame)
         self.traffic_light_red_11.setEnabled(True)
-        self.traffic_light_red_11.setGeometry(QtCore.QRect(524, 542, 35, 26))
+        self.traffic_light_red_11.setGeometry(QtCore.QRect(482, 542, 35, 26))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -611,6 +613,67 @@ class Ui_Frame(object):
         self.commanded_speed_spinBox = QtWidgets.QSpinBox(Frame)
         self.commanded_speed_spinBox.setGeometry(QtCore.QRect(199, 322, 42, 22))
         self.commanded_speed_spinBox.setObjectName("commanded_speed_spinBox")
+        self.toggle_switch1 = QtWidgets.QPushButton(Frame)
+        self.toggle_switch1.setGeometry(QtCore.QRect(291, 133, 51, 23))
+        self.toggle_switch1.setObjectName("toggle_switch1")
+        self.toggle_switch1.setCheckable(True)
+        self.toggle_switch2 = QtWidgets.QPushButton(Frame)
+        self.toggle_switch2.setGeometry(QtCore.QRect(290, 171, 51, 23))
+        self.toggle_switch2.setObjectName("toggle_switch2")
+        self.toggle_switch2.setCheckable(True)
+        self.toggle_switch3 = QtWidgets.QPushButton(Frame)
+        self.toggle_switch3.setGeometry(QtCore.QRect(290, 211, 51, 23))
+        self.toggle_switch3.setObjectName("toggle_switch3")
+        self.toggle_switch3.setCheckable(True)
+        self.toggle_light = QtWidgets.QPushButton(Frame)
+        self.toggle_light.setGeometry(QtCore.QRect(604, 143, 51, 23))
+        self.toggle_light.setObjectName("toggle_light")
+        self.toggle_light.setCheckable(True)
+        self.toggle_light_2 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_2.setGeometry(QtCore.QRect(604, 184, 51, 23))
+        self.toggle_light_2.setObjectName("toggle_light_2")
+        self.toggle_light_2.setCheckable(True)
+        self.toggle_light_3 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_3.setGeometry(QtCore.QRect(605, 225, 51, 23))
+        self.toggle_light_3.setObjectName("toggle_light_3")
+        self.toggle_light_3.setCheckable(True)
+        self.toggle_light_4 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_4.setGeometry(QtCore.QRect(604, 263, 51, 23))
+        self.toggle_light_4.setObjectName("toggle_light_4")
+        self.toggle_light_4.setCheckable(True)
+        self.toggle_light_5 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_5.setGeometry(QtCore.QRect(604, 304, 51, 23))
+        self.toggle_light_5.setObjectName("toggle_light_5")
+        self.toggle_light_5.setCheckable(True)
+        self.toggle_light_6 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_6.setGeometry(QtCore.QRect(604, 344, 51, 23))
+        self.toggle_light_6.setObjectName("toggle_light_6")
+        self.toggle_light_6.setCheckable(True)
+        self.toggle_light_7 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_7.setGeometry(QtCore.QRect(604, 386, 51, 23))
+        self.toggle_light_7.setObjectName("toggle_light_7")
+        self.toggle_light_7.setCheckable(True)
+        self.toggle_light_8 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_8.setGeometry(QtCore.QRect(604, 424, 51, 23))
+        self.toggle_light_8.setObjectName("toggle_light_8")
+        self.toggle_light_8.setCheckable(True)
+        self.toggle_light_9 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_9.setGeometry(QtCore.QRect(604, 462, 51, 23))
+        self.toggle_light_9.setObjectName("toggle_light_9")
+        self.toggle_light_9.setCheckable(True)
+        self.toggle_light_10 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_10.setGeometry(QtCore.QRect(604, 502, 51, 23))
+        self.toggle_light_10.setObjectName("toggle_light_10")
+        self.toggle_light_10.setCheckable(True)
+        self.toggle_light_11 = QtWidgets.QPushButton(Frame)
+        self.toggle_light_11.setGeometry(QtCore.QRect(604, 544, 51, 23))
+        self.toggle_light_11.setObjectName("toggle_light_11")
+        self.toggle_light_11.setCheckable(True)
+
+        # self.toggle_switch1.clicked.connect(self.ChangeVisibility)
+        # self.toggle_switch2.clicked.connect(self.ChangeVisibility)
+        # self.toggle_switch3.clicked.connect(self.ChangeVisibility)
+
         self.title_label.raise_()
         self.wayside_ctrl_comboBox.raise_()
         self.testbench.raise_()
@@ -672,17 +735,30 @@ class Ui_Frame(object):
         self.traffic_light_green_11.raise_()
         self.traffic_light_red_11.raise_()
         self.commanded_speed_spinBox.raise_()
+        self.toggle_switch1.raise_()
+        self.toggle_switch2.raise_()
+        self.toggle_switch3.raise_()
+        self.toggle_light.raise_()
+        self.toggle_light_2.raise_()
+        self.toggle_light_3.raise_()
+        self.toggle_light_4.raise_()
+        self.toggle_light_5.raise_()
+        self.toggle_light_6.raise_()
+        self.toggle_light_7.raise_()
+        self.toggle_light_8.raise_()
+        self.toggle_light_9.raise_()
+        self.toggle_light_10.raise_()
+        self.toggle_light_11.raise_()
 
         self.retranslateUi(Frame)
         QtCore.QMetaObject.connectSlotsByName(Frame)
 
+        self._handler()
+
     def retranslateUi(self, Frame):
         _translate = QtCore.QCoreApplication.translate
-        Frame.setWindowTitle(_translate("Frame", "Frame"))
-        self.wayside_ctrl_comboBox.setItemText(0, _translate("Frame", "Green 1"))
-        self.wayside_ctrl_comboBox.setItemText(1, _translate("Frame", "Green 2"))
-        self.wayside_ctrl_comboBox.setItemText(2, _translate("Frame", "Red 1"))
-        self.wayside_ctrl_comboBox.setItemText(3, _translate("Frame", "Red 2"))
+        Frame.setWindowTitle(_translate("Frame", "Track Controller"))
+        self.wayside_ctrl_comboBox.setItemText(0, _translate("Frame", "Blue 1"))
         self.testbench.setText(_translate("Frame", "Testbench"))
         self.manual_mode_checkBox.setText(_translate("Frame", "Manual Mode"))
         self.commanded_speed_label.setText(_translate("Frame", "Commanded Speed"))
@@ -737,13 +813,157 @@ class Ui_Frame(object):
         self.traffic_light_red_10.setText(_translate("Frame", "Red"))
         self.traffic_light_green_11.setText(_translate("Frame", "Green"))
         self.traffic_light_red_11.setText(_translate("Frame", "Red"))
+        self.toggle_switch1.setText(_translate("Frame", "Toggle"))
+        self.toggle_switch2.setText(_translate("Frame", "Toggle"))
+        self.toggle_switch3.setText(_translate("Frame", "Toggle"))
+        self.toggle_light.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_2.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_3.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_4.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_5.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_6.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_7.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_8.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_9.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_10.setText(_translate("Frame", "Toggle"))
+        self.toggle_light_11.setText(_translate("Frame", "Toggle"))
+    def update(self):
+        _translate = QtCore.QCoreApplication.translate
 
+        #iteration 2 - no system speed
+        self.system_speed_label.setVisible(False)
+        self.system_speed_spinBox.setVisible(False)
+
+        #manual mode changes
+        self.load_PLC_btn.setVisible(not bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_switch1.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_switch2.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_switch3.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_2.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_3.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_4.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_5.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_6.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_7.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_8.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_9.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_10.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_light_11.setVisible(bool(self.manual_mode_checkBox.checkState()))
+
+        #toggle buttons
+        self.ChangeVisibility()
+
+    def ChangeVisibility(self):
+        if self.toggle_switch1.isChecked():
+                self.switch_position_left.setVisible(True)
+                self.switch_position_right.setVisible(False)
+        elif not self.toggle_switch1.isChecked():
+                self.switch_position_left.setVisible(False)
+                self.switch_position_right.setVisible(True)
+
+        if self.toggle_switch2.isChecked():
+                self.switch_position_left_2.setVisible(True)
+                self.switch_position_right_2.setVisible(False)
+        elif not self.toggle_switch2.isChecked():
+                self.switch_position_left_2.setVisible(False)
+                self.switch_position_right_2.setVisible(True)
+
+        if self.toggle_switch3.isChecked():
+                self.switch_position_left_3.setVisible(True)
+                self.switch_position_right_3.setVisible(False)
+        elif not self.toggle_switch3.isChecked():
+                self.switch_position_left_3.setVisible(False)
+                self.switch_position_right_3.setVisible(True)
+
+        if self.toggle_light.isChecked():
+                self.traffic_light_red.setVisible(True)
+                self.traffic_light_green.setVisible(False)
+        elif not self.toggle_light.isChecked():
+                self.traffic_light_red.setVisible(False)
+                self.traffic_light_green.setVisible(True)
+
+        if self.toggle_light_2.isChecked():
+                self.traffic_light_red_2.setVisible(True)
+                self.traffic_light_green_2.setVisible(False)
+        elif not self.toggle_light_2.isChecked():
+                self.traffic_light_red_2.setVisible(False)
+                self.traffic_light_green_2.setVisible(True)
+
+        if self.toggle_light_3.isChecked():
+                self.traffic_light_red_3.setVisible(True)
+                self.traffic_light_green_3.setVisible(False)
+        elif not self.toggle_light_3.isChecked():
+                self.traffic_light_red_3.setVisible(False)
+                self.traffic_light_green_3.setVisible(True)
+
+        if self.toggle_light_4.isChecked():
+                self.traffic_light_red_4.setVisible(True)
+                self.traffic_light_green_4.setVisible(False)
+        elif not self.toggle_light_4.isChecked():
+                self.traffic_light_red_4.setVisible(False)
+                self.traffic_light_green_4.setVisible(True)
+
+        if self.toggle_light_5.isChecked():
+                self.traffic_light_red_5.setVisible(True)
+                self.traffic_light_green_5.setVisible(False)
+        elif not self.toggle_light_5.isChecked():
+                self.traffic_light_red_5.setVisible(False)
+                self.traffic_light_green_5.setVisible(True)
+
+        if self.toggle_light_6.isChecked():
+                self.traffic_light_red_6.setVisible(True)
+                self.traffic_light_green_6.setVisible(False)
+        elif not self.toggle_light_6.isChecked():
+                self.traffic_light_red_6.setVisible(False)
+                self.traffic_light_green_6.setVisible(True)
+
+        if self.toggle_light_7.isChecked():
+                self.traffic_light_red_7.setVisible(True)
+                self.traffic_light_green_7.setVisible(False)
+        elif not self.toggle_light_7.isChecked():
+                self.traffic_light_red_7.setVisible(False)
+                self.traffic_light_green_7.setVisible(True)
+
+        if self.toggle_light_8.isChecked():
+                self.traffic_light_red_8.setVisible(True)
+                self.traffic_light_green_8.setVisible(False)
+        elif not self.toggle_light_8.isChecked():
+                self.traffic_light_red_8.setVisible(False)
+                self.traffic_light_green_8.setVisible(True)
+
+        if self.toggle_light_9.isChecked():
+                self.traffic_light_red_9.setVisible(True)
+                self.traffic_light_green_9.setVisible(False)
+        elif not self.toggle_light_9.isChecked():
+                self.traffic_light_red_9.setVisible(False)
+                self.traffic_light_green_9.setVisible(True)
+
+        if self.toggle_light_10.isChecked():
+                self.traffic_light_red_10.setVisible(True)
+                self.traffic_light_green_10.setVisible(False)
+        elif not self.toggle_light_10.isChecked():
+                self.traffic_light_red_10.setVisible(False)
+                self.traffic_light_green_10.setVisible(True)
+
+        if self.toggle_light_11.isChecked():
+                self.traffic_light_red_11.setVisible(True)
+                self.traffic_light_green_11.setVisible(False)
+        elif not self.toggle_light_10.isChecked():
+                self.traffic_light_red_11.setVisible(False)
+                self.traffic_light_green_11.setVisible(True)
+
+    def _handler(self):
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # refreshes every time period
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Frame = QtWidgets.QFrame()
-    ui = Ui_Frame()
+    ui = Ui_TrackController()
     ui.setupUi(Frame)
     Frame.show()
     sys.exit(app.exec_())
