@@ -57,6 +57,9 @@ class TrainModel(object):
             self._dir_path + "/pitt_logo.jpg",
             self._dir_path + "/station_ad.jpg",
             self._dir_path + "/jazz_train.png",
+            self._dir_path + "/breath.jpg",
+            self._dir_path + "/sweet_tooth.jpg",
+            self._dir_path + "/eyes.jpg",
             ]
         self._current_ad = self._image_files[0]
 
