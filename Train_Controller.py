@@ -3,26 +3,35 @@ import math
 import time
 import numpy as np
 
-class TrainController(object)
-    def __int__(self):
+class TrainController(object):
+
+
+    def __init__(self):
         #priv variables
-        self._current_velocity = 0
-        self._maximum_velocity = 0
-        self._power = 0
+        self._current_velocity = 0.0
+        self._maximum_velocity = 0.0
+        self._commanded_velocity = 0.0
+        self._commanded_power = 0.0
+        self._authority = 0.0
         self._engine_failure = False
         self._signal_pickup_failure = False
         self._service_brake_failure = False
+        self._service_brake_status = False
         self._emergency_brake_failure = False
-        self._underground_status = False #This is needed to determine if the lights must be on
+        self._emergency_brake_status = False
+        self._underground_status = False
         self._right_door_open = False
         self._left_door_open = False
         self._internal_lights_on = False
         self._external_lights_on = False
-        self._kp = 0
-        self._ki = 0
-        self._ek = 0
-        self._uk = 0
+        self._auto_stat = False
+        self._kp = 0.0
+        self._ki = 0.0
+        self._ek = 0.0
+        self._uk = 0.0
         self._beacon = 0
+        self._previous_uk = 0.0
+        self._previous_ek = 0.0
 
         # Update Function
         self.update()
@@ -33,11 +42,111 @@ class TrainController(object)
         # TODO: change this to get from either driver or train model
         # self.set_anything(self.get_anything)
 
-    # put set and get functions here
-    def set(self, var: int):
-        var = var
-
-    def get(self) -> int:
-        return var
-
-    def s
+        self.set_auto_status(bool(self.get_auto_status()))
+        self.set_right_door_status(bool(self.get_right_door_status()))
+        self.set_left_door_status(bool(self.get_left_door_status()))
+        self.set_underground_status(bool(self.get_underground_status()))
+        self.set_internal_lights(bool(self.get_internal_lights()))
+        self.set_external_lights(bool(self.get_external_lights()))
+        self.set_emergency_brake_status(bool(self.get_ebrake_status()))
+        self.set_service_brake_status(bool(self.get_service_brake_status()))
+        self.set_emergency_brake_failure(bool(self.get_emergency_brake_failure_status()))
+        self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
+        self.set_engine_status(bool(self.get_engine_status()))
+        if thread:
+            threading.Timer(0.1, self.update).start()
+    def set_engine_status(self, stat: bool):
+        self._engine_failure = stat
+    def set_auto_status(self, stat: bool):
+        self._auto_stat = stat
+    def set_maximum_veloctity(self, max_speed: float):
+        self._maximum_velocity = max_speed
+    def set_commanded_velocity(self, v: float, m: float):
+        if v <= m:
+            self._commanded_velocity = v
+    def set_current_velocity(self, desired_speed: float, maximum_speed: float):
+        if 0<= desired_speed <= maximum_speed:
+            self._current_velocity = desired_speed
+        if self._engine_failure == True or self._emergency_brake_failure==True or self._service_brake_failure==True or self._signal_pickup_failure==True:
+            self._current_velocity = 0
+    def set_internal_lights(self, status: bool):
+        if self._underground_status:
+            self._internal_lights_on = True
+        self._internal_lights_on = status
+    def set_external_lights(self, status: bool):
+        if self._underground_status:
+            self._external_lights_on = True
+        self._external_lights_on = status
+    # def set_engine_failure_status(self, status: bool):
+    #     self._engine_failure = status
+    def set_signal_pickup_failure_status(self, status: bool):
+        self._signal_pickup_failure = status
+    def set_service_brake_status(self, status: bool):
+        self._service_brake_status = status
+    def set_emergency_brake_status(self, status: bool):
+        self._emergency_brake_status = status
+    def set_emergency_brake_failure(self, status: bool):
+        self._emergency_brake_failure = status
+    def set_kp(self, ki: float, ti: float):
+        self._kp = ti/ki # check out formulas and clarify
+    def set_ki(self, ti:float):
+        self._ki = 1/ti
+    def set_uk(self, current_ek: float):
+        self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
+    def set_eK(self, desired: int, actual: int):
+        self._ek = desired - actual
+    def set_power(self, desired_power: float):
+        if desired_power <= 120000:
+            self._commanded_power = self._kp * self._ek + self._ki + self._uk
+    def set_right_door_status(self,stat: bool):
+        self._right_door_open = stat
+    def set_left_door_status(self, stat: bool):
+        self._left_door_open = stat
+    def set_underground_status(self, stat: bool):
+        self._underground_status = stat
+    def set_authority(self, a: float):
+        self._authority = a
+    def set_ebrake_failure(self, f: bool):
+        self._emergency_brake_failure = f
+    def set_service_brake_failure(self, stat: bool):
+        self._service_brake_failure = stat
+    def get_current_velocity(self)->float:
+        return self._current_velocity
+    def get_auto_status(self)->bool:
+        return self._auto_stat
+    def get_maximum_velocity(self)->float:
+        return self._maximum_velocity
+    def get_kp(self) -> float:
+        return self._kp
+    def get_ki(self)->float:
+        return self._ki
+    def get_right_door_status(self)->bool:
+        return self._right_door_open
+    def get_left_door_status(self)->bool:
+        return self._left_door_open
+    def get_internal_lights(self)->bool:
+        return self._internal_lights_on
+    def get_external_lights(self)->bool:
+        return self._external_lights_on
+    def get_underground_status(self)->bool:
+        return self._underground_status
+    def get_ebrake_status(self)->bool:
+        return self._emergency_brake_status
+    def get_service_brake_status(self)->bool:
+        return self._service_brake_status
+    def get_emergency_brake_failure_status(self)->bool:
+        return self._emergency_brake_failure
+    def get_service_brake_failure_status(self)->bool:
+        return self._service_brake_failure
+    def get_commanded_velocity(self)->float:
+        return self._commanded_velocity
+    def get_authority(self)->float:
+        return self._authority
+    def get_engine_status(self)->bool:
+        return self._engine_failure
+    def get_signal_pickup_failure(self)->bool:
+        return self._signal_pickup_failure
+    def get_actual_velocity(self)->float:
+        return self._current_velocity
+    def get_commanded_power(self)->float:
+        return self._commanded_power

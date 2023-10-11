@@ -9,13 +9,28 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from Train_Controller import TrainController
+from Train_Controller_Main_Window import Ui_MainWindow
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
+class Ui_Test_Bench(object):
+    def __init__(self, train_controller: TrainController):
+        super().__init__()
+        self.train_controller = train_controller
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(629, 552)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+    def open_window(self):
+        self.window = QtWidgets.QMainWindow()
+        # self.ui = Ui_TrainModel_MainUI()
+        self.ui = Ui_MainWindow(self.train_controller)  # Pass the Traincontroller instance to the new UI
+        self.ui.setupUi(self.window)
+        self.window.show()
+
+    def setupUi(self, Test_Bench):
+        Test_Bench.setObjectName("Test_Bench")
+        Test_Bench.resize(629, 552)
+        self.centralwidget = QtWidgets.QWidget(Test_Bench)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
         self.title_label.setGeometry(QtCore.QRect(0, 0, 629, 51))
@@ -28,14 +43,22 @@ class Ui_MainWindow(object):
         self.title_label.setStyleSheet("background-color: rgb(255, 255, 0);\n"
 "border: 3px solid black;")
         self.title_label.setObjectName("title_label")
-        self.test_bench_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.test_bench_btn.setGeometry(QtCore.QRect(498, 10, 101, 27))
+        self.main_ui_btn = QtWidgets.QPushButton(self.centralwidget, clicked=lambda: self.open_window())
+        self.main_ui_btn.setGeometry(QtCore.QRect(498, 10, 101, 27))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
-        self.test_bench_btn.setFont(font)
-        self.test_bench_btn.setObjectName("test_bench_btn")
+        self.main_ui_btn.setFont(font)
+        self.main_ui_btn.setObjectName("main_ui_btn")
+        self.calc_btn = QtWidgets.QPushButton(self.centralwidget, clicked=lambda: self.calculate())
+        self.calc_btn.setGeometry(QtCore.QRect(482, 206, 101, 27))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.calc_btn.setFont(font)
+        self.calc_btn.setObjectName("calc_btn")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(250, 354, 375, 105))
         font = QtGui.QFont()
@@ -829,7 +852,8 @@ class Ui_MainWindow(object):
         self.internal_lights_label.raise_()
         self.engine_fail_label.raise_()
         self.title_label.raise_()
-        self.test_bench_btn.raise_()
+        self.main_ui_btn.raise_()
+        self.calc_btn.raise_()
         self.pushButton.raise_()
         self.ebrake_fail_label.raise_()
         self.brake_fail_label.raise_()
@@ -901,98 +925,190 @@ class Ui_MainWindow(object):
         self.checkBox_12.raise_()
         self.ebrake_fail_off_2.raise_()
         self.pushButton_2.raise_()
-        MainWindow.setCentralWidget(self.centralwidget)
+        Test_Bench.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
-    #     # start code here
-    #     self._handler() #start the timer
-    #
-    #
-    # def _handler(self):
-    #     self.timer = QTimer()
-    #     self.timer.setInterval(100) # 100ms
-    #     self.timer.timeout.connect(self.update)
-    #     self.timer.start()
-    #
-    # def update(self)
-    #     _translate = QtCore.QCoreApplication.translate
-    #
-    #     self.object_name.setText(self.train_controller.get_anthying())
-
-    def retranslateUi(self, MainWindow):
+        self.retranslateUi(Test_Bench)
+        QtCore.QMetaObject.connectSlotsByName(Test_Bench)
+        self._handler()
+        #Auto Status
+        self.checkBox_12.toggled.connect(
+                lambda: self.train_controller.set_auto_status(self.checkBox_12.isChecked()))
+        #Right Door
+        self.checkBox_7.toggled.connect(
+                lambda: self.train_controller.set_right_door_status(self.checkBox_7.isChecked()))
+        #Left Door
+        self.checkBox_6.toggled.connect(
+                lambda: self.train_controller.set_left_door_status(self.checkBox_6.isChecked()))
+        #Undergound Status
+        self.checkBox_5.toggled.connect(
+                lambda: self.train_controller.set_underground_status(self.checkBox_5.isChecked()))
+        #internal lights
+        self.checkBox_4.toggled.connect(
+                lambda: self.train_controller.set_internal_lights(self.checkBox_4.isChecked()))
+        #external lights
+        self.checkBox_3.toggled.connect(
+                lambda: self.train_controller.set_external_lights(self.checkBox_3.isChecked()))
+        #emergency brake
+        self.checkBox_2.toggled.connect(
+                lambda: self.train_controller.set_emergency_brake_status(self.checkBox_2.isChecked()))
+        #service brake
+        self.checkBox.toggled.connect(
+                lambda: self.train_controller.set_service_brake_status(self.checkBox.isChecked()))
+        #emergency brake failure
+        self.checkBox_8.toggled.connect(
+                lambda: self.train_controller.set_emergency_brake_failure(self.checkBox_8.isChecked()))
+        #signal pickup failure
+        self.checkBox_11.toggled.connect(
+                lambda: self.train_controller.set_signal_pickup_failure_status(self.checkBox_11.isChecked()))
+        #train engine failure
+        self.checkBox_9.toggled.connect(
+                lambda: self.train_controller.set_engine_status(self.checkBox_9.isChecked()))
+        #service brake failure
+        self.checkBox_10.toggled.connect(
+                lambda: self.train_controller.set_service_brake_failure(self.checkBox_10.isChecked()))
+        #Speed Limit
+        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        #Commanded Speed
+        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        #actual speed
+        self.external_lights_label_11.setText(str("Actual Speed: " + str(self.train_controller.get_current_velocity())))
+        #commanded power
+        self.external_lights_label_12.setText(str("Commanded Power" + str(self.train_controller.get_commanded_power())))
+    def _handler(self):
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # 100ms update rate
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
+    def update(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.title_label.setText(_translate("MainWindow", " Train #NUM Line COLOR"))
-        self.test_bench_btn.setText(_translate("MainWindow", "Main UI"))
-        self.pushButton.setText(_translate("MainWindow", "Emergency Brake"))
-        self.ebrake_fail_label.setText(_translate("MainWindow", "E-Brake Failure"))
-        self.brake_fail_label.setText(_translate("MainWindow", "Service Brake Failure"))
-        self.engine_fail_off.setText(_translate("MainWindow", "OFF"))
-        self.engine_fail_label.setText(_translate("MainWindow", "Train Engine Failure"))
-        self.brake_fail_on.setText(_translate("MainWindow", "ON"))
-        self.failure_mode_label.setText(_translate("MainWindow", "Failure Modes"))
-        self.brake_fail_off.setText(_translate("MainWindow", "OFF"))
-        self.signal_fail_label.setText(_translate("MainWindow", "Signal Pickup Failure"))
-        self.ebrake_fail_on.setText(_translate("MainWindow", "ON"))
-        self.signal_fail_off.setText(_translate("MainWindow", "OFF"))
-        self.signal_fail_on.setText(_translate("MainWindow", "ON"))
-        self.engine_fail_on.setText(_translate("MainWindow", "ON"))
-        self.ebrake_fail_off.setText(_translate("MainWindow", "OFF"))
-        self.ebrake_on.setText(_translate("MainWindow", "ON"))
-        self.right_door_closed.setText(_translate("MainWindow", "CLOSED"))
-        self.ebrake_label.setText(_translate("MainWindow", "E-Brake"))
-        self.left_door_closed.setText(_translate("MainWindow", "CLOSED"))
-        self.external_lights_off.setText(_translate("MainWindow", "OFF"))
-        self.internal_lights_off.setText(_translate("MainWindow", "OFF"))
-        self.right_door_label.setText(_translate("MainWindow", "Right Door"))
-        self.external_lights_label.setText(_translate("MainWindow", "External Lights"))
-        self.external_lights_on.setText(_translate("MainWindow", "ON"))
-        self.ebrake_off.setText(_translate("MainWindow", "OFF"))
-        self.right_door_open.setText(_translate("MainWindow", "OPEN"))
-        self.left_door_label.setText(_translate("MainWindow", "Left Door"))
-        self.internal_lights_label.setText(_translate("MainWindow", "Internal Lights"))
-        self.internal_lights_on.setText(_translate("MainWindow", "ON"))
-        self.left_door_open.setText(_translate("MainWindow", "OPEN"))
-        self.controls_label.setText(_translate("MainWindow", "Controls"))
-        self.ebrake_off_2.setText(_translate("MainWindow", "OFF"))
-        self.ebrake_on_2.setText(_translate("MainWindow", "ON"))
-        self.ebrake_label_2.setText(_translate("MainWindow", "Service Brake"))
-        self.external_lights_label_2.setText(_translate("MainWindow", "Ek"))
-        self.controls_label_2.setText(_translate("MainWindow", "Power Controls"))
-        self.external_lights_label_3.setText(_translate("MainWindow", "Kp"))
-        self.external_lights_label_4.setText(_translate("MainWindow", "Ki"))
-        self.external_lights_label_5.setText(_translate("MainWindow", "Uk"))
-        self.external_lights_label_9.setText(_translate("MainWindow", "Speed Limit"))
-        self.controls_label_3.setText(_translate("MainWindow", "Speed Information"))
-        self.external_lights_label_10.setText(_translate("MainWindow", "Commanded Speed"))
-        self.external_lights_label_11.setText(_translate("MainWindow", "Actual Speed"))
-        self.external_lights_label_12.setText(_translate("MainWindow", "Commanded Power"))
-        self.external_lights_label_13.setText(_translate("MainWindow", "Authority"))
-        self.cmd_pwr_label.setText(_translate("MainWindow", "Commanded Power"))
-        self.speed_limit_label.setText(_translate("MainWindow", "Speed Limit"))
-        self.train_line_label.setText(_translate("MainWindow", "Train Line"))
-        self.underground_label.setText(_translate("MainWindow", "Underground"))
-        self.acc_pwr_label.setText(_translate("MainWindow", "Actual Power"))
-        self.authority_label.setText(_translate("MainWindow", "Authority"))
-        self.ebrake_label_3.setText(_translate("MainWindow", "Undeground"))
-        self.ebrake_off_3.setText(_translate("MainWindow", "NO"))
-        self.ebrake_on_3.setText(_translate("MainWindow", "YES"))
-        self.cmd_pwr_label_2.setText(_translate("MainWindow", "Kp"))
-        self.acc_pwr_label_2.setText(_translate("MainWindow", "Ki"))
-        self.ebrake_fail_on_2.setText(_translate("MainWindow", "ON"))
-        self.ebrake_fail_label_2.setText(_translate("MainWindow", "Automatic Status "))
-        self.failure_mode_label_2.setText(_translate("MainWindow", "Automatic Status"))
-        self.ebrake_fail_off_2.setText(_translate("MainWindow", "OFF"))
-        self.pushButton_2.setText(_translate("MainWindow", "Service Brake"))
+        #auto status
+        self.ebrake_fail_on_2.setVisible(bool(self.train_controller.get_auto_status()))
+        self.ebrake_fail_off_2.setVisible(not bool(self.train_controller.get_auto_status()))
+        #right door status
+        self.right_door_open.setVisible(bool(self.train_controller.get_right_door_status()))
+        self.right_door_closed.setVisible(not bool(self.train_controller.get_right_door_status()))
+        #left door status
+        self.left_door_open.setVisible(bool(self.train_controller.get_left_door_status()))
+        self.left_door_closed.setVisible(not bool(self.train_controller.get_left_door_status()))
+        #undergound status
+        self.ebrake_on_3.setVisible(bool(self.train_controller.get_underground_status()))
+        self.ebrake_off_3.setVisible(not bool(self.train_controller.get_underground_status()))
+        #internal lights
+        self.internal_lights_on.setVisible(bool(self.train_controller.get_internal_lights()))
+        self.internal_lights_off.setVisible(not bool(self.train_controller.get_internal_lights()))
+        #external lights
+        self.external_lights_on.setVisible(bool(self.train_controller.get_external_lights()))
+        self.external_lights_off.setVisible(not bool(self.train_controller.get_external_lights()))
+        #emergency brake
+        self.ebrake_on.setVisible(bool(self.train_controller.get_ebrake_status()))
+        self.ebrake_off.setVisible(not bool(self.train_controller.get_ebrake_status()))
+        #service brake
+        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_status()))
+        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_status()))
+        #ebrake failure
+        self.ebrake_fail_on.setVisible(bool(self.train_controller.get_emergency_brake_failure_status()))
+        self.ebrake_fail_off.setVisible(not bool(self.train_controller.get_emergency_brake_failure_status()))
+        #service brake failure
+        self.brake_fail_on.setVisible(bool(self.train_controller.get_service_brake_failure_status()))
+        self.brake_fail_off.setVisible(not bool(self.train_controller.get_service_brake_failure_status()))
+        #train engine failure status
+        self.engine_fail_on.setVisible(bool(self.train_controller.get_engine_status()))
+        self.engine_fail_off.setVisible(not bool(self.train_controller.get_engine_status()))
+        #signal pickup failure
+        self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
+        self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
+        #speed limit
+        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        #commanded speed
+        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        #kp
+        self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
+        #ki
+        self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+
+    def calculate(self):
+
+        speed_limit = self.speed_limit_edit.toPlainText()
+        self.train_controller.set_maximum_veloctity(float(speed_limit))
+
+        kp = self.cmd_pwr_edit_2.toPlainText()
+        print(kp)
+        self.train_controller.set_kp(float(kp),1.0)
+
+    def retranslateUi(self, Test_Bench):
+        _translate = QtCore.QCoreApplication.translate
+        Test_Bench.setWindowTitle(_translate("Test_Bench", "MainWindow"))
+        self.title_label.setText(_translate("Test_Bench", " Train #NUM Line COLOR"))
+        self.main_ui_btn.setText(_translate("Test_Bench", "Main UI"))
+        self.calc_btn.setText(_translate("Test_Bench", "Calculate"))
+        self.pushButton.setText(_translate("Test_Bench", "Emergency Brake"))
+        self.ebrake_fail_label.setText(_translate("Test_Bench", "E-Brake Failure"))
+        self.brake_fail_label.setText(_translate("Test_Bench", "Service Brake Failure"))
+        self.engine_fail_off.setText(_translate("Test_Bench", "OFF"))
+        self.engine_fail_label.setText(_translate("Test_Bench", "Train Engine Failure"))
+        self.brake_fail_on.setText(_translate("Test_Bench", "ON"))
+        self.failure_mode_label.setText(_translate("Test_Bench", "Failure Modes"))
+        self.brake_fail_off.setText(_translate("Test_Bench", "OFF"))
+        self.signal_fail_label.setText(_translate("Test_Bench", "Signal Pickup Failure"))
+        self.ebrake_fail_on.setText(_translate("Test_Bench", "ON"))
+        self.signal_fail_off.setText(_translate("Test_Bench", "OFF"))
+        self.signal_fail_on.setText(_translate("Test_Bench", "ON"))
+        self.engine_fail_on.setText(_translate("Test_Bench", "ON"))
+        self.ebrake_fail_off.setText(_translate("Test_Bench", "OFF"))
+        self.ebrake_on.setText(_translate("Test_Bench", "ON"))
+        self.right_door_closed.setText(_translate("Test_Bench", "CLOSED"))
+        self.ebrake_label.setText(_translate("Test_Bench", "E-Brake"))
+        self.left_door_closed.setText(_translate("Test_Bench", "CLOSED"))
+        self.external_lights_off.setText(_translate("Test_Bench", "OFF"))
+        self.internal_lights_off.setText(_translate("Test_Bench", "OFF"))
+        self.right_door_label.setText(_translate("Test_Bench", "Right Door"))
+        self.external_lights_label.setText(_translate("Test_Bench", "External Lights"))
+        self.external_lights_on.setText(_translate("Test_Bench", "ON"))
+        self.ebrake_off.setText(_translate("Test_Bench", "OFF"))
+        self.right_door_open.setText(_translate("Test_Bench", "OPEN"))
+        self.left_door_label.setText(_translate("Test_Bench", "Left Door"))
+        self.internal_lights_label.setText(_translate("Test_Bench", "Internal Lights"))
+        self.internal_lights_on.setText(_translate("Test_Bench", "ON"))
+        self.left_door_open.setText(_translate("Test_Bench", "OPEN"))
+        self.controls_label.setText(_translate("Test_Bench", "Controls"))
+        self.ebrake_off_2.setText(_translate("Test_Bench", "OFF"))
+        self.ebrake_on_2.setText(_translate("Test_Bench", "ON"))
+        self.ebrake_label_2.setText(_translate("Test_Bench", "Service Brake"))
+        self.external_lights_label_2.setText(_translate("Test_Bench", "Ek"))
+        self.controls_label_2.setText(_translate("Test_Bench", "Power Controls"))
+        self.external_lights_label_3.setText(_translate("Test_Bench", "Kp"))
+        self.external_lights_label_4.setText(_translate("Test_Bench", "Ki"))
+        self.external_lights_label_5.setText(_translate("Test_Bench", "Uk"))
+        self.external_lights_label_9.setText(_translate("Test_Bench", "Speed Limit"))
+        self.controls_label_3.setText(_translate("Test_Bench", "Speed Information"))
+        self.external_lights_label_10.setText(_translate("Test_Bench", "Commanded Speed"))
+        self.external_lights_label_11.setText(_translate("Test_Bench", "Actual Speed"))
+        self.external_lights_label_12.setText(_translate("Test_Bench", "Commanded Power"))
+        self.external_lights_label_13.setText(_translate("Test_Bench", "Authority"))
+        self.cmd_pwr_label.setText(_translate("Test_Bench", "Commanded Power"))
+        self.speed_limit_label.setText(_translate("Test_Bench", "Speed Limit"))
+        self.train_line_label.setText(_translate("Test_Bench", "Train Line"))
+        self.underground_label.setText(_translate("Test_Bench", "Underground"))
+        self.acc_pwr_label.setText(_translate("Test_Bench", "Actual Power"))
+        self.authority_label.setText(_translate("Test_Bench", "Authority"))
+        self.ebrake_label_3.setText(_translate("Test_Bench", "Undeground"))
+        self.ebrake_off_3.setText(_translate("Test_Bench", "NO"))
+        self.ebrake_on_3.setText(_translate("Test_Bench", "YES"))
+        self.cmd_pwr_label_2.setText(_translate("Test_Bench", "Kp"))
+        self.acc_pwr_label_2.setText(_translate("Test_Bench", "Ki"))
+        self.ebrake_fail_on_2.setText(_translate("Test_Bench", "ON"))
+        self.ebrake_fail_label_2.setText(_translate("Test_Bench", "Automatic Status "))
+        self.failure_mode_label_2.setText(_translate("Test_Bench", "Automatic Status"))
+        self.ebrake_fail_off_2.setText(_translate("Test_Bench", "OFF"))
+        self.pushButton_2.setText(_translate("Test_Bench", "Service Brake"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    Test_Bench = QtWidgets.QMainWindow()
+    tc = TrainController()
+    ui = Ui_Test_Bench(tc)
+    ui.setupUi(Test_Bench)
+    Test_Bench.show()
     sys.exit(app.exec_())

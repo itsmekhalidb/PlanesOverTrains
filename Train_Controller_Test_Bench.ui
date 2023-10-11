@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>Test_Bench</class>
+ <widget class="QMainWindow" name="Test_Bench">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -41,7 +41,7 @@ border: 3px solid black;</string>
      <string> Train #NUM Line COLOR</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="test_bench_btn">
+   <widget class="QPushButton" name="main_ui_btn">
     <property name="geometry">
      <rect>
       <x>498</x>
@@ -2034,7 +2034,7 @@ color: rgb(255, 255, 255);</string>
    <zorder>internal_lights_label</zorder>
    <zorder>engine_fail_label</zorder>
    <zorder>title_label</zorder>
-   <zorder>test_bench_btn</zorder>
+   <zorder>main_ui_btn</zorder>
    <zorder>pushButton</zorder>
    <zorder>ebrake_fail_label</zorder>
    <zorder>brake_fail_label</zorder>

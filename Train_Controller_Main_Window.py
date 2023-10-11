@@ -9,9 +9,15 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from Train_Controller import TrainController
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 class Ui_MainWindow(object):
+    def __init__(self, train_controller: TrainController):
+        super().__init__()
+        self.train_controller = train_controller
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(656, 492)
@@ -855,7 +861,8 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
+    tc = TrainController()
+    ui = Ui_MainWindow(tc)
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
