@@ -206,7 +206,6 @@ class TrainModel(object):
         # Internal Train Model Calculations #
         #####################################
         # Force
-        # TODO: Fix get_force to calculate force based on Newton's Laws
         self.set_force(float(self.get_force()))  # Pass input from test UI text box
 
         # Passenger Mass
@@ -233,10 +232,9 @@ class TrainModel(object):
 
     # -- Simulation -- #
     # TODO: Remove Simulate Function during integration
-    # TODO: Add BLUE line simulation
     def beacon_simulate(self):
         if self._line == "":
-            self.set_line("GREEN")
+            self.set_line("BLUE")
         if self._line.lower() == "green":
             # Set:
             # Station Name (Beacon)
@@ -399,13 +397,12 @@ class TrainModel(object):
         return self._block
 
     # time
-    # TODO: Confirm if this needs to be a list or int (_time[0])
+    # TODO: Get time from track model
     # def set_time(self, _time: list):
     #     self._time = _time
     def set_time(self):
         self._time = time.time()
 
-    # TODO: Confirm if this needs to be a float, list or int (_time[0])
     def get_time(self) -> float:
         return self._time
 
@@ -447,9 +444,6 @@ class TrainModel(object):
         self._prev_time =  self._current_time
         if self.get_acceleration() < 0.0 and self.get_actual_velocity() < 0.0:
             self.set_actual_velocity(0)
-        # print("prev time: ", self._prev_time)
-        # print("current time: ", self._current_time)
-        # print("dt: ", dt)
 
     # force
     def set_force(self, _force: float):
