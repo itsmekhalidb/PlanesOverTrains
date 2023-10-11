@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
 
+from PlanesOverTrains.track_controller_hw.Track_Controller_UI_Testbench import Ui_Test_Bench
 from PlanesOverTrains.track_controller_hw.track_controller_hw import Track_Controller_HW
 
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -26,13 +27,22 @@ class Ui_track_controller_mainwindow(object):
         super().__init__()
         self.track_controller_hw = track_controller_hw
         self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self.ui = Ui_Test_Bench(self.track_controller_hw)
+
+    def open_window(self):
+        self.window = QtWidgets.QMainWindow()
+        # self.ui = Ui_TrainModel_MainUI()
+       # self.ui = Ui_Test_Bench(self.track_controller_hw)  # Pass the TrainModel instance to the new UI
+        self.ui.setupUi(self.window)
+        self.window.show()
 
     def get_ard(self):
         return self._ard
-    def setupUi(self, track_controller_mainwindow):
-        track_controller_mainwindow.setObjectName("track_controller_mainwindow")
-        track_controller_mainwindow.resize(727, 538)
-        self.centralwidget = QtWidgets.QWidget(track_controller_mainwindow)
+
+    def setupUi(self, track_controller_mainwindow_ui):
+        track_controller_mainwindow_ui.setObjectName("track_controller_mainwindow")
+        track_controller_mainwindow_ui.resize(727, 538)
+        self.centralwidget = QtWidgets.QWidget(track_controller_mainwindow_ui)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
         self.title_label.setGeometry(QtCore.QRect(0, 0, 711, 51))
@@ -241,13 +251,13 @@ class Ui_track_controller_mainwindow(object):
         self.occupancy_display.raise_()
         self.occupancy_label.raise_()
         self.testbench_button.raise_()
-        track_controller_mainwindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(track_controller_mainwindow)
+        track_controller_mainwindow_ui.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(track_controller_mainwindow_ui)
         self.statusbar.setObjectName("statusbar")
-        track_controller_mainwindow.setStatusBar(self.statusbar)
+        track_controller_mainwindow_ui.setStatusBar(self.statusbar)
 
-        self.retranslateUi(track_controller_mainwindow)
-        QtCore.QMetaObject.connectSlotsByName(track_controller_mainwindow)
+        self.retranslateUi(track_controller_mainwindow_ui)
+        QtCore.QMetaObject.connectSlotsByName(track_controller_mainwindow_ui)
 
         self.select_output.clear()
         self._handler()
@@ -264,6 +274,8 @@ class Ui_track_controller_mainwindow(object):
                 self.occupancy_display.addItem(item)
 
         self.select_output.addItem("Commanded Speed")
+
+
     def update(self):
         _translate = QtCore.QCoreApplication.translate
 
@@ -276,6 +288,8 @@ class Ui_track_controller_mainwindow(object):
         self.manual_mode_on.setVisible(bool(self.manual_mode_check.checkState()))
 
         self.CheckIfSelected()
+
+
 
     def CheckIfSelected(self):
         send = ""
@@ -299,7 +313,8 @@ class Ui_track_controller_mainwindow(object):
                         self.get_ard().write(send.encode('utf-8'))
                 elif type_output[0] == "Commanded":
                     print("Commanded")
-                    self.track_controller_hw.set_commanded_speed(self.track_controller_hw.get_authority() - self.track_controller_hw.get_suggested_speed())
+                    self.track_controller_hw.set_commanded_speed(
+                        self.track_controller_hw.get_authority() - self.track_controller_hw.get_suggested_speed())
                     com = self.track_controller_hw.get_commanded_speed()
                     send = "11000" + str(com)
                     self.get_ard().write(send.encode('utf-8'))
