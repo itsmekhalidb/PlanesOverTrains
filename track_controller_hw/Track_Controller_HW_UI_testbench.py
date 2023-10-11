@@ -373,6 +373,8 @@ class Ui_test_bench(object):
         self.retranslateUi(test_bench)
         QtCore.QMetaObject.connectSlotsByName(test_bench)
 
+
+
     def retranslateUi(self, test_bench):
         _translate = QtCore.QCoreApplication.translate
         test_bench.setWindowTitle(_translate("test_bench", "Form"))

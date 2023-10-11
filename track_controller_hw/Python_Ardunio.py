@@ -1,7 +1,7 @@
 import serial
 import time
 
-""""
+
 ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
 end = 1
@@ -11,7 +11,7 @@ while end == 1:
     if output == "Button Pressed":
         ard.write("One".encode('utf-8'))
 
-"""
+""""
 
 
 class Hello(object):
@@ -49,3 +49,5 @@ i = Hello()
 print(i.get_switch('B6'))
 i.set_switch('B6',1)
 print(i.get_switch('B6'))
+
+"""

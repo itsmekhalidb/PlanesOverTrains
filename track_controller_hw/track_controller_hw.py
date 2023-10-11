@@ -4,16 +4,16 @@ class Track_Controller_HW(object):
         # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
         # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
-        self._blue = {'A1': {1: 50, 2: 1}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
+        self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
                       'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'Light A5': 0, 'Light B6': 0, 'Light C11': 0}
+        self._lights = {'Light B-A5': 0, 'Light B-B6': 0, 'Light B-C11': 0}
         # plc input
         self._plc_input = ""
         # 0 = left, 1 = right
-        self._switches = {'Switch A5': 0, 'Switch B6': 0, 'Switch C11': 0}
+        self._switches = {'Switch B-A5': 0, 'Switch B-B6': 0, 'Switch B-C11': 0}
         # crossing lights/gate
         self._crossing_lights_gates = ""
         # if program is in automatic mode
@@ -55,6 +55,9 @@ class Track_Controller_HW(object):
 
     def set_switch(self, switch, value: int):
         self._switches[switch] = value
+
+    def get_light_list(self) -> dict:
+        return self._lights
 
     def get_lights(self, light) -> int:
         return self._lights[light]

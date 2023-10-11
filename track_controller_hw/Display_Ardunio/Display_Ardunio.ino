@@ -12,7 +12,7 @@ int Green_LED = 4;
 int Super_Green = 5;
 
 void Transmitter(){
-  
+
 }
 
 void Receiver() {
@@ -33,13 +33,15 @@ void Receiver() {
     lcd1.setCursor(0,0);
     lcd1.print("Commanded Speed:");
     lcd1.setCursor(0,1);
-    lcd1.print(incomingData.substring(6,incomingData.length()));
+    lcd1.print(incomingData.substring(5,incomingData.length()));
   }
   
   if(incomingData.substring(2,3).equals("1")){
     lcd1.clear();
     lcd1.setCursor(0,0);
-    lcd1.print(incomingData.substring(6,incomingData.length()));
+    lcd1.print("Switch:");
+    lcd1.setCursor(0,1);
+    lcd1.print(incomingData.substring(5,incomingData.length()));
   }
 
   if(incomingData.substring(3,4).equals("1")){
@@ -47,7 +49,7 @@ void Receiver() {
     lcd1.setCursor(0,0);
     lcd1.print("Light:");
     lcd1.setCursor(0,1);
-    lcd1.print(incomingData.substring(6,incomingData.length()));
+    lcd1.print(incomingData.substring(5,incomingData.length()));
     if(incomingData.substring(4,5).equals("0")){
       digitalWrite(Red_LED, HIGH);
     }
