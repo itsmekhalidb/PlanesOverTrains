@@ -9,12 +9,21 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QTime, QTimer
+from datetime import datetime, time
+from CTC import CTC
 
 last_page = 0
+CTC = CTC()
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        global CTC
+
+        # create blue line test
+        CTC.test_blue_line_CTC()
+
         # create pages
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(981, 730)
@@ -36,13 +45,9 @@ class Ui_MainWindow(object):
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(590, 210, 131, 22))
         self.station_list.setObjectName("station_list")
-        self.station_list.addItem("")
-        self.confirm = QtWidgets.QPushButton(self.train_view_page)
-        self.confirm.setGeometry(QtCore.QRect(450, 520, 75, 23))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.confirm.setFont(font)
-        self.confirm.setObjectName("confirm")
+        self.station_list.addItem("Destination Station")
+        for station_name in CTC.get_stations_names():
+            self.station_list.addItem(station_name)
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(806, 10, 169, 31))
         font = QtGui.QFont()
@@ -61,6 +66,7 @@ class Ui_MainWindow(object):
         self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
         self.arrival_time.setGeometry(QtCore.QRect(620, 370, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
+        self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.dest_image = QtWidgets.QLabel(self.train_view_page)
         self.dest_image.setGeometry(QtCore.QRect(610, 240, 101, 101))
         self.dest_image.setObjectName("dest_image")
@@ -70,6 +76,7 @@ class Ui_MainWindow(object):
         self.train_info = QtWidgets.QTextEdit(self.train_view_page)
         self.train_info.setGeometry(QtCore.QRect(390, 400, 191, 91))
         self.train_info.setObjectName("train_info")
+        self.train_info.setReadOnly(True)
         self.train_list = QtWidgets.QComboBox(self.train_view_page)
         self.train_list.setGeometry(QtCore.QRect(0, 50, 361, 51))
         font = QtGui.QFont()
@@ -78,7 +85,8 @@ class Ui_MainWindow(object):
         font.setWeight(75)
         self.train_list.setFont(font)
         self.train_list.setObjectName("train_list")
-        self.train_list.addItem("")
+        for train in CTC.get_trains():
+            self.train_list.addItem(train.train_list_info())
         self.train_image = QtWidgets.QLabel(self.train_view_page)
         self.train_image.setGeometry(QtCore.QRect(210, 190, 181, 181))
         self.train_image.setObjectName("train_image")
@@ -106,6 +114,7 @@ class Ui_MainWindow(object):
         self.arrival_time_label = QtWidgets.QTextEdit(self.train_view_page)
         self.arrival_time_label.setGeometry(QtCore.QRect(610, 350, 101, 41))
         self.arrival_time_label.setObjectName("arrival_time_label")
+        self.arrival_time_label.setReadOnly(True)
         self.sys_time_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.sys_time_label_3.setGeometry(QtCore.QRect(710, 10, 83, 31))
         font = QtGui.QFont()
@@ -116,6 +125,14 @@ class Ui_MainWindow(object):
         self.sys_time_label_3.setStyleSheet("border: 1px solid black;\n"
 "background-color: rgb(255, 255, 255);")
         self.sys_time_label_3.setObjectName("sys_time_label_3")
+        self.confirm = QtWidgets.QPushButton(self.train_view_page)
+        self.confirm.setGeometry(QtCore.QRect(450, 520, 75, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.confirm.setFont(font)
+        self.confirm.setObjectName("confirm")
+        not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, self.train_list.currentIndex()))
         self.arrival_time_label.raise_()
         self.header.raise_()
         self.switch_auto.raise_()
@@ -140,6 +157,7 @@ class Ui_MainWindow(object):
         self.key_header = QtWidgets.QTextEdit(self.track_view_page)
         self.key_header.setGeometry(QtCore.QRect(10, 60, 71, 51))
         self.key_header.setObjectName("key_header")
+        self.key_header.setReadOnly(True)
         self.station_icon = QtWidgets.QLabel(self.track_view_page)
         self.station_icon.setGeometry(QtCore.QRect(10, 110, 31, 31))
         self.station_icon.setObjectName("station_icon")
@@ -152,6 +170,7 @@ class Ui_MainWindow(object):
         self.element_info = QtWidgets.QTextEdit(self.track_view_page)
         self.element_info.setGeometry(QtCore.QRect(670, 150, 301, 241))
         self.element_info.setObjectName("element_info")
+        self.element_info.setReadOnly(True)
         self.occupiedBlocks = QtWidgets.QScrollArea(self.track_view_page)
         self.occupiedBlocks.setGeometry(QtCore.QRect(669, 419, 301, 261))
         self.occupiedBlocks.setWidgetResizable(True)
@@ -177,6 +196,7 @@ class Ui_MainWindow(object):
         self.element_header = QtWidgets.QTextEdit(self.track_view_page)
         self.element_header.setGeometry(QtCore.QRect(670, 60, 301, 91))
         self.element_header.setObjectName("element_header")
+        self.element_header.setReadOnly(True)
         self.sys_time_label_2 = QtWidgets.QLabel(self.track_view_page)
         self.sys_time_label_2.setGeometry(QtCore.QRect(710, 10, 83, 31))
         font = QtGui.QFont()
@@ -197,6 +217,7 @@ class Ui_MainWindow(object):
         self.key_labels = QtWidgets.QTextEdit(self.track_view_page)
         self.key_labels.setGeometry(QtCore.QRect(40, 110, 111, 131))
         self.key_labels.setObjectName("key_labels")
+        self.key_labels.setReadOnly(True)
         self.track_icon = QtWidgets.QLabel(self.track_view_page)
         self.track_icon.setGeometry(QtCore.QRect(10, 170, 31, 31))
         self.track_icon.setObjectName("track_icon")
@@ -288,9 +309,11 @@ class Ui_MainWindow(object):
         self.curr_time_label = QtWidgets.QTextEdit(self.testbench)
         self.curr_time_label.setGeometry(QtCore.QRect(10, 140, 91, 31))
         self.curr_time_label.setObjectName("curr_time_label")
+        self.curr_time_label.setReadOnly(True)
         self.num_passengers_label = QtWidgets.QTextEdit(self.testbench)
         self.num_passengers_label.setGeometry(QtCore.QRect(-1, 270, 171, 31))
         self.num_passengers_label.setObjectName("num_passengers_label")
+        self.num_passengers_label.setReadOnly(True)
         self.yellow = QtWidgets.QRadioButton(self.testbench)
         self.yellow.setGeometry(QtCore.QRect(0, 600, 82, 17))
         font = QtGui.QFont()
@@ -317,6 +340,7 @@ class Ui_MainWindow(object):
         self.left_right_label = QtWidgets.QTextEdit(self.testbench)
         self.left_right_label.setGeometry(QtCore.QRect(0, 430, 171, 51))
         self.left_right_label.setObjectName("left_right_label")
+        self.left_right_label.setReadOnly(True)
         self.back_button = QtWidgets.QPushButton(self.testbench)
         self.back_button.setGeometry(QtCore.QRect(620, 10, 81, 31))
         self.back_button.setObjectName("back_button")
@@ -367,12 +391,14 @@ class Ui_MainWindow(object):
         self.curr_vel_label = QtWidgets.QTextEdit(self.testbench)
         self.curr_vel_label.setGeometry(QtCore.QRect(0, 320, 91, 31))
         self.curr_vel_label.setObjectName("curr_vel_label")
+        self.curr_vel_label.setReadOnly(True)
         self.velocity_selector = QtWidgets.QSpinBox(self.testbench)
         self.velocity_selector.setGeometry(QtCore.QRect(90, 320, 61, 22))
         self.velocity_selector.setObjectName("velocity_selector")
         self.kmhr_label = QtWidgets.QTextEdit(self.testbench)
         self.kmhr_label.setGeometry(QtCore.QRect(150, 320, 41, 31))
         self.kmhr_label.setObjectName("kmhr_label")
+        self.kmhr_label.setReadOnly(True)
         self.title_label_4.raise_()
         self.red.raise_()
         self.train_label.raise_()
@@ -415,10 +441,10 @@ class Ui_MainWindow(object):
     
 
     def retranslateUi(self, MainWindow):
+        global CTC
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.switch_auto.setText(_translate("MainWindow", "Switch to Automatic"))
-        self.station_list.setItemText(0, _translate("MainWindow", "Destination Station"))
         self.confirm.setText(_translate("MainWindow", "Confirm"))
         self.system_speed_label_3.setText(_translate("MainWindow", " System Speed"))
         self.testbench_button.setText(_translate("MainWindow", "TESTBENCH"))
@@ -432,7 +458,6 @@ class Ui_MainWindow(object):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: </span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: </span></p>\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: </span></p></body></html>"))
-        self.train_list.setItemText(0, _translate("MainWindow", "Train # - Outbound"))
         self.train_image.setText(_translate("MainWindow", "<html><head/><body><p><img src=\":/train_image/CTC_resources/train.png\"/></p></body></html>"))
         self.track_view.setText(_translate("MainWindow", "Track View"))
         self.header.setText(_translate("MainWindow", "Train View"))
@@ -497,7 +522,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Left            Right</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Left                   Right</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
         self.back_button.setText(_translate("MainWindow", "BACK"))
         self.green.setText(_translate("MainWindow", "Green"))
@@ -514,7 +539,39 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">km/hr</p></body></html>"))
-        
+    
+
+    # update function
+    def update(self):
+        global CTC
+        _translate = QtCore.QCoreApplication.translate
+
+        # train schedule info
+        temp_train = CTC._trains[self.train_list.currentIndex()]
+        if temp_train._schedule != None:
+            temp_dep_time_w_ms = temp_train.get_departure_time()
+            temp_dep_time = time(temp_dep_time_w_ms.hour, temp_dep_time_w_ms.minute, temp_dep_time_w_ms.second)
+            temp_auth = temp_train.get_authority()
+            temp_sug_speed = temp_train.get_suggested_velocity()
+            temp_curr_speed = temp_train.get_actual_velocity()
+            self.train_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+        "p, li { white-space: pre-wrap; }\n"
+        "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Departure Time: {temp_dep_time}</span></p>\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: {temp_auth}</span></p>\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: {temp_sug_speed}</span></p>\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: {temp_curr_speed}</span></p></body></html>"))
+        else:
+            self.train_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+        "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+        "p, li { white-space: pre-wrap; }\n"
+        "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Departure Time: </span></p>\n"
+        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: </span></p>\n"
+        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: </span></p>\n"
+        "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: </span></p></body></html>"))
+
 
     # switch to train view
     def show_train_view(self):
@@ -537,6 +594,18 @@ class Ui_MainWindow(object):
     def leave_testbench(self):
         global last_page
         self.view_switcher.setCurrentIndex(last_page)
+
+
+    # confirm button pressed, run checks then call ctc.py function
+    def confirm_route(self, station_name, time_in, train_index):
+        global CTC
+        if datetime.now().time() < time_in and station_name != "Destination Station":
+            CTC._trains[train_index].create_schedule(station_name, time_in, CTC._track)
+            self.update()
+
+
+    def test(self):
+        print("help")
         
 
 import CTC_resource_file_rc
