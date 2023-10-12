@@ -9,7 +9,6 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from track_model import TrackModel
 from PyQt5.QtWidgets import *
@@ -17,7 +16,8 @@ from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtGui import QPixmap
-
+from Track_Model_Block_Test import Ui_Track_Model_Block
+from Track_Model_Train_Test import Ui_Track_Model_Train
 
 class Ui_TrackModel_MainUI(object):
     def setupUi(self, TrackModel_MainUI):
@@ -26,11 +26,30 @@ class Ui_TrackModel_MainUI(object):
         TrackModel_MainUI.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.centralwidget = QtWidgets.QWidget(TrackModel_MainUI)
         self.centralwidget.setObjectName("centralwidget")
+
+        self.block_title = QtWidgets.QLabel(self.centralwidget)
+        self.block_title.setGeometry(QtCore.QRect(320,75,450,30))
+        self.block_title.setStyleSheet("background-color: rgb(149, 188, 242);\n"
+                                       "border: 2px solid black;\n"
+                                       "font-style: bold;\n"
+                                       "font-size: 16pt;")
+        self.block_title.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.train_title = QtWidgets.QLabel(self.centralwidget)
+        self.train_title.setGeometry(QtCore.QRect(320, 235, 450, 30))
+        self.train_title.setStyleSheet("background-color: rgb(149, 188, 242);\n"
+                                       "border: 2px solid black;\n"
+                                       "font-style: bold;\n"
+                                       "font-size: 16pt;")
+        self.train_title.setAlignment(QtCore.Qt.AlignCenter)
+        self.train_title.setText("Search by Train")
+
+        self.block_title.setText("Search by Block")
         self.title = QtWidgets.QLabel(self.centralwidget)
         self.title.setGeometry(QtCore.QRect(0, 0, 781, 71))
         self.title.setStyleSheet("background-color: rgb(255, 255, 0);\n"
-                                 "border: 3px solid black;\n"
-                                 "")
+                                 "border: 3px solid black;\n")
+
         self.title.setObjectName("title")
         tfont = QtGui.QFont()
         tfont.setPointSize(16)
@@ -107,12 +126,13 @@ class Ui_TrackModel_MainUI(object):
         self.train_selection.addItems(train_list)
         self.train_selection.setStyleSheet("border: 1px solid black;")
 
-        self.block_button = QtWidgets.QPushButton(self.centralwidget)
+        self.block_button = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.open_block_window())
         self.block_button.setGeometry(QtCore.QRect(670, 110, 101, 71))
         self.block_button.setObjectName("block_button")
         self.block_button.setStyleSheet("border: 1px solid black;")
 
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
+
+        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget, clicked = lambda: self.open_train_window())
         self.pushButton_2.setGeometry(QtCore.QRect(670, 280, 101, 71))
         self.pushButton_2.setText("")
         self.pushButton_2.setObjectName("pushButton_2")
@@ -145,10 +165,32 @@ class Ui_TrackModel_MainUI(object):
         c3 = self.block_number.currentText()
         combined_text = f"{c1}{c2}{c3}"
         self.block_button.setText(combined_text)
+        self.block_button.setStyleSheet("background: rgb(0,255,0);\n"
+                                        "color: white;\n"
+                                        "font-style: bold;\n"
+                                        "font-size: 16pt;")
 
     def update_train_button(self):
         c1 = self.train_selection.currentText()
         self.pushButton_2.setText(c1)
+        self.pushButton_2.setStyleSheet("background: rgb(0,255,0);\n"
+                                        "color: white;\n"
+                                        "font-style: bold;\n"
+                                        "font-size: 16pt;")
+
+    #Connecting block button to block window
+    def open_block_window(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_Track_Model_Block()
+        self.ui.setUi(self.window)
+        self.window.show()
+
+    #Connecting train button to train window
+    def open_train_window(self):
+        self.window = QtWidgets.QMainWindow()
+        self.ui = Ui_Track_Model_Train()
+        self.ui.setpUi(self.window)
+        self.window.show()
 
 
 if __name__ == "__main__":
