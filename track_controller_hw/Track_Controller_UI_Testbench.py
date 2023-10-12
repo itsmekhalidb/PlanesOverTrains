@@ -39,7 +39,7 @@ class Ui_Test_Bench(object):
         self.title_label_2.setStyleSheet("background-color: rgb(255, 255, 0);\n"
 "border: 3px solid black;")
         self.title_label_2.setObjectName("title_label_2")
-        self.light_red_button = QtWidgets.QPushButton(self.centralwidget)
+        self.light_red_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(0))
         self.light_red_button.setGeometry(QtCore.QRect(10, 290, 93, 28))
         self.light_red_button.setObjectName("light_red_button")
         self.broken_label_on = QtWidgets.QLabel(self.centralwidget)
@@ -246,7 +246,7 @@ class Ui_Test_Bench(object):
 "")
         self.ctc_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.ctc_label.setObjectName("ctc_label")
-        self.super_green_light_button = QtWidgets.QPushButton(self.centralwidget)
+        self.super_green_light_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(2))
         self.super_green_light_button.setGeometry(QtCore.QRect(210, 290, 101, 28))
         self.super_green_light_button.setObjectName("super_green_light_button")
         self.selected_output_label = QtWidgets.QLabel(self.centralwidget)
@@ -265,7 +265,7 @@ class Ui_Test_Bench(object):
         self.broken_rail_check.setEnabled(True)
         self.broken_rail_check.setGeometry(QtCore.QRect(570, 110, 14, 15))
         self.broken_rail_check.setObjectName("broken_rail_check")
-        self.light_green_button = QtWidgets.QPushButton(self.centralwidget)
+        self.light_green_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(1))
         self.light_green_button.setGeometry(QtCore.QRect(110, 290, 93, 28))
         self.light_green_button.setObjectName("light_green_button")
         self.circuit_failure_on = QtWidgets.QLabel(self.centralwidget)
@@ -280,7 +280,7 @@ class Ui_Test_Bench(object):
 "background-color: rgb(0, 170, 0);")
         self.circuit_failure_on.setAlignment(QtCore.Qt.AlignCenter)
         self.circuit_failure_on.setObjectName("circuit_failure_on")
-        self.change_switch_button = QtWidgets.QPushButton(self.centralwidget)
+        self.change_switch_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_switch())
         self.change_switch_button.setGeometry(QtCore.QRect(10, 210, 131, 31))
         self.change_switch_button.setObjectName("change_switch_button")
         self.selected_output = QtWidgets.QLineEdit(self.centralwidget)
@@ -396,6 +396,27 @@ class Ui_Test_Bench(object):
         self.timer.timeout.connect(self.update)
         self.timer.start()
 
+    def change_light(self, i: int):
+        if i == 0:
+            self.track_controller_hw.set_lights(0, self.light_select_drop.currentText())
+        elif i == 1:
+            self.track_controller_hw.set_lights(1, self.light_select_drop.currentText())
+        elif i == 2:
+            self.track_controller_hw.set_lights(2, self.light_select_drop.currentText())
+    def change_occupancy(self):
+        if self.track_controller_hw.get_occupancy(self.block_drop.currentText()) == 0:
+            self.track_controller_hw.set_switch(1, self.switch_drop.currentText())
+            print(self.switch_drop.currentText() + "1")
+        elif self.track_controller_hw.get_switch(self.switch_drop.currentText()) == 1:
+            self.track_controller_hw.set_switch(0, self.switch_drop.currentText())
+
+    def change_switch(self):
+        if self.track_controller_hw.get_switch(self.switch_drop.currentText()) == 0:
+            self.track_controller_hw.set_switch(1, self.switch_drop.currentText())
+            print(self.switch_drop.currentText() + "1")
+        elif self.track_controller_hw.get_switch(self.switch_drop.currentText()) == 1:
+            self.track_controller_hw.set_switch(0, self.switch_drop.currentText())
+
     def update(self):
         self.broken_label_off.setVisible(not bool(self.broken_rail_check.checkState()))
         self.broken_label_on.setVisible(bool(self.broken_rail_check.checkState()))
@@ -408,6 +429,17 @@ class Ui_Test_Bench(object):
 
         self.train_engine_failure_off.setVisible(not bool(self.train_engine_failure_check.checkState()))
         self.train_engine_failure_on.setVisible(bool(self.train_engine_failure_check.checkState()))
+
+        if bool(self.power_failure_check.checkState()) && bool(self.circuit_failure_check.checkState()) && bool(self.broken_rail_check.checkState()) &&
+
+        try:
+            self.track_controller_hw.set_test_speed_limit(float(self.selected_output.text()))
+            self.track_controller_hw.set_authority(float(self.authority_input.text()))
+            print("Value")
+        except:
+            print("No Value Yet")
+
+
 
 
     def retranslateUi(self, MainWindow):

@@ -53,7 +53,7 @@ class Track_Controller_HW(object):
     def get_switch(self, switch) -> int:
         return self._switches[switch]
 
-    def set_switch(self, switch, value: int):
+    def set_switch(self, value: int, switch: str):
         self._switches[switch] = value
 
     def get_light_list(self) -> dict:
@@ -62,7 +62,7 @@ class Track_Controller_HW(object):
     def get_lights(self, light) -> int:
         return self._lights[light]
 
-    def set_lights(self, light, value: int):
+    def set_lights(self, value: int, light: str):
         self._lights[light] = value
 
     def get_automatic(self) -> bool:
