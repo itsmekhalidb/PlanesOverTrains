@@ -25,7 +25,7 @@ class Ui_Test_Bench(object):
         test_bench.resize(613, 509)
         self.centralwidget = QtWidgets.QWidget(test_bench)
         self.centralwidget.setObjectName("centralwidget")
-        self.maintence_mode_button = QtWidgets.QPushButton(self.centralwidget)
+        self.maintence_mode_button = QtWidgets.QPushButton(test_bench,clicked=lambda: self.change_occupancy_maintenance_mode())
         self.maintence_mode_button.setGeometry(QtCore.QRect(350, 460, 221, 28))
         self.maintence_mode_button.setObjectName("maintence_mode_button")
         self.title_label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -231,7 +231,7 @@ class Ui_Test_Bench(object):
                                                "")
         self.power_failure_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.power_failure_label.setObjectName("power_failure_label")
-        self.train_engine_failure_check = QtWidgets.QCheckBox(self.centralwidget)
+        self.train_engine_failure_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.train_engine_failure_check.setEnabled(True)
         self.train_engine_failure_check.setGeometry(QtCore.QRect(570, 200, 14, 15))
         self.train_engine_failure_check.setObjectName("train_engine_failure_check")
@@ -262,7 +262,7 @@ class Ui_Test_Bench(object):
                                                  "")
         self.selected_output_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.selected_output_label.setObjectName("selected_output_label")
-        self.broken_rail_check = QtWidgets.QCheckBox(self.centralwidget)
+        self.broken_rail_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.broken_rail_check.setEnabled(True)
         self.broken_rail_check.setGeometry(QtCore.QRect(570, 110, 14, 15))
         self.broken_rail_check.setObjectName("broken_rail_check")
@@ -292,10 +292,10 @@ class Ui_Test_Bench(object):
         self.suggested_soeed_input.setGeometry(QtCore.QRect(240, 420, 211, 25))
         self.suggested_soeed_input.setText("")
         self.suggested_soeed_input.setObjectName("suggested_soeed_input")
-        self.change_occupancy_button = QtWidgets.QPushButton(self.centralwidget)
+        self.change_occupancy_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_occupancy())
         self.change_occupancy_button.setGeometry(QtCore.QRect(10, 130, 161, 31))
         self.change_occupancy_button.setObjectName("change_occupancy_button")
-        self.circuit_failure_check = QtWidgets.QCheckBox(self.centralwidget)
+        self.circuit_failure_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.circuit_failure_check.setEnabled(True)
         self.circuit_failure_check.setGeometry(QtCore.QRect(570, 142, 14, 15))
         self.circuit_failure_check.setObjectName("circuit_failure_check")
@@ -347,7 +347,7 @@ class Ui_Test_Bench(object):
                                              "")
         self.track_model_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.track_model_label.setObjectName("track_model_label")
-        self.power_failure_check = QtWidgets.QCheckBox(self.centralwidget)
+        self.power_failure_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.power_failure_check.setEnabled(True)
         self.power_failure_check.setGeometry(QtCore.QRect(570, 172, 14, 15))
         self.power_failure_check.setObjectName("power_failure_check")
@@ -394,6 +394,7 @@ class Ui_Test_Bench(object):
         self.selected_output.setText("0")
         self.authority_input.setText("0")
         self.suggested_soeed_input.setText("0")
+        self.super_green_light_button.setVisible(False)
 
     def _handler(self):
         self.timer = QTimer()
@@ -408,6 +409,14 @@ class Ui_Test_Bench(object):
             self.track_controller_hw.set_lights(1, self.light_select_drop.currentText())
         elif i == 2:
             self.track_controller_hw.set_lights(2, self.light_select_drop.currentText())
+
+    def change_occupancy_maintenance_mode(self):
+        if self.track_controller_hw.get_occupancy(self.track_status_drop.currentText()) == 0:
+            self.track_controller_hw.set_occupancy(self.track_status_drop.currentText(), 1)
+            print(self.block_drop.currentText() + "1")
+        elif self.track_controller_hw.get_occupancy(self.track_status_drop.currentText()) == 1:
+            self.track_controller_hw.set_occupancy(self.track_status_drop.currentText(), 0)
+
 
     def change_occupancy(self):
         if self.track_controller_hw.get_occupancy(self.block_drop.currentText()) == 0:
@@ -424,6 +433,9 @@ class Ui_Test_Bench(object):
             self.track_controller_hw.set_switch(0, self.switch_drop.currentText())
 
     def update(self):
+        self.authority_input.setVisible(False)
+        self.authoriy_label.setVisible(False)
+
         self.broken_label_off.setVisible(not bool(self.broken_rail_check.checkState()))
         self.broken_label_on.setVisible(bool(self.broken_rail_check.checkState()))
 
@@ -435,10 +447,6 @@ class Ui_Test_Bench(object):
 
         self.train_engine_failure_off.setVisible(not bool(self.train_engine_failure_check.checkState()))
         self.train_engine_failure_on.setVisible(bool(self.train_engine_failure_check.checkState()))
-
-        if bool(self.power_failure_check.checkState()) or bool(self.circuit_failure_check.checkState()) or bool(
-                self.broken_rail_check.checkState()) or bool(self.train_engine_failure_check.checkState()):
-            self.track_controller_hw.set_occupancy(self.block_drop.currentText(), 1)
 
         try:
             self.track_controller_hw.set_suggested_speed(float(self.suggested_soeed_input.text()))
