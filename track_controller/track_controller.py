@@ -29,7 +29,7 @@ class Track_Controller(object):
         self._circuit_failure = False  # service brake failure
         self._power_failure = False  # signal pickup failure
         self._authority = 0
-        self._suggested_speed = 0
+        self._suggested_speed = 30
         self._test_speed_limit = 0
         self._track_status = False
     # Variables

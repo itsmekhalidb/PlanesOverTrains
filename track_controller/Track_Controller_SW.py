@@ -375,7 +375,7 @@ class Ui_TrackController_MainUI(object):
         self.PLC_output_label.setAlignment(QtCore.Qt.AlignCenter)
         self.PLC_output_label.setObjectName("PLC_output_label")
         self.PLC_output = QtWidgets.QListWidget(Frame)
-        self.PLC_output.setGeometry(QtCore.QRect(650, 127, 289, 453))
+        self.PLC_output.setGeometry(QtCore.QRect(670, 127, 289, 453))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.PLC_output.setFont(font)
@@ -630,7 +630,7 @@ class Ui_TrackController_MainUI(object):
         font.setPointSize(12)
         self.commanded_speed_label.setFont(font)
         self.commanded_speed.setObjectName("commanded_speed")
-        self.commanded_speed_spinBox = QtWidgets.QSpinBox(Frame)
+        self.commanded_speed_spinBox = QtWidgets.QSpinBox(Frame, valueChanged=lambda: self.track_controller.set_commanded_speed(self.commanded_speed_spinBox.value()))
         self.commanded_speed_spinBox.setGeometry(QtCore.QRect(199, 322, 42, 22))
         self.commanded_speed_spinBox.setObjectName("commanded_speed_spinBox")
         self.toggle_switch1 = QtWidgets.QPushButton(Frame, clicked=lambda: self.track_controller.set_switch('BC-A', not self.track_controller.get_switch('BC-A')))
@@ -943,6 +943,8 @@ class Ui_TrackController_MainUI(object):
 
 
     def PLC(self):
+        self.track_controller.set_commanded_speed(min(self.track_controller.get_suggested_speed(), self.track_controller.get_speed_limit('A5')))
+
         self.sect_A_occ = bool(self.track_controller.get_occupancy('A1') or self.track_controller.get_occupancy('A2') or self.track_controller.get_occupancy('A3') or self.track_controller.get_occupancy('A4') or self.track_controller.get_occupancy('A5'))
         self.sect_B_occ = bool(self.track_controller.get_occupancy('B6') or self.track_controller.get_occupancy('B7') or self.track_controller.get_occupancy('B8') or self.track_controller.get_occupancy('B9') or self.track_controller.get_occupancy('B10'))
         self.sect_C_occ = bool(self.track_controller.get_occupancy('C11') or self.track_controller.get_occupancy('C12') or self.track_controller.get_occupancy('C13') or self.track_controller.get_occupancy('C14') or self.track_controller.get_occupancy('C15'))
