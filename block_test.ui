@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>780</width>
+    <height>603</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="title">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>781</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);
+font: 75 16pt &quot;MS Shell Dlg 2&quot;;
+
+
+border: 3px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Blue Line - C4</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="clock">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>10</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid black;
+font: 75 10pt &quot;MS Shell Dlg 2&quot;;
+background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>13:56:54</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="speed_limit_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Speed Limit</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="direction_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Direction</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="elevation_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>240</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Elevation</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="length_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>160</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Length</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="grade_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Grade</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="track_color_label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>120</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Track Color</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="underground_label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>200</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Underground</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="track_heaters_label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>240</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Track Heaters</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="occupancy_label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>160</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Occupied</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="switch_position_label">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>80</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Switch Position</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>290</y>
+      <width>781</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>353</x>
+      <y>300</y>
+      <width>20</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="brake_failure_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>360</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Brake Failure</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="broken_rail_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>520</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Broken Rail</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="circuit_failure_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Circuit Failure</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="engine_failure_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>400</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Engine Failure</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="power_failure_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>440</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Power Failure</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="speed_limit">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>80</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="direction">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>120</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="length">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>160</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="elevation">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>240</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="grade">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>200</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="track_heaters">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>240</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="underground">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>200</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="occupancy">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>160</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="track_color">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>120</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="switch_position">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>80</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="failure_title">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>300</y>
+      <width>361</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);
+font: 75 16pt &quot;MS Shell Dlg 2&quot;;
+
+
+border: 3px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Failures</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="beacon_info">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>300</y>
+      <width>421</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);
+font: 75 16pt &quot;MS Shell Dlg 2&quot;;
+
+
+border: 3px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Static Information</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="brake_failure">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>360</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="engine_failure">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>400</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="broken_rail">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>520</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="circuit_failure">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>480</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="power_failiure">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>440</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>ye</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="static_info">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>400</y>
+      <width>181</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(225, 225, 225);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Station on right side</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="back">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>10</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 75 10pt &quot;MS Shell Dlg 2&quot;;
+background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>780</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
