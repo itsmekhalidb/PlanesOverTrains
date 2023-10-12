@@ -634,7 +634,7 @@ class Ui_Test_Bench(object):
         self.train_line_label.setObjectName("train_line_label")
 
         self.actual_velocity_label = QtWidgets.QLabel(self.centralwidget)
-        self.actual_velocity_label.setGeometry(QtCore.QRect(2, 544, 65, 19))
+        self.actual_velocity_label.setGeometry(QtCore.QRect(234, 510, 65, 31))
         font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(True)
@@ -643,17 +643,31 @@ class Ui_Test_Bench(object):
         self.actual_velocity_label.setAlignment(QtCore.Qt.AlignCenter)
         self.actual_velocity_label.setObjectName("actual_velocity_label")
 
-        self.underground_label = QtWidgets.QLabel(self.centralwidget)
-        self.underground_label.setGeometry(QtCore.QRect(156, 512, 87, 19))
+        # self.underground_label = QtWidgets.QLabel(self.centralwidget)
+        # self.underground_label.setGeometry(QtCore.QRect(156, 512, 87, 19))
+        # font = QtGui.QFont()
+        # font.setPointSize(9)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.underground_label.setFont(font)
+        # self.underground_label.setObjectName("underground_label")
+        # self.underground_edit = QtWidgets.QTextEdit(self.centralwidget)
+        # self.underground_edit.setGeometry(QtCore.QRect(234, 510, 65, 31))
+        # self.underground_edit.setObjectName("underground_edit")
+        # self.underground_label.setGeometry(QtCore.QRect(156, 512, 87, 19))
+
+        self.actual_velocity_label = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(True)
         font.setWeight(75)
-        self.underground_label.setFont(font)
-        self.underground_label.setObjectName("underground_label")
-        self.underground_edit = QtWidgets.QTextEdit(self.centralwidget)
-        self.underground_edit.setGeometry(QtCore.QRect(234, 510, 65, 31))
-        self.underground_edit.setObjectName("underground_edit")
+        self.actual_velocity_label.setFont(font)
+        self.actual_velocity_label.setObjectName("actual_velocity_label")
+        self.actual_velocity_edit = QtWidgets.QTextEdit(self.centralwidget)
+        self.actual_velocity_edit.setGeometry(QtCore.QRect(234, 510, 65, 31))
+        self.actual_velocity_edit.setObjectName("actual_velocity_edit")
+        self.actual_velocity_label.setGeometry(QtCore.QRect(156, 512, 87, 19))
+
         self.acc_pwr_label = QtWidgets.QLabel(self.centralwidget)
         self.acc_pwr_label.setGeometry(QtCore.QRect(318, 514, 87, 19))
         font = QtGui.QFont()
@@ -684,9 +698,7 @@ class Ui_Test_Bench(object):
         self.train_line_edit.setGeometry(QtCore.QRect(74, 508, 65, 31))
         self.train_line_edit.setObjectName("train_line_edit")
 
-        self.actual_velocity_edit = QtWidgets.QTextEdit(self.centralwidget)
-        self.actual_velocity_edit.setGeometry(QtCore.QRect(74, 544, 65, 31))
-        self.actual_velocity_edit.setObjectName("actual_velocity_edit")
+
 
         self.ebrake_label_3 = QtWidgets.QLabel(self.centralwidget)
         self.ebrake_label_3.setGeometry(QtCore.QRect(12, 186, 198, 27))
@@ -915,8 +927,8 @@ class Ui_Test_Bench(object):
         self.speed_limit_edit.raise_()
         self.train_line_label.raise_()
         self.actual_velocity_label.raise_()
-        self.underground_label.raise_()
-        self.underground_edit.raise_()
+        #self.underground_label.raise_()
+        #self.underground_edit.raise_()
         self.acc_pwr_label.raise_()
         self.cmd_pwr_edit.raise_()
         self.acc_pwr_edit.raise_()
@@ -1065,8 +1077,15 @@ class Ui_Test_Bench(object):
         #train line
         self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line())))
         #underground
-        self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
-
+        #self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
+        #ebrake clicked
+        self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(True))
+        if self.train_controller.get_ebrake_status() == True:
+                self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(False))
+        #service brake clicked
+        self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
+        if self.train_controller.get_service_brake_status()==True:
+                self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
     def calculate(self):
 
         speed_limit = self.speed_limit_edit.toPlainText()
@@ -1081,8 +1100,8 @@ class Ui_Test_Bench(object):
         train_line = self.train_line_edit.toPlainText()
         self.train_controller.set_train_line(train_line)
 
-        underground = self.underground_edit.toPlainText()
-        self.train_controller.set_underground_status(underground)
+        #underground = self.underground_edit.toPlainText()
+        #self.train_controller.set_underground_status(bool(underground))
 
         kp = self.cmd_pwr_edit_2.toPlainText()
         print(kp)
@@ -1142,10 +1161,10 @@ class Ui_Test_Bench(object):
         self.speed_limit_label.setText(_translate("Test_Bench", "Speed Limit"))
         self.train_line_label.setText(_translate("Test_Bench", "Train Line"))
         self.actual_velocity_label.setText(_translate("Test_Bench", "Actual \n Velocity"))
-        self.underground_label.setText(_translate("Test_Bench", "Underground"))
+        #self.underground_label.setText(_translate("Test_Bench", "Underground"))
         self.acc_pwr_label.setText(_translate("Test_Bench", "Actual Power"))
         self.authority_label.setText(_translate("Test_Bench", "Authority"))
-        self.ebrake_label_3.setText(_translate("Test_Bench", "Undeground"))
+        self.ebrake_label_3.setText(_translate("Test_Bench", "Underground"))
         self.ebrake_off_3.setText(_translate("Test_Bench", "NO"))
         self.ebrake_on_3.setText(_translate("Test_Bench", "YES"))
         self.cmd_pwr_label_2.setText(_translate("Test_Bench", "Kp"))

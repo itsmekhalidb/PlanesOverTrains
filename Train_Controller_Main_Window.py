@@ -796,6 +796,133 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self._handler()
+        #Auto Status
+        self.checkBox_12.toggled.connect(
+                lambda: self.train_controller.set_auto_status(self.checkBox_12.isChecked()))
+        #Right Door
+        self.checkBox_7.toggled.connect(
+                lambda: self.train_controller.set_right_door_status(self.checkBox_7.isChecked()))
+        #Left Door
+        self.checkBox_6.toggled.connect(
+                lambda: self.train_controller.set_left_door_status(self.checkBox_6.isChecked()))
+        #Undergound Status
+        self.checkBox_5.toggled.connect(
+                lambda: self.train_controller.set_underground_status(self.checkBox_5.isChecked()))
+        #internal lights
+        self.checkBox_4.toggled.connect(
+                lambda: self.train_controller.set_internal_lights(self.checkBox_4.isChecked()))
+        #external lights
+        self.checkBox_3.toggled.connect(
+                lambda: self.train_controller.set_external_lights(self.checkBox_3.isChecked()))
+        #emergency brake
+        self.checkBox_2.toggled.connect(
+                lambda: self.train_controller.set_emergency_brake_status(self.checkBox_2.isChecked()))
+        #service brake
+        self.checkBox.toggled.connect(
+                lambda: self.train_controller.set_service_brake_status(self.checkBox.isChecked()))
+        #emergency brake failure
+        self.checkBox_8.toggled.connect(
+                lambda: self.train_controller.set_emergency_brake_failure(self.checkBox_8.isChecked()))
+        #signal pickup failure
+        self.checkBox_11.toggled.connect(
+                lambda: self.train_controller.set_signal_pickup_failure_status(self.checkBox_11.isChecked()))
+        #train engine failure
+        self.checkBox_9.toggled.connect(
+                lambda: self.train_controller.set_engine_status(self.checkBox_9.isChecked()))
+        #service brake failure
+        self.checkBox_10.toggled.connect(
+                lambda: self.train_controller.set_service_brake_failure(self.checkBox_10.isChecked()))
+        #Speed Limit
+        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        #Commanded Speed
+        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        #actual speed
+        self.external_lights_label_11.setText(str("Actual Speed: " + str(self.train_controller.get_current_velocity())))
+        #commanded power
+        self.external_lights_label_12.setText(str("Commanded Power" + str(self.train_controller.get_commanded_power())))
+        #authority
+        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())));
+        #kp
+        self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
+        #ki
+        self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+        #ek
+        # self.doubleSpinBox.setValue(float(self.train_controller.get_ki()))
+        # #uk
+        # self.doubleSpinBox_4.setValue(float(self.train_controller.get_ki()))
+
+    def _handler(self):
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # 100ms update rate
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
+    def update(self):
+        _translate = QtCore.QCoreApplication.translate
+        #auto status
+        self.ebrake_fail_on_2.setVisible(bool(self.train_controller.get_auto_status()))
+        self.ebrake_fail_off_2.setVisible(not bool(self.train_controller.get_auto_status()))
+        #right door status
+        self.right_door_open.setVisible(bool(self.train_controller.get_right_door_status()))
+        self.right_door_closed.setVisible(not bool(self.train_controller.get_right_door_status()))
+        #left door status
+        self.left_door_open.setVisible(bool(self.train_controller.get_left_door_status()))
+        self.left_door_closed.setVisible(not bool(self.train_controller.get_left_door_status()))
+        #undergound status
+        self.ebrake_on_3.setVisible(bool(self.train_controller.get_underground_status()))
+        self.ebrake_off_3.setVisible(not bool(self.train_controller.get_underground_status()))
+        #internal lights
+        self.internal_lights_on.setVisible(bool(self.train_controller.get_internal_lights()))
+        self.internal_lights_off.setVisible(not bool(self.train_controller.get_internal_lights()))
+        #external lights
+        self.external_lights_on.setVisible(bool(self.train_controller.get_external_lights()))
+        self.external_lights_off.setVisible(not bool(self.train_controller.get_external_lights()))
+        #emergency brake
+        self.ebrake_on.setVisible(bool(self.train_controller.get_ebrake_status()))
+        self.ebrake_off.setVisible(not bool(self.train_controller.get_ebrake_status()))
+        #service brake
+        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_status()))
+        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_status()))
+        #ebrake failure
+        self.ebrake_fail_on.setVisible(bool(self.train_controller.get_emergency_brake_failure_status()))
+        self.ebrake_fail_off.setVisible(not bool(self.train_controller.get_emergency_brake_failure_status()))
+        #service brake failure
+        self.brake_fail_on.setVisible(bool(self.train_controller.get_service_brake_failure_status()))
+        self.brake_fail_off.setVisible(not bool(self.train_controller.get_service_brake_failure_status()))
+        #train engine failure status
+        self.engine_fail_on.setVisible(bool(self.train_controller.get_engine_status()))
+        self.engine_fail_off.setVisible(not bool(self.train_controller.get_engine_status()))
+        #signal pickup failure
+        self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
+        self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
+        #speed limit
+        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        #commanded speed
+        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        #kp
+        self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
+        #ki
+        self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+        #actual speed
+        self.external_lights_label_11.setText(str("Actual Speed: " + str(round(self.train_controller.get_current_velocity(),3))))
+        #commanded power
+        self.external_lights_label_12.setText(str("Commanded Power: " + str(self.train_controller.get_commanded_power())))
+        #authority
+        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())))
+        #actual velocity
+        # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
+        #train line
+        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line())))
+        #underground
+        #self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
+        #ebrake clicked
+        self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(True))
+        if self.train_controller.get_ebrake_status() == True:
+                self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(False))
+        #service brake clicked
+        self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
+        if self.train_controller.get_service_brake_status()==True:
+                self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
