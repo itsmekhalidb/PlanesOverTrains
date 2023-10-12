@@ -208,7 +208,7 @@ class Ui_TrackController_Testbench(object):
         font.setPointSize(12)
         self.suggested_speed_label.setFont(font)
         self.suggested_speed_label.setObjectName("suggested_speed_label")
-        self.suggested_speed_spinBox = QtWidgets.QSpinBox(Frame)
+        self.suggested_speed_spinBox = QtWidgets.QSpinBox(Frame, valueChanged=lambda: self.track_controller.set_suggested_speed(self.suggested_speed_spinBox.value()))
         self.suggested_speed_spinBox.setGeometry(QtCore.QRect(268, 454, 52, 28))
         self.suggested_speed_spinBox.setObjectName("suggested_speed_spinBox")
         self.authority_label = QtWidgets.QLabel(Frame)
@@ -352,6 +352,8 @@ class Ui_TrackController_Testbench(object):
         self.power_checkBox.setText(_translate("Frame", "Power"))
         self.brake_checkBox.setText(_translate("Frame", "Brake"))
         self.train_engine_checkBox.setText(_translate("Frame", "Train Engine"))
+        self.authority_label.setVisible(False)
+        self.authority_spinBox.setVisible(False)
 
     def update(self):
         self.speed_limit_spinBox.setValue(self.track_controller.get_speed_limit(self.block_comboBox.currentText()))
