@@ -8,11 +8,13 @@ class Track_Controller(object):
                       'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
-        # 0 = red, 1 = green, 2 = super green
+        #blocks that are currently occupied
+        self._occupied_blocks = ['A1']
+        # 1 = red, 0 = green
         self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
         # plc input
         self._plc_input = ""
-        # 0 = left, 1 = right
+        # 1 = left, 0 = right
         self._switches = {'BC-A': 0}
         # crossing lights/gate
         self._crossing_lights_gates = ""
@@ -38,8 +40,19 @@ class Track_Controller(object):
     def get_occupancy(self, block) -> int:
         return self._blue[block][2]
 
+    def get_occupied_blocks(self) -> list:
+        temp = []
+        for x in self._occupied_blocks:
+            temp.append(x + '          ' + str(self.get_speed_limit(x)) + ' mph')
+        return temp
+
     def set_occupancy(self, block, value: int):
         self._blue[block][2] = value
+        if value == 1:
+            self._occupied_blocks.append(block)
+        else:
+            self._occupied_blocks.remove(block)
+        self._occupied_blocks.sort()
 
     def get_speed_limit(self, block) -> float:
         return self._blue[block][1]

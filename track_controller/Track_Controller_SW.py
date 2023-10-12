@@ -60,7 +60,7 @@ class Ui_TrackController_MainUI(object):
         font.setPointSize(12)
         self.commanded_speed_label.setFont(font)
         self.commanded_speed_label.setObjectName("commanded_speed_label")
-        self.occupied_blocks = QtWidgets.QTextBrowser(Frame)
+        self.occupied_blocks = QtWidgets.QListWidget(Frame)
         self.occupied_blocks.setGeometry(QtCore.QRect(28, 391, 256, 192))
         font = QtGui.QFont()
         font.setPointSize(10)
@@ -374,8 +374,8 @@ class Ui_TrackController_MainUI(object):
         self.PLC_output_label.setFont(font)
         self.PLC_output_label.setAlignment(QtCore.Qt.AlignCenter)
         self.PLC_output_label.setObjectName("PLC_output_label")
-        self.PLC_output = QtWidgets.QTextBrowser(Frame)
-        self.PLC_output.setGeometry(QtCore.QRect(683, 127, 256, 453))
+        self.PLC_output = QtWidgets.QListWidget(Frame)
+        self.PLC_output.setGeometry(QtCore.QRect(650, 127, 289, 453))
         font = QtGui.QFont()
         font.setPointSize(10)
         self.PLC_output.setFont(font)
@@ -855,8 +855,13 @@ class Ui_TrackController_MainUI(object):
         self.toggle_light_9.setText(_translate("Frame", "Toggle"))
         self.toggle_light_10.setText(_translate("Frame", "Toggle"))
         self.toggle_light_11.setText(_translate("Frame", "Toggle"))
+
     def update(self):
         _translate = QtCore.QCoreApplication.translate
+        self.occupied_blocks.clear()
+        self.PLC_output.clear()
+        self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks())
+        self.track_controller.set_automatic(not self.manual_mode_checkBox.checkState())
 
         self.commanded_speed_spinBox.setValue(min(self.track_controller.get_commanded_speed(), self.track_controller.get_speed_limit('A5')))
         self.commanded_speed.setText(str(min(self.track_controller.get_commanded_speed(), self.track_controller.get_speed_limit('A5'))) + " mph")
@@ -932,14 +937,60 @@ class Ui_TrackController_MainUI(object):
         self.traffic_light_red_11.setVisible(False)
         self.traffic_light_green_11.setVisible(False)
 
-    # def PLC(self):
-    #     self.sect_B_occ = bool(self.track_controller.get_occupancy('B6') || self.track_controller.get_occupancy('B7') || self.track_controller.get_occupancy('B8') || self.track_controller.get_occupancy('B9') || self.track_controller.get_occupancy('B10'))
-    #     if bool(self.track_controller.get_occupancy('A1') || self.track_controller.get_occupancy('A2') || self.track_controller.get_occupancy('A3') || self.track_controller.get_occupancy('A4') || self.track_controller.get_occupancy('A5'))
-    #             self.track_controller.set_lights('A5', 0)
-    #             self.track_controller.set_lights('B6', 1)
-    #             self.track_controller.set_lights('B6', 1)
-    #     elif self.sect_B_occ
-    #             self.track_controller.set_switch('BC-A', 1)
+        if self.track_controller.get_automatic():
+            self.PLC()
+
+
+
+    def PLC(self):
+        self.sect_A_occ = bool(self.track_controller.get_occupancy('A1') or self.track_controller.get_occupancy('A2') or self.track_controller.get_occupancy('A3') or self.track_controller.get_occupancy('A4') or self.track_controller.get_occupancy('A5'))
+        self.sect_B_occ = bool(self.track_controller.get_occupancy('B6') or self.track_controller.get_occupancy('B7') or self.track_controller.get_occupancy('B8') or self.track_controller.get_occupancy('B9') or self.track_controller.get_occupancy('B10'))
+        self.sect_C_occ = bool(self.track_controller.get_occupancy('C11') or self.track_controller.get_occupancy('C12') or self.track_controller.get_occupancy('C13') or self.track_controller.get_occupancy('C14') or self.track_controller.get_occupancy('C15'))
+        if self.sect_A_occ:
+                self.PLC_output.addItem("Train detected in section A")
+                self.track_controller.set_lights('A5', 0)
+                self.track_controller.set_lights('B6', 1)
+                self.track_controller.set_lights('C11', 1)
+                if self.sect_B_occ:
+                        self.PLC_output.addItem("Train detected in section B")
+                        self.track_controller.set_lights('A5', 0)
+                        self.track_controller.set_lights('B6', 1)
+                        self.track_controller.set_lights('C11', 1)
+                        self.track_controller.set_switch('BC-A', 1)
+                        self.PLC_output.addItem("Stopping traffic from track section B")
+                        self.PLC_output.addItem("Switching to track section C")
+                elif self.sect_C_occ:
+                        self.PLC_output.addItem("Train detected in section C")
+                        self.track_controller.set_lights('A5', 0)
+                        self.track_controller.set_lights('B6', 1)
+                        self.track_controller.set_lights('C11', 1)
+                        self.track_controller.set_switch('BC-A', 0)
+                        self.PLC_output.addItem("Stopping traffic from track section C")
+                        self.PLC_output.addItem("Switching to track section B")
+                else:
+                        self.PLC_output.addItem("Stopping traffic from track sections B and C")
+                        self.PLC_output.addItem("Switching to track section B")
+        elif self.sect_B_occ:
+                self.PLC_output.addItem("Train detected in section B")
+                self.track_controller.set_lights('A5', 0)
+                self.track_controller.set_lights('B6', 1)
+                self.track_controller.set_lights('C11', 0)
+                self.track_controller.set_switch('BC-A', 1)
+                self.PLC_output.addItem("Stopping traffic from track sections A and C")
+                self.PLC_output.addItem("Switching to track section B")
+        elif self.sect_C_occ:
+                self.PLC_output.addItem("Train detected in section C")
+                self.track_controller.set_lights('A5', 1)
+                self.track_controller.set_lights('B6', 1)
+                self.track_controller.set_lights('C11', 0)
+                self.track_controller.set_switch('BC-A', 0)
+                self.PLC_output.addItem("Stopping traffic from track sections A and B")
+                self.PLC_output.addItem("Switching to track section C")
+        else:
+                self.PLC_output.addItem("No trains on the track")
+                self.track_controller.set_lights('A5', 0)
+                self.track_controller.set_lights('B6', 0)
+                self.track_controller.set_lights('C11', 0)
 
     def ChangeVisibility(self):
         if self.track_controller.get_switch('BC-A'):
@@ -1042,7 +1093,7 @@ class Ui_TrackController_MainUI(object):
 
     def _handler(self):
         self.timer = QTimer()
-        self.timer.setInterval(100)  # refreshes every time period
+        self.timer.setInterval(500)  # refreshes every time period
         self.timer.timeout.connect(self.update)
         self.timer.start()
 
