@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTimeEdit
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime, time
 from CTC import CTC
@@ -163,9 +164,18 @@ class Ui_MainWindow(object):
         self.station_icon = QtWidgets.QLabel(self.track_view_page)
         self.station_icon.setGeometry(QtCore.QRect(10, 110, 31, 31))
         self.station_icon.setObjectName("station_icon")
+
+        # map
         self.track_map = QtWidgets.QGraphicsView(self.track_view_page)
         self.track_map.setGeometry(QtCore.QRect(170, 61, 481, 621))
         self.track_map.setObjectName("track_map")
+        self.scene = QtWidgets.QGraphicsScene()
+        self.track_map.setScene(self.scene)
+        image_path = "C:\\Users\\irons\\OneDrive\\Documents\\GitHub\\PlanesOverTrains\\CTC_resources\\blue_map.png"
+        pixmap = QtGui.QPixmap(image_path)
+        pixmap_item = QtWidgets.QGraphicsPixmapItem(pixmap)
+        self.scene.addItem(pixmap_item)
+
         self.closure_icon = QtWidgets.QLabel(self.track_view_page)
         self.closure_icon.setGeometry(QtCore.QRect(10, 200, 31, 31))
         self.closure_icon.setObjectName("closure_icon")
@@ -482,7 +492,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">info info blah blah</span></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">info</span></p></body></html>"))
         self.title_label_2.setText(_translate("MainWindow", "Track View"))
         self.element_header.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
