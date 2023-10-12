@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QTimeEdit
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime, time
 from CTC import CTC
@@ -74,7 +75,7 @@ class Ui_MainWindow(object):
         self.track_image.setGeometry(QtCore.QRect(440, 260, 101, 71))
         self.track_image.setObjectName("track_image")
         self.train_info = QtWidgets.QTextEdit(self.train_view_page)
-        self.train_info.setGeometry(QtCore.QRect(390, 400, 191, 91))
+        self.train_info.setGeometry(QtCore.QRect(365, 400, 241, 91))
         self.train_info.setObjectName("train_info")
         self.train_info.setReadOnly(True)
         self.train_list = QtWidgets.QComboBox(self.train_view_page)
@@ -87,6 +88,7 @@ class Ui_MainWindow(object):
         self.train_list.setObjectName("train_list")
         for train in CTC.get_trains():
             self.train_list.addItem(train.train_list_info())
+        self.train_list.activated.connect(lambda:self.update())
         self.train_image = QtWidgets.QLabel(self.train_view_page)
         self.train_image.setGeometry(QtCore.QRect(210, 190, 181, 181))
         self.train_image.setObjectName("train_image")
@@ -399,6 +401,7 @@ class Ui_MainWindow(object):
         self.kmhr_label.setGeometry(QtCore.QRect(150, 320, 41, 31))
         self.kmhr_label.setObjectName("kmhr_label")
         self.kmhr_label.setReadOnly(True)
+        
         self.title_label_4.raise_()
         self.red.raise_()
         self.train_label.raise_()
@@ -546,22 +549,40 @@ class Ui_MainWindow(object):
         global CTC
         _translate = QtCore.QCoreApplication.translate
 
+        # destination station and arrival time
+        if CTC._trains[self.train_list.currentIndex()]._schedule != None:
+            self.station_list.setCurrentText(CTC._trains[self.train_list.currentIndex()]._schedule.get_destination_station())
+            self.station_list.setDisabled(True)
+
+            arr_time = CTC._trains[self.train_list.currentIndex()]._schedule.get_arrival_time()
+            real_arr_time = QTime(arr_time.hour, arr_time.minute)
+            self.arrival_time.setTime(real_arr_time)
+            self.arrival_time.setReadOnly(True)
+            self.arrival_time.setButtonSymbols(QTimeEdit.NoButtons)
+        else:
+            self.station_list.setCurrentText("Destination Station")
+            self.station_list.setDisabled(False)
+
+            self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
+            self.arrival_time.setReadOnly(False)
+            self.arrival_time.setButtonSymbols(QTimeEdit.UpDownArrows)
+
         # train schedule info
         temp_train = CTC._trains[self.train_list.currentIndex()]
         if temp_train._schedule != None:
             temp_dep_time_w_ms = temp_train.get_departure_time()
             temp_dep_time = time(temp_dep_time_w_ms.hour, temp_dep_time_w_ms.minute, temp_dep_time_w_ms.second)
-            temp_auth = temp_train.get_authority()
-            temp_sug_speed = temp_train.get_suggested_velocity()
-            temp_curr_speed = temp_train.get_actual_velocity()
+            temp_auth = self.meters_to_miles(temp_train.get_authority())
+            temp_sug_speed = self.kmhr_to_mihr(temp_train.get_suggested_velocity())
+            temp_curr_speed = self.kmhr_to_mihr(temp_train.get_actual_velocity())
             self.train_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
         "p, li { white-space: pre-wrap; }\n"
         "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
         f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Departure Time: {temp_dep_time}</span></p>\n"
-        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: {temp_auth}</span></p>\n"
-        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: {temp_sug_speed}</span></p>\n"
-        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: {temp_curr_speed}</span></p></body></html>"))
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: {temp_auth} Mi</span></p>\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: {temp_sug_speed} Mi/Hr</span></p>\n"
+        f"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: {temp_curr_speed} Mi/Hr</span></p></body></html>"))
         else:
             self.train_info.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -571,6 +592,7 @@ class Ui_MainWindow(object):
         "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Authority: </span></p>\n"
         "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Suggested Speed: </span></p>\n"
         "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Current Speed: </span></p></body></html>"))
+
 
 
     # switch to train view
@@ -602,10 +624,13 @@ class Ui_MainWindow(object):
         if datetime.now().time() < time_in and station_name != "Destination Station":
             CTC._trains[train_index].create_schedule(station_name, time_in, CTC._track)
             self.update()
+    
 
-
-    def test(self):
-        print("help")
+    # unit conversion functions
+    def meters_to_miles(self, meters):
+        return "{:.2f}".format(meters / 1609.344)
+    def kmhr_to_mihr(self, kmhr):
+        return "{:.2f}".format(kmhr / 0.621371)
         
 
 import CTC_resource_file_rc

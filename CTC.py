@@ -171,7 +171,13 @@ class Block(object):
 
     # return ideal traversal time in seconds
     def get_ideal_traversal_time(self):
-        return self._length / (self._speed_limit * 1000 / 360)
+        ms_vel = self._speed_limit * 1000 / 360
+        res = self._length / ms_vel
+        return res
+    
+    # getter function 
+    def get_length(self):
+        return self._length
 
 
 
@@ -214,7 +220,7 @@ class Train(object):
     def __init__(self):
         self._number = -1 # train id number
         self._authority = -1 # distance train is allowed to move in meters
-        self._actual_velocity = -1 # actual velocity of train from train controller
+        self._actual_velocity = 0 # actual velocity of train from train controller
         self._current_block = 0 # current position of train, 0 indicates yard
         self._schedule = None # object containing train's schedule
     
@@ -233,9 +239,9 @@ class Train(object):
     def create_schedule(self, dest_station, arrival_time, track):
         global _stations
         destination_block = _stations[dest_station]
-        sched = Schedule(destination_block, arrival_time)
+        sched = Schedule(destination_block, dest_station, arrival_time)
         self._schedule = sched
-        sched.test_blue_sched(track)
+        self._authority = sched.test_blue_sched(track)
         
     # getter functions
     def get_authority(self):
@@ -252,9 +258,10 @@ class Train(object):
 
 
 class Schedule(object):
-    def __init__(self, dest_block, arrival_time):
+    def __init__(self, dest_block, dest_station, arrival_time):
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._destination_block = dest_block # train destination from dispatcher
+        self._dest_station = dest_station # name of destination station
         self._departure_time = None # calculated train departure time
         self._suggested_velocity = 0 # calculated velocity
 
@@ -265,21 +272,27 @@ class Schedule(object):
         lines = track.get_lines()
         sections = lines[0].get_sections()
         total_time = 0 # total travel time in seconds
+        total_dist = 0 # total distance in meters
         # calculate travel time
         if self._destination_block == 10:
             for x in sections[0].get_blocks():
                 total_time += x.get_ideal_traversal_time()
+                total_dist += x.get_length()
             for x in sections[1].get_blocks():
                 total_time += x.get_ideal_traversal_time()
+                total_dist += x.get_length()
         elif self._destination_block == 15:
             for x in sections[0].get_blocks():
                 total_time += x.get_ideal_traversal_time()
+                total_dist += x.get_length()
             for x in sections[2].get_blocks():
                 total_time += x.get_ideal_traversal_time()
+                total_dist += x.get_length()
         arrival_time_with_date = datetime.combine(datetime.today(), self._arrival_time)
-        temp_departure_time = arrival_time_with_date - timedelta(seconds=total_time)
+        temp_departure_time = arrival_time_with_date - timedelta(minutes=total_time) # I CHANGED THIS TO MINUTES SO IT'S NOT INSTANTANEOUS
         self._departure_time = temp_departure_time.time()
         self._suggested_velocity = 50
+        return total_dist
             
 
     # getter functions
@@ -289,3 +302,5 @@ class Schedule(object):
         return self._departure_time
     def get_arrival_time(self):
         return self._arrival_time
+    def get_destination_station(self):
+        return self._dest_station
