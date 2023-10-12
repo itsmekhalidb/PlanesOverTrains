@@ -29,7 +29,7 @@ class Ui_Test_Bench(object):
 
     def setupUi(self, Test_Bench):
         Test_Bench.setObjectName("Test_Bench")
-        Test_Bench.resize(629, 552)
+        Test_Bench.resize(629, 582)
         self.centralwidget = QtWidgets.QWidget(Test_Bench)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
@@ -632,6 +632,17 @@ class Ui_Test_Bench(object):
         self.train_line_label.setFont(font)
         self.train_line_label.setAlignment(QtCore.Qt.AlignCenter)
         self.train_line_label.setObjectName("train_line_label")
+
+        self.actual_velocity_label = QtWidgets.QLabel(self.centralwidget)
+        self.actual_velocity_label.setGeometry(QtCore.QRect(2, 544, 65, 19))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.actual_velocity_label.setFont(font)
+        self.actual_velocity_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.actual_velocity_label.setObjectName("actual_velocity_label")
+
         self.underground_label = QtWidgets.QLabel(self.centralwidget)
         self.underground_label.setGeometry(QtCore.QRect(156, 512, 87, 19))
         font = QtGui.QFont()
@@ -672,6 +683,11 @@ class Ui_Test_Bench(object):
         self.train_line_edit = QtWidgets.QTextEdit(self.centralwidget)
         self.train_line_edit.setGeometry(QtCore.QRect(74, 508, 65, 31))
         self.train_line_edit.setObjectName("train_line_edit")
+
+        self.actual_velocity_edit = QtWidgets.QTextEdit(self.centralwidget)
+        self.actual_velocity_edit.setGeometry(QtCore.QRect(74, 544, 65, 31))
+        self.actual_velocity_edit.setObjectName("actual_velocity_edit")
+
         self.ebrake_label_3 = QtWidgets.QLabel(self.centralwidget)
         self.ebrake_label_3.setGeometry(QtCore.QRect(12, 186, 198, 27))
         font = QtGui.QFont()
@@ -898,6 +914,7 @@ class Ui_Test_Bench(object):
         self.speed_limit_label.raise_()
         self.speed_limit_edit.raise_()
         self.train_line_label.raise_()
+        self.actual_velocity_label.raise_()
         self.underground_label.raise_()
         self.underground_edit.raise_()
         self.acc_pwr_label.raise_()
@@ -906,6 +923,7 @@ class Ui_Test_Bench(object):
         self.authority_label.raise_()
         self.authority_edit.raise_()
         self.train_line_edit.raise_()
+        self.actual_velocity_edit.raise_()
         self.cmd_pwr_label_2.raise_()
         self.acc_pwr_label_2.raise_()
         self.cmd_pwr_edit_2.raise_()
@@ -974,6 +992,17 @@ class Ui_Test_Bench(object):
         self.external_lights_label_11.setText(str("Actual Speed: " + str(self.train_controller.get_current_velocity())))
         #commanded power
         self.external_lights_label_12.setText(str("Commanded Power" + str(self.train_controller.get_commanded_power())))
+        #authority
+        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())));
+        #kp
+        self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
+        #ki
+        self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+        #ek
+        self.doubleSpinBox.setValue(float(self.train_controller.get_ki()))
+        #uk
+        self.doubleSpinBox_4.setValue(float(self.train_controller.get_ki()))
+
     def _handler(self):
         self.timer = QTimer()
         self.timer.setInterval(100)  # 100ms update rate
@@ -1025,11 +1054,35 @@ class Ui_Test_Bench(object):
         self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
         #ki
         self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+        #actual speed
+        self.external_lights_label_11.setText(str("Actual Speed: " + str(round(self.train_controller.get_current_velocity(),3))))
+        #commanded power
+        self.external_lights_label_12.setText(str("Commanded Power: " + str(self.train_controller.get_commanded_power())))
+        #authority
+        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())))
+        #actual velocity
+        # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
+        #train line
+        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line())))
+        #underground
+        self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
 
     def calculate(self):
 
         speed_limit = self.speed_limit_edit.toPlainText()
         self.train_controller.set_maximum_veloctity(float(speed_limit))
+
+        authority = self.authority_edit.toPlainText()
+        self.train_controller.set_authority(float(authority))
+
+        actual_velocity = self.actual_velocity_edit.toPlainText()
+        self.train_controller.set_current_velocity(float(actual_velocity), float(speed_limit))
+
+        train_line = self.train_line_edit.toPlainText()
+        self.train_controller.set_train_line(train_line)
+
+        underground = self.underground_edit.toPlainText()
+        self.train_controller.set_underground_status(underground)
 
         kp = self.cmd_pwr_edit_2.toPlainText()
         print(kp)
@@ -1088,6 +1141,7 @@ class Ui_Test_Bench(object):
         self.cmd_pwr_label.setText(_translate("Test_Bench", "Commanded Power"))
         self.speed_limit_label.setText(_translate("Test_Bench", "Speed Limit"))
         self.train_line_label.setText(_translate("Test_Bench", "Train Line"))
+        self.actual_velocity_label.setText(_translate("Test_Bench", "Actual \n Velocity"))
         self.underground_label.setText(_translate("Test_Bench", "Underground"))
         self.acc_pwr_label.setText(_translate("Test_Bench", "Actual Power"))
         self.authority_label.setText(_translate("Test_Bench", "Authority"))

@@ -29,9 +29,11 @@ class TrainController(object):
         self._ki = 0.0
         self._ek = 0.0
         self._uk = 0.0
+        self._ti = 1.0
         self._beacon = 0
         self._previous_uk = 0.0
         self._previous_ek = 0.0
+        self._train_line = ""
 
         # Update Function
         self.update()
@@ -53,6 +55,17 @@ class TrainController(object):
         self.set_emergency_brake_failure(bool(self.get_emergency_brake_failure_status()))
         self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
         self.set_engine_status(bool(self.get_engine_status()))
+        self.set_signal_pickup_failure_status(bool(self.get_signal_pickup_failure()))
+        self.set_commanded_velocity(float(self.get_current_velocity()), float(self.get_maximum_velocity()))
+        self.set_maximum_veloctity(float(self.get_maximum_velocity()))
+        self.set_authority(float(self.get_authority()))
+        self.set_current_velocity(float(self.get_actual_velocity()), float(self.get_maximum_velocity()))
+        self.set_ki(float(self.get_ki()))
+        self.set_kp(float(self.get_ki()), 1.0)
+        self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
+        self.set_uk(float(self._ek))
+        self.set_power(float(self.get_commanded_power()))
+
         if thread:
             threading.Timer(0.1, self.update).start()
     def set_engine_status(self, stat: bool):
@@ -65,10 +78,15 @@ class TrainController(object):
         if v <= m:
             self._commanded_velocity = v
     def set_current_velocity(self, desired_speed: float, maximum_speed: float):
-        if 0<= desired_speed <= maximum_speed:
-            self._current_velocity = desired_speed
-        if self._engine_failure == True or self._emergency_brake_failure==True or self._service_brake_failure==True or self._signal_pickup_failure==True:
+        if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
             self._current_velocity = 0
+        else:
+            if desired_speed <= maximum_speed:
+                while self._current_velocity < desired_speed:
+                    self._current_velocity += (.006*.3048*60)
+            else:
+                while self._current_velocity < maximum_speed:
+                    self._current_velocity += (.006*.3048*60)
     def set_internal_lights(self, status: bool):
         if self._underground_status:
             self._internal_lights_on = True
@@ -90,12 +108,14 @@ class TrainController(object):
     def set_kp(self, ki: float, ti: float):
         self._kp = ti/ki # check out formulas and clarify
     def set_ki(self, ti:float):
-        self._ki = 1/ti
+        self._ki = 1/self._ti
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
     def set_eK(self, desired: int, actual: int):
-        self._ek = desired - actual
+        self._ek = self._commanded_velocity - self._current_velocity
     def set_power(self, desired_power: float):
+        if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
+            self._commanded_power = 0
         if desired_power <= 120000:
             self._commanded_power = self._kp * self._ek + self._ki + self._uk
     def set_right_door_status(self,stat: bool):
@@ -110,6 +130,8 @@ class TrainController(object):
         self._emergency_brake_failure = f
     def set_service_brake_failure(self, stat: bool):
         self._service_brake_failure = stat
+    def set_train_line(self, line: str):
+        self._train_line = line
     def get_current_velocity(self)->float:
         return self._current_velocity
     def get_auto_status(self)->bool:
@@ -150,3 +172,5 @@ class TrainController(object):
         return self._current_velocity
     def get_commanded_power(self)->float:
         return self._commanded_power
+    def get_train_line(self)->str:
+        return self._train_line
