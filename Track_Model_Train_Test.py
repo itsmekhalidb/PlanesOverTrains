@@ -267,25 +267,20 @@ class Ui_Track_Model_Train(object):
         self.onboarding_train.setGeometry(QtCore.QRect(600, 390, 51, 41))
         self.onboarding_train.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
-        self.onboarding_train.setText("")
+        self.onboarding_train.setText("13")
         self.onboarding_train.setObjectName("onboarding_train")
-        self.onboarding_double = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.onboarding_double.setGeometry(QtCore.QRect(600,390,51,41))
+
 
 
         self.offboarding_train = QtWidgets.QLabel(self.centralwidget)
         self.offboarding_train.setGeometry(QtCore.QRect(600, 480, 51, 41))
         self.offboarding_train.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
-        self.offboarding_train.setText("")
+        self.offboarding_train.setText("8")
         self.offboarding_train.setObjectName("offboarding_train")
-        self.offboarding_double = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.offboarding_double.setGeometry(QtCore.QRect(600,480,51,41))
 
-        self.onboarding_double.valueChanged.connect(self.update_passenger_count)
-        self.offboarding_double.valueChanged.connect(self.update_passenger_count)
-        self.pass_count = 100
-        self.update_passenger_count()
+
+
 
 
         self.temp_control_label_train = QtWidgets.QLabel(self.centralwidget)
@@ -340,13 +335,6 @@ class Ui_Track_Model_Train(object):
         self.onboarding_label_train.setText(_translate("Track_Model_Train", "Onboarding"))
         self.offboarding_label_train.setText(_translate("Track_Model_Train", "Offboarding"))
         self.temp_control_label_train.setText(_translate("Track_Model_Train", "Temperature Control"))
-
-    def update_passenger_count(self):
-            onboarding = self.onboarding_double.value()
-            offboarding = self.offboarding_double.value()
-            self.pass_count_2 = self.pass_count + onboarding - offboarding
-            self.passenger_count_train.setText(str(self.pass_count_2))
-
 
 
 
