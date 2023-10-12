@@ -447,10 +447,10 @@ class Ui_track_controller_mainwindow(object):
         if type_output[0] == "Switch":
             print("Switch")
             if self.track_controller_hw.get_switch(value) == 0:
-                send = "10100" + str(type_output[1]) + " => C"
+                send = "10100" + str(type_output[1]) + " => B"
                 self.get_ard().write(send.encode('utf-8'))
             elif self.track_controller_hw.get_switch(value) == 1:
-                send = "10100" + str(type_output[1]) + " => A"
+                send = "10100" + str(type_output[1]) + " => C"
                 self.get_ard().write(send.encode('utf-8'))
 
     def _handler(self):
@@ -511,7 +511,7 @@ class Ui_track_controller_mainwindow(object):
             self.track_controller_hw.set_lights(1, 'Light B-B6')
             self.track_controller_hw.set_lights(1, 'Light C-C11')
             if self.sect_B_occ:
-                self.plc_output_output.addItem("Train detected in section B")
+                self.plc_output.addItem("Train detected in section B")
                 self.track_controller_hw.set_lights(1, 'Light B-A5', )
                 self.track_controller_hw.set_lights(1, 'Light B-B6')
                 self.track_controller_hw.set_lights(1, 'Light B-C11')
