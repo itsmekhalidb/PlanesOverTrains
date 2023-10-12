@@ -391,7 +391,7 @@ class Ui_Test_Bench(object):
 
         self._handler()
 
-        self.selected_output.setText("0")
+        self.selected_output.setText("50")
         self.authority_input.setText("0")
         self.suggested_soeed_input.setText("0")
         self.super_green_light_button.setVisible(False)

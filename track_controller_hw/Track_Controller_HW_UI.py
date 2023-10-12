@@ -512,7 +512,7 @@ class Ui_track_controller_mainwindow(object):
             self.track_controller_hw.set_lights(1, 'Light C-C11')
             if self.sect_B_occ:
                 self.plc_output.addItem("Train detected in section B")
-                self.track_controller_hw.set_lights(1, 'Light B-A5', )
+                self.track_controller_hw.set_lights(0, 'Light B-A5', )
                 self.track_controller_hw.set_lights(1, 'Light B-B6')
                 self.track_controller_hw.set_lights(1, 'Light B-C11')
                 self.track_controller_hw.set_switch(1, 'Switch BC-A')
@@ -521,7 +521,7 @@ class Ui_track_controller_mainwindow(object):
             elif self.sect_C_occ:
                 self.plc_output.addItem("Train detected in section C")
                 self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(0, 'Light B-B6')
+                self.track_controller_hw.set_lights(1, 'Light B-B6')
                 self.track_controller_hw.set_lights(1, 'Light B-C11')
                 self.track_controller_hw.set_switch(0, 'Switch BC-A')
                 self.plc_output.addItem("Stopping traffic from track section C")
@@ -534,15 +534,15 @@ class Ui_track_controller_mainwindow(object):
             self.track_controller_hw.set_lights(0, 'Light B-A5')
             self.track_controller_hw.set_lights(1, 'Light B-B6')
             self.track_controller_hw.set_lights(0, 'Light B-C11')
-            self.track_controller_hw.set_switch(1, 'Light BC-A')
+            self.track_controller_hw.set_switch(0, 'Light BC-A')
             self.plc_output.addItem("Stopping traffic from track sections A and C")
             self.plc_output.addItem("Switching to track section B")
         elif self.sect_C_occ:
             self.plc_output.addItem("Train detected in section C")
-            self.track_controller_hw.set_lights(1, 'Light B-A5')
-            self.track_controller_hw.set_lights(1, 'Light B-B6')
-            self.track_controller_hw.set_lights(0, 'Light B-C11')
-            self.track_controller_hw.set_switch(0, 'Switch BC-A')
+            self.track_controller_hw.set_lights(0, 'Light B-A5')
+            self.track_controller_hw.set_lights(0, 'Light B-B6')
+            self.track_controller_hw.set_lights(1, 'Light B-C11')
+            self.track_controller_hw.set_switch(1, 'Switch BC-A')
             self.plc_output.addItem("Stopping traffic from track sections A and B")
             self.plc_output.addItem("Switching to track section C")
         else:
