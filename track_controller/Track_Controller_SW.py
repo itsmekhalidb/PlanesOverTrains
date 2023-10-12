@@ -63,7 +63,7 @@ class Ui_TrackController_MainUI(object):
         self.occupied_blocks = QtWidgets.QListWidget(Frame)
         self.occupied_blocks.setGeometry(QtCore.QRect(28, 391, 256, 192))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(16)
         self.occupied_blocks.setFont(font)
         self.occupied_blocks.setFrameShape(QtWidgets.QFrame.Box)
         self.occupied_blocks.setFrameShadow(QtWidgets.QFrame.Plain)
@@ -892,6 +892,7 @@ class Ui_TrackController_MainUI(object):
         # iteration 2 - no system speed
         self.system_speed_label.setVisible(False)
         self.system_speed_spinBox.setVisible(False)
+        self.sys_time_label.setVisible(False)
 
         #switches
         self.switch_label_2.setVisible(False)
