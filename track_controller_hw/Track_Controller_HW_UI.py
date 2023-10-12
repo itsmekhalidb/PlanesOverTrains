@@ -115,6 +115,17 @@ class Ui_track_controller_mainwindow(object):
         self.manual_mode_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                              "border: 1px solid black;\n"
                                              "")
+        self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
+        self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.manual_mode_label_1.setFont(font)
+        self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+                                             "border: 1px solid black;\n"
+                                             "")
+        self.manual_mode_label_1.setText("Crossing Lights")
         self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.manual_mode_label.setObjectName("manual_mode_label")
         self.manual_mode_off = QtWidgets.QLabel(self.centralwidget)
