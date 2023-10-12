@@ -13,13 +13,15 @@ class Track_Controller_HW(object):
         # plc input
         self._plc_input = ""
         # 0 = left, 1 = right
-        self._switches = {'Switch B-A5': 0, 'Switch B-B6': 0, 'Switch B-C11': 0}
+        self._switches = {'Switch BC-A': 0}
         # crossing lights/gate
         self._crossing_lights_gates = ""
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
         self._command_speed = 0
+
+        self._occupied_blocks = []
 
         # Testbench Variables
         self._broken_rail = False  # ebrake failure
@@ -35,11 +37,22 @@ class Track_Controller_HW(object):
     def get_blue_track(self) -> dict:
         return self._blue
 
-    def get_occupancy(self, block) -> int:
-        return self._blue[block][2]
+    def get_occupied_blocks(self) -> list:
+        temp = []
+        for x in self._occupied_blocks:
+            temp.append(x + '          ' + str(self.get_speed_limit(x)) + ' mph')
+        return temp
 
     def set_occupancy(self, block, value: int):
         self._blue[block][2] = value
+        if value == 1:
+            self._occupied_blocks.append(block)
+        else:
+            self._occupied_blocks.remove(block)
+        self._occupied_blocks.sort()
+
+    def get_occupancy(self, block) -> int:
+        return self._blue[block][2]
 
     def get_speed_limit(self, block) -> float:
         return self._blue[block][1]

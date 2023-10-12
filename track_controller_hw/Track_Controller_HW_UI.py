@@ -285,6 +285,11 @@ class Ui_track_controller_mainwindow(object):
         self.system_speed_label.setVisible(False)
         self.system_speed_spnbx.setVisible(False)
 
+        self.occupancy_display.clear()
+        self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
+
+
+
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
         # label visibility
         self.manual_mode_off.setVisible(not bool(self.manual_mode_check.checkState()))
@@ -293,7 +298,7 @@ class Ui_track_controller_mainwindow(object):
         self.CheckIfSelected()
 
         try:
-            self.track_controller_hw.set_commanded_speed(self.track_controller_hw.get_test_speed_limit() - self.track_controller_hw.get_authority())
+            self.track_controller_hw.set_commanded_speed(self.track_controller_hw.get_suggested_speed() - self.track_controller_hw.get_speed_limit('B-A1'))
         except:
             print("None")
 
@@ -312,15 +317,13 @@ class Ui_track_controller_mainwindow(object):
                 elif type_output[0] == "Switch":
                     print("Switch")
                     if self.track_controller_hw.get_switch(value) == 0:
-                        send = "10100" + str(type_output[1]) + " => Left"
+                        send = "10100" + str(type_output[1]) + " => C"
                         self.get_ard().write(send.encode('utf-8'))
                     elif self.track_controller_hw.get_switch(value) == 1:
-                        send = "10100" + str(type_output[1]) + " => Right"
+                        send = "10100" + str(type_output[1]) + " => A"
                         self.get_ard().write(send.encode('utf-8'))
                 elif type_output[0] == "Commanded":
                     print("Commanded")
-                    self.track_controller_hw.set_commanded_speed(
-                        self.track_controller_hw.get_authority() - self.track_controller_hw.get_suggested_speed())
                     com = self.track_controller_hw.get_commanded_speed()
                     send = "11000" + str(com)
                     self.get_ard().write(send.encode('utf-8'))
