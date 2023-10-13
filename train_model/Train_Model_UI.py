@@ -776,13 +776,13 @@ class Ui_TrainModel_MainUI(object):
                 _translate = QtCore.QCoreApplication.translate
 
                 # Acceleration
-                self.accel_info_label.setText(str(round(self.train_model.get_acceleration(), 3)) + " m/s²")
+                self.accel_info_label.setText(str(round(self.train_model.get_acceleration() * 2.23694, 3)) + " mi/(h * s)")
 
                 # Velocity
-                self.vacc_info_label.setText(str("Vacc = " + str(round(self.train_model.get_actual_velocity(),3)) + " m/s"))
+                self.vacc_info_label.setText(str("Actual Velocity = " + str(round(self.train_model.get_actual_velocity() * 2.23694, 3)) + " mph"))
 
                 # Force
-                self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N")
+                self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N                         " + str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -797,24 +797,25 @@ class Ui_TrainModel_MainUI(object):
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(self.train_model.get_cmd_speed()) + " m/s"))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 2.23694, 3)) + " mph"))
 
                 # Next Station Info
                 # Row 1
                 self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Next Station:"))
                 self.next_station_infobox.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_beacon())))
+                # TODO: Are we measuring authority in feet or blocks?
                 self.next_station_infobox.setItem(0, 2, QtWidgets.QTableWidgetItem("Authority:"))
-                self.next_station_infobox.setItem(0, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_authority())))
+                self.next_station_infobox.setItem(0, 3, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_authority() * 3.28084, 3)) + " ft"))
                 # Row 2
                 self.next_station_infobox.setItem(1, 0, QtWidgets.QTableWidgetItem("Speed Limit:"))
-                self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_speed_limit())))
+                self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_speed_limit() * 2.23694, 3)) + " mph"))
                 self.next_station_infobox.setItem(1, 2, QtWidgets.QTableWidgetItem("Underground:"))
                 self.next_station_infobox.setItem(1, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_underground())))
                 # Row 3
-                self.next_station_infobox.setItem(2, 0, QtWidgets.QTableWidgetItem("Grade:"))
-                self.next_station_infobox.setItem(2, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_grade())))
+                self.next_station_infobox.setItem(2, 0, QtWidgets.QTableWidgetItem("Grade (°):"))
+                self.next_station_infobox.setItem(2, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_grade()) + "°"))
                 self.next_station_infobox.setItem(2, 2, QtWidgets.QTableWidgetItem("Elevation:"))
-                self.next_station_infobox.setItem(2, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_elevation())))
+                self.next_station_infobox.setItem(2, 3, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_elevation() * 3.28084, 3)) + " ft"))
 
                 # Advertisements
                 self.ad_view1.setPixmap(QtGui.QPixmap(self.train_model.get_advertisement()))
@@ -874,6 +875,9 @@ class Ui_TrainModel_MainUI(object):
                 temp = self.temperature_spnbx.value()
                 self.train_model.set_temperature(float(temp))
 
+                # TODO: Remove this when we have a real beacon
+                self.train_model.beacon_simulate()
+
         def _handler(self):
                 self.timer = QTimer()
                 self.timer.setInterval(100)  # refreshes every time period
@@ -893,7 +897,7 @@ class Ui_TrainModel_MainUI(object):
                 self.height_label.setText(_translate("TrainModel_MainUI", "Height: 11.2 ft"))
                 self.temperature_label.setText(_translate("TrainModel_MainUI", "Car Temp.: 72°F      SP:"))
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
-                self.force_label.setText(_translate("TrainModel_MainUI", "Force (N)"))
+                self.force_label.setText(_translate("TrainModel_MainUI", "        Force (N)            CMD Power (kWh)"))
                 self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
                 self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (m/s)"))
                 self.vacc_info_label.setText(_translate("TrainModel_MainUI", "Vacc = laplace(Vacc)"))

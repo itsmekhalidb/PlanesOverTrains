@@ -10,7 +10,8 @@ import threading
 # from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
 import threading
 
-# TODO: Make an orange juice ad
+# TODO: Convert m/s to Mi/hr
+# TODO: Display Cmd Power
 
 class TrainModel(object):
     def __init__(self):
@@ -20,7 +21,7 @@ class TrainModel(object):
         self._cmd_power = 0.0 # commanded power
         self._max_power = 120000.0 # max power of the train from data sheet
         self._force = 0.0 # force
-        self._curr_passenger_count = 0 # passenger count currently on the train
+        self._curr_passenger_count = 6 # passenger count currently on the train including crew
         self._max_passenger_count = 222 # combine max standing & seating passengers from data sheet
         self._prev_passenger_count = 0 # previous passenger count for the train
         self._passenger_mass = 0.0 # mass of the passengers on the train
@@ -34,7 +35,7 @@ class TrainModel(object):
         self._prev_time = self._time
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
-        self._line = "" # line the train is on
+        self._line = "BLUE" # line the train is on
         self._cmd_speed = 0.0 # commanded speed
         self._acceleration = 0.0 # acceleration of the train
         self._actual_velocity = 0.0 # actual velocity of the train
