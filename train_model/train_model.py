@@ -10,9 +10,6 @@ import threading
 # from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
 import threading
 
-# TODO: Convert m/s to Mi/hr
-# TODO: Display Cmd Power
-
 class TrainModel(object):
     def __init__(self):
 

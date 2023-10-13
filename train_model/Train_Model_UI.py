@@ -160,18 +160,40 @@ class Ui_TrainModel_MainUI(object):
                 "")
                 self.force_label.setAlignment(QtCore.Qt.AlignCenter)
                 self.force_label.setObjectName("force_label")
-                self.force_info_label_2 = QtWidgets.QLabel(self.centralwidget)
+                # self.force_info_label_2 = QtWidgets.QLabel(self.centralwidget)
+                # self.force_info_label_2.setGeometry(QtCore.QRect(12, 92, 435, 35))
+                # font = QtGui.QFont()
+                # font.setPointSize(14)
+                # font.setBold(True)
+                # font.setWeight(75)
+                # self.force_info_label_2.setFont(font)
+                # self.force_info_label_2.setStyleSheet("background-color: rgb(202, 202, 202);\n"
+                # "border: 1px solid black;\n"
+                # "")
+                # self.force_info_label_2.setAlignment(QtCore.Qt.AlignCenter)
+                # self.force_info_label_2.setObjectName("force_info_label_2")
+
+                self.force_info_label_2 = QtWidgets.QTableWidget(self.centralwidget)
                 self.force_info_label_2.setGeometry(QtCore.QRect(12, 92, 435, 35))
+                self.force_info_label_2.setColumnCount(2)
+                self.force_info_label_2.setRowCount(1)
                 font = QtGui.QFont()
                 font.setPointSize(14)
                 font.setBold(True)
                 font.setWeight(75)
                 self.force_info_label_2.setFont(font)
+                self.force_info_label_2.horizontalHeader().setVisible(False)
+                self.force_info_label_2.verticalHeader().setVisible(False)
+                self.force_info_label_2.verticalScrollBar().setVisible(False)
                 self.force_info_label_2.setStyleSheet("background-color: rgb(202, 202, 202);\n"
                 "border: 1px solid black;\n"
                 "")
-                self.force_info_label_2.setAlignment(QtCore.Qt.AlignCenter)
+                self.force_info_label_2.resizeRowsToContents()
+                self.force_info_label_2.setShowGrid(False)  # Remove grid lines
+                self.force_info_label_2.setColumnWidth(0, 216)  # Set the width of the first column to 200 pixels
+                self.force_info_label_2.setColumnWidth(1, 216)  # Set the width of the second column to 235 pixels
                 self.force_info_label_2.setObjectName("force_info_label_2")
+
                 self.velocity_label = QtWidgets.QLabel(self.centralwidget)
                 self.velocity_label.setGeometry(QtCore.QRect(12, 138, 435, 35))
                 font = QtGui.QFont()
@@ -744,7 +766,7 @@ class Ui_TrainModel_MainUI(object):
                 self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
 
                 # Force
-                self.force_info_label_2.setText(str(self.train_model.get_force()) + " N")
+                # self.force_info_label_2.setText(str(self.train_model.get_force()) + " N")
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -782,7 +804,9 @@ class Ui_TrainModel_MainUI(object):
                 self.vacc_info_label.setText(str("Actual Velocity = " + str(round(self.train_model.get_actual_velocity() * 2.23694, 3)) + " mph"))
 
                 # Force
-                self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N                         " + str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
+                # self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N                         " + str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
+                self.force_info_label_2.setItem(0, 0, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_force(), 3)) + " N"))
+                self.force_info_label_2.setItem(0, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh"))
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -898,7 +922,7 @@ class Ui_TrainModel_MainUI(object):
                 self.temperature_label.setText(_translate("TrainModel_MainUI", "Car Temp.: 72°F      SP:"))
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
                 self.force_label.setText(_translate("TrainModel_MainUI", "        Force (N)            CMD Power (kWh)"))
-                self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
+                # self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
                 self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (m/s)"))
                 self.vacc_info_label.setText(_translate("TrainModel_MainUI", "Vacc = laplace(Vacc)"))
                 self.accel_info_label.setText(_translate("TrainModel_MainUI", "a = F/M"))
