@@ -10,6 +10,8 @@ import threading
 # from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
 import threading
 
+# TODO: Format Force and Power to be centered
+
 class TrainModel(object):
     def __init__(self):
 
@@ -92,6 +94,10 @@ class TrainModel(object):
         # Commanded Power
         # TODO: change get_cmd_power to get_cmd_power from train controller signals
         self.set_cmd_power(float(self.get_cmd_power()))  # Pass input from test UI text box
+
+        # Internal Temperature
+        # TODO: get temperature from train controller
+        self.set_temperature(self.get_temperature())
 
         #################
         # Failure Modes #
@@ -211,9 +217,6 @@ class TrainModel(object):
 
         # Total Mass
         self.set_total_mass()
-
-        # Internal Temperature
-        self.set_temperature(self.get_temperature())
 
         # Force
         self.calc_force()
@@ -362,6 +365,10 @@ class TrainModel(object):
     # underground
     def set_underground(self, _underground: bool):
         self._underground = _underground
+
+        # Set lights to bool of underground
+        self.set_ext_lights(_underground)
+        self.set_int_lights(_underground)
 
     def get_underground(self) -> bool:
         return self._underground

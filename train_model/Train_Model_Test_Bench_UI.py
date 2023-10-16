@@ -177,18 +177,38 @@ class Ui_TrainModel_TestBench(object):
                 "background-color: rgb(0, 170, 0);")
                 self.signal_fail_on.setAlignment(QtCore.Qt.AlignCenter)
                 self.signal_fail_on.setObjectName("signal_fail_on")
-                self.force_info_label = QtWidgets.QLabel(self.Test_Bench)
-                self.force_info_label.setGeometry(QtCore.QRect(10, 92, 435, 35))
+                # self.force_info_label = QtWidgets.QLabel(self.Test_Bench)
+                # self.force_info_label.setGeometry(QtCore.QRect(10, 92, 435, 35))
+                # font = QtGui.QFont()
+                # font.setPointSize(14)
+                # font.setBold(True)
+                # font.setWeight(75)
+                # self.force_info_label.setFont(font)
+                # self.force_info_label.setStyleSheet("background-color: rgb(202, 202, 202);\n"
+                # "border: 1px solid black;\n"
+                # "")
+                # self.force_info_label.setAlignment(QtCore.Qt.AlignCenter)
+                # self.force_info_label.setObjectName("force_info_label")
+                self.force_info_label_2 = QtWidgets.QTableWidget(self.Test_Bench)
+                self.force_info_label_2.setGeometry(QtCore.QRect(12, 92, 435, 35))
+                self.force_info_label_2.setColumnCount(2)
+                self.force_info_label_2.setRowCount(1)
                 font = QtGui.QFont()
                 font.setPointSize(14)
                 font.setBold(True)
                 font.setWeight(75)
-                self.force_info_label.setFont(font)
-                self.force_info_label.setStyleSheet("background-color: rgb(202, 202, 202);\n"
+                self.force_info_label_2.setFont(font)
+                self.force_info_label_2.horizontalHeader().setVisible(False)
+                self.force_info_label_2.verticalHeader().setVisible(False)
+                self.force_info_label_2.verticalScrollBar().setVisible(False)
+                self.force_info_label_2.setStyleSheet("background-color: rgb(202, 202, 202);\n"
                 "border: 1px solid black;\n"
                 "")
-                self.force_info_label.setAlignment(QtCore.Qt.AlignCenter)
-                self.force_info_label.setObjectName("force_info_label")
+                self.force_info_label_2.resizeRowsToContents()
+                self.force_info_label_2.setShowGrid(False)  # Remove grid lines
+                self.force_info_label_2.setColumnWidth(0, 216)  # Set the width of the first column to 200 pixels
+                self.force_info_label_2.setColumnWidth(1, 216)  # Set the width of the second column to 235 pixels
+                self.force_info_label_2.setObjectName("force_info_label_2")
                 self.accel_info_label = QtWidgets.QLabel(self.Test_Bench)
                 self.accel_info_label.setGeometry(QtCore.QRect(10, 286, 435, 35))
                 font = QtGui.QFont()
@@ -869,7 +889,7 @@ class Ui_TrainModel_TestBench(object):
                 self.engine_fail_chkbx.raise_()
                 self.ebrake_fail_chkbx.raise_()
                 # self.sys_time_label.raise_()
-                self.force_info_label.raise_()
+                self.force_info_label_2.raise_()
                 self.acceleration_label.raise_()
                 self.ebrake_on.raise_()
                 self.ebrake_on.hide() # default ebrake is off
@@ -937,7 +957,7 @@ class Ui_TrainModel_TestBench(object):
                 self.vacc_info_label.setText(str("Vacc = " + str(self.train_model.get_actual_velocity()) + " m/s"))
 
                 # Force
-                self.force_info_label.setText(str(self.train_model.get_force()) + " N")
+                # self.force_info_label.setText(str(self.train_model.get_force()) + " N")
 
                 # Authority
                 self.authority_edit.setText(str(self.train_model.get_authority()))
@@ -1016,7 +1036,12 @@ class Ui_TrainModel_TestBench(object):
                 self.vacc_info_label.setText(str("Vacc = " + str(round(self.train_model.get_actual_velocity(),3)) + " m/s"))
 
                 # Force
-                self.force_info_label.setText(str(round(self.train_model.get_force(), 3)) + " N")
+                force = QtWidgets.QTableWidgetItem(str(round(self.train_model.get_force(), 3)) + " N")
+                force.setTextAlignment(QtCore.Qt.AlignCenter)
+                cmd_pwr = QtWidgets.QTableWidgetItem(str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
+                cmd_pwr.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.force_info_label_2.setItem(0, 0, force)
+                self.force_info_label_2.setItem(0, 1, cmd_pwr)
 
                 # Authority
                 self.authority_edit.setText(str(self.train_model.get_authority()))
@@ -1173,7 +1198,7 @@ class Ui_TrainModel_TestBench(object):
                 self.internal_lights_on.setText(_translate("TrainModel_TestBench", "ON"))
                 self.left_door_closed.setText(_translate("TrainModel_TestBench", "CLOSED"))
                 self.signal_fail_on.setText(_translate("TrainModel_TestBench", "ON"))
-                self.force_info_label.setText(_translate("TrainModel_TestBench", "F = P/Vcmd"))
+                # self.force_info_label.setText(_translate("TrainModel_TestBench", "F = P/Vcmd"))
                 self.accel_info_label.setText(_translate("TrainModel_TestBench", "a = F/M"))
                 self.internal_lights_label.setText(_translate("TrainModel_TestBench", "Internal Lights"))
                 self.engine_fail_on.setText(_translate("TrainModel_TestBench", "ON"))
@@ -1198,7 +1223,7 @@ class Ui_TrainModel_TestBench(object):
                 self.height_label.setText(_translate("TrainModel_TestBench", "Height: 11.2 ft"))
                 self.train_info_label.setText(_translate("TrainModel_TestBench", "Train Information"))
                 self.vacc_info_label.setText(_translate("TrainModel_TestBench", "Vacc = laplace(Vacc)"))
-                self.force_label.setText(_translate("TrainModel_TestBench", "Force (N)"))
+                self.force_label.setText(_translate("TrainModel_MainUI", "         Force (N)           CMD Power (kWh)"))
                 self.next_station_label.setText(_translate("TrainModel_TestBench", "Next Station Information"))
                 # self.sys_time_label.setText(_translate("TrainModel_TestBench", "13:24:55"))
                 self.test_bench_btn.setText(_translate("TrainModel_TestBench", "Main UI"))

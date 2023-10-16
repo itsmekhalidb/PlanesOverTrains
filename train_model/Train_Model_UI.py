@@ -804,9 +804,12 @@ class Ui_TrainModel_MainUI(object):
                 self.vacc_info_label.setText(str("Actual Velocity = " + str(round(self.train_model.get_actual_velocity() * 2.23694, 3)) + " mph"))
 
                 # Force
-                # self.force_info_label_2.setText(str(round(self.train_model.get_force(), 3)) + " N                         " + str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
-                self.force_info_label_2.setItem(0, 0, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_force(), 3)) + " N"))
-                self.force_info_label_2.setItem(0, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh"))
+                force = QtWidgets.QTableWidgetItem(str(round(self.train_model.get_force(), 3)) + " N")
+                force.setTextAlignment(QtCore.Qt.AlignCenter)
+                cmd_pwr = QtWidgets.QTableWidgetItem(str(round(self.train_model.get_cmd_power()/1000, 3)) + " kWh")
+                cmd_pwr.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.force_info_label_2.setItem(0, 0, force)
+                self.force_info_label_2.setItem(0, 1, cmd_pwr)
 
                 # Title
                 self.title_label.setText(str(self.train_model.get_line() + " Line"))
@@ -895,6 +898,7 @@ class Ui_TrainModel_MainUI(object):
                 # Velocity Calculation
                 self.train_model.calc_actual_velocity()
 
+                # TODO: Deprecate this when we integrate modules
                 # update the temperature
                 temp = self.temperature_spnbx.value()
                 self.train_model.set_temperature(float(temp))
@@ -921,7 +925,7 @@ class Ui_TrainModel_MainUI(object):
                 self.height_label.setText(_translate("TrainModel_MainUI", "Height: 11.2 ft"))
                 self.temperature_label.setText(_translate("TrainModel_MainUI", "Car Temp.: 72°F      SP:"))
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
-                self.force_label.setText(_translate("TrainModel_MainUI", "        Force (N)            CMD Power (kWh)"))
+                self.force_label.setText(_translate("TrainModel_MainUI", "         Force (N)           CMD Power (kWh)"))
                 # self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
                 self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (m/s)"))
                 self.vacc_info_label.setText(_translate("TrainModel_MainUI", "Vacc = laplace(Vacc)"))
