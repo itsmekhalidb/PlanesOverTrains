@@ -1,0 +1,2092 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TrainModel_TestBench</class>
+ <widget class="QMainWindow" name="TrainModel_TestBench">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>679</width>
+    <height>690</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="Test_Bench">
+   <widget class="QDoubleSpinBox" name="system_speed_spnbx">
+    <property name="geometry">
+     <rect>
+      <x>602</x>
+      <y>12</y>
+      <width>62</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="engine_fail_off">
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>300</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="external_lights_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>488</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>514</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="next_station_infobox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>366</y>
+      <width>435</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(202, 202, 202);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;You are arriving at DORMONT STATION in 59 minutes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="brake_fail_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>328</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="brake_fail_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>328</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="vcmd_info_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>206</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(202, 202, 202);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Vcmd = 100 m/s</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="left_door_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>432</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Left Door</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="ebrake_fail_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>276</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="internal_lights_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>462</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="engine_fail_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>302</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="signal_fail_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>354</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="left_door_closed">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>544</x>
+      <y>436</y>
+      <width>53</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>CLOSED</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal_fail_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>352</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="force_info_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>92</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(202, 202, 202);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>F = P/Vcmd</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="accel_info_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>286</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(202, 202, 202);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>a = F/M</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="internal_lights_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>458</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Internal Lights</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="engine_fail_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>300</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="system_speed_label">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>8</y>
+      <width>169</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string> System Speed</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="right_door_closed">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>544</x>
+      <y>410</y>
+      <width>53</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>CLOSED</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="right_door_open">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>410</y>
+      <width>49</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>OPEN</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="temperature_spnbx">
+    <property name="geometry">
+     <rect>
+      <x>608</x>
+      <y>214</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>510</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>E-Brake</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="brake_fail_off">
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>328</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_fail_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>270</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>E-Brake Failure</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="brake_fail_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>322</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Service Brake Failure</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="mass_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>160</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Mass: 40900 Kg</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_fail_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>274</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="left_door_open">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>436</y>
+      <width>49</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>OPEN</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_fail_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>274</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="title_label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>679</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);
+border: 3px solid black;</string>
+    </property>
+    <property name="text">
+     <string> Train #NUM Line COLOR</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="velocity_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>138</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Actual &amp; Commanded Velocity (m/s)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="right_door_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>406</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Right Door</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="width_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>108</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Width: 8.7 ft</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="acceleration_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>252</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Acceleration (m/s²)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="passenger_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>186</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Passengers Onboard:</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="length_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>82</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Length: 105.6 ft</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="height_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>134</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Height: 11.2 ft</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="train_info_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>56</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Train Information</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="vacc_info_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>172</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(202, 202, 202);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Vacc = laplace(Vacc)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="force_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>58</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Force (N)</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="next_station_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>332</y>
+      <width>435</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Next Station Information</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="sys_time_label">
+    <property name="geometry">
+     <rect>
+      <x>404</x>
+      <y>8</y>
+      <width>83</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid black;
+background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>13:24:55</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="test_bench_btn">
+    <property name="geometry">
+     <rect>
+      <x>292</x>
+      <y>10</y>
+      <width>101</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Main UI</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal_fail_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>348</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Signal Pickup Failure</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="external_lights_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>484</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>External Lights</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="external_lights_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>488</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>514</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal_fail_off">
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>352</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="engine_fail_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>296</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Train Engine Failure</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="temperature_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>212</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Internal Temperature</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="controls_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>380</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Controls</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="failure_mode_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>244</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(149, 188, 242);
+border: 2px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Failure Modes</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="ad_view1">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>434</y>
+      <width>435</width>
+      <height>129</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="internal_lights_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>462</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="external_lights_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>490</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="right_door_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>412</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="left_door_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>438</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="internal_lights_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>464</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="ebrake_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>516</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="service_brake_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>624</x>
+      <y>540</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="service_brake_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>598</x>
+      <y>540</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="service_brake_label">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>536</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Service Brake</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="service_brake_chkbx">
+    <property name="geometry">
+     <rect>
+      <x>658</x>
+      <y>542</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="Line" name="line">
+    <property name="geometry">
+     <rect>
+      <x>6</x>
+      <y>566</y>
+      <width>667</width>
+      <height>4</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);
+background-color: rgb(0, 0, 0);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="authority_edit">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>580</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="train_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>614</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="authority_label">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>588</y>
+      <width>65</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Authority</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="train_line_label">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>618</y>
+      <width>65</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Train Line</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="speed_limit_label">
+    <property name="geometry">
+     <rect>
+      <x>194</x>
+      <y>590</y>
+      <width>79</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Speed Limit</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="underground_label">
+    <property name="geometry">
+     <rect>
+      <x>186</x>
+      <y>620</y>
+      <width>87</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Underground</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="speed_limit_edit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>582</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="underground_edit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>616</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="acc_pwr_label">
+    <property name="geometry">
+     <rect>
+      <x>372</x>
+      <y>620</y>
+      <width>87</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Actual Power</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="acc_pwr_edit">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>616</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="cmd_pwr_edit">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>582</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="cmd_pwr_label">
+    <property name="geometry">
+     <rect>
+      <x>376</x>
+      <y>578</y>
+      <width>81</width>
+      <height>39</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Commanded Power</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="grade_label">
+    <property name="geometry">
+     <rect>
+      <x>16</x>
+      <y>654</y>
+      <width>65</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Grade</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="elevation_label">
+    <property name="geometry">
+     <rect>
+      <x>204</x>
+      <y>654</y>
+      <width>65</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Elevation</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="occupancy_edit">
+    <property name="geometry">
+     <rect>
+      <x>604</x>
+      <y>614</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="vcmd_label">
+    <property name="geometry">
+     <rect>
+      <x>378</x>
+      <y>650</y>
+      <width>79</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Vcmd</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="elevation_edit">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>650</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="occupancy_label">
+    <property name="geometry">
+     <rect>
+      <x>534</x>
+      <y>618</y>
+      <width>71</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>9</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Occupancy</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="grade_edit">
+    <property name="geometry">
+     <rect>
+      <x>88</x>
+      <y>648</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="vcmd_edit">
+    <property name="geometry">
+     <rect>
+      <x>456</x>
+      <y>650</y>
+      <width>65</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="passenger_spnbx">
+    <property name="geometry">
+     <rect>
+      <x>608</x>
+      <y>188</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <zorder>ebrake_fail_label</zorder>
+   <zorder>engine_fail_label</zorder>
+   <zorder>temperature_label</zorder>
+   <zorder>service_brake_label</zorder>
+   <zorder>external_lights_label</zorder>
+   <zorder>left_door_label</zorder>
+   <zorder>right_door_label</zorder>
+   <zorder>left_door_closed</zorder>
+   <zorder>signal_fail_label</zorder>
+   <zorder>internal_lights_label</zorder>
+   <zorder>ebrake_fail_on</zorder>
+   <zorder>vacc_info_label</zorder>
+   <zorder>left_door_open</zorder>
+   <zorder>engine_fail_off</zorder>
+   <zorder>temperature_spnbx</zorder>
+   <zorder>signal_fail_chkbx</zorder>
+   <zorder>velocity_label</zorder>
+   <zorder>internal_lights_off</zorder>
+   <zorder>ebrake_label</zorder>
+   <zorder>force_label</zorder>
+   <zorder>brake_fail_chkbx</zorder>
+   <zorder>vcmd_info_label</zorder>
+   <zorder>brake_fail_label</zorder>
+   <zorder>passenger_label</zorder>
+   <zorder>signal_fail_off</zorder>
+   <zorder>accel_info_label</zorder>
+   <zorder>signal_fail_on</zorder>
+   <zorder>title_label</zorder>
+   <zorder>internal_lights_on</zorder>
+   <zorder>external_lights_on</zorder>
+   <zorder>ebrake_fail_off</zorder>
+   <zorder>height_label</zorder>
+   <zorder>right_door_open</zorder>
+   <zorder>next_station_label</zorder>
+   <zorder>engine_fail_chkbx</zorder>
+   <zorder>ebrake_fail_chkbx</zorder>
+   <zorder>sys_time_label</zorder>
+   <zorder>force_info_label</zorder>
+   <zorder>acceleration_label</zorder>
+   <zorder>ebrake_on</zorder>
+   <zorder>length_label</zorder>
+   <zorder>brake_fail_on</zorder>
+   <zorder>engine_fail_on</zorder>
+   <zorder>controls_label</zorder>
+   <zorder>mass_label</zorder>
+   <zorder>ebrake_off</zorder>
+   <zorder>brake_fail_off</zorder>
+   <zorder>next_station_infobox</zorder>
+   <zorder>failure_mode_label</zorder>
+   <zorder>right_door_closed</zorder>
+   <zorder>external_lights_off</zorder>
+   <zorder>width_label</zorder>
+   <zorder>test_bench_btn</zorder>
+   <zorder>train_info_label</zorder>
+   <zorder>ad_view1</zorder>
+   <zorder>system_speed_label</zorder>
+   <zorder>system_speed_spnbx</zorder>
+   <zorder>external_lights_chkbx</zorder>
+   <zorder>right_door_chkbx</zorder>
+   <zorder>left_door_chkbx</zorder>
+   <zorder>internal_lights_chkbx</zorder>
+   <zorder>ebrake_chkbx</zorder>
+   <zorder>service_brake_on</zorder>
+   <zorder>service_brake_off</zorder>
+   <zorder>service_brake_chkbx</zorder>
+   <zorder>line</zorder>
+   <zorder>authority_edit</zorder>
+   <zorder>train_line_edit</zorder>
+   <zorder>authority_label</zorder>
+   <zorder>train_line_label</zorder>
+   <zorder>speed_limit_label</zorder>
+   <zorder>underground_label</zorder>
+   <zorder>speed_limit_edit</zorder>
+   <zorder>underground_edit</zorder>
+   <zorder>acc_pwr_label</zorder>
+   <zorder>acc_pwr_edit</zorder>
+   <zorder>cmd_pwr_edit</zorder>
+   <zorder>cmd_pwr_label</zorder>
+   <zorder>grade_label</zorder>
+   <zorder>elevation_label</zorder>
+   <zorder>occupancy_edit</zorder>
+   <zorder>vcmd_label</zorder>
+   <zorder>elevation_edit</zorder>
+   <zorder>occupancy_label</zorder>
+   <zorder>grade_edit</zorder>
+   <zorder>vcmd_edit</zorder>
+   <zorder>passenger_spnbx</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
