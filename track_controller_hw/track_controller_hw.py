@@ -15,7 +15,7 @@ class Track_Controller_HW(object):
         # 0 = left, 1 = right
         self._switches = {'Switch BC-A': 0}
         # crossing lights/gate
-        self._crossing_lights_gates = ""
+        self._crossing_lights_gates = {}
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -33,6 +33,9 @@ class Track_Controller_HW(object):
         self._test_speed_limit = 0
         self._track_status = False
     # Variables
+
+    def get_crossing_lights_gates(self) -> dict:
+        return self._crossing_lights_gates
 
     def get_blue_track(self) -> dict:
         return self._blue

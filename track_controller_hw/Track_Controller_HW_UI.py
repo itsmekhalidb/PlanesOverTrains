@@ -27,11 +27,19 @@ class Ui_track_controller_mainwindow(object):
     def __init__(self, track_controller_hw: Track_Controller_HW):
         super().__init__()
         self.track_controller_hw = track_controller_hw
-        self._light = False
-        self._switch = False
-        self._command = False
+        #self._light = False
+        #self._switch = False
+        #self._command = False
+        self._previous = ""
+        self._send_bits = ""
         self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
+    def set_previous_show(self, s: str):
+        self._previous = s
+
+    def get_previous_show(self) -> str:
+        return self._previous
+    """
     def set_light_show(self, l: bool):
         self._light = l
 
@@ -49,6 +57,12 @@ class Ui_track_controller_mainwindow(object):
 
     def get_command_show(self) -> bool:
         return self._command
+"""
+    def get_send_bits(self) -> str:
+        return self._send_bits
+
+    def set_send_bits(self, l: str):
+        self._send_bits = l
 
     def open_window(self):
         self.window = QtWidgets.QMainWindow()
@@ -123,8 +137,8 @@ class Ui_track_controller_mainwindow(object):
         font.setWeight(75)
         self.manual_mode_label_1.setFont(font)
         self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                             "border: 1px solid black;\n"
-                                             "")
+                                               "border: 1px solid black;\n"
+                                               "")
         self.manual_mode_label_1.setText("Crossing Lights")
         self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.manual_mode_label.setObjectName("manual_mode_label")
@@ -331,7 +345,6 @@ class Ui_track_controller_mainwindow(object):
 
         self.wayside_select.addItem("Blue")
 
-
         self.select_output.addItem(item)
         self.select_output.setCurrentItem(item)
 
@@ -354,7 +367,7 @@ class Ui_track_controller_mainwindow(object):
             self.show_ard.setVisible(True)
             self.command_label.setVisible(True)
             self.command_spin.setVisible(True)
-            #self.command_drop.setVisible(True)
+            # self.command_drop.setVisible(True)
         else:
             self.show_ard.setVisible(False)
             self.command_label.setVisible(False)
@@ -376,24 +389,23 @@ class Ui_track_controller_mainwindow(object):
                 self.selected_output.setText(value)
                 type_output = self.selected_output.text().split(" ")
 
-                if type_output[0] == "Light":
-                    if not self.get_light_show():
+                if self.get_previous_show() != value:
+                    self.set_previous_show(value)
+                    if type_output[0] == "Light":
                         self.send_lights()
-                        self.set_light_show(True)
-                        self.set_switch_show(False)
-                        self.set_command_show(False)
-                elif type_output[0] == "Switch":
-                    if not self.get_switch_show():
+                          #  self.set_light_show(True)
+                          #  self.set_switch_show(False)
+                          #  self.set_command_show(False)
+                    elif type_output[0] == "Switch":
                         self.send_switch()
-                        self.set_light_show(False)
-                        self.set_switch_show(True)
-                        self.set_command_show(False)
-                elif type_output[0] == "Commanded":
-                    if not self.get_command_show():
+                          #  self.set_light_show(False)
+                           # self.set_switch_show(True)
+                           # self.set_command_show(False)
+                    elif type_output[0] == "Commanded":
                         self.send_command(True)
-                        self.set_light_show(False)
-                        self.set_switch_show(False)
-                        self.set_command_show(True)
+                           # self.set_light_show(False)
+                           # self.set_switch_show(False)
+                           # self.set_command_show(True)
         except:
             print("Non Value")
 
@@ -419,7 +431,6 @@ class Ui_track_controller_mainwindow(object):
             self.send_command(False)
 
     def change_light(self, i: int, light: str):
-        type_output = self.selected_output.text().split(" ")
         if i == 0:
             self.track_controller_hw.set_lights(0, light)
         elif i == 1:
