@@ -471,6 +471,7 @@ class Ui_MainWindow(object):
         self.external_lights_label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_3.setObjectName("external_lights_label_3")
         self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.doubleSpinBox_2.setMaximum(1000.0)
         self.doubleSpinBox_2.setGeometry(QtCore.QRect(126, 174, 68, 24))
         self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
         self.external_lights_label_4 = QtWidgets.QLabel(self.centralwidget)
@@ -486,6 +487,7 @@ class Ui_MainWindow(object):
         self.external_lights_label_4.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_4.setObjectName("external_lights_label_4")
         self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.doubleSpinBox_3.setMaximum(1000.0)
         self.doubleSpinBox_3.setGeometry(QtCore.QRect(126, 204, 68, 24))
         self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
         self.external_lights_label_9 = QtWidgets.QLabel(self.centralwidget)
@@ -524,6 +526,11 @@ class Ui_MainWindow(object):
 "")
         self.external_lights_label_10.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_10.setObjectName("external_lights_label_10")
+
+        self.commanded_speed_spnbx = QtWidgets.QSpinBox(self.centralwidget)
+        self.commanded_speed_spnbx.setGeometry(QtCore.QRect(350, 116, 62, 22))
+        self.commanded_speed_spnbx.setObjectName("commanded_speed_spnbx")
+        self.commanded_speed_spnbx.setMaximum(1000.0)
         self.external_lights_label_11 = QtWidgets.QLabel(self.centralwidget)
         self.external_lights_label_11.setGeometry(QtCore.QRect(210, 142, 209, 31))
         font = QtGui.QFont()
@@ -814,6 +821,8 @@ class Ui_MainWindow(object):
         self.checkBox_12.raise_()
         self.ebrake_fail_on_2.raise_()
         self.ebrake_fail_off_2.raise_()
+        self.commanded_speed_spnbx.raise_()
+        self.temperature_spnbx.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -889,6 +898,7 @@ class Ui_MainWindow(object):
                     self.checkBox_4.setEnabled(False)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(False)  # temperature
+                    self.commanded_speed_spnbx.setEnabled(False)  # commanded speed
             else:
                     self.slider.setEnabled(True)  # service brake
                     self.checkBox_7.setEnabled(True)  # right door
@@ -897,6 +907,7 @@ class Ui_MainWindow(object):
                     self.checkBox_4.setEnabled(True)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(True)  # temperature
+                    self.commanded_speed_spnbx.setEnabled(True)  # commanded speed
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         #auto status
@@ -938,7 +949,11 @@ class Ui_MainWindow(object):
         #speed limit
         self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #commanded speed
-        self.external_lights_label_10.setText(str("Commanded Speed (mph): " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Com. Speed: " + str(self.train_controller.get_commanded_velocity())))
+
+        comspeed = self.commanded_speed_spnbx.value()
+        self.train_controller.set_commanded_velocity(float(comspeed))
+
         #kp
         kp = self.doubleSpinBox_2.value()
         self.train_controller.set_kp(kp)
@@ -971,7 +986,7 @@ class Ui_MainWindow(object):
         # if self.train_controller.get_service_brake_status()==True:
         #         self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
         # temperature
-        self.temperature.setText(str("Car Temp.: " + str(round(self.train_controller.get_temperature(),0)) + "°F"))
+        self.temperature.setText(str("Car Temp: " + str(round(self.train_controller.get_temperature(),0)) + "°F"))
         temp = self.temperature_spnbx.value()
         self.train_controller.set_temperature_sp(float(temp))
         self.toggle_buttons()
