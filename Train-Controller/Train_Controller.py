@@ -26,8 +26,8 @@ class TrainController(object):
         self._internal_lights_on = False
         self._external_lights_on = False
         self._auto_stat = False
-        self._kp = 1.0
-        self._ki = 0.001
+        self._kp = 0.0
+        self._ki = 0.0
         self._ek = 0.0
         self._uk = 0.0
         self._ti = 1.0
@@ -61,7 +61,7 @@ class TrainController(object):
         self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
         self.set_engine_status(bool(self.get_engine_status()))
         self.set_signal_pickup_failure_status(bool(self.get_signal_pickup_failure()))
-        self.set_commanded_velocity(float(self.get_current_velocity()), float(self.get_maximum_velocity()))
+        self.set_commanded_velocity(float(self.get_current_velocity()))
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
         self.set_authority(float(self.get_authority()))
         self.set_current_velocity(float(self.get_actual_velocity()))
@@ -102,8 +102,8 @@ class TrainController(object):
         self._auto_stat = stat
     def set_maximum_veloctity(self, max_speed: float):
         self._maximum_velocity = max_speed
-    def set_commanded_velocity(self, v: float, m: float):
-        if v <= m:
+    def set_commanded_velocity(self, v: float):
+        if v <= self._maximum_velocity:
             self._commanded_velocity = v
     def set_current_velocity(self, c : float):
         if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
@@ -129,13 +129,13 @@ class TrainController(object):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):
         self._emergency_brake_failure = status
-    def set_kp(self, ki: float):
+    def set_kp(self, kp: float):
         # self._kp = 1/ki # check out formulas and clarify
-        self._kp = ki
+        self._kp = kp
         # print("Kp = " + str(self._kp))
-    def set_ki(self, ti:float):
+    def set_ki(self, ki:float):
         # self._ki = 1/self._ti
-        self._ki = ti
+        self._ki = ki
         # print("Ki = " + str(self._ki))
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
