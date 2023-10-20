@@ -531,7 +531,6 @@ class Ui_MainWindow(object):
         self.commanded_speed_spnbx.setGeometry(QtCore.QRect(350, 116, 62, 22))
         self.commanded_speed_spnbx.setObjectName("commanded_speed_spnbx")
         self.commanded_speed_spnbx.setMaximum(1000.0)
-
         self.external_lights_label_11 = QtWidgets.QLabel(self.centralwidget)
         self.external_lights_label_11.setGeometry(QtCore.QRect(210, 142, 209, 31))
         font = QtGui.QFont()
