@@ -14,6 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
+from PyQt5.uic import loadUi
 
 from PlanesOverTrains.track_controller_hw.Track_Controller_UI_Testbench import Ui_Test_Bench
 from PlanesOverTrains.track_controller_hw.track_controller_hw import Track_Controller_HW
@@ -27,9 +28,9 @@ class Ui_track_controller_mainwindow(object):
     def __init__(self, track_controller_hw: Track_Controller_HW):
         super().__init__()
         self.track_controller_hw = track_controller_hw
-        #self._light = False
-        #self._switch = False
-        #self._command = False
+        # self._light = False
+        # self._switch = False
+        # self._command = False
         self._previous = ""
         self._send_bits = ""
         self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
@@ -39,6 +40,7 @@ class Ui_track_controller_mainwindow(object):
 
     def get_previous_show(self) -> str:
         return self._previous
+
     """
     def set_light_show(self, l: bool):
         self._light = l
@@ -58,6 +60,7 @@ class Ui_track_controller_mainwindow(object):
     def get_command_show(self) -> bool:
         return self._command
 """
+
     def get_send_bits(self) -> str:
         return self._send_bits
 
@@ -66,9 +69,14 @@ class Ui_track_controller_mainwindow(object):
 
     def open_window(self):
         self.window = QtWidgets.QMainWindow()
-        self.ui = Ui_Test_Bench(self.track_controller_hw)  # Pass the TrainModel instance to the new UI
+        self.ui = Ui_Test_Bench(self.track_controller_hw)
         self.ui.setupUi(self.window)
         self.window.show()
+
+    def browse_files(self):
+        self.browse = QFileDialog.getOpenFileName(self.load_plc_button)
+        print(self.browse[0])
+
 
     def get_ard(self):
         return self._ard
@@ -234,7 +242,8 @@ class Ui_track_controller_mainwindow(object):
                                             "")
         self.plc_output_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.plc_output_label.setObjectName("plc_output_label")
-        self.load_plc_button = QtWidgets.QPushButton(self.centralwidget)
+        self.load_plc_button = QtWidgets.QPushButton(track_controller_mainwindow_ui,
+                                                     clicked=lambda: self.browse_files())
         self.load_plc_button.setGeometry(QtCore.QRect(600, 60, 93, 28))
         self.load_plc_button.setObjectName("load_plc_button")
         self.Select_wayside_label = QtWidgets.QLabel(self.centralwidget)
@@ -393,19 +402,19 @@ class Ui_track_controller_mainwindow(object):
                     self.set_previous_show(value)
                     if type_output[0] == "Light":
                         self.send_lights()
-                          #  self.set_light_show(True)
-                          #  self.set_switch_show(False)
-                          #  self.set_command_show(False)
+                        #  self.set_light_show(True)
+                        #  self.set_switch_show(False)
+                        #  self.set_command_show(False)
                     elif type_output[0] == "Switch":
                         self.send_switch()
-                          #  self.set_light_show(False)
-                           # self.set_switch_show(True)
-                           # self.set_command_show(False)
+                        #  self.set_light_show(False)
+                        # self.set_switch_show(True)
+                        # self.set_command_show(False)
                     elif type_output[0] == "Commanded":
                         self.send_command(True)
-                           # self.set_light_show(False)
-                           # self.set_switch_show(False)
-                           # self.set_command_show(True)
+                        # self.set_light_show(False)
+                        # self.set_switch_show(False)
+                        # self.set_command_show(True)
         except:
             print("Non Value")
 
