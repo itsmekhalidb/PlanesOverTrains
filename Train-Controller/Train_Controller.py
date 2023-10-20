@@ -37,6 +37,8 @@ class TrainController(object):
         self._train_line = ""
         self._next_station = ""
         self._station_status = ""
+        self._temp_sp = 0.0 # internal temperature set point
+        self._temperature = 0.0 # internal temperature of the train
 
         # Update Function
         self.update()
@@ -64,7 +66,7 @@ class TrainController(object):
         self.set_authority(float(self.get_authority()))
         self.set_current_velocity(float(self.get_actual_velocity()))
         self.set_ki(float(self.get_ki()))
-        self.set_kp(float(self.get_ki()), 1.0)
+        self.set_kp(float(self.get_ki()))
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
         self.set_uk(float(self._ek))
         self.set_power(float(self.get_commanded_power()))
@@ -79,6 +81,18 @@ class TrainController(object):
 
     def set_next_station(self, station: str):
         self._next_station = station
+
+    def set_temperature_sp(self, temp_sp: float):
+        self._temp_sp = temp_sp
+
+    def get_temperature_sp(self) -> float:
+        return self._temp_sp
+
+    def set_temperature(self, temp: float):
+        self._temperature = temp
+
+    def get_temperature(self) -> float:
+        return self._temperature
 
     def set_station_status(self, status: str):
         self._station_status = status
@@ -120,7 +134,9 @@ class TrainController(object):
         self._kp = ki
         # print("Kp = " + str(self._kp))
     def set_ki(self, ti:float):
-        self._ki = 1/self._ti
+        # self._ki = 1/self._ti
+        self._ki = ti
+        # print("Ki = " + str(self._ki))
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
     def set_eK(self, desired: int, actual: int):
