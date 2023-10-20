@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>track_controller_mainwindow</class>
+ <widget class="QMainWindow" name="track_controller_mainwindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>723</width>
+    <height>560</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="title_label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>711</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);
+border: 3px solid black;</string>
+    </property>
+    <property name="text">
+     <string>Wayside Controller - Hardware</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="system_speed_spnbx">
+    <property name="geometry">
+     <rect>
+      <x>634</x>
+      <y>14</y>
+      <width>62</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="system_speed_label">
+    <property name="geometry">
+     <rect>
+      <x>498</x>
+      <y>10</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;</string>
+    </property>
+    <property name="text">
+     <string> System Speed</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="manual_mode_check">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>62</y>
+      <width>14</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Manual Mode</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="ebrake_fail_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>176</x>
+      <y>60</y>
+      <width>25</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="manual_mode_label">
+    <property name="geometry">
+     <rect>
+      <x>8</x>
+      <y>56</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Manual Mode</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="manual_mode_off">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>60</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>OFF</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="select_output">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>200</y>
+      <width>231</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Light B-C11</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Light  B-A5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Light B-B6</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Switch B -A5/B6/C11</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="wayside_select">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>231</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>Blue 1</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="manual_mode_on">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>60</y>
+      <width>25</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 0);</string>
+    </property>
+    <property name="text">
+     <string>ON</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="load_plc_label">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>60</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>PLC BLUE</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="selected_output">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>490</y>
+      <width>211</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="plc_output">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>190</y>
+      <width>191</width>
+      <height>261</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="plc_output_label">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>150</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>PLC Output</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="load_plc_button">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>60</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load PLC</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Select_wayside_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>231</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Select Waysde Controller</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="select_output_label">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>170</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Select Output</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="selected_output_label">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>460</y>
+      <width>198</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Selected Output</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="occupancy_display">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>231</width>
+      <height>231</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="occupancy_label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>170</y>
+      <width>221</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Blocks Occupied- Limit</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="testbench_button">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>480</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Testbench</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>490</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="selected_output_label_2">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>460</y>
+      <width>121</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);
+border: 1px solid black;
+</string>
+    </property>
+    <property name="text">
+     <string>Commanded</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="track_status_drop">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>490</y>
+      <width>61</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="editable">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>B-A1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-A2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-A3</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-A4</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-A5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-B6</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-B7</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-B8</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-B9</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-B10</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-C11</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-C12</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-C13</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-C14</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>B-C15</string>
+     </property>
+    </item>
+   </widget>
+   <zorder>title_label</zorder>
+   <zorder>system_speed_label</zorder>
+   <zorder>system_speed_spnbx</zorder>
+   <zorder>manual_mode_check</zorder>
+   <zorder>ebrake_fail_on</zorder>
+   <zorder>manual_mode_label</zorder>
+   <zorder>manual_mode_off</zorder>
+   <zorder>select_output</zorder>
+   <zorder>wayside_select</zorder>
+   <zorder>manual_mode_on</zorder>
+   <zorder>load_plc_label</zorder>
+   <zorder>selected_output</zorder>
+   <zorder>plc_output</zorder>
+   <zorder>plc_output_label</zorder>
+   <zorder>load_plc_button</zorder>
+   <zorder>Select_wayside_label</zorder>
+   <zorder>select_output_label</zorder>
+   <zorder>selected_output_label</zorder>
+   <zorder>occupancy_display</zorder>
+   <zorder>occupancy_label</zorder>
+   <zorder>testbench_button</zorder>
+   <zorder>spinBox</zorder>
+   <zorder>selected_output_label_2</zorder>
+   <zorder>track_status_drop</zorder>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
