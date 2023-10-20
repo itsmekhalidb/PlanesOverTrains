@@ -997,19 +997,19 @@ class Ui_Test_Bench(object):
         self.checkBox_10.toggled.connect(
                 lambda: self.train_controller.set_service_brake_failure(self.checkBox_10.isChecked()))
         #Speed Limit
-        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #Commanded Speed
-        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Commanded Speed (mph): " + str(self.train_controller.get_commanded_velocity())))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed: " + str(self.train_controller.get_current_velocity())))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(self.train_controller.get_current_velocity())))
         #commanded power
-        self.external_lights_label_12.setText(str("Commanded Power" + str(self.train_controller.get_commanded_power())))
+        self.external_lights_label_12.setText(str("Commanded Power (W):" + str(self.train_controller.get_commanded_power())))
         #authority
-        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())));
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())));
         #kp
-        self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
+        #self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
         #ki
-        self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
+        #self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
         #ek
         self.doubleSpinBox.setValue(float(self.train_controller.get_ki()))
         #uk
@@ -1059,19 +1059,19 @@ class Ui_Test_Bench(object):
         self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
         self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
         #speed limit
-        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #commanded speed
-        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Commanded Speed (mph): " + str(self.train_controller.get_commanded_velocity())))
         #kp
         self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
         #ki
         self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed: " + str(round(self.train_controller.get_current_velocity(),0))))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round(self.train_controller.get_current_velocity(),0))))
         #commanded power
-        self.external_lights_label_12.setText(str("Commanded Power: " + str(self.train_controller.get_commanded_power())))
+        self.external_lights_label_12.setText(str("Commanded Power (W): " + str(self.train_controller.get_commanded_power())))
         #authority
-        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())))
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line
@@ -1104,9 +1104,9 @@ class Ui_Test_Bench(object):
         #underground = self.underground_edit.toPlainText()
         #self.train_controller.set_underground_status(bool(underground))
 
-        kp = self.cmd_pwr_edit_2.toPlainText()
-        print(kp)
-        self.train_controller.set_kp(float(kp),1.0)
+        #kp = self.cmd_pwr_edit_2.toPlainText()
+        #print(kp)
+        #self.train_controller.set_kp(float(kp),1.0)
 
     def retranslateUi(self, Test_Bench):
         _translate = QtCore.QCoreApplication.translate
@@ -1149,22 +1149,22 @@ class Ui_Test_Bench(object):
         self.ebrake_label_2.setText(_translate("Test_Bench", "Service Brake"))
         self.external_lights_label_2.setText(_translate("Test_Bench", "Ek"))
         self.controls_label_2.setText(_translate("Test_Bench", "Power Controls"))
-        self.external_lights_label_3.setText(_translate("Test_Bench", "Kp"))
+        #self.external_lights_label_3.setText(_translate("Test_Bench", ""))
         self.external_lights_label_4.setText(_translate("Test_Bench", "Ki"))
         self.external_lights_label_5.setText(_translate("Test_Bench", "Uk"))
-        self.external_lights_label_9.setText(_translate("Test_Bench", "Speed Limit"))
+        self.external_lights_label_9.setText(_translate("Test_Bench", "Speed Limit (mph)"))
         self.controls_label_3.setText(_translate("Test_Bench", "Speed Information"))
-        self.external_lights_label_10.setText(_translate("Test_Bench", "Commanded Speed"))
-        self.external_lights_label_11.setText(_translate("Test_Bench", "Actual Speed"))
-        self.external_lights_label_12.setText(_translate("Test_Bench", "Commanded Power"))
-        self.external_lights_label_13.setText(_translate("Test_Bench", "Authority"))
-        self.cmd_pwr_label.setText(_translate("Test_Bench", "Commanded Power"))
-        self.speed_limit_label.setText(_translate("Test_Bench", "Speed Limit"))
+        self.external_lights_label_10.setText(_translate("Test_Bench", "Commanded Speed (mph)"))
+        self.external_lights_label_11.setText(_translate("Test_Bench", "Actual Speed (mph)"))
+        self.external_lights_label_12.setText(_translate("Test_Bench", "Commanded Power (W)"))
+        self.external_lights_label_13.setText(_translate("Test_Bench", "Authority (ft)"))
+        self.cmd_pwr_label.setText(_translate("Test_Bench", "Commanded Power (W)"))
+        self.speed_limit_label.setText(_translate("Test_Bench", "Speed Limit (mph)"))
         self.train_line_label.setText(_translate("Test_Bench", "Train Line"))
         self.actual_velocity_label.setText(_translate("Test_Bench", "Actual \n Velocity"))
         #self.underground_label.setText(_translate("Test_Bench", "Underground"))
-        self.acc_pwr_label.setText(_translate("Test_Bench", "Actual Power"))
-        self.authority_label.setText(_translate("Test_Bench", "Authority"))
+        self.acc_pwr_label.setText(_translate("Test_Bench", "Actual Power (W)"))
+        self.authority_label.setText(_translate("Test_Bench", "Authority (ft)"))
         self.ebrake_label_3.setText(_translate("Test_Bench", "Underground"))
         self.ebrake_off_3.setText(_translate("Test_Bench", "NO"))
         self.ebrake_on_3.setText(_translate("Test_Bench", "YES"))

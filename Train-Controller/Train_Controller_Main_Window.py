@@ -34,14 +34,14 @@ class Ui_MainWindow(object):
         self.title_label.setStyleSheet("background-color: rgb(255, 255, 0);\n"
 "border: 3px solid black;")
         self.title_label.setObjectName("title_label")
-        self.test_bench_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.test_bench_btn.setGeometry(QtCore.QRect(514, 10, 101, 27))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.test_bench_btn.setFont(font)
-        self.test_bench_btn.setObjectName("test_bench_btn")
+        # self.test_bench_btn = QtWidgets.QPushButton(self.centralwidget)
+        # self.test_bench_btn.setGeometry(QtCore.QRect(514, 10, 101, 27))
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.test_bench_btn.setFont(font)
+        # self.test_bench_btn.setObjectName("test_bench_btn")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(18, 364, 401, 119))
         font = QtGui.QFont()
@@ -158,7 +158,7 @@ class Ui_MainWindow(object):
         self.ebrake_fail_on.setAlignment(QtCore.Qt.AlignCenter)
         self.ebrake_fail_on.setObjectName("ebrake_fail_on")
         self.signal_fail_off = QtWidgets.QLabel(self.centralwidget)
-        self.signal_fail_off.setGeometry(QtCore.QRect(566, 430, 25, 17))
+        self.signal_fail_off.setGeometry(QtCore.QRect(566, 430+27, 25, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -170,7 +170,7 @@ class Ui_MainWindow(object):
         self.signal_fail_off.setObjectName("signal_fail_off")
         self.signal_fail_on = QtWidgets.QLabel(self.centralwidget)
         self.signal_fail_on.setEnabled(True)
-        self.signal_fail_on.setGeometry(QtCore.QRect(596, 430, 25, 17))
+        self.signal_fail_on.setGeometry(QtCore.QRect(596, 430+27, 25, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -582,23 +582,31 @@ class Ui_MainWindow(object):
 "background-color: rgb(0, 170, 0);")
         self.ebrake_on_3.setAlignment(QtCore.Qt.AlignCenter)
         self.ebrake_on_3.setObjectName("ebrake_on_3")
-        self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(18, 240, 401, 119))
+        self.pushButton_2 = QtWidgets.QLabel(self.centralwidget)
+        self.pushButton_2.setGeometry(QtCore.QRect(18, 280, 401, 60)) #cut height in half
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
         self.pushButton_2.setFont(font)
         self.pushButton_2.setStyleSheet("background-color: rgb(0, 0, 0);\n"
 "color: rgb(255, 255, 255);")
+        self.pushButton_2.setAlignment(QtCore.Qt.AlignCenter)
         self.pushButton_2.setObjectName("pushButton_2")
-        self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox.setGeometry(QtCore.QRect(630, 294, 87, 20))
-        self.checkBox.setText("")
-        self.checkBox.setObjectName("checkBox")
-        self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_2.setGeometry(QtCore.QRect(630, 268, 87, 20))
-        self.checkBox_2.setText("")
-        self.checkBox_2.setObjectName("checkBox_2")
+        self.slider = QtWidgets.QSlider(self.centralwidget)
+        self.slider.setGeometry(QtCore.QRect(18, 250, 401, 22))
+        self.slider.setOrientation(QtCore.Qt.Horizontal)
+        self.slider.setObjectName("slider")
+        self.slider.setMinimum(0)
+        self.slider.setMaximum(100)
+        self.slider.setValue(0)
+        # #self.checkBox = QtWidgets.QCheckBox(self.centralwidget)
+        # #self.checkBox.setGeometry(QtCore.QRect(630, 294, 87, 20))
+        # #self.checkBox.setText("")
+        # self.checkBox.setObjectName("checkBox")
+        # self.checkBox_2 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_2.setGeometry(QtCore.QRect(630, 268, 87, 20))
+        # self.checkBox_2.setText("")
+        # self.checkBox_2.setObjectName("checkBox_2")
         self.checkBox_3 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_3.setGeometry(QtCore.QRect(630, 242, 87, 20))
         self.checkBox_3.setText("")
@@ -607,10 +615,10 @@ class Ui_MainWindow(object):
         self.checkBox_4.setGeometry(QtCore.QRect(630, 216, 87, 20))
         self.checkBox_4.setText("")
         self.checkBox_4.setObjectName("checkBox_4")
-        self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_5.setGeometry(QtCore.QRect(630, 192, 87, 20))
-        self.checkBox_5.setText("")
-        self.checkBox_5.setObjectName("checkBox_5")
+        # self.checkBox_5 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_5.setGeometry(QtCore.QRect(630, 192, 87, 20))
+        # self.checkBox_5.setText("")
+        # self.checkBox_5.setObjectName("checkBox_5")
         self.checkBox_6 = QtWidgets.QCheckBox(self.centralwidget)
         self.checkBox_6.setGeometry(QtCore.QRect(630, 166, 87, 20))
         self.checkBox_6.setText("")
@@ -619,22 +627,22 @@ class Ui_MainWindow(object):
         self.checkBox_7.setGeometry(QtCore.QRect(630, 142, 87, 20))
         self.checkBox_7.setText("")
         self.checkBox_7.setObjectName("checkBox_7")
-        self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_8.setGeometry(QtCore.QRect(632, 350, 87, 20))
-        self.checkBox_8.setText("")
-        self.checkBox_8.setObjectName("checkBox_8")
-        self.checkBox_9 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_9.setGeometry(QtCore.QRect(632, 376, 87, 20))
-        self.checkBox_9.setText("")
-        self.checkBox_9.setObjectName("checkBox_9")
-        self.checkBox_10 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_10.setGeometry(QtCore.QRect(632, 402, 87, 20))
-        self.checkBox_10.setText("")
-        self.checkBox_10.setObjectName("checkBox_10")
-        self.checkBox_11 = QtWidgets.QCheckBox(self.centralwidget)
-        self.checkBox_11.setGeometry(QtCore.QRect(632, 428, 87, 20))
-        self.checkBox_11.setText("")
-        self.checkBox_11.setObjectName("checkBox_11")
+        # self.checkBox_8 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_8.setGeometry(QtCore.QRect(632, 350, 87, 20))
+        # self.checkBox_8.setText("")
+        # self.checkBox_8.setObjectName("checkBox_8")
+        # self.checkBox_9 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_9.setGeometry(QtCore.QRect(632, 376, 87, 20))
+        # self.checkBox_9.setText("")
+        # self.checkBox_9.setObjectName("checkBox_9")
+        # self.checkBox_10 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_10.setGeometry(QtCore.QRect(632, 402, 87, 20))
+        # self.checkBox_10.setText("")
+        # self.checkBox_10.setObjectName("checkBox_10")
+        # self.checkBox_11 = QtWidgets.QCheckBox(self.centralwidget)
+        # self.checkBox_11.setGeometry(QtCore.QRect(632, 428, 87, 20))
+        # self.checkBox_11.setText("")
+        # self.checkBox_11.setObjectName("checkBox_11")
         self.controls_label_4 = QtWidgets.QLabel(self.centralwidget)
         self.controls_label_4.setGeometry(QtCore.QRect(16, 58, 187, 27))
         font = QtGui.QFont()
@@ -658,19 +666,19 @@ class Ui_MainWindow(object):
 "border: 1px solid black;\n"
 "")
         self.external_lights_label_14.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.external_lights_label_14.setObjectName("external_lights_label_14")
-        self.external_lights_label_15 = QtWidgets.QLabel(self.centralwidget)
-        self.external_lights_label_15.setGeometry(QtCore.QRect(16, 114, 187, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.external_lights_label_15.setFont(font)
-        self.external_lights_label_15.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-"border: 1px solid black;\n"
-"")
-        self.external_lights_label_15.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.external_lights_label_15.setObjectName("external_lights_label_15")
+#         self.external_lights_label_14.setObjectName("external_lights_label_14")
+#         self.external_lights_label_15 = QtWidgets.QLabel(self.centralwidget)
+#         self.external_lights_label_15.setGeometry(QtCore.QRect(16, 114, 187, 31))
+#         font = QtGui.QFont()
+#         font.setPointSize(10)
+#         font.setBold(True)
+#         font.setWeight(75)
+#         self.external_lights_label_15.setFont(font)
+#         self.external_lights_label_15.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+# "border: 1px solid black;\n"
+# "")
+#         self.external_lights_label_15.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+#         self.external_lights_label_15.setObjectName("external_lights_label_15")
         self.failure_mode_label_2 = QtWidgets.QLabel(self.centralwidget)
         self.failure_mode_label_2.setGeometry(QtCore.QRect(428, 56, 198, 27))
         font = QtGui.QFont()
@@ -735,7 +743,7 @@ class Ui_MainWindow(object):
         self.internal_lights_label.raise_()
         self.engine_fail_label.raise_()
         self.title_label.raise_()
-        self.test_bench_btn.raise_()
+        #self.test_bench_btn.raise_()
         self.pushButton.raise_()
         self.ebrake_fail_label.raise_()
         self.brake_fail_label.raise_()
@@ -773,20 +781,20 @@ class Ui_MainWindow(object):
         self.external_lights_label_11.raise_()
         self.external_lights_label_12.raise_()
         self.pushButton_2.raise_()
-        self.checkBox.raise_()
-        self.checkBox_2.raise_()
+        #self.checkBox.raise_()
+        #self.checkBox_2.raise_()
         self.checkBox_3.raise_()
         self.checkBox_4.raise_()
-        self.checkBox_5.raise_()
+        #self.checkBox_5.raise_()
         self.checkBox_6.raise_()
         self.checkBox_7.raise_()
-        self.checkBox_8.raise_()
-        self.checkBox_9.raise_()
-        self.checkBox_10.raise_()
-        self.checkBox_11.raise_()
+        # self.checkBox_8.raise_()
+        # self.checkBox_9.raise_()
+        # self.checkBox_10.raise_()
+        # self.checkBox_11.raise_()
         self.controls_label_4.raise_()
         self.external_lights_label_14.raise_()
-        self.external_lights_label_15.raise_()
+        #self.external_lights_label_15.raise_()
         self.failure_mode_label_2.raise_()
         self.ebrake_fail_label_2.raise_()
         self.checkBox_12.raise_()
@@ -807,8 +815,8 @@ class Ui_MainWindow(object):
         self.checkBox_6.toggled.connect(
                 lambda: self.train_controller.set_left_door_status(self.checkBox_6.isChecked()))
         #Undergound Status
-        self.checkBox_5.toggled.connect(
-                lambda: self.train_controller.set_underground_status(self.checkBox_5.isChecked()))
+        # self.checkBox_5.toggled.connect(
+        #         lambda: self.train_controller.set_underground_status(self.checkBox_5.isChecked()))
         #internal lights
         self.checkBox_4.toggled.connect(
                 lambda: self.train_controller.set_internal_lights(self.checkBox_4.isChecked()))
@@ -816,33 +824,33 @@ class Ui_MainWindow(object):
         self.checkBox_3.toggled.connect(
                 lambda: self.train_controller.set_external_lights(self.checkBox_3.isChecked()))
         #emergency brake
-        self.checkBox_2.toggled.connect(
-                lambda: self.train_controller.set_emergency_brake_status(self.checkBox_2.isChecked()))
-        #service brake
-        self.checkBox.toggled.connect(
-                lambda: self.train_controller.set_service_brake_status(self.checkBox.isChecked()))
-        #emergency brake failure
-        self.checkBox_8.toggled.connect(
-                lambda: self.train_controller.set_emergency_brake_failure(self.checkBox_8.isChecked()))
-        #signal pickup failure
-        self.checkBox_11.toggled.connect(
-                lambda: self.train_controller.set_signal_pickup_failure_status(self.checkBox_11.isChecked()))
-        #train engine failure
-        self.checkBox_9.toggled.connect(
-                lambda: self.train_controller.set_engine_status(self.checkBox_9.isChecked()))
-        #service brake failure
-        self.checkBox_10.toggled.connect(
-                lambda: self.train_controller.set_service_brake_failure(self.checkBox_10.isChecked()))
+        # self.checkBox_2.toggled.connect(
+        #         lambda: self.train_controller.set_emergency_brake_status(self.checkBox_2.isChecked()))
+        # #service brake
+        # self.checkBox.toggled.connect(
+        #         lambda: self.train_controller.set_service_brake_status(self.checkBox.isChecked()))
+        # #emergency brake failure
+        # self.checkBox_8.toggled.connect(
+        #         lambda: self.train_controller.set_emergency_brake_failure(self.checkBox_8.isChecked()))
+        # #signal pickup failure
+        # self.checkBox_11.toggled.connect(
+        #         lambda: self.train_controller.set_signal_pickup_failure_status(self.checkBox_11.isChecked()))
+        # #train engine failure
+        # self.checkBox_9.toggled.connect(
+        #         lambda: self.train_controller.set_engine_status(self.checkBox_9.isChecked()))
+        # #service brake failure
+        # self.checkBox_10.toggled.connect(
+        #         lambda: self.train_controller.set_service_brake_failure(self.checkBox_10.isChecked()))
         #Speed Limit
-        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #Commanded Speed
-        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Commanded Speed (mph): " + str(self.train_controller.get_commanded_velocity())))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed: " + str(self.train_controller.get_current_velocity())))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(self.train_controller.get_current_velocity())))
         #commanded power
-        self.external_lights_label_12.setText(str("Commanded Power" + str(self.train_controller.get_commanded_power())))
+        self.external_lights_label_12.setText(str("Commanded Power (W):" + str(self.train_controller.get_commanded_power())))
         #authority
-        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())));
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
         #kp
         self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
         #ki
@@ -857,6 +865,24 @@ class Ui_MainWindow(object):
         self.timer.setInterval(100)  # 100ms update rate
         self.timer.timeout.connect(self.update)
         self.timer.start()
+
+    def toggle_buttons(self):
+            if self.train_controller.get_auto_status():
+                    self.slider.setEnabled(False)  # service brake
+                    self.checkBox_7.setEnabled(False)  # right door
+                    self.checkBox_6.setEnabled(False)  # left door
+                    self.checkBox_3.setEnabled(False)  # external lights
+                    self.checkBox_4.setEnabled(False)  # internal lights
+                    self.pushButton.setEnabled(True)  # emergency brake
+                    self.temperature_spnbx.setEnabled(False)  # temperature
+            else:
+                    self.slider.setEnabled(True)  # service brake
+                    self.checkBox_7.setEnabled(True)  # right door
+                    self.checkBox_6.setEnabled(True)  # left door
+                    self.checkBox_3.setEnabled(True)  # external lights
+                    self.checkBox_4.setEnabled(True)  # internal lights
+                    self.pushButton.setEnabled(True)  # emergency brake
+                    self.temperature_spnbx.setEnabled(True)  # temperature
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         #auto status
@@ -881,8 +907,8 @@ class Ui_MainWindow(object):
         self.ebrake_on.setVisible(bool(self.train_controller.get_ebrake_status()))
         self.ebrake_off.setVisible(not bool(self.train_controller.get_ebrake_status()))
         #service brake
-        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_status()))
-        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_status()))
+        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_value()>0))
+        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_value()>0))
         #ebrake failure
         self.ebrake_fail_on.setVisible(bool(self.train_controller.get_emergency_brake_failure_status()))
         self.ebrake_fail_off.setVisible(not bool(self.train_controller.get_emergency_brake_failure_status()))
@@ -896,19 +922,19 @@ class Ui_MainWindow(object):
         self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
         self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
         #speed limit
-        self.external_lights_label_9.setText(str("Speed Limit: " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #commanded speed
-        self.external_lights_label_10.setText(str("Commanded Speed: " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Commanded Speed (mph): " + str(self.train_controller.get_commanded_velocity())))
         #kp
         self.doubleSpinBox_2.setValue(float(self.train_controller.get_kp()))
         #ki
         self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed: " + str(round(self.train_controller.get_current_velocity(),3))))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round(self.train_controller.get_current_velocity(),3))))
         #commanded power
-        self.external_lights_label_12.setText(str("Commanded Power: " + str(self.train_controller.get_commanded_power())))
+        self.external_lights_label_12.setText(str("Commanded Power (W): " + str(self.train_controller.get_commanded_power())))
         #authority
-        self.external_lights_label_13.setText(str("Authority: " + str(self.train_controller.get_authority())))
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line
@@ -919,16 +945,24 @@ class Ui_MainWindow(object):
         self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(True))
         if self.train_controller.get_ebrake_status() == True:
                 self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(False))
+        #service brake slider value
+        slider_value = self.slider.value()
+        self.train_controller.set_service_brake_value(slider_value/100)
         #service brake clicked
-        self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
-        if self.train_controller.get_service_brake_status()==True:
-                self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
+        # self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
+        # if self.train_controller.get_service_brake_status()==True:
+        #         self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
+        # temperature
+        self.temperature.setText(str("Car Temp.: " + str(round(self.train_controller.get_temperature(),0)) + "°F"))
+        temp = self.temperature_spnbx.value()
+        self.train_controller.set_temperature_sp(float(temp))
+        self.toggle_buttons()
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title_label.setText(_translate("MainWindow", " Train #NUM Line COLOR"))
-        self.test_bench_btn.setText(_translate("MainWindow", "Test Bench"))
+        #self.test_bench_btn.setText(_translate("MainWindow", "Test Bench"))
         self.pushButton.setText(_translate("MainWindow", "Emergency Brake"))
         self.ebrake_fail_label.setText(_translate("MainWindow", "E-Brake Failure"))
         self.brake_fail_label.setText(_translate("MainWindow", "Service Brake Failure"))
@@ -965,23 +999,25 @@ class Ui_MainWindow(object):
         self.controls_label_2.setText(_translate("MainWindow", "Power Controls"))
         self.external_lights_label_3.setText(_translate("MainWindow", "Kp"))
         self.external_lights_label_4.setText(_translate("MainWindow", "Ki"))
-        self.external_lights_label_9.setText(_translate("MainWindow", "Speed Limit"))
+        self.external_lights_label_9.setText(_translate("MainWindow", "Speed Limit (mph)"))
         self.controls_label_3.setText(_translate("MainWindow", "Speed Information"))
-        self.external_lights_label_10.setText(_translate("MainWindow", "Commanded Speed"))
-        self.external_lights_label_11.setText(_translate("MainWindow", "Actual Speed"))
-        self.external_lights_label_12.setText(_translate("MainWindow", "Commanded Power"))
-        self.external_lights_label_13.setText(_translate("MainWindow", "Authority"))
-        self.ebrake_label_3.setText(_translate("MainWindow", "Undeground"))
+        self.external_lights_label_10.setText(_translate("MainWindow", "Commanded Speed (mph)"))
+        self.external_lights_label_11.setText(_translate("MainWindow", "Actual Speed (mph)"))
+        self.external_lights_label_12.setText(_translate("MainWindow", "Commanded Power (W)"))
+        self.external_lights_label_13.setText(_translate("MainWindow", "Authority (ft)"))
+        self.ebrake_label_3.setText(_translate("MainWindow", "Underground"))
         self.ebrake_off_3.setText(_translate("MainWindow", "NO"))
         self.ebrake_on_3.setText(_translate("MainWindow", "YES"))
         self.pushButton_2.setText(_translate("MainWindow", "Service Brake"))
         self.controls_label_4.setText(_translate("MainWindow", "Station Information"))
-        self.external_lights_label_14.setText(_translate("MainWindow", "Next Station: Dormont"))
-        self.external_lights_label_15.setText(_translate("MainWindow", "Station Status: Approaching"))
+        self.external_lights_label_14.setText(_translate("MainWindow", "Current Station:"))
+        #self.external_lights_label_15.setText(_translate("MainWindow", "Station Status:"))
         self.failure_mode_label_2.setText(_translate("MainWindow", "Automatic Status"))
         self.ebrake_fail_label_2.setText(_translate("MainWindow", "Automatic Status "))
         self.ebrake_fail_on_2.setText(_translate("MainWindow", "ON"))
         self.ebrake_fail_off_2.setText(_translate("MainWindow", "OFF"))
+
+
 
 
 if __name__ == "__main__":

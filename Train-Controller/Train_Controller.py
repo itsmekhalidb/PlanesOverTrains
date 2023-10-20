@@ -54,7 +54,7 @@ class TrainController(object):
         self.set_internal_lights(bool(self.get_internal_lights()))
         self.set_external_lights(bool(self.get_external_lights()))
         self.set_emergency_brake_status(bool(self.get_ebrake_status()))
-        self.set_service_brake_status(bool(self.get_service_brake_status()))
+        #self.set_service_brake_status(bool(self.get_service_brake_status()))
         self.set_emergency_brake_failure(bool(self.get_emergency_brake_failure_status()))
         self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
         self.set_engine_status(bool(self.get_engine_status()))
@@ -62,12 +62,17 @@ class TrainController(object):
         self.set_commanded_velocity(float(self.get_current_velocity()), float(self.get_maximum_velocity()))
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
         self.set_authority(float(self.get_authority()))
-        self.set_current_velocity(float(self.get_actual_velocity()), float(self.get_maximum_velocity()))
+        self.set_current_velocity(float(self.get_actual_velocity()))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()), 1.0)
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
         self.set_uk(float(self._ek))
         self.set_power(float(self.get_commanded_power()))
+        self.set_service_brake_value(float(self.get_service_brake_value()))
+
+        # Comment in later
+        # self.train_model.set_temperature(self.get_temperature_sp())
+        # self.set_temperature(self.train_model.get_temperature())
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -86,18 +91,12 @@ class TrainController(object):
     def set_commanded_velocity(self, v: float, m: float):
         if v <= m:
             self._commanded_velocity = v
-    def set_current_velocity(self, desired_speed: float, maximum_speed: float):
+    def set_current_velocity(self, c : float):
         if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
             self._current_velocity = 0
         else:
-            if desired_speed <= maximum_speed:
-                while self._current_velocity < desired_speed:
-                    self._current_velocity += (.006*.3048*60)
-            else:
-                while self._current_velocity < maximum_speed:
-                    self._current_velocity += (.006*.3048*60)
-        #while self.get_service_brake_status():
-           # self._current_velocity-=round(self._current_velocity*.05)
+            self._current_velocity = c
+
     def set_internal_lights(self, status: bool):
         if self._underground_status:
             self._internal_lights_on = True
@@ -116,8 +115,10 @@ class TrainController(object):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):
         self._emergency_brake_failure = status
-    def set_kp(self, ki: float, ti: float):
-        self._kp = ti/ki # check out formulas and clarify
+    def set_kp(self, ki: float):
+        # self._kp = 1/ki # check out formulas and clarify
+        self._kp = ki
+        # print("Kp = " + str(self._kp))
     def set_ki(self, ti:float):
         self._ki = 1/self._ti
     def set_uk(self, current_ek: float):
@@ -129,6 +130,8 @@ class TrainController(object):
             self._commanded_power = 0
         if desired_power <= 120000:
             self._commanded_power = self._kp * self._ek + self._ki + self._uk
+        else:
+            self._commanded_power = 120000
     def set_right_door_status(self,stat: bool):
         self._right_door_open = stat
     def set_left_door_status(self, stat: bool):
@@ -166,7 +169,7 @@ class TrainController(object):
     def get_ebrake_status(self)->bool:
         return self._emergency_brake_status
     def get_service_brake_value(self)->float:
-        return self._service_brake_status
+        return self._service_brake_value
     def get_emergency_brake_failure_status(self)->bool:
         return self._emergency_brake_failure
     def get_service_brake_failure_status(self)->bool:
