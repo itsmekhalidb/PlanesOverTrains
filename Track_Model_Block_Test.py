@@ -9,13 +9,18 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+from track_model import TrackModel
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
-
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(780, 603)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+class Ui_Track_Model_Block(object):
+    def setUi(self, Track_Model_Block):
+        Track_Model_Block.setObjectName("Track_Model_Block")
+        Track_Model_Block.resize(780, 594)
+        self.centralwidget = QtWidgets.QWidget(Track_Model_Block)
         self.centralwidget.setObjectName("centralwidget")
         self.title = QtWidgets.QLabel(self.centralwidget)
         self.title.setGeometry(QtCore.QRect(0, 0, 781, 51))
@@ -31,6 +36,9 @@ class Ui_MainWindow(object):
 "font: 75 10pt \"MS Shell Dlg 2\";\n"
 "background-color: rgb(255, 255, 255);")
         self.clock.setObjectName("clock")
+
+#----- LABELS -----#
+
         self.speed_limit_label = QtWidgets.QLabel(self.centralwidget)
         self.speed_limit_label.setGeometry(QtCore.QRect(10, 80, 131, 31))
         self.speed_limit_label.setStyleSheet("background-color: rgb(225, 225, 225);\n"
@@ -116,59 +124,82 @@ class Ui_MainWindow(object):
         self.power_failure_label.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
         self.power_failure_label.setObjectName("power_failure_label")
+
+#----- VALUES -----#
+
         self.speed_limit = QtWidgets.QLabel(self.centralwidget)
         self.speed_limit.setGeometry(QtCore.QRect(160, 80, 51, 31))
         self.speed_limit.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.speed_limit.setText("31.07")
         self.speed_limit.setObjectName("speed_limit")
+
         self.direction = QtWidgets.QLabel(self.centralwidget)
         self.direction.setGeometry(QtCore.QRect(160, 120, 51, 31))
         self.direction.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.direction.setText("SE")
         self.direction.setObjectName("direction")
+
         self.length = QtWidgets.QLabel(self.centralwidget)
         self.length.setGeometry(QtCore.QRect(160, 160, 51, 31))
         self.length.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.length.setText("164.04")
         self.length.setObjectName("length")
+
         self.elevation = QtWidgets.QLabel(self.centralwidget)
         self.elevation.setGeometry(QtCore.QRect(160, 240, 51, 31))
         self.elevation.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.elevation.setText("0.00")
         self.elevation.setObjectName("elevation")
+
         self.grade = QtWidgets.QLabel(self.centralwidget)
         self.grade.setGeometry(QtCore.QRect(160, 200, 51, 31))
         self.grade.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.grade.setText("0")
         self.grade.setObjectName("grade")
+
         self.track_heaters = QtWidgets.QLabel(self.centralwidget)
         self.track_heaters.setGeometry(QtCore.QRect(720, 240, 51, 31))
-        self.track_heaters.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+        self.track_heaters.setStyleSheet("background-color: rgb(0, 225, 0);\n"
+"border: 1px solid black;\n""color: white;")
+        self.track_heaters.setText("ON")
         self.track_heaters.setObjectName("track_heaters")
+
         self.underground = QtWidgets.QLabel(self.centralwidget)
         self.underground.setGeometry(QtCore.QRect(720, 200, 51, 31))
-        self.underground.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+        self.underground.setStyleSheet("background-color: rgb(225, 0, 0);\n"
+"border: 1px solid black;\n""color:white;")
+        self.underground.setText("NO")
         self.underground.setObjectName("underground")
+
         self.occupancy = QtWidgets.QLabel(self.centralwidget)
         self.occupancy.setGeometry(QtCore.QRect(720, 160, 51, 31))
-        self.occupancy.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+        self.occupancy.setStyleSheet("background-color: rgb(225, 0, 0);\n"
+"border: 1px solid black;\n""color:white;")
+        self.occupancy.setText("NO")
         self.occupancy.setObjectName("occupancy")
+
         self.track_color = QtWidgets.QLabel(self.centralwidget)
         self.track_color.setGeometry(QtCore.QRect(720, 120, 51, 31))
         self.track_color.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
+        self.track_color.setText("BLUE")
         self.track_color.setObjectName("track_color")
+
         self.switch_position = QtWidgets.QLabel(self.centralwidget)
         self.switch_position.setGeometry(QtCore.QRect(720, 80, 51, 31))
-        self.switch_position.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+        self.switch_position.setStyleSheet("background-color: rgb(225, 0, 0);\n"
+"border: 1px solid black;\n""color:white;")
+        self.switch_position.setText("NO")
         self.switch_position.setObjectName("switch_position")
+
         self.failure_title = QtWidgets.QLabel(self.centralwidget)
         self.failure_title.setGeometry(QtCore.QRect(0, 300, 361, 51))
-        self.failure_title.setStyleSheet("background-color: rgb(255, 255, 0);\n"
+        self.failure_title.setStyleSheet("background-color: rgb(149, 188, 242);\n"
 "font: 75 16pt \"MS Shell Dlg 2\";\n"
 "\n"
 "\n"
@@ -176,105 +207,121 @@ class Ui_MainWindow(object):
         self.failure_title.setObjectName("failure_title")
         self.beacon_info = QtWidgets.QLabel(self.centralwidget)
         self.beacon_info.setGeometry(QtCore.QRect(360, 300, 421, 51))
-        self.beacon_info.setStyleSheet("background-color: rgb(255, 255, 0);\n"
+        self.beacon_info.setStyleSheet("background-color: rgb(149, 188, 242);\n"
 "font: 75 16pt \"MS Shell Dlg 2\";\n"
 "\n"
 "\n"
 "border: 3px solid black;")
         self.beacon_info.setObjectName("beacon_info")
+
         self.brake_failure = QtWidgets.QLabel(self.centralwidget)
         self.brake_failure.setGeometry(QtCore.QRect(160, 360, 51, 31))
         self.brake_failure.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+"background-color: rgb(170, 0, 0);\n"
+"border: 1px solid black;\n"
+"color: white")
+        self.brake_failure.setAlignment(QtCore.Qt.AlignCenter)
         self.brake_failure.setObjectName("brake_failure")
+
         self.engine_failure = QtWidgets.QLabel(self.centralwidget)
         self.engine_failure.setGeometry(QtCore.QRect(160, 400, 51, 31))
         self.engine_failure.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+"background-color: rgb(170, 0, 0);\n"
+"border: 1px solid black;\n"
+"color: white")
+        self.engine_failure.setAlignment(QtCore.Qt.AlignCenter)
         self.engine_failure.setObjectName("engine_failure")
+
         self.broken_rail = QtWidgets.QLabel(self.centralwidget)
         self.broken_rail.setGeometry(QtCore.QRect(160, 520, 51, 31))
         self.broken_rail.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+"background-color: rgb(170, 0, 0);\n"
+"border: 1px solid black;\n"
+"color: white")
+        self.broken_rail.setAlignment(QtCore.Qt.AlignCenter)
         self.broken_rail.setObjectName("broken_rail")
+
         self.circuit_failure = QtWidgets.QLabel(self.centralwidget)
         self.circuit_failure.setGeometry(QtCore.QRect(160, 480, 51, 31))
         self.circuit_failure.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+"background-color: rgb(170, 0, 0);\n"
+"border: 1px solid black;\n"
+"color: white")
+        self.circuit_failure.setAlignment(QtCore.Qt.AlignCenter)
         self.circuit_failure.setObjectName("circuit_failure")
+
         self.power_failiure = QtWidgets.QLabel(self.centralwidget)
         self.power_failiure.setGeometry(QtCore.QRect(160, 440, 51, 31))
         self.power_failiure.setStyleSheet("background-color: rgb(225, 225, 225);\n"
-"border: 1px solid black;")
+"background-color: rgb(170, 0, 0);\n"
+"border: 1px solid black;\n"
+"color: white")
+        self.power_failiure.setAlignment(QtCore.Qt.AlignCenter)
         self.power_failiure.setObjectName("power_failiure")
+
         self.static_info = QtWidgets.QLabel(self.centralwidget)
         self.static_info.setGeometry(QtCore.QRect(480, 400, 181, 141))
         self.static_info.setStyleSheet("background-color: rgb(225, 225, 225);\n"
 "border: 1px solid black;")
         self.static_info.setObjectName("static_info")
-        self.back = QtWidgets.QPushButton(self.centralwidget)
-        self.back.setGeometry(QtCore.QRect(690, 10, 81, 31))
-        self.back.setStyleSheet("font: 75 10pt \"MS Shell Dlg 2\";\n"
-"background-color: rgb(255, 255, 255);")
-        self.back.setObjectName("back")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 780, 21))
+        self.temperature_control = QtWidgets.QLabel(self.centralwidget)
+        self.temperature_control.setGeometry(QtCore.QRect(320, 80, 131, 31))
+        self.temperature_control.setStyleSheet("background-color: rgb(225, 225, 225);\n"
+"border: 1px solid black;")
+        self.temperature_control.setObjectName("temperature_control")
+        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.doubleSpinBox.setGeometry(QtCore.QRect(350, 120, 71, 22))
+        self.doubleSpinBox.setObjectName("doubleSpinBox")
+        self.doubleSpinBox.setValue(70)
+
+        Track_Model_Block.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(Track_Model_Block)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 780, 18))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        Track_Model_Block.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(Track_Model_Block)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        Track_Model_Block.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(Track_Model_Block)
+        QtCore.QMetaObject.connectSlotsByName(Track_Model_Block)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, Track_Model_Block):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.title.setText(_translate("MainWindow", "Blue Line - C4"))
-        self.clock.setText(_translate("MainWindow", "13:56:54"))
-        self.speed_limit_label.setText(_translate("MainWindow", "Speed Limit"))
-        self.direction_label.setText(_translate("MainWindow", "Direction"))
-        self.elevation_label.setText(_translate("MainWindow", "Elevation"))
-        self.length_label.setText(_translate("MainWindow", "Length"))
-        self.grade_label.setText(_translate("MainWindow", "Grade"))
-        self.track_color_label.setText(_translate("MainWindow", "Track Color"))
-        self.underground_label.setText(_translate("MainWindow", "Underground"))
-        self.track_heaters_label.setText(_translate("MainWindow", "Track Heaters"))
-        self.occupancy_label.setText(_translate("MainWindow", "Occupied"))
-        self.switch_position_label.setText(_translate("MainWindow", "Switch Position"))
-        self.brake_failure_label.setText(_translate("MainWindow", "Brake Failure"))
-        self.broken_rail_label.setText(_translate("MainWindow", "Broken Rail"))
-        self.circuit_failure_label.setText(_translate("MainWindow", "Circuit Failure"))
-        self.engine_failure_label.setText(_translate("MainWindow", "Engine Failure"))
-        self.power_failure_label.setText(_translate("MainWindow", "Power Failure"))
-        self.speed_limit.setText(_translate("MainWindow", "ye"))
-        self.direction.setText(_translate("MainWindow", "ye"))
-        self.length.setText(_translate("MainWindow", "ye"))
-        self.elevation.setText(_translate("MainWindow", "ye"))
-        self.grade.setText(_translate("MainWindow", "ye"))
-        self.track_heaters.setText(_translate("MainWindow", "ye"))
-        self.underground.setText(_translate("MainWindow", "ye"))
-        self.occupancy.setText(_translate("MainWindow", "ye"))
-        self.track_color.setText(_translate("MainWindow", "ye"))
-        self.switch_position.setText(_translate("MainWindow", "ye"))
-        self.failure_title.setText(_translate("MainWindow", "Failures"))
-        self.beacon_info.setText(_translate("MainWindow", "Static Information"))
-        self.brake_failure.setText(_translate("MainWindow", "ye"))
-        self.engine_failure.setText(_translate("MainWindow", "ye"))
-        self.broken_rail.setText(_translate("MainWindow", "ye"))
-        self.circuit_failure.setText(_translate("MainWindow", "ye"))
-        self.power_failiure.setText(_translate("MainWindow", "ye"))
-        self.static_info.setText(_translate("MainWindow", "Station on right side"))
-        self.back.setText(_translate("MainWindow", "Back"))
+        Track_Model_Block.setWindowTitle(_translate("Track_Model_Block", "MainWindow"))
+        self.title.setText(_translate("Track_Model_Block", "Blue Line - C4"))
+        self.clock.setText(_translate("Track_Model_Block", "13:56:54"))
+        self.speed_limit_label.setText(_translate("Track_Model_Block", "Speed Limit (mph)"))
+        self.direction_label.setText(_translate("Track_Model_Block", "Direction"))
+        self.elevation_label.setText(_translate("Track_Model_Block", "Elevation (ft)"))
+        self.length_label.setText(_translate("Track_Model_Block", "Length of Track (ft)"))
+        self.grade_label.setText(_translate("Track_Model_Block", "Grade (%)"))
+        self.track_color_label.setText(_translate("Track_Model_Block", "Track Color"))
+        self.underground_label.setText(_translate("Track_Model_Block", "Underground"))
+        self.track_heaters_label.setText(_translate("Track_Model_Block", "Track Heaters"))
+        self.occupancy_label.setText(_translate("Track_Model_Block", "Occupied"))
+        self.switch_position_label.setText(_translate("Track_Model_Block", "Switch Position"))
+        self.brake_failure_label.setText(_translate("Track_Model_Block", "Brake Failure"))
+        self.broken_rail_label.setText(_translate("Track_Model_Block", "Broken Rail"))
+        self.circuit_failure_label.setText(_translate("Track_Model_Block", "Circuit Failure"))
+        self.engine_failure_label.setText(_translate("Track_Model_Block", "Engine Failure"))
+        self.power_failure_label.setText(_translate("Track_Model_Block", "Power Failure"))
+        self.failure_title.setText(_translate("Track_Model_Block", "Failure Modes"))
+        self.beacon_info.setText(_translate("Track_Model_Block", "Static Information"))
+        self.brake_failure.setText(_translate("Track_Model_Block", "OFF"))
+        self.engine_failure.setText(_translate("Track_Model_Block", "OFF"))
+        self.broken_rail.setText(_translate("Track_Model_Block", "OFF"))
+        self.circuit_failure.setText(_translate("Track_Model_Block", "OFF"))
+        self.power_failiure.setText(_translate("Track_Model_Block", "OFF"))
+        self.static_info.setText(_translate("Track_Model_Block", "Station on right side"))
+        self.temperature_control.setText(_translate("Track_Model_Block", "Temperature Control (F)"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    Track_Model_Block = QtWidgets.QMainWindow()
+    ui = Ui_Track_Model_Block()
+    ui.setUi(Track_Model_Block)
+    Track_Model_Block.show()
     sys.exit(app.exec_())

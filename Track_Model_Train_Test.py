@@ -17,7 +17,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 class Ui_Track_Model_Train(object):
+
     def setpUi(self, Track_Model_Train):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
         Track_Model_Train.setObjectName("Track_Model_Train")
         Track_Model_Train.resize(782, 594)
         self.centralwidget = QtWidgets.QWidget(Track_Model_Train)

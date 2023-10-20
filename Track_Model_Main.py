@@ -21,6 +21,8 @@ from Track_Model_Train_Test import Ui_Track_Model_Train
 
 class Ui_TrackModel_MainUI(object):
     def setupUi(self, TrackModel_MainUI):
+        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
         TrackModel_MainUI.setObjectName("TrackModel_MainUI")
         TrackModel_MainUI.resize(780, 435)
         TrackModel_MainUI.setStyleSheet("background-color: rgb(255, 255, 255);")
@@ -109,8 +111,9 @@ class Ui_TrackModel_MainUI(object):
         self.section.setGeometry(QtCore.QRect(440, 110, 91, 61))
         self.section.setObjectName("section")
         self.section.setStyleSheet("border: 1px solid black;")
-        section_list = ['A', 'B', 'C', ]
-        self.section.addItems(section_list)
+        section_list_blue = ['A', 'B', 'C', ]
+        section_list_red = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T']
+        section_list_green = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
         self.block_number = QtWidgets.QComboBox(self.centralwidget)
         self.block_number.setGeometry(QtCore.QRect(550, 110, 91, 61))
