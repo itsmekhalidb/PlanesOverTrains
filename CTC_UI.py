@@ -391,6 +391,79 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">km/hr</p></body></html>"))
+            
+
+    # update function
+    def update(self):
+        global CTC
+        _translate = QtCore.QCoreApplication.translate
+
+        # destination station and arrival time
+        if CTC._trains[self.train_list.currentIndex()]._schedule != None:
+            self.station_list.setCurrentText(CTC._trains[self.train_list.currentIndex()]._schedule.get_destination_station())
+            self.station_list.setDisabled(True)
+
+            arr_time = CTC._trains[self.train_list.currentIndex()]._schedule.get_arrival_time()
+            real_arr_time = QTime(arr_time.hour, arr_time.minute)
+            self.arrival_time.setTime(real_arr_time)
+            self.arrival_time.setReadOnly(True)
+            self.arrival_time.setButtonSymbols(QTimeEdit.NoButtons)
+        else:
+            self.station_list.setCurrentText("Destination Station")
+            self.station_list.setDisabled(False)
+
+            self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
+            self.arrival_time.setReadOnly(False)
+            self.arrival_time.setButtonSymbols(QTimeEdit.UpDownArrows)
+
+        # train schedule info
+        temp_train = CTC._trains[self.train_list.currentIndex()]
+        if temp_train._schedule != None:
+            temp_dep_time_w_ms = temp_train.get_departure_time()
+            temp_dep_time = time(temp_dep_time_w_ms.hour, temp_dep_time_w_ms.minute, temp_dep_time_w_ms.second)
+            temp_auth = self.meters_to_miles(temp_train.get_authority())
+            temp_sug_speed = self.kmhr_to_mihr(temp_train.get_suggested_velocity())
+            temp_curr_speed = self.kmhr_to_mihr(temp_train.get_actual_velocity())
+
+
+    # switch to train view
+    def show_train_view(self):
+        self.view_switcher.setCurrentIndex(0)
+
+
+    # switch to track view
+    def show_track_view(self):
+        self.view_switcher.setCurrentIndex(1)
+
+
+    # switch to testbench
+    def show_testbench(self):
+        global last_page
+        last_page = self.view_switcher.currentIndex()
+        self.view_switcher.setCurrentIndex(2)
+
+
+    # leave testbench
+    def leave_testbench(self):
+        global last_page
+        self.view_switcher.setCurrentIndex(last_page)
+
+
+    # confirm button pressed, run checks then call ctc.py function
+    def confirm_route(self, station_name, time_in, train_index):
+        global CTC
+        if datetime.now().time() < time_in and station_name != "Destination Station":
+            CTC._trains[train_index].create_schedule(station_name, time_in, CTC._track)
+            self.update()
+    
+
+    # unit conversion functions
+    def meters_to_miles(self, meters):
+        return "{:.2f}".format(meters / 1609.344)
+    def kmhr_to_mihr(self, kmhr):
+        return "{:.2f}".format(kmhr / 0.621371)
+        
+
 import CTC_resource_file_rc
 
 
