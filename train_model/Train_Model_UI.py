@@ -14,6 +14,9 @@ from train_model import TrainModel
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
+import napkin
+
+
 class Ui_TrainModel_MainUI(object):
 
         def __init__(self, train_model: TrainModel):
@@ -828,7 +831,7 @@ class Ui_TrainModel_MainUI(object):
 
                 # Next Station Info
                 # Row 1
-                self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Next Station:"))
+                self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Current Station:"))
                 self.next_station_infobox.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_beacon())))
                 # TODO: Are we measuring authority in feet or blocks?
                 self.next_station_infobox.setItem(0, 2, QtWidgets.QTableWidgetItem("Authority:"))
@@ -937,7 +940,7 @@ class Ui_TrainModel_MainUI(object):
         # "p, li { white-space: pre-wrap; }\n"
         # "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:600; font-style:normal;\">\n"
         # "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">You are arriving at DORMONT STATION in 59 minutes.</span></p></body></html>"))
-                self.next_station_label.setText(_translate("TrainModel_MainUI", "Next Station Information"))
+                self.next_station_label.setText(_translate("TrainModel_MainUI", "Current Station Information"))
                 self.emergency_mode_label.setText(_translate("TrainModel_MainUI", "Emergency & Failure Modes"))
                 self.engine_fail_label.setText(_translate("TrainModel_MainUI", "Train Engine Failure"))
                 self.signal_fail_label.setText(_translate("TrainModel_MainUI", "Signal Pickup Failure"))
@@ -974,6 +977,7 @@ class Ui_TrainModel_MainUI(object):
 
 if __name__ == "__main__":
     import sys
+    napkin.generate()
     app = QtWidgets.QApplication(sys.argv)
     TrainModel_MainUI = QtWidgets.QMainWindow()
     tm = TrainModel()

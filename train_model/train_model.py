@@ -4,6 +4,8 @@ import os
 import random
 import time
 import random as rand
+
+import napkin
 import numpy as np
 import threading
 # from Train_Model_Test_Bench_UI import Ui_TrainModel_TestBench as tb
@@ -593,3 +595,7 @@ class TrainModel(object):
 
     def get_service_brake(self) -> bool:
         return self._service_brake
+
+    def launch_tm_ui(self):
+        from Train_Model_UI import Ui_TrainModel_MainUI
+        self._ui = Ui_TrainModel_MainUI(self)
