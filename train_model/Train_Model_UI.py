@@ -10,24 +10,24 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-from train_model import TrainModel
+from train_model.train_model import TrainModel
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
-import napkin
 
-
-class Ui_TrainModel_MainUI(object):
+class Ui_TrainModel_MainUI(QMainWindow):
 
         def __init__(self, train_model: TrainModel):
                 super().__init__()
                 self.train_model = train_model
+                self.setupUi()
+                self.show()
 
-        def setupUi(self, TrainModel_MainUI):
-                TrainModel_MainUI.setObjectName("TrainModel_MainUI")
-                TrainModel_MainUI.resize(679, 569)
-                TrainModel_MainUI.setStyleSheet("background-color: rgb(255, 255, 255);")
-                self.centralwidget = QtWidgets.QWidget(TrainModel_MainUI)
+        def setupUi(self):
+                self.setObjectName("self")
+                self.resize(679, 569)
+                self.setStyleSheet("background-color: rgb(255, 255, 255);")
+                self.centralwidget = QtWidgets.QWidget(self)
                 self.centralwidget.setObjectName("centralwidget")
                 self.title_label = QtWidgets.QLabel(self.centralwidget)
                 self.title_label.setGeometry(QtCore.QRect(0, 0, 679, 51))
@@ -754,10 +754,10 @@ class Ui_TrainModel_MainUI(object):
                 self.service_brake_on.raise_()
                 self.service_brake_on.hide()
                 self.service_brake_off.raise_()
-                TrainModel_MainUI.setCentralWidget(self.centralwidget)
+                self.setCentralWidget(self.centralwidget)
 
-                self.retranslateUi(TrainModel_MainUI)
-                QtCore.QMetaObject.connectSlotsByName(TrainModel_MainUI)
+                self.retranslateUi()
+                QtCore.QMetaObject.connectSlotsByName(self)
 
                 self._handler()
 
@@ -915,9 +915,9 @@ class Ui_TrainModel_MainUI(object):
                 self.timer.timeout.connect(self.update)
                 self.timer.start()
 
-        def retranslateUi(self, TrainModel_MainUI):
+        def retranslateUi(self):
                 _translate = QtCore.QCoreApplication.translate
-                TrainModel_MainUI.setWindowTitle(_translate("TrainModel_MainUI", "Train Model"))
+                self.setWindowTitle(_translate("TrainModel_MainUI", "Train Model"))
                 self.title_label.setText(_translate("TrainModel_MainUI", " Train #NUM Line COLOR"))
                 # self.system_speed_label.setText(_translate("TrainModel_MainUI", " System Speed"))
                 # self.sys_time_label.setText(_translate("TrainModel_MainUI", "13:24:55"))
@@ -977,7 +977,6 @@ class Ui_TrainModel_MainUI(object):
 
 if __name__ == "__main__":
     import sys
-    napkin.generate()
     app = QtWidgets.QApplication(sys.argv)
     TrainModel_MainUI = QtWidgets.QMainWindow()
     tm = TrainModel()

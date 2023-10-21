@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Gui_of_guis</class>
- <widget class="QMainWindow" name="Gui_of_guis">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>302</width>
-    <height>480</height>
+    <width>339</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="CTC_open_Ui">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>341</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>22</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 0);</string>
+    </property>
+    <property name="text">
+     <string>Planes Over Trains #5</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="CTC_launch">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>60</y>
-      <width>281</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -34,32 +60,12 @@
      <string>CTC</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Track_controller_sw_open_ui">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>200</y>
-      <width>281</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>18</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Track Controller - HW</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Track_controller_hw_open_ui">
+   <widget class="QPushButton" name="track_controller_sw_launch">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>130</y>
-      <width>281</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -74,12 +80,32 @@
      <string>Track Controller - SW</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="Track_model_open_ui">
+   <widget class="QPushButton" name="track_controller_hw_launch">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>321</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>18</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Track Controller - HW</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="track_model_launch">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>270</y>
-      <width>281</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -94,12 +120,12 @@
      <string>Track Model</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="train_controller_open_ui">
+   <widget class="QPushButton" name="train_model_launch">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>340</y>
-      <width>281</width>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -114,12 +140,12 @@
      <string>Train Model</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="train_model_open_ui_2">
+   <widget class="QPushButton" name="train_controller_launch">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
-      <width>281</width>
+      <y>460</y>
+      <width>321</width>
       <height>61</height>
      </rect>
     </property>
@@ -134,34 +160,34 @@
      <string>Train Controller</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QComboBox" name="train_model_select">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>301</width>
+      <x>10</x>
+      <y>400</y>
+      <width>321</width>
       <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>18</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>12</pointsize>
      </font>
     </property>
-    <property name="autoFillBackground">
-     <bool>false</bool>
+   </widget>
+   <widget class="QComboBox" name="train_controller_select">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>520</y>
+      <width>321</width>
+      <height>51</height>
+     </rect>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 0);
-</string>
-    </property>
-    <property name="text">
-     <string>Planes Over Trains #5</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
     </property>
    </widget>
   </widget>

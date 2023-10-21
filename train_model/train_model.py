@@ -4,17 +4,14 @@ import os
 import random
 import time
 import random as rand
-
-import napkin
 import numpy as np
 import threading
-# from Train_Model_Test_Bench_UI import Ui_TrainModel_TestBench as tb
-# from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
-import threading
 
-# TODO: Format Force and Power to be centered
+# from track_model.track_model import TrackModel
+# from train_controller.train_controller import TrainController
 
 class TrainModel(object):
+    # def __init__(self, train_signals: TrainSignals, track_signals: TrackSignals):
     def __init__(self):
 
         # -- Train Model Variables -- #
@@ -597,5 +594,6 @@ class TrainModel(object):
         return self._service_brake
 
     def launch_tm_ui(self):
-        from Train_Model_UI import Ui_TrainModel_MainUI
+        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
+        print("Launching Train Model UI")
         self._ui = Ui_TrainModel_MainUI(self)
