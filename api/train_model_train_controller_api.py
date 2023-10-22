@@ -25,3 +25,4 @@ class TrainModelTrainControllerAPI:
         self.right_doors = False
         self.int_lights = False
         self.ext_lights = False
+        self.temp_sp = 0
