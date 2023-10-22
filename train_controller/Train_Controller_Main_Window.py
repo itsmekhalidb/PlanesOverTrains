@@ -10,17 +10,19 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from Train_Controller import TrainController
+from train_controller.train_controller import TrainController
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QMainWindow):
     def __init__(self, train_controller: TrainController):
         super().__init__()
         self.train_controller = train_controller
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(656, 492)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.setupUi()
+        self.show()
+    def setupUi(self):
+        self.setObjectName("self")
+        self.resize(656, 492)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
         self.title_label.setGeometry(QtCore.QRect(0, 0, 657, 51))
@@ -823,10 +825,10 @@ class Ui_MainWindow(object):
         self.ebrake_fail_off_2.raise_()
         self.commanded_speed_spnbx.raise_()
         self.temperature_spnbx.raise_()
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
         self._handler()
         #Auto Status
         self.checkBox_12.toggled.connect(
@@ -991,9 +993,9 @@ class Ui_MainWindow(object):
         self.train_controller.set_temperature_sp(float(temp))
         self.toggle_buttons()
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.title_label.setText(_translate("MainWindow", " Train #NUM Line COLOR"))
         #self.test_bench_btn.setText(_translate("MainWindow", "Test Bench"))
         self.pushButton.setText(_translate("MainWindow", "Emergency Brake"))
@@ -1059,6 +1061,6 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     tc = TrainController()
     ui = Ui_MainWindow(tc)
-    ui.setupUi(MainWindow)
+    ui.setupUi(Ui_MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())

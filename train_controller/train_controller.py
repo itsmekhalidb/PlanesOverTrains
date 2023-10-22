@@ -210,3 +210,8 @@ class TrainController(object):
 
     def get_station_status(self)->str:
         return self._station_status
+
+    def launch_tc_ui(self):
+        from train_controller.Train_Controller_Main_Window import Ui_MainWindow
+        print("Launching Train Controller UI")
+        self._ui = Ui_MainWindow(self)

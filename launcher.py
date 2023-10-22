@@ -17,10 +17,16 @@ import sys
 from train_model.train_model import TrainModel
 from train_model.train_model_manager import TrainModelManager
 
+from train_controller.train_controller import TrainController
+from train_controller.train_controller_manager import TrainControllerManager
+
 class Launcher(QMainWindow):
     def __init__(self):
         # self.train_model_manager = TrainModelManager(train_signals, track_signals)
         self.train_model_manager = TrainModelManager()
+
+        # self.train_controller_manager = TrainControllerManager(train_signals, track_signals)
+        self.train_controller_manager = TrainControllerManager()
 
         super().__init__()
         self.setupUi()
@@ -95,6 +101,19 @@ class Launcher(QMainWindow):
         self.train_model_launch.setFont(font)
         self.train_model_launch.setObjectName("train_model_launch")
         self.train_controller_launch = QtWidgets.QPushButton(self)
+        # Disable button until train is selected
+        # self.train_controller_launch.setStyleSheet(
+        #     "QPushButton:disabled {\n"
+        #     "background-color: rgb(63, 63, 63);\n"
+        #     "color: rgb(90, 90, 90);\n"
+        #     "}\n"
+        #     "QPushButton:enabled {\n"
+        #     "background-color: rgb(63, 63, 63);\n"
+        #     "color: rgb(255, 255, 255);\n"
+        #     "}\n"
+        #     # "\n"
+        #     # ""
+        # )
         self.train_controller_launch.setGeometry(QtCore.QRect(10, 460, 321, 61))
         font = QtGui.QFont()
         font.setPointSize(18)
@@ -122,6 +141,19 @@ class Launcher(QMainWindow):
         self.train_model_select.setFont(font)
         self.train_model_select.setObjectName("train_model_select")
         self.train_controller_select = QtWidgets.QComboBox(self)
+        # Disable button until train is selected
+        # self.train_controller_select.setStyleSheet(
+        #     "QPushButton:disabled {\n"
+        #     "background-color: rgb(63, 63, 63);\n"
+        #     "color: rgb(255, 255, 255);\n"
+        #     "}\n"
+        #     "QPushButton:enabled {\n"
+        #     "background-color: rgb(63, 63, 63);\n"
+        #     "color: rgb(255, 255, 255);\n"
+        #     "}\n"
+        #     # "\n"
+        #     # ""
+        # )
         self.train_controller_select.setGeometry(QtCore.QRect(10, 520, 321, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
@@ -133,6 +165,7 @@ class Launcher(QMainWindow):
 
         # Launch UI on Click
         self.train_model_launch.clicked.connect(self.launch_train_model)
+        self.train_controller_launch.clicked.connect(self.launch_train_controller)
 
         # Run Timer
         self._handler()
@@ -163,10 +196,21 @@ class Launcher(QMainWindow):
         # else:
         #     self.train_model_launch.setEnabled(True)
 
+        # Disable Button for Train Model if no train selected
+        # if self.train_controller_select.currentText() == "":
+        #     self.train_controller_launch.setEnabled(False)
+        # else:
+        #     self.train_controller_launch.setEnabled(True)
+
     def get_train_models(self):
         self.train_model_select.clear()
         self.train_model_select.addItems(
             [f'train #{id + 1}' for id in self.train_model_manager.get_ids()]
+        )
+    def get_train_controllers(self):
+        self.train_controller_select.clear()
+        self.train_controller_select.addItems(
+            [f'train #{id + 1}' for id in self.train_controller_manager.get_ids()]
         )
 
     def launch_train_model(self):
@@ -174,6 +218,13 @@ class Launcher(QMainWindow):
         # id = int(self.train_model_select.currentText()[-1]) - 1
         # self.train_model_manager.launch_ui(id)
         self.train_model_manager.launch_ui(0)
+    def launch_train_controller(self):
+        # comment out this line until train is dispatched
+        # id = int(self.train_model_select.currentText()[-1]) - 1
+        # self.train_model_manager.launch_ui(id)
+        self.train_controller_manager.launch_ui(0)
+
+
 
 class ComboBox(QtWidgets.QComboBox):
     popupAboutToBeShown = QtCore.pyqtSignal()
