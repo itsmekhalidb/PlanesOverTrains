@@ -2,12 +2,12 @@ from .train_model import TrainModel
 from typing import DefaultDict
 import threading
 
-# from signals.train_signals import TrainSignals
-# from signals.track_signals import TrackSignals
+# from api.train_signals import TrainSignals
+# from api.track_signals import TrackSignals
 
 class TrainModelManager():
 
-    # Uncomment this when the signals are ready
+    # Uncomment this when the api are ready
     # def __init__(self, train_signals, track_to_train_signals):
     def __init__(self) -> None:
         self._train_models = DefaultDict(TrainModel)

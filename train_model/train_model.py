@@ -78,10 +78,10 @@ class TrainModel(object):
         self._service_brake = False # service brake
 
         # -- Get Data from Other Modules -- #
-        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller signals
-        self._train_ctrl_signals = None # train controller signals
-        # TODO: change _track_model_signals to _track_model_signals from track model signals
-        self._track_model_signals = None # track model signals
+        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller api
+        self._train_ctrl_signals = None # train controller api
+        # TODO: change _track_model_signals to _track_model_signals from track model api
+        self._track_model_signals = None # track model api
 
         # -- Run the Update Function -- #
         self.update()
@@ -91,7 +91,7 @@ class TrainModel(object):
         # Input Train Controller Signals #
         ##################################
         # Commanded Power
-        # TODO: change get_cmd_power to get_cmd_power from train controller signals
+        # TODO: change get_cmd_power to get_cmd_power from train controller api
         self.set_cmd_power(float(self.get_cmd_power()))  # Pass input from test UI text box
 
         # Internal Temperature
@@ -102,97 +102,97 @@ class TrainModel(object):
         # Failure Modes #
         #################
         # E-Brake Failure
-        # TODO: change get_ebrake_failure to get_ebrake_failure from train controller signals
+        # TODO: change get_ebrake_failure to get_ebrake_failure from train controller api
         self.set_ebrake_failure(bool(self.get_ebrake_failure()))  # Pass input from test UI text box
 
         # Train Engine Failure
-        # TODO: change get_engine_failure to get_engine_failure from train controller signals
+        # TODO: change get_engine_failure to get_engine_failure from train controller api
         self.set_engine_failure(bool(self.get_engine_failure()))  # Pass input from test UI text box
 
         # Service Brake Failure
-        # TODO: change get_sbrake_failure to get_sbrake_failure from train controller signals
+        # TODO: change get_sbrake_failure to get_sbrake_failure from train controller api
         self.set_sbrake_failure(bool(self.get_sbrake_failure()))  # Pass input from test UI text box
 
         # Signal Pickup Failure
-        # TODO: change get_signal_failure to get_signal_failure from train controller signals
+        # TODO: change get_signal_failure to get_signal_failure from train controller api
         self.set_signal_failure(bool(self.get_signal_failure()))  # Pass input from test UI text box
 
         ############
         # Controls #
         ############
         # Right Door
-        # TODO: change get_right_door to get_right_door from train controller signals
+        # TODO: change get_right_door to get_right_door from train controller api
         self.set_right_door(bool(self.get_right_door()))  # Pass input from test UI text box
 
         # Left Door
-        # TODO: change get_left_door to get_left_door from train controller signals
+        # TODO: change get_left_door to get_left_door from train controller api
         self.set_left_door(bool(self.get_left_door()))  # Pass input from test UI text box
 
         # Internal Lights
-        # TODO: change get_int_lights to get_int_lights from train controller signals
+        # TODO: change get_int_lights to get_int_lights from train controller api
         self.set_int_lights(bool(self.get_int_lights()))  # Pass input from test UI text box
 
         # External Lights
-        # TODO: change get_ext_lights to get_ext_lights from train controller signals
+        # TODO: change get_ext_lights to get_ext_lights from train controller api
         self.set_ext_lights(bool(self.get_ext_lights()))  # Pass input from test UI text box
 
         # Emergency Brake
-        # TODO: change get_emergency_brake to get_emergency_brake from train controller signals
+        # TODO: change get_emergency_brake to get_emergency_brake from train controller api
         self.set_emergency_brake(bool(self.get_emergency_brake()))  # Pass input from test UI text box
 
         # Service Brake
-        # TODO: change get_service_brake to get_service_brake from train controller signals
+        # TODO: change get_service_brake to get_service_brake from train controller api
         self.set_service_brake(bool(self.get_service_brake()))  # Pass input from test UI text box
 
         #############################
         # Input Track Model Signals #
         #############################
         # Passenger Count
-        # TODO: change get_curr_passenger_count to get_curr_passenger_count from track model signals
+        # TODO: change get_curr_passenger_count to get_curr_passenger_count from track model api
         self.set_curr_passenger_count(int(self.get_curr_passenger_count()))  # Pass input from test UI text box
 
         # Time
-        # TODO: change get_time to get_time from track model signals
+        # TODO: change get_time to get_time from track model api
         self.set_time()
 
         # Beacon
-        # TODO: change get_beacon to get_beacon from track model signals
+        # TODO: change get_beacon to get_beacon from track model api
         self.set_beacon(self.get_beacon())
 
         # Line
-        # TODO: change get_line to get_line from track model signals
+        # TODO: change get_line to get_line from track model api
         self.set_line(self.get_line())
 
         # Station Side
-        # TODO: change get_station_side to get_station_side from track model signals
+        # TODO: change get_station_side to get_station_side from track model api
         self.set_station_side(self.get_station_side())
 
         # Block
-        # TODO: change get_block to get_block from track model signals
+        # TODO: change get_block to get_block from track model api
         self.set_block(self.get_block())
 
         # Authority
-        # TODO: change get_authority to get_authority from track model signals
+        # TODO: change get_authority to get_authority from track model api
         self.set_authority(float(self.get_authority()))
 
         # Speed Limit
-        # TODO: change get_speed_limit to get_speed_limit from track model signals
+        # TODO: change get_speed_limit to get_speed_limit from track model api
         self.set_speed_limit(float(self.get_speed_limit()))
 
         # Elevation
-        # TODO: change get_elevation to get_elevation from track model signals
+        # TODO: change get_elevation to get_elevation from track model api
         self.set_elevation(float(self.get_elevation()))
 
         # Grade
-        # TODO: change get_grade to get_grade from track model signals
+        # TODO: change get_grade to get_grade from track model api
         self.set_grade(float(self.get_grade()))
 
         # Underground
-        # TODO: change get_underground to get_underground from track model signals
+        # TODO: change get_underground to get_underground from track model api
         self.set_underground(bool(self.get_underground()))
 
         # Commanded Speed
-        # TODO: change get_cmd_speed to get_cmd_speed from track model signals
+        # TODO: change get_cmd_speed to get_cmd_speed from track model api
         self.set_cmd_speed(float(self.get_cmd_speed()))
 
         ##############################

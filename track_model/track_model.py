@@ -41,8 +41,8 @@ class TrackModel(object):
         self._temperature = 0 #temperature of cabin
 
         #Data from Other Modules
-        self._train_model_signals = None #signals from Train Model
-        self ._track_controller_signals = None #signals from track controller
+        self._train_model_signals = None #api from Train Model
+        self ._track_controller_signals = None #api from track controller
 
         self.update()
 
