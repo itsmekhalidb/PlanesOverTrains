@@ -1,17 +1,19 @@
+import traceback
+
 from .train_model import TrainModel
 from typing import DefaultDict
 import threading
 
-# from api.train_signals import TrainSignals
-# from api.track_signals import TrackSignals
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
+# from api.track_model_train_model_api import TrackModelTrainModelAPI
 
-class TrainModelManager():
+class TrainModelManager:
 
-    # Uncomment this when the api are ready
-    # def __init__(self, train_signals, track_to_train_signals):
-    def __init__(self) -> None:
+    def __init__(self, train_signals) -> None:
+    # def __init__(self, train_signals, track_signals) -> None:
         self._train_models = DefaultDict(TrainModel)
-        # self._train_signals = train_signals
+        self._train_signals = train_signals
+
         # self._track_to_train_signals = track_signals
         self.update()
 
@@ -51,4 +53,16 @@ class TrainModelManager():
         return self._train_models.keys()
 
     def launch_ui(self, train_id: int):
-        self._train_models[train_id].launch_tm_ui()
+        print("Launching UI for train " + str(train_id))
+
+        try:
+            # Create a TrainModel instance with the required 'train_signals' argument
+            self._train_models[train_id] = TrainModel(self._train_signals)
+
+            # Now you can call the 'launch_tm_ui' method
+            self._train_models[train_id].launch_tm_ui()
+
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+            print("Train model not initialized yet")

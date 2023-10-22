@@ -1,18 +1,19 @@
 # -- Imports -- #
-import math
 import os
+import math
 import random
 import time
 import random as rand
 import numpy as np
 import threading
 
-# from track_model.track_model import TrackModel
-# from train_controller.train_controller import TrainController
+import api.train_model_train_controller_api as TrainModelTrainControllerAPI
+# from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
-    # def __init__(self, train_signals: TrainSignals, track_signals: TrackSignals):
-    def __init__(self):
+    # def __init__(self):
+    def __init__(self, train_signals: TrainModelTrainControllerAPI) -> None:
+    # def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
 
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
@@ -78,15 +79,14 @@ class TrainModel(object):
         self._service_brake = False # service brake
 
         # -- Get Data from Other Modules -- #
-        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller api
-        self._train_ctrl_signals = None # train controller api
-        # TODO: change _track_model_signals to _track_model_signals from track model api
-        self._track_model_signals = None # track model api
+        self._train_ctrl_signals = train_signals # train controller api
+        # self._track_model_signals = track_signals # track model api
 
         # -- Run the Update Function -- #
         self.update()
 
     def update(self, thread=False):
+
         ##################################
         # Input Train Controller Signals #
         ##################################
@@ -106,8 +106,7 @@ class TrainModel(object):
         self.set_ebrake_failure(bool(self.get_ebrake_failure()))  # Pass input from test UI text box
 
         # Train Engine Failure
-        # TODO: change get_engine_failure to get_engine_failure from train controller api
-        self.set_engine_failure(bool(self.get_engine_failure()))  # Pass input from test UI text box
+        self._train_ctrl_signals.engine_failure = self.get_engine_failure()
 
         # Service Brake Failure
         # TODO: change get_sbrake_failure to get_sbrake_failure from train controller api
@@ -594,6 +593,6 @@ class TrainModel(object):
         return self._service_brake
 
     def launch_tm_ui(self):
-        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
         print("Launching Train Model UI")
+        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
         self._ui = Ui_TrainModel_MainUI(self)

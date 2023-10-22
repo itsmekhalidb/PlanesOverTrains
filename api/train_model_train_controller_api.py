@@ -1,5 +1,5 @@
 class TrainModelTrainControllerAPI:
-    def __init__(self):
+    def __init__(self) -> None:
         # Define variable passed between Train Model and Train Controller
 
         # From Train Model to Train Controller
