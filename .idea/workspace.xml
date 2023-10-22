@@ -4,15 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="039616d0-502f-49f6-b5ec-484d90614013" name="Changes" comment="First Iteration of the Gui of Guis, should be a model for the rest, plan is to pass one signal from CTC to Train Controller on Sunday">
-      <change afterPath="$PROJECT_DIR$/api/ctc_to_tc_api.py" afterDir="false" />
+    <list default="true" id="a6a6c122-f429-4bd8-8af5-3c6c154b71c3" name="Changes" comment="who tf knows">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/PlanesOverTrains.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/track_model/track_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/track_model/track_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_model/train_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_model/train_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train_model/train_model_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_model/train_model_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train-Controller/Train_Controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train-Controller/Train_Controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train-Controller/Train_Controller_Main_Window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train-Controller/Train_Controller_Main_Window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,55 +29,65 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Train_Model" />
+        <entry key="$PROJECT_DIR$" value="Train_Controller" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="recentNewPullRequestHead">
+      <RepoCoordinatesHolder>
+        <option name="owner" value="itsmekhalidb" />
+        <option name="repository" value="PlanesOverTrains" />
+      </RepoCoordinatesHolder>
+    </option>
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="3de357ee-b958-4415-ad43-e5bfadbc6777" />
+        <option name="url" value="https://github.com/itsmekhalidb/PlanesOverTrains" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 3
+  &quot;associatedIndex&quot;: 7
 }</component>
-  <component name="ProjectId" id="2W91gJNVePgJtyv0LO7ygCoKwv1" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+  <component name="ProjectId" id="2W5GcS5TLXw1OK2aL8ySKKFGoTz" />
+  <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/LucasTroy/Documents/PlanesOverTrains/train_model/Train_Model_Test_Bench_UI.py",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "settings.codegpt",
-    "two.files.diff.last.used.file": "C:/Users/LucasTroy/Documents/PlanesOverTrains/train_model/Train_Model_Test_Bench_UI.py",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
+    ]
   }
-}]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\LucasTroy\Documents\PlanesOverTrains\train_model" />
-      <recent name="C:\Users\LucasTroy\Documents\PlanesOverTrains\train_model\gui" />
-      <recent name="C:\Users\LucasTroy\Documents\PlanesOverTrains\gui\pyqt5" />
-      <recent name="C:\Users\LucasTroy\Documents\PlanesOverTrains\gui\python" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Python.launcher">
-    <configuration name="Train_Model_UI (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+}</component>
+  <component name="RunManager" selected="Python.Train_Controller_Main_Window (1)">
+    <configuration name="Train_Controller_Main_Window (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PlanesOverTrains" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -85,12 +95,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/train_model" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Train-Controller" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train_model/Train_Model_UI.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Train-Controller/Train_Controller_Main_Window.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -99,7 +109,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="launcher" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Train_Controller_Main_Window" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PlanesOverTrains" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -112,7 +122,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/launcher.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Train_Controller_Main_Window.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -121,7 +131,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="master_ui" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Train_Controller_Test_Bench" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="PlanesOverTrains" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -134,51 +144,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/master_ui.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="train_model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="PlanesOverTrains" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/train_model" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train_model/train_model.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="train_model_manager" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="PlanesOverTrains" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/train_model" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train_model/train_model_manager.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Train_Controller_Test_Bench.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -189,138 +155,140 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.launcher" />
-        <item itemvalue="Python.train_model" />
-        <item itemvalue="Python.train_model_manager" />
-        <item itemvalue="Python.master_ui" />
-        <item itemvalue="Python.Train_Model_UI (1)" />
+        <item itemvalue="Python.Train_Controller_Main_Window (1)" />
+        <item itemvalue="Python.Train_Controller_Test_Bench" />
+        <item itemvalue="Python.Train_Controller_Main_Window" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="039616d0-502f-49f6-b5ec-484d90614013" name="Changes" comment="" />
-      <created>1696130092602</created>
+      <changelist id="a6a6c122-f429-4bd8-8af5-3c6c154b71c3" name="Changes" comment="" />
+      <created>1696015113369</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1696130092602</updated>
-      <workItem from="1696130096497" duration="68239000" />
-      <workItem from="1697063789702" duration="10665000" />
+      <updated>1696015113369</updated>
+      <workItem from="1696015121082" duration="1599000" />
+      <workItem from="1696017122762" duration="3231000" />
+      <workItem from="1696180152135" duration="1663000" />
+      <workItem from="1696549992384" duration="2472000" />
+      <workItem from="1696783060501" duration="9088000" />
+      <workItem from="1696863826625" duration="1254000" />
+      <workItem from="1696980402159" duration="16840000" />
+      <workItem from="1697073721656" duration="791000" />
+      <workItem from="1697133011884" duration="11750000" />
+      <workItem from="1697392916142" duration="6000" />
+      <workItem from="1697746565670" duration="649000" />
+      <workItem from="1697747297934" duration="6531000" />
+      <workItem from="1697817722188" duration="10975000" />
+      <workItem from="1697831904373" duration="2078000" />
     </task>
-    <task id="LOCAL-00001" summary="Created some UIs for the Train Model&#10;Very basic with no functionality (yet)">
+    <task id="LOCAL-00001" summary="test commit">
       <option name="closed" value="true" />
-      <created>1696130328137</created>
+      <created>1696017157365</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1696130328137</updated>
+      <updated>1696017157366</updated>
     </task>
-    <task id="LOCAL-00002" summary="Advanced my UI a bit more&#10;- implemented a button for test bench">
+    <task id="LOCAL-00002" summary="deleted text files">
       <option name="closed" value="true" />
-      <created>1696214697227</created>
+      <created>1696791127519</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1696214697227</updated>
+      <updated>1696791127519</updated>
     </task>
-    <task id="LOCAL-00003" summary="Advanced my UI a bit more&#10;- Added a bunch of implementation&#10;    - See TODOs&#10;- Setup update and _handler loops">
+    <task id="LOCAL-00003" summary="Base Files for python and UI">
       <option name="closed" value="true" />
-      <created>1696301752649</created>
+      <created>1696791244949</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1696301752649</updated>
+      <updated>1696791244949</updated>
     </task>
-    <task id="LOCAL-00004" summary="whoopsie on passenger count update&#10;fixed it so line above it is used">
+    <task id="LOCAL-00004" summary="private variables created">
       <option name="closed" value="true" />
-      <created>1696302126950</created>
+      <created>1696858935523</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1696302126950</updated>
+      <updated>1696858935523</updated>
     </task>
-    <task id="LOCAL-00005" summary="Added some implementation for beacon info (block, line, beacon)&#10;Got the Line color to change for the title text&#10;Added some temperature functionality, but working on the time component/equation">
+    <task id="LOCAL-00005" summary="test bench">
       <option name="closed" value="true" />
-      <created>1696386964044</created>
+      <created>1697055667434</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1696386964044</updated>
+      <updated>1697055667434</updated>
     </task>
-    <task id="LOCAL-00006" summary="Added some simulation for Beacon Info -- still WIP&#10;Added more private vars to the train model class">
+    <task id="LOCAL-00006" summary="test bench 2.0">
       <option name="closed" value="true" />
-      <created>1696513014146</created>
+      <created>1697140152900</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1696513014146</updated>
+      <updated>1697140152900</updated>
     </task>
-    <task id="LOCAL-00007" summary="Finished Newton's Laws Calcs&#10; - Need to test them in the UI&#10; - Need to print stuff to console so it gets updated&#10;   - Might be overwritten somewhere">
+    <task id="LOCAL-00007" summary="main and test bench done, without service brake slowdown accounted for.">
       <option name="closed" value="true" />
-      <created>1696695980672</created>
+      <created>1697145798874</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1696695980672</updated>
+      <updated>1697145798874</updated>
     </task>
-    <task id="LOCAL-00008" summary="Tested Velocity, Accel and Force calcs&#10; - Still need to figure out if Velocity is being calculated correctly but updates on each click of calculate">
+    <task id="LOCAL-00008" summary="main and test bench done, without service brake slowdown accounted for.">
       <option name="closed" value="true" />
-      <created>1696779372644</created>
+      <created>1697747536146</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1696779372644</updated>
+      <updated>1697747536148</updated>
     </task>
-    <task id="LOCAL-00009" summary="Added a time update">
+    <task id="LOCAL-00009" summary="changed service brake to float, and added next station, and station status methods">
       <option name="closed" value="true" />
-      <created>1696780609329</created>
+      <created>1697749387190</created>
       <option name="number" value="00009" />
       <option name="presentableId" value="LOCAL-00009" />
       <option name="project" value="LOCAL" />
-      <updated>1696780609329</updated>
+      <updated>1697749387190</updated>
     </task>
-    <task id="LOCAL-00010" summary="Updated functions to round on display not in calculations">
+    <task id="LOCAL-00010" summary="UI is done. Just need to confirm physics formulas with Thomas to ensure properly working.">
       <option name="closed" value="true" />
-      <created>1696817901246</created>
+      <created>1697825801939</created>
       <option name="number" value="00010" />
       <option name="presentableId" value="LOCAL-00010" />
       <option name="project" value="LOCAL" />
-      <updated>1696817901246</updated>
+      <updated>1697825801939</updated>
     </task>
-    <task id="LOCAL-00011" summary="Finished Ad Presentation scroll, just need to add 5 more ads and should be good with that part">
+    <task id="LOCAL-00011" summary="Changes by Lucas">
       <option name="closed" value="true" />
-      <created>1696893394807</created>
+      <created>1697825836007</created>
       <option name="number" value="00011" />
       <option name="presentableId" value="LOCAL-00011" />
       <option name="project" value="LOCAL" />
-      <updated>1696893394807</updated>
+      <updated>1697825836007</updated>
     </task>
-    <task id="LOCAL-00012" summary="Added some more Ads, UI is fully functional and implemented">
+    <task id="LOCAL-00012" summary="Changes by Lucas">
       <option name="closed" value="true" />
-      <created>1696900851562</created>
+      <created>1697826520839</created>
       <option name="number" value="00012" />
       <option name="presentableId" value="LOCAL-00012" />
       <option name="project" value="LOCAL" />
-      <updated>1696900851562</updated>
+      <updated>1697826520839</updated>
     </task>
-    <task id="LOCAL-00013" summary="Cleanup">
+    <task id="LOCAL-00013" summary="who tf knows">
       <option name="closed" value="true" />
-      <created>1696988135084</created>
+      <created>1697827086001</created>
       <option name="number" value="00013" />
       <option name="presentableId" value="LOCAL-00013" />
       <option name="project" value="LOCAL" />
-      <updated>1696988135084</updated>
+      <updated>1697827086001</updated>
     </task>
-    <task id="LOCAL-00014" summary="First Iteration of the Gui of Guis, should be a model for the rest, plan is to pass one signal from CTC to Train Controller on Sunday">
-      <option name="closed" value="true" />
-      <created>1697856425074</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1697856425074</updated>
-    </task>
-    <option name="localTasksCounter" value="15" />
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -339,34 +307,24 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Created some UIs for the Train Model&#10;Very basic with no functionality (yet)" />
-    <MESSAGE value="Advanced my UI a bit more&#10;- implemented a button for test bench" />
-    <MESSAGE value="Advanced my UI a bit more&#10;- Added a bunch of implementation&#10;    - See TODOs&#10;- Setup update and _handler loops" />
-    <MESSAGE value="whoopsie on passenger count update&#10;fixed it so line above it is used" />
-    <MESSAGE value="Added some implementation for beacon info (block, line, beacon)&#10;Got the Line color to change for the title text&#10;Added some temperature functionality, but working on the time component/equation" />
-    <MESSAGE value="Added some simulation for Beacon Info -- still WIP&#10;Added more private vars to the train model class" />
-    <MESSAGE value="Finished Newton's Laws Calcs&#10; - Need to test them in the UI&#10; - Need to print stuff to console so it gets updated&#10;   - Might be overwritten somewhere" />
-    <MESSAGE value="Tested Velocity, Accel and Force calcs&#10; - Still need to figure out if Velocity is being calculated correctly but updates on each click of calculate" />
-    <MESSAGE value="Added a time update" />
-    <MESSAGE value="Updated functions to round on display not in calculations" />
-    <MESSAGE value="Finished Ad Presentation scroll, just need to add 5 more ads and should be good with that part" />
-    <MESSAGE value="Added some more Ads, UI is fully functional and implemented" />
-    <MESSAGE value="Cleanup" />
-    <MESSAGE value="First Iteration of the Gui of Guis, should be a model for the rest, plan is to pass one signal from CTC to Train Controller on Sunday" />
-    <option name="LAST_COMMIT_MESSAGE" value="First Iteration of the Gui of Guis, should be a model for the rest, plan is to pass one signal from CTC to Train Controller on Sunday" />
+    <MESSAGE value="test commit" />
+    <MESSAGE value="deleted text files" />
+    <MESSAGE value="Base Files for python and UI" />
+    <MESSAGE value="private variables created" />
+    <MESSAGE value="test bench" />
+    <MESSAGE value="test bench 2.0" />
+    <MESSAGE value="main and test bench done, without service brake slowdown accounted for." />
+    <MESSAGE value="changed service brake to float, and added next station, and station status methods" />
+    <MESSAGE value="UI is done. Just need to confirm physics formulas with Thomas to ensure properly working." />
+    <MESSAGE value="Changes by Lucas" />
+    <MESSAGE value="who tf knows" />
+    <option name="LAST_COMMIT_MESSAGE" value="who tf knows" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Track_Controller_SW.coverage" NAME="Track_Controller_SW Coverage Results" MODIFIED="1697063548720" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/track_controller" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$main_ui.coverage" NAME="main_ui Coverage Results" MODIFIED="1696299983132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Downloads/train_model/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Model_UI__1_.coverage" NAME="Train_Model_UI (1) Coverage Results" MODIFIED="1697849892641" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Model_Test_Bench_UI.coverage" NAME="Train_Model_Test_Bench_UI Coverage Results" MODIFIED="1696207348507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model/gui/python" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$train_model_manager.coverage" NAME="train_model_manager Coverage Results" MODIFIED="1697854082073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$train_model.coverage" NAME="train_model Coverage Results" MODIFIED="1697854990357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Track_Controller_TB.coverage" NAME="Track_Controller_TB Coverage Results" MODIFIED="1697063522016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/track_controller" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Model_Test_Bench_UI__1_.coverage" NAME="Train_Model_Test_Bench_UI (1) Coverage Results" MODIFIED="1697584710963" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$ets.coverage" NAME="ets Coverage Results" MODIFIED="1696213925807" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$master_ui.coverage" NAME="master_ui Coverage Results" MODIFIED="1697849924533" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$launcher.coverage" NAME="launcher Coverage Results" MODIFIED="1697856433940" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Model_UI.coverage" NAME="Train_Model_UI Coverage Results" MODIFIED="1696174531438" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/train_model/gui/python" />
+    <SUITE FILE_PATH="coverage/PlanesOverTrains$testfile.coverage" NAME="testfile Coverage Results" MODIFIED="1696181841092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Documents/Fall-2023/ECE-1140" />
+    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Controller_Main_Window__1_.coverage" NAME="Train_Controller_Main_Window (1) Coverage Results" MODIFIED="1697834027568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Train-Controller" />
+    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Controller_Test_Bench.coverage" NAME="Train_Controller_Test_Bench Coverage Results" MODIFIED="1697818085137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Controller_UI.coverage" NAME="Train_Controller_UI Coverage Results" MODIFIED="1696551235369" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PlanesOverTrains$Train_Controller_Main_Window.coverage" NAME="Train_Controller_Main_Window Coverage Results" MODIFIED="1696982798967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
