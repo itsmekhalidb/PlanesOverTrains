@@ -4,7 +4,7 @@ class CTCTrackControllerAPI:
 
         #CTC to Track Controller
         self._authority = 0.0 # meters
-        self._track_section_status = False # is the track in maintanence mode
+        self._track_section_status = {'block': False} #blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
 
         #Track Controller to CTC
@@ -13,8 +13,8 @@ class CTCTrackControllerAPI:
 
     def get_authority(self) -> float:
         return self._authority
-    def get_track_section_status(self) -> bool:
-        return self._track_section_status
+    def get_track_section_status(self, block) -> bool:
+        return self._track_section_status[block]
 
     def get_suggested_speed(self) -> float:
         return self._suggested_speed
@@ -28,8 +28,9 @@ class CTCTrackControllerAPI:
     def set_authority(self, distance: float):
         self._authority = distance
 
-    def set_track_section_status(self, mode: bool):
-        self._track_section_status = mode
+    def set_track_section_status(self, block, mode: bool):
+        self._track_section_status[block] = mode
+        self._occupancy[block][2] = mode
 
     def set_suggested_speed(self, speed: float):
         self._suggested_speed = speed
