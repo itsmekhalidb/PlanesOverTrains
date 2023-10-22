@@ -3,10 +3,12 @@ import math
 import time
 import numpy as np
 
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
+
 class TrainController(object):
 
-
-    def __init__(self):
+    def __init__(self, train_signals: TrainModelTrainControllerAPI):
+    #def __init__(self):
         #priv variables
         self._current_velocity = 0.0
         self._maximum_velocity = 0.0
@@ -41,6 +43,7 @@ class TrainController(object):
         self._temperature = 0.0 # internal temperature of the train
 
         # Update Function
+        self.train_model = train_signals
         self.update()
 
     def update(self, thread=False):
@@ -59,7 +62,7 @@ class TrainController(object):
         #self.set_service_brake_status(bool(self.get_service_brake_status()))
         self.set_emergency_brake_failure(bool(self.get_emergency_brake_failure_status()))
         self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
-        self.set_engine_status(bool(self.get_engine_status()))
+        self.set_engine_status(self.train_model.engine_failure)
         self.set_signal_pickup_failure_status(bool(self.get_signal_pickup_failure()))
         self.set_commanded_velocity(float(self.get_current_velocity()))
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))

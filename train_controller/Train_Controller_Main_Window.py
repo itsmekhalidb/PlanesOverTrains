@@ -995,7 +995,7 @@ class Ui_MainWindow(QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.setWindowTitle(_translate("MainWindow", "Train Controller"))
         self.title_label.setText(_translate("MainWindow", " Train #NUM Line COLOR"))
         #self.test_bench_btn.setText(_translate("MainWindow", "Test Bench"))
         self.pushButton.setText(_translate("MainWindow", "Emergency Brake"))
