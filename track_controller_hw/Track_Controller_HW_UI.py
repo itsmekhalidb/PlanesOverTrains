@@ -11,6 +11,7 @@ import serial
 from PyQt5 import uic
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PlanesOverTrains.track_controller_hw.File_Parser import File_Parser
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
@@ -33,7 +34,7 @@ class Ui_track_controller_mainwindow(object):
         # self._command = False
         self._previous = ""
         self._send_bits = ""
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
     def set_previous_show(self, s: str):
         self._previous = s
@@ -74,8 +75,9 @@ class Ui_track_controller_mainwindow(object):
         self.window.show()
 
     def browse_files(self):
-        self.browse = QFileDialog.getOpenFileName(self.load_plc_button)
-        print(self.browse[0])
+        browse = QFileDialog.getOpenFileName(self.load_plc_button)
+        print(browse[0])
+        data = File_Parser(browse[0])
 
 
     def get_ard(self):

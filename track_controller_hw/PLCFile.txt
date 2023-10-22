@@ -1,1 +1,2 @@
-This is a test
+IF block 64 THEN switch 64
+IF !block 63 THEN !switch 63
