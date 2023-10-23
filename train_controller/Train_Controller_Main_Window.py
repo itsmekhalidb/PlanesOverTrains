@@ -876,6 +876,8 @@ class Ui_MainWindow(QMainWindow):
         # self.doubleSpinBox.setValue(float(self.train_controller.get_ki()))
         # #uk
         # self.doubleSpinBox_4.setValue(float(self.train_controller.get_ki()))
+        # temperature
+        self.temperature_spnbx.setValue(72.0) # Default temperature
 
     def _handler(self):
         self.timer = QTimer()

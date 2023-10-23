@@ -689,7 +689,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.height_label.raise_()
                 self.temperature_label.raise_()
                 self.passenger_label.raise_()
-                self.temperature_spnbx.raise_()
+                # self.temperature_spnbx.raise_()
                 self.force_label.raise_()
                 self.force_info_label_2.raise_()
                 self.velocity_label.raise_()
@@ -894,8 +894,8 @@ class Ui_TrainModel_MainUI(QMainWindow):
 
                 # TODO: Deprecate this when we integrate modules
                 # update the temperature
-                temp = self.temperature_spnbx.value()
-                self.train_model.set_temperature(float(temp))
+                # temp = self.temperature_spnbx.value()
+                # self.train_model.set_temperature(float(temp))
 
                 # TODO: Remove this when we have a real beacon
                 self.train_model.beacon_simulate()
