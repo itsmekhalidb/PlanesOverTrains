@@ -11,8 +11,6 @@ import api.train_model_train_controller_api as TrainModelTrainControllerAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
-    # def __init__(self):
-    # def __init__(self, train_signals: TrainModelTrainControllerAPI) -> None:
     def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
 
         # -- Train Model Variables -- #
@@ -230,7 +228,6 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Simulation -- #
-    # TODO: Remove Simulate Function during integration
     def beacon_simulate(self):
         if self._line == "":
             self.set_line("BLUE")
@@ -238,7 +235,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("PIONEER")
-            # print(self.get_beacon())  # TODO: Remove print statement
             # Authority
             self.set_authority(700)
             # Speed Limit
@@ -255,7 +251,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("SHADYSIDE")
-            # print(self.get_beacon()) # TODO: Remove print statement
             # Authority
             self.set_authority(615)
             # Speed Limit
@@ -272,7 +267,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("Station B")
-            # print(self.get_beacon()) # TODO: Remove print statement
             # Authority
             self.set_authority(250)
             # Speed Limit
@@ -455,7 +449,6 @@ class TrainModel(object):
     def get_force(self) -> float:
         return self._force
 
-    # TODO: Why does velocity not increase when grade and elevation are 0?
     def calc_force(self):
         # Max power limit
         if self.get_cmd_power() > self._max_power:
@@ -466,7 +459,6 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    # TODO: Determine if we need _decel_limit or _ebrake_decel_limit
                     self.set_force(self.get_total_mass() * self._decel_limit * self._friction_coeff)
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:

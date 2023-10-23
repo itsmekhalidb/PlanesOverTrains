@@ -140,9 +140,6 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 "")
                 self.passenger_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
                 self.passenger_label.setObjectName("passenger_label")
-                self.temperature_spnbx = QtWidgets.QSpinBox(self.centralwidget)
-                self.temperature_spnbx.setGeometry(QtCore.QRect(610, 214, 42, 22))
-                self.temperature_spnbx.setObjectName("temperature_spnbx")
                 self.force_label = QtWidgets.QLabel(self.centralwidget)
                 self.force_label.setGeometry(QtCore.QRect(12, 58, 435, 35))
                 font = QtGui.QFont()
@@ -690,7 +687,6 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.height_label.raise_()
                 self.temperature_label.raise_()
                 self.passenger_label.raise_()
-                # self.temperature_spnbx.raise_()
                 self.force_label.raise_()
                 self.force_info_label_2.raise_()
                 self.velocity_label.raise_()
@@ -893,13 +889,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 # Velocity Calculation
                 self.train_model.calc_actual_velocity()
 
-                # TODO: Deprecate this when we integrate modules
-                # update the temperature
-                # temp = self.temperature_spnbx.value()
-                # self.train_model.set_temperature(float(temp))
-
-                # TODO: Remove this when we have a real beacon
-                self.train_model.beacon_simulate()
+                # self.train_model.beacon_simulate()
 
         def _handler(self):
                 self.timer = QTimer()
