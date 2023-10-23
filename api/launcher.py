@@ -15,8 +15,8 @@ from PyQt5.QtCore import *
 import sys
 
 # APIs
-from ctc_track_controller_api import CTCTrackControllerAPI
-from track_controller_track_model_api import TrackControllerTrackModelAPI
+from api.ctc_track_controller_api import CTCTrackControllerAPI
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
