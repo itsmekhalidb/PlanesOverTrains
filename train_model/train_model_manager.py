@@ -5,16 +5,17 @@ from typing import DefaultDict
 import threading
 
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
-# from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModelManager:
 
-    def __init__(self, train_signals) -> None:
-    # def __init__(self, train_signals, track_signals) -> None:
+    # def __init__(self, train_signals) -> None:
+    def __init__(self, train_signals, track_signals) -> None:
         self._train_models = DefaultDict(TrainModel)
         self._train_signals = train_signals
+        # self._track_signals = track_signals
 
-        # self._track_to_train_signals = track_signals
+        self._track_to_train_signals = track_signals
         self.update()
 
     def update(self, thread=True):
@@ -57,7 +58,7 @@ class TrainModelManager:
 
         try:
             # Create a TrainModel instance with the required 'train_signals' argument
-            self._train_models[train_id] = TrainModel(self._train_signals)
+            self._train_models[train_id] = TrainModel(self._train_signals, self._track_to_train_signals)
 
             # Now you can call the 'launch_tm_ui' method
             self._train_models[train_id].launch_tm_ui()

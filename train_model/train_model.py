@@ -8,12 +8,12 @@ import numpy as np
 import threading
 
 import api.train_model_train_controller_api as TrainModelTrainControllerAPI
-# from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
     # def __init__(self):
-    def __init__(self, train_signals: TrainModelTrainControllerAPI) -> None:
-    # def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
+    # def __init__(self, train_signals: TrainModelTrainControllerAPI) -> None:
+    def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
 
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
@@ -80,7 +80,7 @@ class TrainModel(object):
 
         # -- Get Data from Other Modules -- #
         self._train_ctrl_signals = train_signals # train controller api
-        # self._track_model_signals = track_signals # track model api
+        self._track_model_signals = track_signals # track model api
 
         # -- Run the Update Function -- #
         self.update()

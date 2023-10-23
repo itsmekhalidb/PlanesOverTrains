@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class Ui_TrainModel_MainUI(QMainWindow):
 
@@ -969,7 +970,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
-    e = Ui_TrainModel_MainUI(TrainModel(TrainModelTrainControllerAPI()))
+    e = Ui_TrainModel_MainUI(TrainModel(TrainModelTrainControllerAPI(), TrackModelTrainModelAPI()))
     # TrainModel_MainUI = QtWidgets.QMainWindow()
     # tm = TrainModel()
     # ui = Ui_self(tm)

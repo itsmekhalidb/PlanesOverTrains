@@ -15,26 +15,42 @@ from PyQt5.QtCore import *
 import sys
 
 # APIs
-from api.train_model_train_controller_api import TrainModelTrainControllerAPI
-from api.track_model_train_model_api import TrackModelTrainModelAPI
 from ctc_track_controller_api import CTCTrackControllerAPI
 from track_controller_track_model_api import TrackControllerTrackModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
-from train_model.train_model import TrainModel
+# Managers are only necessary for train model and train controller
+# from CTC.ctc import CTC
+# from track_controller.track_controller import TrackController
+# from track_controller_hw.track_controller_hw import TrackControllerHW
+# from track_model.track_model import TrackModel
 from train_model.train_model_manager import TrainModelManager
-
-from train_controller.train_controller import TrainController
 from train_controller.train_controller_manager import TrainControllerManager
 
 class Launcher(QMainWindow):
     def __init__(self):
-        self.train_api = TrainModelTrainControllerAPI()
 
-        # self.train_model_manager = TrainModelManager(train_signals, track_signals)
-        self.train_model_manager = TrainModelManager(self.train_api)
+        # API for CTC and Track Controller
+        self.ctc_track_controller_api = CTCTrackControllerAPI()
 
-        # self.train_controller_manager = TrainControllerManager(train_signals, track_signals)
-        self.train_controller_manager = TrainControllerManager(self.train_api)
+        # API for Track Controller and Track Model
+        self.track_controller_track_model_api = TrackControllerTrackModelAPI()
+
+        # API for Track Model and Train Model
+        self.track_model_train_model_api = TrackModelTrainModelAPI()
+
+        # API for Train Model and Train Controller
+        self.train_model_train_controller_api = TrainModelTrainControllerAPI()
+
+        # TODO: CTC, track controllers, and track model need to change to use the APIs -- See train_model.py and train_controller.py for examples
+        # Link APIs together
+        # self.ctc = CTC(self.ctc_track_controller_api)
+        # self.track_controller = TrackController(self.ctc_track_controller_api, self.track_controller_track_model_api)
+        # self.track_controller_hw = TrackControllerHW(self.ctc_track_controller_api, self.track_controller_track_model_api)
+        # self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
+        self.train_model_manager = TrainModelManager(self.train_model_train_controller_api, self.track_model_train_model_api)
+        self.train_controller_manager = TrainControllerManager(self.train_model_train_controller_api)
 
         super().__init__()
         self.setupUi()
@@ -171,7 +187,14 @@ class Launcher(QMainWindow):
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
+        # TODO: CTC, track controllers, and track model need to add a launch function -- See below for examples
+        # TODO: Also reference the manager functions in train_model_manager.py and train_controller_manager.py
+        # TODO: You will need to edit how your UI is built to be launched from the launcher -- See Train_Model_UI.py
         # Launch UI on Click
+        # self.CTC_launch.clicked.connect(self.launch_ctc)
+        # self.track_controller_sw_launch.clicked.connect(self.launch_track_controller_sw)
+        # self.track_controller_hw_launch.clicked.connect(self.launch_track_controller_hw)
+        # self.track_model_launch.clicked.connect(self.launch_track_model)
         self.train_model_launch.clicked.connect(self.launch_train_model)
         self.train_controller_launch.clicked.connect(self.launch_train_controller)
 
@@ -198,6 +221,8 @@ class Launcher(QMainWindow):
     def _update(self):
 
         print("Updating Launcher")
+
+        # Comment this out until train is dispatched
         # Disable Button for Train Model if no train selected
         # if self.train_model_select.currentText() == "":
         #     self.train_model_launch.setEnabled(False)
@@ -221,6 +246,21 @@ class Launcher(QMainWindow):
             [f'train #{id + 1}' for id in self.train_controller_manager.get_ids()]
         )
 
+    '''
+    # Uncomment this section when you have implemented a launch function for your module
+    def launch_ctc(self):
+        self.ctc.launch_ui()
+        
+    def launch_track_controller_sw(self):
+        self.track_controller.launch_ui()
+        
+    def launch_track_controller_hw(self):
+        self.track_controller_hw.launch_ui()
+        
+    def launch_track_model(self):
+        self.track_model.launch_ui()
+    '''
+
     def launch_train_model(self):
         # comment out this line until train is dispatched
         # id = int(self.train_model_select.currentText()[-1]) - 1
@@ -231,8 +271,6 @@ class Launcher(QMainWindow):
         # id = int(self.train_model_select.currentText()[-1]) - 1
         # self.train_model_manager.launch_ui(id)
         self.train_controller_manager.launch_ui(0)
-
-
 
 class ComboBox(QtWidgets.QComboBox):
     popupAboutToBeShown = QtCore.pyqtSignal()
