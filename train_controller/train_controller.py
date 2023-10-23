@@ -53,7 +53,7 @@ class TrainController:
         self.train_signals.ext_lights = self.get_external_lights()
         self.set_underground_status(self.train_signals.underground)
         self.train_signals.service_brake_value = self.get_service_brake_value()
-        self.set_emergency_brake_status(bool(self.get_ebrake_status()))
+        self.train_signals.emergency_brake = self.get_ebrake_status()
         #self.set_service_brake_status(bool(self.get_service_brake_status()))
         self.set_emergency_brake_failure(self.train_signals.ebrake_failure)
         self.set_service_brake_failure(self.train_signals.brake_failure)

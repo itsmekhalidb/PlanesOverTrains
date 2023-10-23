@@ -28,4 +28,4 @@ class TrainModelTrainControllerAPI:
         self.int_lights = False
         self.ext_lights = False
         self.temp_sp = 0.0
-        self.temperture = 0
+        self.temperature = 0
