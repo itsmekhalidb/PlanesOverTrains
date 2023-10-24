@@ -339,11 +339,9 @@ class TrainModel(object):
         # faults
         if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
-        # service brake or emergency brake
-        if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
-            self.set_acceleration(0)
-
-        self.set_acceleration(self.get_acceleration())
+        # emergency brake
+        if self.get_emergency_brake() and self.get_actual_velocity() != 0:
+            self.set_acceleration(self._ebrake_decel_limit)
 
     # station side
     def set_station_side(self, _station_side: str):
