@@ -20,11 +20,13 @@ from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
-# Managers are only necessary for train model and train controller
+
 # from CTC.ctc import CTC
 # from track_controller.track_controller import TrackController
 # from track_controller_hw.track_controller_hw import TrackControllerHW
 # from track_model.track_model import TrackModel
+
+# Managers are only necessary for train model and train controller
 from train_model.train_model_manager import TrainModelManager
 from train_controller.train_controller_manager import TrainControllerManager
 

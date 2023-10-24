@@ -7,7 +7,7 @@ import random as rand
 import numpy as np
 import threading
 
-import api.train_model_train_controller_api as TrainModelTrainControllerAPI
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
