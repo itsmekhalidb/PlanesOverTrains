@@ -8,7 +8,7 @@ class TrainController:
     def __init__(self, train_model):
         #priv variables
         self._current_velocity = 0.0
-        self._maximum_velocity =  0.0
+        self._maximum_velocity = 100.0 #0.0
         self._commanded_velocity = 0.0
         self._commanded_power = 0.0
         self._authority = 0.0
@@ -60,13 +60,15 @@ class TrainController:
         self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
         self.train_model.cmd_speed = self.get_commanded_velocity()
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
+        self.set_current_velocity(self.train_model.actual_velocity)
+        self.set_commanded_velocity(self.train_model.cmd_speed)
         self.set_authority(float(self.get_authority()))
         #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
         self.set_uk(float(self._ek))
-        # self.set_power(desired_power???) # TODO: figure out how to get desired power
+        self.set_power()
         self.train_model.cmd_power = self.get_commanded_power()
         self.set_service_brake_value(float(self.get_service_brake_value()))
         self.train_model.temp_sp = self.get_temperature_sp()
@@ -103,10 +105,7 @@ class TrainController:
         if v <= self._maximum_velocity:
             self._commanded_velocity = v
     def set_current_velocity(self, c : float):
-        if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
-            self._current_velocity = 0
-        else:
-            self._current_velocity = c
+        self._current_velocity = c
 
     # TODO: Lights do not turn on if underground, needs fix
     def set_internal_lights(self, status: bool):
@@ -146,7 +145,7 @@ class TrainController:
     def set_power(self):
         if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
             self._commanded_power = 0
-        if desired_power <= 120000:
+        elif (self._kp * self._ek + self._ki + self._uk) <= 120000:
             self._commanded_power = self._kp * self._ek + self._ki + self._uk
         else:
             self._commanded_power = 120000

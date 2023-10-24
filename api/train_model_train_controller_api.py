@@ -3,6 +3,7 @@ class TrainModelTrainControllerAPI:
         # Define variable passed between Train Model and Train Controller
 
         # From Train Model to Train Controller
+        self.line = "" # track model
         self.beacon = "" # track model
         self.authority = 0 # track model
         self.cmd_speed = 0 # track model

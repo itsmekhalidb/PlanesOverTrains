@@ -75,6 +75,7 @@ class TrainModel(object):
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
         self._service_brake = False # service brake
+        self._service_brake_value = 0.0 # % service brake
 
         # -- Get Data from Other Modules -- #
         self._train_ctrl_signals = train_signals # train controller api
@@ -125,14 +126,13 @@ class TrainModel(object):
         self.set_ext_lights(self._train_ctrl_signals.ext_lights)
 
         # Emergency Brake
-        # TODO: change get_emergency_brake to get_emergency_brake from train controller api
-        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)  # Pass input from test UI text box
+        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)
 
         # Service Brake
         self.set_service_brake(self._train_ctrl_signals.service_brake_value > 0)
 
         # Service Brake Value
-        # self.set_service_brake_value(self._train_ctrl_signals.service_brake_value)
+        self.set_service_brake_value(self._train_ctrl_signals.service_brake_value)
 
         #############################
         # Input Track Model Signals #
@@ -180,7 +180,6 @@ class TrainModel(object):
         # Underground
         # TODO: change get_underground to get_underground from track model api
         # self.set_underground(bool(self.track_model_signals.underground))
-
 
         # Commanded Speed
         # TODO: change get_cmd_speed to get_cmd_speed from track model api
@@ -302,6 +301,12 @@ class TrainModel(object):
             self.set_block(10)
 
     # -- Getters and Setters -- #
+    def set_service_brake_value(self, _service_brake_value: float):
+        self._service_brake_value = _service_brake_value
+
+    def get_service_brake_value(self) -> float:
+        return self._service_brake_value
+
     def get_advertisement(self):
         # Choose a random image file from the list
         if self._ad_poll_attempts < self._ad_poll_rate:
@@ -329,8 +334,8 @@ class TrainModel(object):
         if self.get_acceleration() < self._ebrake_decel_limit:
             self.set_acceleration(self._ebrake_decel_limit)
         # sbrake min limit
-        if self._ebrake_decel_limit < self.get_acceleration() < self._decel_limit:
-            self.set_acceleration(self._decel_limit)
+        if self._ebrake_decel_limit < self.get_acceleration() < (self._decel_limit * self.get_service_brake_value()):
+            self.set_acceleration(self._decel_limit * self.get_service_brake_value())
         # faults
         if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
@@ -480,7 +485,7 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    self.set_force(self.get_total_mass() * self._decel_limit * self._friction_coeff)
+                    self.set_force(self.get_total_mass() * self._decel_limit * self.get_service_brake_value() * self._friction_coeff)
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
                     self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
@@ -498,7 +503,7 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    self.set_force(net_force + self.get_total_mass() * self._decel_limit)
+                    self.set_force(net_force + self.get_total_mass() * self._decel_limit * self.get_service_brake_value())
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
                     self.set_force(self.get_cmd_power() - net_force)
@@ -507,7 +512,7 @@ class TrainModel(object):
                 self.set_force(self.get_cmd_power() / self.get_actual_velocity() - net_force)
         # Service Brakes are Pulled
         if self.get_service_brake():
-            self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit)
+            self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit * self.get_service_brake_value())
         # Emergency Brakes or Failures
         elif self.get_emergency_brake() or self.get_engine_failure() or self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
             self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
