@@ -1,18 +1,17 @@
 # -- Imports -- #
-import math
 import os
+import math
 import random
 import time
 import random as rand
 import numpy as np
 import threading
 
-# from track_model.track_model import TrackModel
-# from train_controller.train_controller import TrainController
+import api.train_model_train_controller_api as TrainModelTrainControllerAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
-    # def __init__(self, train_signals: TrainSignals, track_signals: TrackSignals):
-    def __init__(self):
+    def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
 
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
@@ -78,71 +77,62 @@ class TrainModel(object):
         self._service_brake = False # service brake
 
         # -- Get Data from Other Modules -- #
-        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller api
-        self._train_ctrl_signals = None # train controller api
-        # TODO: change _track_model_signals to _track_model_signals from track model api
-        self._track_model_signals = None # track model api
+        self._train_ctrl_signals = train_signals # train controller api
+        self._track_model_signals = track_signals # track model api
 
         # -- Run the Update Function -- #
         self.update()
 
     def update(self, thread=False):
+
         ##################################
         # Input Train Controller Signals #
         ##################################
         # Commanded Power
-        # TODO: change get_cmd_power to get_cmd_power from train controller api
-        self.set_cmd_power(float(self.get_cmd_power()))  # Pass input from test UI text box
+        self.set_cmd_power(self._train_ctrl_signals.cmd_power)
 
         # Internal Temperature
-        # TODO: get temperature from train controller
-        self.set_temperature(self.get_temperature())
+        self.set_temperature(self._train_ctrl_signals.temp_sp)
 
         #################
         # Failure Modes #
         #################
         # E-Brake Failure
-        # TODO: change get_ebrake_failure to get_ebrake_failure from train controller api
-        self.set_ebrake_failure(bool(self.get_ebrake_failure()))  # Pass input from test UI text box
+        self._train_ctrl_signals.ebrake_failure = self.get_ebrake_failure()
 
         # Train Engine Failure
-        # TODO: change get_engine_failure to get_engine_failure from train controller api
-        self.set_engine_failure(bool(self.get_engine_failure()))  # Pass input from test UI text box
+        self._train_ctrl_signals.engine_failure = self.get_engine_failure()
 
         # Service Brake Failure
-        # TODO: change get_sbrake_failure to get_sbrake_failure from train controller api
-        self.set_sbrake_failure(bool(self.get_sbrake_failure()))  # Pass input from test UI text box
+        self._train_ctrl_signals.brake_failure = self.get_sbrake_failure()
 
         # Signal Pickup Failure
-        # TODO: change get_signal_failure to get_signal_failure from train controller api
-        self.set_signal_failure(bool(self.get_signal_failure()))  # Pass input from test UI text box
+        self._train_ctrl_signals.signal_pickup_failure = self.get_signal_failure()
 
         ############
         # Controls #
         ############
         # Right Door
-        # TODO: change get_right_door to get_right_door from train controller api
-        self.set_right_door(bool(self.get_right_door()))  # Pass input from test UI text box
+        self.set_right_door(self._train_ctrl_signals.right_doors)
 
         # Left Door
-        # TODO: change get_left_door to get_left_door from train controller api
-        self.set_left_door(bool(self.get_left_door()))  # Pass input from test UI text box
+        self.set_left_door(self._train_ctrl_signals.left_doors)
 
         # Internal Lights
-        # TODO: change get_int_lights to get_int_lights from train controller api
-        self.set_int_lights(bool(self.get_int_lights()))  # Pass input from test UI text box
+        self.set_int_lights(self._train_ctrl_signals.int_lights)
 
         # External Lights
-        # TODO: change get_ext_lights to get_ext_lights from train controller api
-        self.set_ext_lights(bool(self.get_ext_lights()))  # Pass input from test UI text box
+        self.set_ext_lights(self._train_ctrl_signals.ext_lights)
 
         # Emergency Brake
         # TODO: change get_emergency_brake to get_emergency_brake from train controller api
-        self.set_emergency_brake(bool(self.get_emergency_brake()))  # Pass input from test UI text box
+        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)  # Pass input from test UI text box
 
         # Service Brake
-        # TODO: change get_service_brake to get_service_brake from train controller api
-        self.set_service_brake(bool(self.get_service_brake()))  # Pass input from test UI text box
+        self.set_service_brake(self._train_ctrl_signals.service_brake_value > 0)
+
+        # Service Brake Value
+        # self.set_service_brake_value(self._train_ctrl_signals.service_brake_value)
 
         #############################
         # Input Track Model Signals #
@@ -189,16 +179,23 @@ class TrainModel(object):
 
         # Underground
         # TODO: change get_underground to get_underground from track model api
-        self.set_underground(bool(self.get_underground()))
+        # self.set_underground(bool(self.track_model_signals.underground))
+
 
         # Commanded Speed
         # TODO: change get_cmd_speed to get_cmd_speed from track model api
-        self.set_cmd_speed(float(self.get_cmd_speed()))
+        self.set_cmd_speed(self._train_ctrl_signals.cmd_speed)
 
         ##############################
         # Output to Train Controller #
         ##############################
         # TODO: Add output to train controller
+
+        # Undergound
+        self._train_ctrl_signals.underground = self.get_underground()
+
+        # Temperature
+        self._train_ctrl_signals.temperature = self.get_temperature()
 
         #########################
         # Output to Track Model #
@@ -231,7 +228,6 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Simulation -- #
-    # TODO: Remove Simulate Function during integration
     def beacon_simulate(self):
         if self._line == "":
             self.set_line("BLUE")
@@ -239,7 +235,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("PIONEER")
-            # print(self.get_beacon())  # TODO: Remove print statement
             # Authority
             self.set_authority(700)
             # Speed Limit
@@ -256,7 +251,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("SHADYSIDE")
-            # print(self.get_beacon()) # TODO: Remove print statement
             # Authority
             self.set_authority(615)
             # Speed Limit
@@ -273,7 +267,6 @@ class TrainModel(object):
             # Set:
             # Station Name (Beacon)
             self.set_beacon("Station B")
-            # print(self.get_beacon()) # TODO: Remove print statement
             # Authority
             self.set_authority(250)
             # Speed Limit
@@ -456,7 +449,6 @@ class TrainModel(object):
     def get_force(self) -> float:
         return self._force
 
-    # TODO: Why does velocity not increase when grade and elevation are 0?
     def calc_force(self):
         # Max power limit
         if self.get_cmd_power() > self._max_power:
@@ -467,7 +459,6 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    # TODO: Determine if we need _decel_limit or _ebrake_decel_limit
                     self.set_force(self.get_total_mass() * self._decel_limit * self._friction_coeff)
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
@@ -594,6 +585,6 @@ class TrainModel(object):
         return self._service_brake
 
     def launch_tm_ui(self):
-        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
         print("Launching Train Model UI")
+        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
         self._ui = Ui_TrainModel_MainUI(self)
