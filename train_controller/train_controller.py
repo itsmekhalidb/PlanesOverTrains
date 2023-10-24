@@ -61,7 +61,7 @@ class TrainController:
         self.train_model.cmd_speed = self.get_commanded_velocity()
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
         self.set_authority(float(self.get_authority()))
-        self.set_current_velocity(float(self.get_actual_velocity()))
+        #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
@@ -71,6 +71,7 @@ class TrainController:
         self.set_service_brake_value(float(self.get_service_brake_value()))
         self.train_model.temp_sp = self.get_temperature_sp()
         self.set_temperature(self.train_model.temperature)
+        self.set_train_line(self.train_model.line)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -136,11 +137,13 @@ class TrainController:
         # print("Ki = " + str(self._ki))
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
+        self._previous_uk = self._uk
     def set_eK(self, desired: int, actual: int):
         self._ek = self._commanded_velocity - self._current_velocity
+        self._previous_ek = self._ek
 
     # TODO: Desired power is not being passed in at any point in your code, needs fix
-    def set_power(self, desired_power: float):
+    def set_power(self):
         if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
             self._commanded_power = 0
         if desired_power <= 120000:

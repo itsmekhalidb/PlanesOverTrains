@@ -191,8 +191,29 @@ class TrainModel(object):
         ##############################
         # TODO: Add output to train controller
 
-        # Undergound
+        # Train Line
+        self._train_ctrl_signals.line = self.get_line()
+
+        # Beacon
+        self._train_ctrl_signals.beacon = self.get_beacon()
+
+        # Authority
+        self._train_ctrl_signals.authority = self.get_authority()
+
+        # Commanded Speed
+        self._train_ctrl_signals.cmd_speed = self.get_cmd_speed()
+
+        # Speed Limit
+        self._train_ctrl_signals.speed_limit = self.get_speed_limit()
+
+        # Underground
         self._train_ctrl_signals.underground = self.get_underground()
+
+        # Station Side
+        self._train_ctrl_signals.station_side = self.get_station_side()
+
+        # Actual Velocity
+        self._train_ctrl_signals.actual_velocity = self.get_actual_velocity()
 
         # Temperature
         self._train_ctrl_signals.temperature = self.get_temperature()

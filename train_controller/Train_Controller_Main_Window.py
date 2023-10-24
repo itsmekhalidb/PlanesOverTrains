@@ -895,6 +895,8 @@ class Ui_MainWindow(QMainWindow):
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(False)  # temperature
                     self.commanded_speed_spnbx.setEnabled(False)  # commanded speed
+                    self.doubleSpinBox_3.setEnabled(False)  # ki
+                    self.doubleSpinBox_2.setEnabled(False)  # kp
             else:
                     self.slider.setEnabled(True)  # service brake
                     self.checkBox_7.setEnabled(True)  # right door
@@ -904,6 +906,8 @@ class Ui_MainWindow(QMainWindow):
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(True)  # temperature
                     self.commanded_speed_spnbx.setEnabled(True)  # commanded speed
+                    self.doubleSpinBox_3.setEnabled(True)  # ki
+                    self.doubleSpinBox_2.setEnabled(True)  # kp
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         #auto status
@@ -945,7 +949,7 @@ class Ui_MainWindow(QMainWindow):
         #speed limit
         self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
         #commanded speed
-        self.external_lights_label_10.setText(str("Com. Speed: " + str(self.train_controller.get_commanded_velocity())))
+        self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
 
         comspeed = self.commanded_speed_spnbx.value()
         self.train_controller.set_commanded_velocity(float(comspeed))
@@ -959,9 +963,9 @@ class Ui_MainWindow(QMainWindow):
         self.train_controller.set_ki(ki)
         # self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round(self.train_controller.get_current_velocity(),3))))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round((self.train_controller.get_current_velocity()*2.23694),3))))
         #commanded power
-        self.external_lights_label_12.setText(str("Commanded Power (W): " + str(self.train_controller.get_commanded_power())))
+        self.external_lights_label_12.setText(str("Commanded Power (kW): " + str(round(self.train_controller.get_commanded_power()/1000,3))))
         #authority
         self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
         #actual velocity
