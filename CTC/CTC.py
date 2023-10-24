@@ -1,4 +1,4 @@
-# -- Imports -- #
+ # -- Imports -- #
 import os
 import threading
 from datetime import datetime, timedelta
@@ -38,7 +38,24 @@ class CTC(object):
         return self._trains
     def get_stations_names(self):
         return _stations.keys()
-
+    
+    # track controller interface functions
+    def get_authority(self, train_num):
+        return self._trains[train_num].get_authority()
+    def get_suggested_speed(self, train_num):
+        return self._trains[train_num].get_suggested_velocity()
+    def get_block_status(self, block_num):
+        return self._track.get_block_status(block_num)
+    def update_light_color(self, light_num, status):
+        self._track.update_track(light_num, status)
+    def update_switch_position(self, switch_index):
+        self._track.switch_switch(switch_index)
+    def update_occupancy(self, occupied_block):
+        self._track.update_occupancy(occupied_block)
+    def update_passenger_info(self, station, tickets_sold):
+        self._track.update_tickets(station, tickets_sold)
+    
+    # update function
     def update(self, thread=False):
 
         # Enable Threading
@@ -70,6 +87,24 @@ class Track(object):
     # getter functions
     def get_lines(self):
         return self._lines
+    
+    def get_block_status(self, block_num):
+        for l in self._lines:
+            status = l.get_block_status(block_num)
+            if status != "no":
+                return status
+            
+    def switch_switch(self, switch_index):
+        self._switches[switch_index].switch_switch(switch_index)
+
+    def update_tickets(self, station, tickets_sold):
+        global _stations
+        station_id = _stations[station]
+        for l in self._lines:
+            status = l.update_block(station_id, tickets_sold)
+            if status == 1:
+                break
+
 
 
 class Line(object):
@@ -94,6 +129,19 @@ class Line(object):
     # getter functions
     def get_sections(self):
         return self._sections
+    
+    def get_block_status(self, block_num):
+        for s in self._sections:
+            status = s.get_block_status(block_num)
+            if status != "no":
+                return status
+        return "no"
+    
+    def update_block(self, station_id, tickets_sold):
+        for s in self._sections:
+            status = s.update_block(station_id, tickets_sold)
+            if status == 1:
+                return 1
 
 
 class Section(object):
@@ -124,17 +172,25 @@ class Section(object):
     # getter functions
     def get_blocks(self):
         return self._blocks
+    
+    def get_block_status(self, block_num):
+        for b in self._blocks:
+            status = b.get_block_status(block_num)
+            if status != "no":
+                return status
+        return "no"
 
 
 
 class Block(object):
     def __init__(self):
-        self._number = -1 # block number inside line from plc file
+        self._number = -1 # block number inside line from file
         self._block_id = -1 # block id for internal use
         self._length = -1 # length of block in m
         self._speed_limit = -1 # speed limit inside block in km/hr
         self._station = None # station inside block if applicable
         self._occupied = 0 # indicates what train is occupying a block, 0 if unoccupied
+        self._closed = 0 # indicates if block is closed for maintenance mode, 0 if not closed, 1 if closed
         self._input_blocks = [] # indicates what blocks can input to this block, 0 indicates yard
         self._output_blocks = [] # indicates what blocks this block can output to, 0 indicates yard
 
@@ -175,9 +231,15 @@ class Block(object):
         res = self._length / ms_vel
         return res
     
-    # getter function 
+    # getter functions
     def get_length(self):
         return self._length
+    
+    def get_block_status(self, block_num):
+        if self._number == block_num:
+            return self._closed
+        else:
+            return "no"
 
 
 
@@ -203,6 +265,12 @@ class Switch(object):
         self._input_block = 5
         self._block_connections.append(6)
         self._block_connections.append(11)
+    
+    def switch_switch(self, switch_index):
+        if (self._position == 0):
+            self._position = 1
+        elif (self._position == 1):
+            self._position = 0
 
 
 class Yard(object):
