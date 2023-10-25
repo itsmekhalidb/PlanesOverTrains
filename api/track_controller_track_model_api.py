@@ -1,5 +1,5 @@
 class TrackControllerTrackModelAPI:
-    def __init__(self):
+    def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
 
         self._broken_rail = False  # ebrake failure
@@ -8,8 +8,13 @@ class TrackControllerTrackModelAPI:
         self._power_failure = False  # signal pickup failure
         self._authority = 0  # authority
         self._commanded_speed = 0  # commanded speed
+        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = gate/crossing, 4 = switch, 5 = light
+        self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
+                      'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
+                      'B7': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B8': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},'B9': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
+                      'B10': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'C11': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'C12': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
+                      'C13': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'C14': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'C15': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}}
 
-        # Block Data, 1 = switch, 2 = Speed Limit, 3 = gate/crossing, 4 = block occupancy, 5 = light
         self._green = {'A1': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'A2': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
                        'B4': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'B5': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'B6': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
                        'C7': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'C8': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'C9': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
