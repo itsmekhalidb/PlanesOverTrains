@@ -205,7 +205,7 @@ class TrainModel(object):
         self.set_block(self._track_model_signals.current_block)
 
         # Time
-        # TODO: uncomment line in set_time to use time from track model
+        # REMINDER: uncomment line in set_time to use time from track model
         self.set_time(self._track_model_signals.time)
 
         # Red Line Track Info Decode

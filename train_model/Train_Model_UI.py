@@ -817,19 +817,15 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 # Commanded Velocity
                 self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 2.23694, 3)) + " mph"))
 
-                # Next Station Info
-                # Row 1
+                # Station Info
                 self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Current Station:"))
                 self.next_station_infobox.setItem(0, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_beacon())))
-                # TODO: Are we measuring authority in feet or blocks?
                 self.next_station_infobox.setItem(0, 2, QtWidgets.QTableWidgetItem("Authority:"))
                 self.next_station_infobox.setItem(0, 3, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_authority() * 3.28084, 3)) + " ft"))
-                # Row 2
                 self.next_station_infobox.setItem(1, 0, QtWidgets.QTableWidgetItem("Speed Limit:"))
                 self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_speed_limit() * 2.23694, 3)) + " mph"))
                 self.next_station_infobox.setItem(1, 2, QtWidgets.QTableWidgetItem("Underground:"))
                 self.next_station_infobox.setItem(1, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_underground())))
-                # Row 3
                 self.next_station_infobox.setItem(2, 0, QtWidgets.QTableWidgetItem("Grade (°):"))
                 self.next_station_infobox.setItem(2, 1, QtWidgets.QTableWidgetItem(str(self.train_model.get_grade()) + "°"))
                 self.next_station_infobox.setItem(2, 2, QtWidgets.QTableWidgetItem("Elevation:"))
