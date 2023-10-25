@@ -29,6 +29,7 @@ class Ui_track_controller_mainwindow(object):
     def __init__(self, track_controller_hw: Track_Controller_HW):
         super().__init__()
         self.track_controller_hw = track_controller_hw
+        self.blue_line_plc = File_Parser("")
         # self._light = False
         # self._switch = False
         # self._command = False
@@ -78,6 +79,7 @@ class Ui_track_controller_mainwindow(object):
         browse = QFileDialog.getOpenFileName(self.load_plc_button)
         print(browse[0])
         data = File_Parser(browse[0])
+        self.blue_line_plc = data
 
 
     def get_ard(self):
@@ -524,7 +526,25 @@ class Ui_track_controller_mainwindow(object):
         self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
 
-    def PLC(self):
+    def PLC(self): #have not tested this yet
+        for i in range(len(self.blue_line_plc.get_block_number())):
+            block_number = self.blue_line_plc.get_block_number()[i]
+            block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
+            operation = self.blue_line_plc.get_operations()[i]
+            operation_number = self.blue_line_plc.get_operations_number()[i]
+            if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
+                    (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
+                if operation == 'switch':
+                    self.track_controller_hw.set_switch(1, operation_number)
+                elif operation == '!switch':
+                    self.track_controller_hw.set_switch(0, operation_number)
+                elif operation == "green":
+                    self.track_controller_hw.set_lights(1, operation_number)
+                elif operation == "red":
+                    self.track_controller_hw.set_lights(0, operation_number)
+
+
+        """""
         self.track_controller_hw.set_commanded_speed(
             min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
 
@@ -583,7 +603,7 @@ class Ui_track_controller_mainwindow(object):
             self.track_controller_hw.set_lights(0, 'Light B-A5')
             self.track_controller_hw.set_lights(0, 'Light B-B6')
             self.track_controller_hw.set_lights(0, 'Light B-C11')
-
+"""
 
 if __name__ == "__main__":
     import sys
