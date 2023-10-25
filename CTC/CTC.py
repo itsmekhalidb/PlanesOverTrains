@@ -38,6 +38,22 @@ class CTC(object):
         return self._trains
     def get_stations_names(self):
         return _stations.keys()
+    
+    # track controller interface functions
+    def get_authority(self, train_num):
+        return self._trains[train_num].get_authority()
+    def get_suggested_speed(self, train_num):
+        return self._trains[train_num].get_suggested_velocity()
+    def get_block_status(self, block_num):
+        return self._track.get_block_status(block_num)
+    def update_light_color(self, light_num, status):
+        self._track.update_track(light_num, status)
+    def update_switch_position(self, switch_index):
+        self._track.switch_switch(switch_index)
+    def update_occupancy(self, occupied_block):
+        self._track.update_occupancy(occupied_block)
+    def update_passenger_info(self, station, tickets_sold):
+        self._track.update_tickets(station, tickets_sold)
 
     def update(self, thread=False):
 
