@@ -85,19 +85,31 @@ class TrainModel(object):
         self.update()
 
     def update(self, thread=False):
+        #####################################
+        # Internal Train Model Calculations #
+        #####################################
+        # Force
+        self.set_force(float(self.get_force()))
+
+        # Passenger Mass
+        self.set_passenger_mass(self.get_curr_passenger_count())
+
+        # Total Mass
+        self.set_total_mass()
+
+        # Force
+        self.calc_force()
+
+        # Acceleration
+        self.calc_acceleration()
+
+        # Actual Velocity
+        self.calc_actual_velocity()
 
         ##################################
         # Input Train Controller Signals #
         ##################################
-        # Commanded Power
-        self.set_cmd_power(self._train_ctrl_signals.cmd_power)
-
-        # Internal Temperature
-        self.set_temperature(self._train_ctrl_signals.temp_sp)
-
-        #################
-        # Failure Modes #
-        #################
+        ## Failures
         # E-Brake Failure
         self._train_ctrl_signals.ebrake_failure = self.get_ebrake_failure()
 
@@ -110,9 +122,13 @@ class TrainModel(object):
         # Signal Pickup Failure
         self._train_ctrl_signals.signal_pickup_failure = self.get_signal_failure()
 
-        ############
-        # Controls #
-        ############
+        ## Controls
+        # Commanded Power
+        self.set_cmd_power(self._train_ctrl_signals.cmd_power)
+
+        # Internal Temperature
+        self.set_temperature(self._train_ctrl_signals.temp_sp)
+
         # Right Door
         self.set_right_door(self._train_ctrl_signals.right_doors)
 
@@ -134,62 +150,9 @@ class TrainModel(object):
         # Service Brake Value
         self.set_service_brake_value(self._train_ctrl_signals.service_brake_value)
 
-        #############################
-        # Input Track Model Signals #
-        #############################
-        # Passenger Count
-        # TODO: change get_curr_passenger_count to get_curr_passenger_count from track model api
-        self.set_curr_passenger_count(int(self.get_curr_passenger_count()))  # Pass input from test UI text box
-
-        # Time
-        # TODO: change get_time to get_time from track model api
-        self.set_time()
-
-        # Beacon
-        # TODO: change get_beacon to get_beacon from track model api
-        self.set_beacon(self.get_beacon())
-
-        # Line
-        # TODO: change get_line to get_line from track model api
-        self.set_line(self.get_line())
-
-        # Station Side
-        # TODO: change get_station_side to get_station_side from track model api
-        self.set_station_side(self.get_station_side())
-
-        # Block
-        # TODO: change get_block to get_block from track model api
-        self.set_block(self.get_block())
-
-        # Authority
-        # TODO: change get_authority to get_authority from track model api
-        self.set_authority(float(self.get_authority()))
-
-        # Speed Limit
-        # TODO: change get_speed_limit to get_speed_limit from track model api
-        self.set_speed_limit(float(self.get_speed_limit()))
-
-        # Elevation
-        # TODO: change get_elevation to get_elevation from track model api
-        self.set_elevation(float(self.get_elevation()))
-
-        # Grade
-        # TODO: change get_grade to get_grade from track model api
-        self.set_grade(float(self.get_grade()))
-
-        # Underground
-        # TODO: change get_underground to get_underground from track model api
-        # self.set_underground(bool(self.track_model_signals.underground))
-
-        # Commanded Speed
-        # TODO: change get_cmd_speed to get_cmd_speed from track model api
-        self.set_cmd_speed(self._train_ctrl_signals.cmd_speed)
-
         ##############################
         # Output to Train Controller #
         ##############################
-        # TODO: Add output to train controller
-
         # Train Line
         self._train_ctrl_signals.line = self.get_line()
 
@@ -211,94 +174,111 @@ class TrainModel(object):
         # Station Side
         self._train_ctrl_signals.station_side = self.get_station_side()
 
+        # Time
+        self._train_ctrl_signals.time = self.get_time()
+
         # Actual Velocity
         self._train_ctrl_signals.actual_velocity = self.get_actual_velocity()
 
         # Temperature
         self._train_ctrl_signals.temperature = self.get_temperature()
 
+        #############################
+        # Input Track Model Signals #
+        #############################
+        # Passenger Onboard
+        self.set_curr_passenger_count(self._track_model_signals.passenger_onboard)
+
+        # Line
+        self.set_line(self._track_model_signals.line)
+
+        # Beacon
+        self.set_beacon(self._track_model_signals.beacon)
+
+        # Authority
+        self.set_authority(self._track_model_signals.authority)
+
+        # Commanded Speed
+        self.set_cmd_speed(self._track_model_signals.cmd_speed)
+
+        # Block
+        self.set_block(self._track_model_signals.current_block)
+
+        # Time
+        # REMINDER: uncomment line in set_time to use time from track model
+        self.set_time(self._track_model_signals.time)
+
+        # Red Line Track Info Decode
+        if (self.get_block() in self._track_model_signals.red_track_info) and self.get_line().lower() == "red":
+            # Speed Limit
+            self.set_speed_limit(self._track_model_signals.red_track_info[self.get_block()]["speed_limit"])
+
+            # Elevation
+            self.set_elevation(self._track_model_signals.red_track_info[self.get_block()]["elevation"])
+
+            # Grade
+            self.set_grade(self._track_model_signals.red_track_info[self.get_block()]["grade"])
+
+            # Underground
+            self.set_underground(self._track_model_signals.red_track_info[self.get_block()]["underground"])
+
+            # Station Side
+            self.set_station_side(self._track_model_signals.red_track_info[self.get_block()]["station_side"])
+
+        # Green Line Track Info Decode
+        if (self.get_block() in self._track_model_signals.green_track_info) and self.get_line().lower() == "green":
+            # Speed Limit
+            self.set_speed_limit(self._track_model_signals.green_track_info[self.get_block()]["speed_limit"])
+
+            # Elevation
+            self.set_elevation(self._track_model_signals.green_track_info[self.get_block()]["elevation"])
+
+            # Grade
+            self.set_grade(self._track_model_signals.green_track_info[self.get_block()]["grade"])
+
+            # Underground
+            self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
+
+            # Station Side
+            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station_side"])
+
         #########################
         # Output to Track Model #
         #########################
-        # TODO: Add output to track model
+        # Passenger Update
+        if self.get_beacon() != "": # We are at a station
+            self.set_prev_passenger_count(self.get_curr_passenger_count())
+        else:
+            self.set_prev_passenger_count(0)
 
-        #####################################
-        # Internal Train Model Calculations #
-        #####################################
-        # Force
-        self.set_force(float(self.get_force()))  # Pass input from test UI text box
-
-        # Passenger Mass
-        self.set_passenger_mass(self.get_curr_passenger_count())
-
-        # Total Mass
-        self.set_total_mass()
-
-        # Force
-        self.calc_force()
-
-        # Acceleration
-        self.calc_acceleration()
+        # Send Passengers Departing when at a stop
+        if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors()) # Open the doors
+            if self.get_prev_passenger_count() > 0:
+                # Depart all passengers at last stop before yard
+                if (self.get_line().lower() == "green" and self.get_block() == 56) or (self.get_line().lower() == "red" and self.get_block() == 16):
+                    self._track_model_signals.passenger_onboard = 0
+                    self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
+                # Pick a random number of passengers to depart and onboard
+                else:
+                    self._track_model_signals.passenger_onboard = random.randint(0, self.get_curr_passenger_count())
+                    self._track_model_signals.passenger_departing = random.randint(0, self.get_curr_passenger_count())
+            else:
+                # No passengers to depart
+                self._track_model_signals.passenger_onboard = self.get_curr_passenger_count()
+                self._track_model_signals.passenger_departing = 0
+        elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors()) # Close the doors
 
         # Actual Velocity
-        self.calc_actual_velocity()
+        self._track_model_signals.actual_velocity = self.get_actual_velocity()
+
+        # Signal Pickup Failure
+        self._track_model_signals.signal_pickup_failure = self.get_signal_failure()
 
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
-
-    # -- Simulation -- #
-    def beacon_simulate(self):
-        if self._line == "":
-            self.set_line("BLUE")
-        if self._line.lower() == "green":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("PIONEER")
-            # Authority
-            self.set_authority(700)
-            # Speed Limit
-            self.set_speed_limit(45)
-            # Elevation
-            self.set_elevation(1)
-            # Grade
-            self.set_grade(0.01)
-            # Underground
-            self.set_underground(False)
-            # Occupancy (Block)
-            self.set_block(2)
-        if self._line.lower() == "red":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("SHADYSIDE")
-            # Authority
-            self.set_authority(615)
-            # Speed Limit
-            self.set_speed_limit(40)
-            # Elevation
-            self.set_elevation(0.38)
-            # Grade
-            self.set_grade(0.005)
-            # Underground
-            self.set_underground(False)
-            # Occupancy (Block)
-            self.set_block(7)
-        if self._line.lower() == "blue":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("Station B")
-            # Authority
-            self.set_authority(250)
-            # Speed Limit
-            self.set_speed_limit(50)
-            # Elevation
-            self.set_elevation(0.0)
-            # Grade
-            self.set_grade(0.0)
-            # Underground
-            self.set_underground(True)
-            # Occupancy (Block)
-            self.set_block(10)
 
     # -- Getters and Setters -- #
     def set_service_brake_value(self, _service_brake_value: float):
@@ -418,10 +398,9 @@ class TrainModel(object):
         return self._block
 
     # time
-    # TODO: Get time from track model
-    # def set_time(self, _time: list):
-    #     self._time = _time
-    def set_time(self):
+    def set_time(self, _time: float):
+        # Uncomment to use time from track model
+        # self._time = _time
         self._time = time.time()
 
     def get_time(self) -> float:
@@ -455,7 +434,7 @@ class TrainModel(object):
         # v = integrate acceleration over time
         # calculating dt
         self._current_time = self._time
-        self.set_time()
+        self.set_time(self._current_time) #TODO: Remove this line when using time from track model
         dt = self._current_time - self._prev_time
         # check if time difference is less than zero
         if dt < 0:
@@ -522,6 +501,12 @@ class TrainModel(object):
     def get_curr_passenger_count(self) -> int:
         return self._curr_passenger_count
 
+    def set_prev_passenger_count(self, _prev_passenger_count: int):
+        self._prev_passenger_count = _prev_passenger_count
+
+    def get_prev_passenger_count(self) -> int:
+        return self._prev_passenger_count
+
     # passenger mass
     def set_passenger_mass(self, _curr_passenger_count: float):
         self._passenger_mass = self._curr_passenger_count * 150 * 0.453592 # lbs to kg
@@ -579,6 +564,13 @@ class TrainModel(object):
 
     def get_left_door(self) -> bool:
         return self._left_door
+
+    # doors
+    def set_doors(self, _doors: bool):
+        self._doors = _doors
+
+    def get_doors(self) -> bool:
+        return self._doors
 
     # internal lights
     def set_int_lights(self, _int_lights: bool):

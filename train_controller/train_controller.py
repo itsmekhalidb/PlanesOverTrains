@@ -8,7 +8,7 @@ class TrainController:
     def __init__(self, train_model):
         #priv variables
         self._current_velocity = 0.0
-        self._maximum_velocity = 100.0 #0.0
+        self._maximum_velocity = 0.0
         self._commanded_velocity = 0.0
         self._commanded_power = 0.0
         self._authority = 0.0
