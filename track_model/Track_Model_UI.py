@@ -7,12 +7,21 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPolygonItem, QGraphicsPathItem
 from PyQt5.QtGui import QPen, QBrush, QColor
 from PyQt5.QtCore import Qt
+from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+from track_model.track_model import TrackModel
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1143, 938)
-        self.trackmodel_main = QtWidgets.QWidget(MainWindow)
+class Ui_MainWindow(QMainWindow):
+
+    def __init__(self, track_model: TrackModel) -> None:
+        super().__init__()
+        self.track_model = track_model
+        self.setupUi()
+        self.show()
+    def setupUi(self):
+        self.setObjectName("MainWindow")
+        self.resize(1143, 938)
+        self.trackmodel_main = QtWidgets.QWidget(self)
         self.trackmodel_main.setObjectName("trackmodel_main")
 
         scene = QGraphicsScene(self.trackmodel_main)
@@ -391,21 +400,21 @@ class Ui_MainWindow(object):
         self.track_heater.raise_()
         self.t_temp_control.raise_()
         self.temp_control.raise_()
-        MainWindow.setCentralWidget(self.trackmodel_main)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.setCentralWidget(self.trackmodel_main)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1143, 21))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Track Model"))
+        self.setWindowTitle(_translate("MainWindow", "Track Model"))
         self.title.setText(_translate("MainWindow", "Track Map"))
         self.clock.setText(_translate("MainWindow", "13:24:55"))
         self.t_sys_spd.setText(_translate("MainWindow", "System Speed"))
@@ -436,8 +445,8 @@ class Ui_MainWindow(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    e = Ui_MainWindow(TrackModel(TrackControllerTrackModelAPI(), TrackModelTrainModelAPI()))
+    #ui = Ui_MainWindow()
+    #ui.setupUi(MainWindow)
+    #MainWindow.show()
     sys.exit(app.exec_())
