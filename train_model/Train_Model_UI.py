@@ -164,6 +164,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 # "")
                 # self.force_info_label_2.setAlignment(QtCore.Qt.AlignCenter)
                 # self.force_info_label_2.setObjectName("force_info_label_2")
+
                 self.force_info_label_2 = QtWidgets.QTableWidget(self.centralwidget)
                 self.force_info_label_2.setGeometry(QtCore.QRect(12, 92, 435, 35))
                 self.force_info_label_2.setColumnCount(2)
