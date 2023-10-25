@@ -10,33 +10,35 @@ class CTCTrackControllerAPI:
         #Track Controller to CTC
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {'block': {1: 0.0, 2: False}} # blocks{speed limit(m/s), occupancy(bool)}
+        self._light = ("light color", 0) # light color, color (0 for green, 1 for red)
+        self._switch = (0, 0) # switch position (first is switch number, second is position)
 
-    def get_authority(self) -> float:
-        return self._authority
-    def get_track_section_status(self, block) -> bool:
-        return self._track_section_status[block]
+    # def get_authority(self) -> float:
+    #     return self._authority
+    # def get_track_section_status(self, block) -> bool:
+    #     return self._track_section_status[block]
 
-    def get_suggested_speed(self) -> float:
-        return self._suggested_speed
+    # def get_suggested_speed(self) -> float:
+    #     return self._suggested_speed
 
-    def get_passenger_onboarding(self) -> int:
-        return self._passenger_onboarding
+    # def get_passenger_onboarding(self) -> int:
+    #     return self._passenger_onboarding
 
-    def get_occupancy(self, block) -> bool:
-        return self._occupancy[block][2]
+    # def get_occupancy(self, block) -> bool:
+    #     return self._occupancy[block][2]
 
-    def set_authority(self, distance: float):
-        self._authority = distance
+    # def set_authority(self, distance: float):
+    #     self._authority = distance
 
-    def set_track_section_status(self, block, mode: bool):
-        self._track_section_status[block] = mode
-        self._occupancy[block][2] = mode
+    # def set_track_section_status(self, block, mode: bool):
+    #     self._track_section_status[block] = mode
+    #     self._occupancy[block][2] = mode
 
-    def set_suggested_speed(self, speed: float):
-        self._suggested_speed = speed
+    # def set_suggested_speed(self, speed: float):
+    #     self._suggested_speed = speed
 
-    def set_passenger_onboarding(self, tickets: int):
-        self._passenger_onboarding = tickets
+    # def set_passenger_onboarding(self, tickets: int):
+    #     self._passenger_onboarding = tickets
 
-    def set_occupancy(self, block, value: bool):
-        self._occupancy[block][2] = value
+    # def set_occupancy(self, block, value: bool):
+    #     self._occupancy[block][2] = value
