@@ -1,3 +1,5 @@
+import traceback
+
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 class Track_Controller(object):
@@ -191,3 +193,16 @@ class Track_Controller(object):
 
     def get_railway_crossing(self, crossing):
         return self._crossing_lights_gates[crossing]
+
+    def launch_ui(self):
+        print("Launching Track Controller UI")
+        try:
+            from track_controller.Track_Controller_SW import Ui_TrackController_MainUI
+        except:
+            print("Can't import UI")
+            traceback.print_exc()
+        try:
+            self._ui = Ui_TrackController_MainUI(self)
+        except:
+            print("An error occurred:")
+            traceback.print_exc()
