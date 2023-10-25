@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView
+from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView, QHeaderView
 from PyQt5.QtGui import QPixmap, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime, time
@@ -107,7 +107,34 @@ class Ui_MainWindow(object):
         self.train_list_2 = QtWidgets.QTableView(self.train_view_page)
         self.train_list_2.setGeometry(QtCore.QRect(0, 50, 981, 271))
         self.train_list_2.setObjectName("train_list_2")
-        header_data = [QStandardItem("Train Number"), QStandardItem("Departure Time"), QStandardItem("Current Authority"), QStandardItem("Suggested Speed"), QStandardItem("Current Speed")]
+        self.train_list_2_data = QStandardItemModel()
+        self.train_list_2_data.setHorizontalHeaderItem(0, QStandardItem("Train Number"))
+        self.train_list_2_data.setHorizontalHeaderItem(1, QStandardItem("Departure Time"))
+        self.train_list_2_data.setHorizontalHeaderItem(2, QStandardItem("Arrival Time"))
+        self.train_list_2_data.setHorizontalHeaderItem(3, QStandardItem("Destination Station"))
+        self.train_list_2_data.setHorizontalHeaderItem(4, QStandardItem("Current Authority"))
+        self.train_list_2_data.setHorizontalHeaderItem(5, QStandardItem("Suggested Speed"))
+        self.train_list_2_data.setHorizontalHeaderItem(6, QStandardItem("Current Speed"))
+        self.train_list_2.setModel(self.train_list_2_data)
+        header = self.train_list_2.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Automatically adjust column size
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
+
+        # data = [ # code to add data
+        #     ["1", "08:00", "10:30", "East Liberty", "890 m", "89 mi/hr", "50 mi/hr"]
+        #     # Add more rows as needed
+        # ]
+
+        # for row_index, row_data in enumerate(data):
+        #     for column_index, cell_data in enumerate(row_data):
+        #         item = QStandardItem(str(cell_data))
+        #         self.train_list_2_data.setItem(row_index, column_index, item)
+
         self.occupied_blocks = QtWidgets.QScrollArea(self.train_view_page)
         self.occupied_blocks.setGeometry(QtCore.QRect(819, 460, 161, 191))
         self.occupied_blocks.setWidgetResizable(True)
