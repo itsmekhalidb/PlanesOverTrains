@@ -25,10 +25,10 @@ from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
 
 
-# from CTC.ctc import CTC
-# from track_controller.track_controller import TrackController
-# from track_controller_hw.track_controller_hw import TrackControllerHW
-# from track_model.track_model import TrackModel
+from CTC.CTC import CTC
+from track_controller.track_controller import Track_Controller
+from track_controller_hw.track_controller_hw import Track_Controller_HW
+from track_model.track_model import TrackModel
 
 # Managers are only necessary for train model and train controller
 from train_model.train_model_manager import TrainModelManager
@@ -51,10 +51,10 @@ class Launcher(QMainWindow):
 
         # TODO: CTC, track controllers, and track model need to change to use the APIs -- See train_model.py and train_controller.py for examples
         # Link APIs together
-        # self.ctc = CTC(self.ctc_track_controller_api)
-        # self.track_controller = TrackController(self.ctc_track_controller_api, self.track_controller_track_model_api)
+        self.ctc = CTC(self.ctc_track_controller_api)
+        self.track_controller = Track_Controller(self.ctc_track_controller_api, self.track_controller_track_model_api)
         self.track_controller_hw = Track_Controller_HW(self.ctc_track_controller_api, self.track_controller_track_model_api)
-        # self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
+        self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
         self.train_model_manager = TrainModelManager(self.train_model_train_controller_api, self.track_model_train_model_api)
         self.train_controller_manager = TrainControllerManager(self.train_model_train_controller_api)
 
@@ -197,10 +197,10 @@ class Launcher(QMainWindow):
         # TODO: Also reference the manager functions in train_model_manager.py and train_controller_manager.py
         # TODO: You will need to edit how your UI is built to be launched from the launcher -- See Train_Model_UI.py
         # Launch UI on Click
-        # self.CTC_launch.clicked.connect(self.launch_ctc)
-        # self.track_controller_sw_launch.clicked.connect(self.launch_track_controller_sw)
+        self.CTC_launch.clicked.connect(self.launch_ctc)
+        self.track_controller_sw_launch.clicked.connect(self.launch_track_controller_sw)
         self.track_controller_hw_launch.clicked.connect(self.launch_track_controller_hw)
-        # self.track_model_launch.clicked.connect(self.launch_track_model)
+        self.track_model_launch.clicked.connect(self.launch_track_model)
         self.train_model_launch.clicked.connect(self.launch_train_model)
         self.train_controller_launch.clicked.connect(self.launch_train_controller)
 
@@ -252,21 +252,14 @@ class Launcher(QMainWindow):
             [f'train #{id + 1}' for id in self.train_controller_manager.get_ids()]
         )
 
-
-
-    '''
-    # Uncomment this section when you have implemented a launch function for your module
     def launch_ctc(self):
         self.ctc.launch_ui()
         
     def launch_track_controller_sw(self):
         self.track_controller.launch_ui()
-        
 
-        
     def launch_track_model(self):
         self.track_model.launch_ui()
-    '''
 
     def launch_track_controller_hw(self):
         self.track_controller_hw.launch_ui()
