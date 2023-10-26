@@ -17,19 +17,16 @@ from PyQt5.QtCore import *
 import sys
 
 # APIs
-
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
-
-
+# Modules
 from CTC.CTC import CTC
 from track_controller.track_controller import Track_Controller
 from track_controller_hw.track_controller_hw import Track_Controller_HW
 from track_model.track_model import TrackModel
-
 # Managers are only necessary for train model and train controller
 from train_model.train_model_manager import TrainModelManager
 from train_controller.train_controller_manager import TrainControllerManager

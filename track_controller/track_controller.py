@@ -40,6 +40,8 @@ class Track_Controller(object):
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
 
+        self.update()
+
     def update(self, thread=False):
         #Interal inputs
         self.set_commanded_speed(self.get_commanded_speed())

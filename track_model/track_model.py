@@ -45,8 +45,8 @@ class TrackModel(object):
         self._temperature = 0 #temperature of cabin
 
         #Data from Other Modules
-        self._train_model_signals = None #api from Train Model
-        self ._track_controller_signals = None #api from track controller
+        self._train_model_signals = trainModelSignal #api from Train Model
+        self._track_controller_signals = trackCtrlSignal #api from track controller
 
         self.update()
 
@@ -77,7 +77,10 @@ class TrackModel(object):
         self.set_light_colors(self.get_light_colors())
 
         #authority
-        self.set_authority(self.get_authority())
+        self.set_authority(self._track_controller_signals._authority)
+
+        # Send Authority
+        self._train_model_signals.authority = self.get_authority()
 
         #gate control
         self.set_gate_control(self.get_gate_control())

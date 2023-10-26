@@ -62,7 +62,7 @@ class TrainController:
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
-        self.set_authority(float(self.get_authority()))
+        self.set_authority(self.train_model.authority)
         #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
