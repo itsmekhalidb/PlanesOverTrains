@@ -18,8 +18,11 @@ class File_Parser():
     def get_block_occupancy(self) -> list:
         return self._block_occupancy
 
+    def get_path(self) -> str:
+        return self._path
+
     def parse(self):
-        f = open(self._path, "r")
+        f = open(self.get_path(), "r")
         for line in f:
             words = line.split()
             print(words)
@@ -34,12 +37,12 @@ class File_Parser():
 
         f.close()
 
-
-jes = File_Parser('C:/Users/jmkla/Documents/College/Senior/Trains/Project/PlanesOverTrains/track_controller_hw'
-                  '/PLCFile.txt')
+"""
+jes = File_Parser('traPLCFile.txt')
 
 jes.parse()
 print(jes.get_block_occupancy())
 print(jes.get_block_number())
 print(jes.get_operations())
 print(jes.get_operations_number())
+"""
