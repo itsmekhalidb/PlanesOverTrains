@@ -3,10 +3,9 @@ import math
 import time
 import numpy as np
 
-class TrainController(object):
+class TrainController:
 
-
-    def __init__(self):
+    def __init__(self, train_model):
         #priv variables
         self._current_velocity = 0.0
         self._maximum_velocity = 0.0
@@ -41,40 +40,40 @@ class TrainController(object):
         self._temperature = 0.0 # internal temperature of the train
 
         # Update Function
+        self.train_model = train_model
         self.update()
 
     def update(self, thread=False):
 
-        #call getters and setters
-        # TODO: change this to get from either driver or train model
-        # self.set_anything(self.get_anything)
-
         self.set_auto_status(bool(self.get_auto_status()))
-        self.set_right_door_status(bool(self.get_right_door_status()))
-        self.set_left_door_status(bool(self.get_left_door_status()))
-        self.set_underground_status(bool(self.get_underground_status()))
-        self.set_internal_lights(bool(self.get_internal_lights()))
-        self.set_external_lights(bool(self.get_external_lights()))
-        self.set_emergency_brake_status(bool(self.get_ebrake_status()))
+        self.train_model.right_doors = self.get_right_door_status()
+        self.train_model.left_doors = self.get_left_door_status()
+        self.train_model.int_lights = self.get_internal_lights()
+        self.train_model.ext_lights = self.get_external_lights()
+        self.set_underground_status(self.train_model.underground)
+        self.train_model.service_brake_value = self.get_service_brake_value()
+        self.train_model.emergency_brake = self.get_ebrake_status()
         #self.set_service_brake_status(bool(self.get_service_brake_status()))
-        self.set_emergency_brake_failure(bool(self.get_emergency_brake_failure_status()))
-        self.set_service_brake_failure(bool(self.get_service_brake_failure_status()))
-        self.set_engine_status(bool(self.get_engine_status()))
-        self.set_signal_pickup_failure_status(bool(self.get_signal_pickup_failure()))
-        self.set_commanded_velocity(float(self.get_current_velocity()))
+        self.set_emergency_brake_failure(self.train_model.ebrake_failure)
+        self.set_service_brake_failure(self.train_model.brake_failure)
+        self.set_engine_status(self.train_model.engine_failure)
+        self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
+        self.train_model.cmd_speed = self.get_commanded_velocity()
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
-        self.set_authority(float(self.get_authority()))
-        self.set_current_velocity(float(self.get_actual_velocity()))
+        self.set_current_velocity(self.train_model.actual_velocity)
+        self.set_commanded_velocity(self.train_model.cmd_speed)
+        self.set_authority(self.train_model.authority)
+        #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
         self.set_uk(float(self._ek))
-        self.set_power(float(self.get_commanded_power()))
+        self.set_power()
+        self.train_model.cmd_power = self.get_commanded_power()
         self.set_service_brake_value(float(self.get_service_brake_value()))
-
-        # Comment in later
-        # self.train_model.set_temperature(self.get_temperature_sp())
-        # self.set_temperature(self.train_model.get_temperature())
+        self.train_model.temp_sp = self.get_temperature_sp()
+        self.set_temperature(self.train_model.temperature)
+        self.set_train_line(self.train_model.line)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -106,11 +105,9 @@ class TrainController(object):
         if v <= self._maximum_velocity:
             self._commanded_velocity = v
     def set_current_velocity(self, c : float):
-        if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
-            self._current_velocity = 0
-        else:
-            self._current_velocity = c
+        self._current_velocity = c
 
+    # TODO: Lights do not turn on if underground, needs fix
     def set_internal_lights(self, status: bool):
         if self._underground_status:
             self._internal_lights_on = True
@@ -139,15 +136,21 @@ class TrainController(object):
         # print("Ki = " + str(self._ki))
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
+        self._previous_uk = self._uk
     def set_eK(self, desired: int, actual: int):
         self._ek = self._commanded_velocity - self._current_velocity
-    def set_power(self, desired_power: float):
+        self._previous_ek = self._ek
+
+    # TODO: Desired power is not being passed in at any point in your code, needs fix
+    def set_power(self):
         if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
             self._commanded_power = 0
-        if desired_power <= 120000:
+        elif (self._kp * self._ek + self._ki + self._uk) <= 120000:
             self._commanded_power = self._kp * self._ek + self._ki + self._uk
         else:
             self._commanded_power = 120000
+
+
     def set_right_door_status(self,stat: bool):
         self._right_door_open = stat
     def set_left_door_status(self, stat: bool):
@@ -210,3 +213,8 @@ class TrainController(object):
 
     def get_station_status(self)->str:
         return self._station_status
+
+    def launch_tc_ui(self):
+        from train_controller.Train_Controller_Main_Window import Ui_MainWindow
+        print("Launching Train Controller UI")
+        self._ui = Ui_MainWindow(self)

@@ -1,8 +1,10 @@
+import traceback
+
+from api.ctc_track_controller_api import CTCTrackControllerAPI
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 class Track_Controller(object):
 
-    def __init__(self):
-        # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
-
+    def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
         # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
         self._blue = {'A1': {1: 50, 2: 1}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
                       'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
@@ -17,7 +19,7 @@ class Track_Controller(object):
         # 1 = left, 0 = right
         self._switches = {'BC-A': 0}
         # crossing lights/gate
-        self._crossing_lights_gates = ""
+        self._crossing_lights_gates = {'A1': 0}
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -31,14 +33,75 @@ class Track_Controller(object):
         self._authority = 0
         self._suggested_speed = 30
         self._test_speed_limit = 0
-        self._track_status = False
-    # Variables
+        self._track_status = {'block': False}
+        self._passengers = 0
+
+        #api signals
+        self.ctc_ctrl_signals = ctcsignals
+        self.track_ctrl_signals = tracksignals
+
+        self.update()
+
+    def update(self, thread=False):
+        #Interal inputs
+        self.set_commanded_speed(self.get_commanded_speed())
+
+        #CTC Office Inputs
+        self.set_authority(self.ctc_ctrl_signals._authority)
+        self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
+        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+
+        #CTC Office Outputs
+        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
+        self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+
+        #Track Model Inputs
+        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
+        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
+        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
+        self.set_power_failure(self.track_ctrl_signals._power_failure)
+        self.set_blue_track(self.track_ctrl_signals._blue)
+        # wait until we have things connected to mess around with this
+        # self.set_blue_track(self.track_ctrl_signals._green)
+
+        #Track Model Outputs
+        self.track_ctrl_signals._authority = self.get_authority()
+        self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        for i in self._lights.keys():
+            self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
+        for i in self._switches.keys():
+            self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
+        for i in self._crossing_lights_gates.keys():
+            self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
+
+
+    def get_passengers(self):
+        return self._passengers
+
+    def set_passengers(self, tickets):
+        self._passengers = tickets
+
+    def get_track_section_status(self):
+        return self._track_status
+    def set_track_section_status(self, block):
+        self._track_status = block
+        for i in block.keys():
+            self._blue[i][2] = block[i]
 
     def get_blue_track(self) -> dict:
         return self._blue
 
+    def set_blue_track(self, track):
+        self._blue = track
+
     def get_occupancy(self, block) -> int:
         return self._blue[block][2]
+
+    def get_block_occupancy(self) -> dict:
+        temp = {}
+        for x in self._occupied_blocks:
+            temp.update({x:self.get_occupancy(x)})
+        return temp
 
     def get_occupied_blocks(self) -> list:
         temp = []
@@ -129,3 +192,19 @@ class Track_Controller(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+
+    def get_railway_crossing(self, crossing):
+        return self._crossing_lights_gates[crossing]
+
+    def launch_ui(self):
+        print("Launching Track Controller UI")
+        try:
+            from track_controller.Track_Controller_SW import Ui_TrackController_MainUI
+        except:
+            print("Can't import UI")
+            traceback.print_exc()
+        try:
+            self._ui = Ui_TrackController_MainUI(self)
+        except:
+            print("An error occurred:")
+            traceback.print_exc()

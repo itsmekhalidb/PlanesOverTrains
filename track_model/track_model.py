@@ -5,9 +5,12 @@ import random as rand
 import numpy as np
 import threading
 import pandas as pd
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
+import traceback
 
 class TrackModel(object):
-    def __init__(self):
+    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, trainModelSignal: TrackModelTrainModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
@@ -29,6 +32,7 @@ class TrackModel(object):
         self._onboarding = 0 #number of passengers boarding train
         self._occupancy = False #if block is occupied or not
         self._track_layout = "" #layout of the track
+        self._temperature = 0
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -41,8 +45,8 @@ class TrackModel(object):
         self._temperature = 0 #temperature of cabin
 
         #Data from Other Modules
-        self._train_model_signals = None #signals from Train Model
-        self ._track_controller_signals = None #signals from track controller
+        self._train_model_signals = trainModelSignal #api from Train Model
+        self._track_controller_signals = trackCtrlSignal #api from track controller
 
         self.update()
 
@@ -62,7 +66,7 @@ class TrackModel(object):
         self.set_engine_failure(bool(self.get_engine_failure()))
 
         #brake failure
-        self.brake_failure(bool(self.get_brake_failure()))
+        self.set_brake_failure(bool(self.get_brake_failure()))
 
         #---- Inputs from Track Controller ----#
 
@@ -73,7 +77,10 @@ class TrackModel(object):
         self.set_light_colors(self.get_light_colors())
 
         #authority
-        self.set_authority(self.get_authority())
+        self.set_authority(self._track_controller_signals._authority)
+
+        # Send Authority
+        self._train_model_signals.authority = self.get_authority()
 
         #gate control
         self.set_gate_control(self.get_gate_control())
@@ -222,6 +229,12 @@ class TrackModel(object):
     def get_railway_xing(self) -> bool:
         return self._railway_xing
 
+    def set_temperature(self, _temperature: int):
+        self._temperature = _temperature
+
+    def get_temperature(self) -> int:
+        return self._temperature
+
     #Actual Velocity
     def set_actual_velocity(self, _actual_velocity: float):
         self._actual_velocity = _actual_velocity
@@ -328,10 +341,10 @@ class TrackModel(object):
         return self._power_failure
 
     #Train Engine Failure
-    def set_train_engine_failure(self, _train_engine_failure: bool):
+    def set_engine_failure(self, _train_engine_failure: bool):
         self._train_engine_failure = _train_engine_failure
 
-    def get_train_engine_failure(self) -> bool:
+    def get_engine_failure(self) -> bool:
         return self._train_engine_failure
 
     #Brake Failure
@@ -340,6 +353,19 @@ class TrackModel(object):
 
     def get_brake_failure(self) -> bool:
         return self._brake_failure
+
+    def launch_ui(self):
+        print("Launching Track Model UI")
+
+        try:
+            from track_model.Track_Model_UI import Ui_MainWindow
+            self._ui = Ui_MainWindow(self)
+
+        except:
+            print("An error occured:")
+            traceback.print_exc()
+            print("Track model not initialized yet")
+
 
 
 

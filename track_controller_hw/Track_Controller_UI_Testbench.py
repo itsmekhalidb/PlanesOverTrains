@@ -11,7 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QTimer
 
-from PlanesOverTrains.track_controller_hw.track_controller_hw import Track_Controller_HW
+from track_controller_hw.track_controller_hw import Track_Controller_HW
 
 
 class Ui_Test_Bench(object):

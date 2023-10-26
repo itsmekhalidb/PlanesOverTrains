@@ -1,19 +1,17 @@
 # -- Imports -- #
-import math
 import os
+import math
 import random
 import time
 import random as rand
 import numpy as np
 import threading
-# from Train_Model_Test_Bench_UI import Ui_TrainModel_TestBench as tb
-# from Train_Model_UI import Ui_TrainModel_MainUI as Train_Model_UI
-import threading
 
-# TODO: Format Force and Power to be centered
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
 class TrainModel(object):
-    def __init__(self):
+    def __init__(self, train_signals: TrainModelTrainControllerAPI, track_signals: TrackModelTrainModelAPI):
 
         # -- Train Model Variables -- #
         self._friction_coeff = 0.006 # friction coefficient for rails
@@ -77,140 +75,21 @@ class TrainModel(object):
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
         self._service_brake = False # service brake
+        self._service_brake_value = 0.0 # % service brake
 
         # -- Get Data from Other Modules -- #
-        # TODO: change _train_ctrl_signals to _train_ctrl_signals from train controller signals
-        self._train_ctrl_signals = None # train controller signals
-        # TODO: change _track_model_signals to _track_model_signals from track model signals
-        self._track_model_signals = None # track model signals
+        self._train_ctrl_signals = train_signals # train controller api
+        self._track_model_signals = track_signals # track model api
 
         # -- Run the Update Function -- #
         self.update()
 
     def update(self, thread=False):
-        ##################################
-        # Input Train Controller Signals #
-        ##################################
-        # Commanded Power
-        # TODO: change get_cmd_power to get_cmd_power from train controller signals
-        self.set_cmd_power(float(self.get_cmd_power()))  # Pass input from test UI text box
-
-        # Internal Temperature
-        # TODO: get temperature from train controller
-        self.set_temperature(self.get_temperature())
-
-        #################
-        # Failure Modes #
-        #################
-        # E-Brake Failure
-        # TODO: change get_ebrake_failure to get_ebrake_failure from train controller signals
-        self.set_ebrake_failure(bool(self.get_ebrake_failure()))  # Pass input from test UI text box
-
-        # Train Engine Failure
-        # TODO: change get_engine_failure to get_engine_failure from train controller signals
-        self.set_engine_failure(bool(self.get_engine_failure()))  # Pass input from test UI text box
-
-        # Service Brake Failure
-        # TODO: change get_sbrake_failure to get_sbrake_failure from train controller signals
-        self.set_sbrake_failure(bool(self.get_sbrake_failure()))  # Pass input from test UI text box
-
-        # Signal Pickup Failure
-        # TODO: change get_signal_failure to get_signal_failure from train controller signals
-        self.set_signal_failure(bool(self.get_signal_failure()))  # Pass input from test UI text box
-
-        ############
-        # Controls #
-        ############
-        # Right Door
-        # TODO: change get_right_door to get_right_door from train controller signals
-        self.set_right_door(bool(self.get_right_door()))  # Pass input from test UI text box
-
-        # Left Door
-        # TODO: change get_left_door to get_left_door from train controller signals
-        self.set_left_door(bool(self.get_left_door()))  # Pass input from test UI text box
-
-        # Internal Lights
-        # TODO: change get_int_lights to get_int_lights from train controller signals
-        self.set_int_lights(bool(self.get_int_lights()))  # Pass input from test UI text box
-
-        # External Lights
-        # TODO: change get_ext_lights to get_ext_lights from train controller signals
-        self.set_ext_lights(bool(self.get_ext_lights()))  # Pass input from test UI text box
-
-        # Emergency Brake
-        # TODO: change get_emergency_brake to get_emergency_brake from train controller signals
-        self.set_emergency_brake(bool(self.get_emergency_brake()))  # Pass input from test UI text box
-
-        # Service Brake
-        # TODO: change get_service_brake to get_service_brake from train controller signals
-        self.set_service_brake(bool(self.get_service_brake()))  # Pass input from test UI text box
-
-        #############################
-        # Input Track Model Signals #
-        #############################
-        # Passenger Count
-        # TODO: change get_curr_passenger_count to get_curr_passenger_count from track model signals
-        self.set_curr_passenger_count(int(self.get_curr_passenger_count()))  # Pass input from test UI text box
-
-        # Time
-        # TODO: change get_time to get_time from track model signals
-        self.set_time()
-
-        # Beacon
-        # TODO: change get_beacon to get_beacon from track model signals
-        self.set_beacon(self.get_beacon())
-
-        # Line
-        # TODO: change get_line to get_line from track model signals
-        self.set_line(self.get_line())
-
-        # Station Side
-        # TODO: change get_station_side to get_station_side from track model signals
-        self.set_station_side(self.get_station_side())
-
-        # Block
-        # TODO: change get_block to get_block from track model signals
-        self.set_block(self.get_block())
-
-        # Authority
-        # TODO: change get_authority to get_authority from track model signals
-        self.set_authority(float(self.get_authority()))
-
-        # Speed Limit
-        # TODO: change get_speed_limit to get_speed_limit from track model signals
-        self.set_speed_limit(float(self.get_speed_limit()))
-
-        # Elevation
-        # TODO: change get_elevation to get_elevation from track model signals
-        self.set_elevation(float(self.get_elevation()))
-
-        # Grade
-        # TODO: change get_grade to get_grade from track model signals
-        self.set_grade(float(self.get_grade()))
-
-        # Underground
-        # TODO: change get_underground to get_underground from track model signals
-        self.set_underground(bool(self.get_underground()))
-
-        # Commanded Speed
-        # TODO: change get_cmd_speed to get_cmd_speed from track model signals
-        self.set_cmd_speed(float(self.get_cmd_speed()))
-
-        ##############################
-        # Output to Train Controller #
-        ##############################
-        # TODO: Add output to train controller
-
-        #########################
-        # Output to Track Model #
-        #########################
-        # TODO: Add output to track model
-
         #####################################
         # Internal Train Model Calculations #
         #####################################
         # Force
-        self.set_force(float(self.get_force()))  # Pass input from test UI text box
+        self.set_force(float(self.get_force()))
 
         # Passenger Mass
         self.set_passenger_mass(self.get_curr_passenger_count())
@@ -227,68 +106,187 @@ class TrainModel(object):
         # Actual Velocity
         self.calc_actual_velocity()
 
+        ##################################
+        # Input Train Controller Signals #
+        ##################################
+        ## Failures
+        # E-Brake Failure
+        self._train_ctrl_signals.ebrake_failure = self.get_ebrake_failure()
+
+        # Train Engine Failure
+        self._train_ctrl_signals.engine_failure = self.get_engine_failure()
+
+        # Service Brake Failure
+        self._train_ctrl_signals.brake_failure = self.get_sbrake_failure()
+
+        # Signal Pickup Failure
+        self._train_ctrl_signals.signal_pickup_failure = self.get_signal_failure()
+
+        ## Controls
+        # Commanded Power
+        self.set_cmd_power(self._train_ctrl_signals.cmd_power)
+
+        # Internal Temperature
+        self.set_temperature(self._train_ctrl_signals.temp_sp)
+
+        # Right Door
+        self.set_right_door(self._train_ctrl_signals.right_doors)
+
+        # Left Door
+        self.set_left_door(self._train_ctrl_signals.left_doors)
+
+        # Internal Lights
+        self.set_int_lights(self._train_ctrl_signals.int_lights)
+
+        # External Lights
+        self.set_ext_lights(self._train_ctrl_signals.ext_lights)
+
+        # Emergency Brake
+        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)
+
+        # Service Brake
+        self.set_service_brake(self._train_ctrl_signals.service_brake_value > 0)
+
+        # Service Brake Value
+        self.set_service_brake_value(self._train_ctrl_signals.service_brake_value)
+
+        ##############################
+        # Output to Train Controller #
+        ##############################
+        # Train Line
+        self._train_ctrl_signals.line = self.get_line()
+
+        # Beacon
+        self._train_ctrl_signals.beacon = self.get_beacon()
+
+        # Authority
+        self._train_ctrl_signals.authority = self.get_authority()
+
+        # Commanded Speed
+        self._train_ctrl_signals.cmd_speed = self.get_cmd_speed()
+
+        # Speed Limit
+        self._train_ctrl_signals.speed_limit = self.get_speed_limit()
+
+        # Underground
+        self._train_ctrl_signals.underground = self.get_underground()
+
+        # Station Side
+        self._train_ctrl_signals.station_side = self.get_station_side()
+
+        # Time
+        self._train_ctrl_signals.time = self.get_time()
+
+        # Actual Velocity
+        self._train_ctrl_signals.actual_velocity = self.get_actual_velocity()
+
+        # Temperature
+        self._train_ctrl_signals.temperature = self.get_temperature()
+
+        #############################
+        # Input Track Model Signals #
+        #############################
+        # Passenger Onboard
+        self.set_curr_passenger_count(self._track_model_signals.passenger_onboard)
+
+        # Line
+        self.set_line(self._track_model_signals.line)
+
+        # Beacon
+        self.set_beacon(self._track_model_signals.beacon)
+
+        # Authority
+        self.set_authority(self._track_model_signals.authority)
+
+        # Commanded Speed
+        self.set_cmd_speed(self._track_model_signals.cmd_speed)
+
+        # Block
+        self.set_block(self._track_model_signals.current_block)
+
+        # Time
+        # REMINDER: uncomment line in set_time to use time from track model
+        self.set_time(self._track_model_signals.time)
+
+        # Red Line Track Info Decode
+        if (self.get_block() in self._track_model_signals.red_track_info) and self.get_line().lower() == "red":
+            # Speed Limit
+            self.set_speed_limit(self._track_model_signals.red_track_info[self.get_block()]["speed_limit"])
+
+            # Elevation
+            self.set_elevation(self._track_model_signals.red_track_info[self.get_block()]["elevation"])
+
+            # Grade
+            self.set_grade(self._track_model_signals.red_track_info[self.get_block()]["grade"])
+
+            # Underground
+            self.set_underground(self._track_model_signals.red_track_info[self.get_block()]["underground"])
+
+            # Station Side
+            self.set_station_side(self._track_model_signals.red_track_info[self.get_block()]["station_side"])
+
+        # Green Line Track Info Decode
+        if (self.get_block() in self._track_model_signals.green_track_info) and self.get_line().lower() == "green":
+            # Speed Limit
+            self.set_speed_limit(self._track_model_signals.green_track_info[self.get_block()]["speed_limit"])
+
+            # Elevation
+            self.set_elevation(self._track_model_signals.green_track_info[self.get_block()]["elevation"])
+
+            # Grade
+            self.set_grade(self._track_model_signals.green_track_info[self.get_block()]["grade"])
+
+            # Underground
+            self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
+
+            # Station Side
+            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station_side"])
+
+        #########################
+        # Output to Track Model #
+        #########################
+        # Passenger Update
+        if self.get_beacon() != "": # We are at a station
+            self.set_prev_passenger_count(self.get_curr_passenger_count())
+        else:
+            self.set_prev_passenger_count(0)
+
+        # Send Passengers Departing when at a stop
+        if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors()) # Open the doors
+            if self.get_prev_passenger_count() > 0:
+                # Depart all passengers at last stop before yard
+                if (self.get_line().lower() == "green" and self.get_block() == 56) or (self.get_line().lower() == "red" and self.get_block() == 16):
+                    self._track_model_signals.passenger_onboard = 0
+                    self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
+                # Pick a random number of passengers to depart and onboard
+                else:
+                    self._track_model_signals.passenger_onboard = random.randint(0, self.get_curr_passenger_count())
+                    self._track_model_signals.passenger_departing = random.randint(0, self.get_curr_passenger_count())
+            else:
+                # No passengers to depart
+                self._track_model_signals.passenger_onboard = self.get_curr_passenger_count()
+                self._track_model_signals.passenger_departing = 0
+        elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors()) # Close the doors
+
+        # Actual Velocity
+        self._track_model_signals.actual_velocity = self.get_actual_velocity()
+
+        # Signal Pickup Failure
+        self._track_model_signals.signal_pickup_failure = self.get_signal_failure()
+
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
 
-    # -- Simulation -- #
-    # TODO: Remove Simulate Function during integration
-    def beacon_simulate(self):
-        if self._line == "":
-            self.set_line("BLUE")
-        if self._line.lower() == "green":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("PIONEER")
-            # print(self.get_beacon())  # TODO: Remove print statement
-            # Authority
-            self.set_authority(700)
-            # Speed Limit
-            self.set_speed_limit(45)
-            # Elevation
-            self.set_elevation(1)
-            # Grade
-            self.set_grade(0.01)
-            # Underground
-            self.set_underground(False)
-            # Occupancy (Block)
-            self.set_block(2)
-        if self._line.lower() == "red":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("SHADYSIDE")
-            # print(self.get_beacon()) # TODO: Remove print statement
-            # Authority
-            self.set_authority(615)
-            # Speed Limit
-            self.set_speed_limit(40)
-            # Elevation
-            self.set_elevation(0.38)
-            # Grade
-            self.set_grade(0.005)
-            # Underground
-            self.set_underground(False)
-            # Occupancy (Block)
-            self.set_block(7)
-        if self._line.lower() == "blue":
-            # Set:
-            # Station Name (Beacon)
-            self.set_beacon("Station B")
-            # print(self.get_beacon()) # TODO: Remove print statement
-            # Authority
-            self.set_authority(250)
-            # Speed Limit
-            self.set_speed_limit(50)
-            # Elevation
-            self.set_elevation(0.0)
-            # Grade
-            self.set_grade(0.0)
-            # Underground
-            self.set_underground(True)
-            # Occupancy (Block)
-            self.set_block(10)
-
     # -- Getters and Setters -- #
+    def set_service_brake_value(self, _service_brake_value: float):
+        self._service_brake_value = _service_brake_value
+
+    def get_service_brake_value(self) -> float:
+        return self._service_brake_value
+
     def get_advertisement(self):
         # Choose a random image file from the list
         if self._ad_poll_attempts < self._ad_poll_rate:
@@ -316,16 +314,14 @@ class TrainModel(object):
         if self.get_acceleration() < self._ebrake_decel_limit:
             self.set_acceleration(self._ebrake_decel_limit)
         # sbrake min limit
-        if self._ebrake_decel_limit < self.get_acceleration() < self._decel_limit:
-            self.set_acceleration(self._decel_limit)
+        if self._ebrake_decel_limit < self.get_acceleration() < (self._decel_limit * self.get_service_brake_value()):
+            self.set_acceleration(self._decel_limit * self.get_service_brake_value())
         # faults
         if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
             self.set_acceleration(0)
-        # service brake or emergency brake
-        if (self.get_service_brake() or self.get_emergency_brake()) and self.get_actual_velocity() == 0:
-            self.set_acceleration(0)
-
-        self.set_acceleration(self.get_acceleration())
+        # emergency brake
+        if self.get_emergency_brake() and self.get_actual_velocity() != 0:
+            self.set_acceleration(self._ebrake_decel_limit)
 
     # station side
     def set_station_side(self, _station_side: str):
@@ -402,10 +398,9 @@ class TrainModel(object):
         return self._block
 
     # time
-    # TODO: Get time from track model
-    # def set_time(self, _time: list):
-    #     self._time = _time
-    def set_time(self):
+    def set_time(self, _time: float):
+        # Uncomment to use time from track model
+        # self._time = _time
         self._time = time.time()
 
     def get_time(self) -> float:
@@ -439,7 +434,7 @@ class TrainModel(object):
         # v = integrate acceleration over time
         # calculating dt
         self._current_time = self._time
-        self.set_time()
+        self.set_time(self._current_time) #TODO: Remove this line when using time from track model
         dt = self._current_time - self._prev_time
         # check if time difference is less than zero
         if dt < 0:
@@ -457,7 +452,6 @@ class TrainModel(object):
     def get_force(self) -> float:
         return self._force
 
-    # TODO: Why does velocity not increase when grade and elevation are 0?
     def calc_force(self):
         # Max power limit
         if self.get_cmd_power() > self._max_power:
@@ -468,8 +462,7 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    # TODO: Determine if we need _decel_limit or _ebrake_decel_limit
-                    self.set_force(self.get_total_mass() * self._decel_limit * self._friction_coeff)
+                    self.set_force(self.get_total_mass() * self._decel_limit * self.get_service_brake_value() * self._friction_coeff)
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
                     self.set_force(self.get_total_mass() * self._accel_limit * self._friction_coeff)
@@ -487,7 +480,7 @@ class TrainModel(object):
             if self.get_actual_velocity() == 0:
                 # commanded power is < 0 therefore train is braking
                 if self.get_cmd_power() < 0:
-                    self.set_force(net_force + self.get_total_mass() * self._decel_limit)
+                    self.set_force(net_force + self.get_total_mass() * self._decel_limit * self.get_service_brake_value())
                 # commanded power is > 0 therefore train is accelerating
                 elif self.get_cmd_power() > 0:
                     self.set_force(self.get_cmd_power() - net_force)
@@ -496,7 +489,7 @@ class TrainModel(object):
                 self.set_force(self.get_cmd_power() / self.get_actual_velocity() - net_force)
         # Service Brakes are Pulled
         if self.get_service_brake():
-            self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit)
+            self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit * self.get_service_brake_value())
         # Emergency Brakes or Failures
         elif self.get_emergency_brake() or self.get_engine_failure() or self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
             self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
@@ -507,6 +500,12 @@ class TrainModel(object):
 
     def get_curr_passenger_count(self) -> int:
         return self._curr_passenger_count
+
+    def set_prev_passenger_count(self, _prev_passenger_count: int):
+        self._prev_passenger_count = _prev_passenger_count
+
+    def get_prev_passenger_count(self) -> int:
+        return self._prev_passenger_count
 
     # passenger mass
     def set_passenger_mass(self, _curr_passenger_count: float):
@@ -566,6 +565,13 @@ class TrainModel(object):
     def get_left_door(self) -> bool:
         return self._left_door
 
+    # doors
+    def set_doors(self, _doors: bool):
+        self._doors = _doors
+
+    def get_doors(self) -> bool:
+        return self._doors
+
     # internal lights
     def set_int_lights(self, _int_lights: bool):
         self._int_lights = _int_lights
@@ -593,3 +599,8 @@ class TrainModel(object):
 
     def get_service_brake(self) -> bool:
         return self._service_brake
+
+    def launch_tm_ui(self):
+        print("Launching Train Model UI")
+        from train_model.Train_Model_UI import Ui_TrainModel_MainUI
+        self._ui = Ui_TrainModel_MainUI(self)

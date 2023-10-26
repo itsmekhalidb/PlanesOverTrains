@@ -1,6 +1,12 @@
+import traceback
+
+from api.ctc_track_controller_api import CTCTrackControllerAPI
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+
+
 class Track_Controller_HW(object):
 
-    def __init__(self):
+    def __init__(self, ctc_signal: CTCTrackControllerAPI, track_signal: TrackControllerTrackModelAPI):
         # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
         # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
@@ -135,3 +141,13 @@ class Track_Controller_HW(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+
+    def launch_ui(self):
+        print("Launching Track Controller HW UI")
+        try:
+            from track_controller_hw.Track_Controller_HW_UI import Ui_track_controller_mainwindow
+            self._ui = Ui_track_controller_mainwindow(self)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+            print("Train model not initialized yet")

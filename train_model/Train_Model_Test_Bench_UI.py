@@ -1254,7 +1254,6 @@ class Ui_TrainModel_TestBench(object):
 
 if __name__ == '__main__':
         import sys
-
         app = QApplication(sys.argv)
         TrainModel_TestBench = QtWidgets.QMainWindow()
         tm = TrainModel()

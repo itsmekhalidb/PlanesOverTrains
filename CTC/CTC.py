@@ -1,17 +1,22 @@
- # -- Imports -- #
+# -- Imports -- #
+import traceback
 import os
 import threading
 from datetime import datetime, timedelta
+
+from api.ctc_track_controller_api import CTCTrackControllerAPI
 
 
 _stations = {} # dictionary of stations and block ids
 
 
 class CTC(object):
-    def __init__(self):
+    def __init__(self, TrackCTRLSignal : CTCTrackControllerAPI):
         # -- CTC Variables -- #
         self._track = None # object for the track
         self._trains = [] # list of train objects
+
+        self.TrackCTRLSignal = TrackCTRLSignal
 
         # run update function
         self.update()
@@ -54,13 +59,23 @@ class CTC(object):
         self._track.update_occupancy(occupied_block)
     def update_passenger_info(self, station, tickets_sold):
         self._track.update_tickets(station, tickets_sold)
-    
+
     # update function
     def update(self, thread=False):
 
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
+
+    def launch_ui(self):
+        print("Launching CTC UI")
+        try:
+            from CTC.CTC_UI import CTC_Main_UI
+            self._ui = CTC_Main_UI(self)
+        except Exception as ex:
+            print("An error occurred:")
+            traceback.print_exc()
+            print("CTC not initialized")
 
 
 
