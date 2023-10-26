@@ -6,17 +6,24 @@ from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtGui import QPixmap
-from Track_Model_Block_Test import Ui_Track_Model_Block
-from Track_Model_Train_Test import Ui_Track_Model_Train
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+# from Track_Model_Block_Test import Ui_Track_Model_Block
+# from Track_Model_Train_Test import Ui_Track_Model_Train
+from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI
 
-class Ui_TrackModel_MainUI(object):
-    def setupUi(self, TrackModel_MainUI):
-        QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+class Ui_TrackModel_MainUI(QMainWindow):
+    def __init__(self, track_model: TrackModel):
+        super().__init__()
+        self.track_model = track_model
+        self.setupUi()
+        self.show()
 
-        TrackModel_MainUI.setObjectName("TrackModel_MainUI")
-        TrackModel_MainUI.resize(780, 435)
-        TrackModel_MainUI.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.centralwidget = QtWidgets.QWidget(TrackModel_MainUI)
+    def setupUi(self):
+        self.setObjectName("self")
+        self.resize(780, 435)
+        # self.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
 
         self.block_title = QtWidgets.QLabel(self.centralwidget)
@@ -131,21 +138,21 @@ class Ui_TrackModel_MainUI(object):
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.setStyleSheet("border: 1px solid black;")
 
-        TrackModel_MainUI.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(TrackModel_MainUI)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 780, 18))
         self.menubar.setObjectName("menubar")
-        TrackModel_MainUI.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(TrackModel_MainUI)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
-        TrackModel_MainUI.setStatusBar(self.statusbar)
+        self.setStatusBar(self.statusbar)
 
-        self.retranslateUi(TrackModel_MainUI)
-        QtCore.QMetaObject.connectSlotsByName(TrackModel_MainUI)
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslateUi(self, TrackModel_MainUI):
+    def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        TrackModel_MainUI.setWindowTitle(_translate("TrackModel_MainUI", "MainWindow"))
+        self.setWindowTitle(_translate("TrackModel_MainUI", "Track Model"))
         self.title.setText(_translate("TrackModel_MainUI", "Track Map"))
         self.testbench.setText(_translate("TrackModel_MainUI", "Testbench"))
         self.system_speed.setText(_translate("TrackModel_MainUI", "System Speed"))
@@ -190,14 +197,15 @@ if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
-    TrackModel_MainUI = QtWidgets.QMainWindow()
-    ui = Ui_TrackModel_MainUI()
-    ui.setupUi(TrackModel_MainUI)
-    ui.line_color.activated.connect(ui.update_block_button)
-    ui.section.activated.connect(ui.update_block_button)
-    ui.block_number.activated.connect(ui.update_block_button)
-    ui.train_selection.activated.connect(ui.update_train_button)
+    e = Ui_TrackModel_MainUI(TrackModel(TrackControllerTrackModelAPI(), TrackModelTrainModelAPI()))
+    # TrackModel_MainUI = QtWidgets.QMainWindow()
+    # ui = Ui_TrackModel_MainUI()
+    # ui.setupUi(TrackModel_MainUI)
+    e.line_color.activated.connect(e.update_block_button)
+    e.section.activated.connect(e.update_block_button)
+    e.block_number.activated.connect(e.update_block_button)
+    e.train_selection.activated.connect(e.update_train_button)
 
-    TrackModel_MainUI.show()
+    # TrackModel_MainUI.show()
     sys.exit(app.exec_())
     # ui.comboBox1.activated.connect(ui.updatePushButtonText)

@@ -46,7 +46,6 @@ class Launcher(QMainWindow):
         # API for Train Model and Train Controller
         self.train_model_train_controller_api = TrainModelTrainControllerAPI()
 
-        # TODO: CTC, track controllers, and track model need to change to use the APIs -- See train_model.py and train_controller.py for examples
         # Link APIs together
         self.ctc = CTC(self.ctc_track_controller_api)
         self.track_controller = Track_Controller(self.ctc_track_controller_api, self.track_controller_track_model_api)
@@ -190,9 +189,6 @@ class Launcher(QMainWindow):
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
-        # TODO: CTC, track controllers, and track model need to add a launch function -- See below for examples
-        # TODO: Also reference the manager functions in train_model_manager.py and train_controller_manager.py
-        # TODO: You will need to edit how your UI is built to be launched from the launcher -- See Train_Model_UI.py
         # Launch UI on Click
         self.CTC_launch.clicked.connect(self.launch_ctc)
         self.track_controller_sw_launch.clicked.connect(self.launch_track_controller_sw)
