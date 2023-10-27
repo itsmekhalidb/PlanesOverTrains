@@ -8,6 +8,7 @@ import pandas as pd
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 import traceback
+from track_model.block_info import block_info
 
 class TrackModel(object):
     def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, trainModelSignal: TrackModelTrainModelAPI):
@@ -33,6 +34,8 @@ class TrackModel(object):
         self._occupancy = False #if block is occupied or not
         self._track_layout = "" #layout of the track
         self._temperature = 0
+        self._filepath = "" #filepath to block info
+        self._track_layout_loaded = 0 #done for track layout
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -100,8 +103,12 @@ class TrackModel(object):
         #offboarding
         self.set_offboarding(self.get_offboarding())
 
-        #---- Temperature Control ----#
+        #---- Internal Functions ----#
+        #temperature
         self.set_temperature(int(self.get_temperature()))
+
+        #track layout
+        self.set_track_layout(self._filepath)
 
         #---- Outputs ----#
         #speed limit
@@ -135,7 +142,7 @@ class TrackModel(object):
         self.set_occupancy(self.get_occupancy())
 
         #track layout
-        self.set_track_layout(self.get_track_layout())
+        self._train_model_signals = self.get_track_layout()
 
         #Enable threading
         if thread:
@@ -174,6 +181,11 @@ class TrackModel(object):
     #         self.set_occupancy(False)           #Occupancy
 
     #---- Getters & Setters ----#
+    #Filepath
+    def set_filepath(self, _filepath: str):
+        self._filepath = _filepath
+    def get_filepath(self) -> str:
+        return self._filepath
 
     #Authority
     def set_authority(self, _authority: float):
@@ -314,8 +326,13 @@ class TrackModel(object):
         return self._occupancy
 
     #Track Layout
-    def set_track_layout(self, _track_layout: str):
-        self._track_layout = _track_layout
+    def set_track_layout(self, path: str):
+        if self._track_layout_loaded == 0 and self._filepath != "":
+            print("here")
+            self._track_layout = block_info(filepath=path)
+            self._track_layout_loaded = 1
+        else:
+            self._track_layout = self.get_track_layout()
 
     def get_track_layout(self) -> str:
         return self._track_layout

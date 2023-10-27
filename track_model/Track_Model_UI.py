@@ -416,6 +416,7 @@ class Ui_MainWindow(QMainWindow):
         self.track_heater.raise_()
         self.t_temp_control.raise_()
         self.temp_control.raise_()
+        self.load_file.raise_()
         self.setCentralWidget(self.trackmodel_main)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1143, 21))
