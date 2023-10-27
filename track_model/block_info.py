@@ -16,16 +16,8 @@ for index, row in df.iterrows():
         'speed limit' : row['speed limit'],
         'elevation' : row['elevation'],
         'switch position' : bool(row['switch position']),
-        'occupied' : bool(row['occupied']),
         'underground' : bool(row['underground']),
-        'track heaters' : bool(row['track heaters']),
-        'beacon' : row['beacon'],
-        'brake failure' : bool(row['brake failure']),
-        'engine failure' : bool(row['engine failure']),
-        'power failure' : bool(row['power failure']),
-        'circuit failure' : bool(row['circuit failure']),
-        'broken rail' : bool(row['broken rail']),
-        'temperature' : row['temperature']
+        'beacon' : row['beacon']
     }
 
     if line in block_dict:

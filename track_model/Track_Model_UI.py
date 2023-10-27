@@ -11,6 +11,7 @@ from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from track_model.track_model import TrackModel
 
+
 class Ui_MainWindow(QMainWindow):
 
     def __init__(self, track_model: TrackModel) -> None:
