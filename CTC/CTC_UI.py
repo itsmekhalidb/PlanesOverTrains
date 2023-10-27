@@ -53,7 +53,7 @@ class CTC_Main_UI(QMainWindow):
         self.switch_auto.setFont(font)
         self.switch_auto.setObjectName("switch_auto")
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
-        self.station_list.setGeometry(QtCore.QRect(380, 370, 201, 31))
+        self.station_list.setGeometry(QtCore.QRect(237, 370, 201, 31))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.station_list.setFont(font)
@@ -62,7 +62,7 @@ class CTC_Main_UI(QMainWindow):
         for station_name in self.ctc.get_stations_names():
             self.station_list.addItem(station_name)
         self.confirm = QtWidgets.QPushButton(self.train_view_page)
-        self.confirm.setGeometry(QtCore.QRect(440, 460, 81, 23))
+        self.confirm.setGeometry(QtCore.QRect(297, 460, 81, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.confirm.setFont(font)
@@ -81,8 +81,9 @@ class CTC_Main_UI(QMainWindow):
         self.testbench_button = QtWidgets.QPushButton(self.train_view_page)
         self.testbench_button.setGeometry(QtCore.QRect(315, 10, 81, 31))
         self.testbench_button.setObjectName("testbench_button")
+        self.testbench_button.clicked.connect(self.open_testbench)
         self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
-        self.arrival_time.setGeometry(QtCore.QRect(440, 430, 81, 22))
+        self.arrival_time.setGeometry(QtCore.QRect(297, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
         self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.system_speed_spnbx_3 = QtWidgets.QDoubleSpinBox(self.train_view_page)
@@ -100,7 +101,7 @@ class CTC_Main_UI(QMainWindow):
 "border: 3px solid black;")
         self.header.setObjectName("header")
         self.arrival_time_label = QtWidgets.QTextEdit(self.train_view_page)
-        self.arrival_time_label.setGeometry(QtCore.QRect(430, 410, 101, 41))
+        self.arrival_time_label.setGeometry(QtCore.QRect(287, 410, 101, 41))
         self.arrival_time_label.setObjectName("arrival_time_label")
         self.sys_time_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.sys_time_label_3.setGeometry(QtCore.QRect(405, 10, 83, 31))
@@ -144,7 +145,7 @@ class CTC_Main_UI(QMainWindow):
         #         self.train_list_2_data.setItem(row_index, column_index, item)
 
         self.occupied_blocks = QtWidgets.QScrollArea(self.train_view_page)
-        self.occupied_blocks.setGeometry(QtCore.QRect(819, 460, 161, 191))
+        self.occupied_blocks.setGeometry(QtCore.QRect(514, 460, 161, 191))
         self.occupied_blocks.setWidgetResizable(True)
         self.occupied_blocks.setObjectName("occupied_blocks")
         self.blocks_table_widget = QtWidgets.QWidget()
@@ -157,27 +158,27 @@ class CTC_Main_UI(QMainWindow):
         self.blocks_table.setRowCount(0)
         self.occupied_blocks.setWidget(self.blocks_table_widget)
         self.edit_schedule = QtWidgets.QPushButton(self.train_view_page)
-        self.edit_schedule.setGeometry(QtCore.QRect(420, 400, 121, 23))
+        self.edit_schedule.setGeometry(QtCore.QRect(277, 400, 121, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.edit_schedule.setFont(font)
         self.edit_schedule.setObjectName("edit_schedule")
         self.edit_schedule.hide()
         self.add_stop = QtWidgets.QPushButton(self.train_view_page)
-        self.add_stop.setGeometry(QtCore.QRect(430, 360, 101, 23))
+        self.add_stop.setGeometry(QtCore.QRect(287, 360, 101, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.add_stop.setFont(font)
         self.add_stop.setObjectName("add_stop")
         self.add_stop.hide()
         self.label = QtWidgets.QLabel(self.train_view_page)
-        self.label.setGeometry(QtCore.QRect(330, 611, 311, 31))
+        self.label.setGeometry(QtCore.QRect(182, 611, 311, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.train_view_page)
-        self.label_2.setGeometry(QtCore.QRect(390, 330, 181, 21))
+        self.label_2.setGeometry(QtCore.QRect(248, 330, 181, 21))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_2.setFont(font)
@@ -280,6 +281,7 @@ class CTC_Main_UI(QMainWindow):
         self.back_button = QtWidgets.QPushButton(self.testbench)
         self.back_button.setGeometry(QtCore.QRect(620, 10, 81, 31))
         self.back_button.setObjectName("back_button")
+        self.testbench_button.clicked.connect(self.open_main)
         self.green = QtWidgets.QRadioButton(self.testbench)
         self.green.setGeometry(QtCore.QRect(0, 630, 82, 17))
         font = QtGui.QFont()
@@ -460,27 +462,14 @@ class CTC_Main_UI(QMainWindow):
             temp_curr_speed = self.kmhr_to_mihr(temp_train.get_actual_velocity())
 
 
-    # switch to train view
-    def show_train_view(self):
-        self.view_switcher.setCurrentIndex(0)
-
-
-    # switch to track view
-    def show_track_view(self):
+    # switch to testbench
+    def open_testbench(self):
         self.view_switcher.setCurrentIndex(1)
 
 
-    # switch to testbench
-    def show_testbench(self):
-        global last_page
-        last_page = self.view_switcher.currentIndex()
-        self.view_switcher.setCurrentIndex(2)
-
-
-    # leave testbench
-    def leave_testbench(self):
-        global last_page
-        self.view_switcher.setCurrentIndex(last_page)
+    # switch to main screen
+    def open_main(self):
+        self.view_switcher.setCurrentIndex(0)
 
 
     # confirm button pressed, run checks then call ctc.py function
