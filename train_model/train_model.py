@@ -240,7 +240,7 @@ class TrainModel(object):
             self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
 
             # Station Side
-            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station_side"])
+            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station side"])
 
         #########################
         # Output to Track Model #
