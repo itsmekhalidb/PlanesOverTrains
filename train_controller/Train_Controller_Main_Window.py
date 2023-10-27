@@ -119,7 +119,7 @@ class Ui_MainWindow(QMainWindow):
         self.brake_fail_off.setGeometry(QtCore.QRect(566, 406+27, 25, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
-        font.setBold(True)
+        font.setBold(True) #comment
         font.setWeight(75)
         self.brake_fail_off.setFont(font)
         self.brake_fail_off.setStyleSheet("color: rgb(255, 255, 255);\n"
