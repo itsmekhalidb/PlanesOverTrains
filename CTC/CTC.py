@@ -27,11 +27,6 @@ class CTC(object):
         track = Track()
         track.test_blue_line_track()
         self._track = track
-
-        for x in range(10):
-            train = Train()
-            train.test_blue_line_train(x+1)
-            self._trains.append(train)
         
         _stations = {
             "B" : 10,
@@ -43,6 +38,21 @@ class CTC(object):
         return self._trains
     def get_stations_names(self):
         return _stations.keys()
+    
+    # train schedule functions
+    def create_schedule(self, station_name, time_in, function, train_index):
+        global _stations
+        if function == 0: # new train
+            temptrn = Train()
+            destination_block = _stations[station_name]
+            departure_time = 1
+            suggested_velocity = 1
+            temptrn.create_schedule(destination_block, station_name, time_in, departure_time, suggested_velocity)
+            self._trains.append(temptrn)
+        elif function == 1: # edit existing schedule
+            return
+        elif function == 2: # add a stop
+            return
     
     # track controller interface functions
     def get_authority(self, train_num):
@@ -257,7 +267,6 @@ class Block(object):
             return "no"
 
 
-
 class Station(object):
     def __init__(self):
         self._name = "" # name of station
@@ -319,12 +328,9 @@ class Train(object):
             return "Train " + str(self._number) + " - Outbound"
         
     # create schedule
-    def create_schedule(self, dest_station, arrival_time, track):
-        global _stations
-        destination_block = _stations[dest_station]
-        sched = Schedule(destination_block, dest_station, arrival_time)
+    def create_schedule(self, destination_block, dest_station, arrival_time, departure_time, suggested_velocity):
+        sched = Schedule(destination_block, dest_station, arrival_time, departure_time, suggested_velocity)
         self._schedule = sched
-        self._authority = sched.test_blue_sched(track)
         
     # getter functions
     def get_authority(self):
@@ -341,12 +347,12 @@ class Train(object):
 
 
 class Schedule(object):
-    def __init__(self, dest_block, dest_station, arrival_time):
+    def __init__(self, dest_block, dest_station, arrival_time, departure_time, suggested_velocity):
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._destination_block = dest_block # train destination from dispatcher
         self._dest_station = dest_station # name of destination station
-        self._departure_time = None # calculated train departure time
-        self._suggested_velocity = 0 # calculated velocity
+        self._departure_time = departure_time # calculated train departure time
+        self._suggested_velocity = suggested_velocity # calculated velocity
 
     # recursive function to schedule each block TO BE IMPLEMENTED
 

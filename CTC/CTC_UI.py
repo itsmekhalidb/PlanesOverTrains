@@ -52,6 +52,10 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.switch_auto.setFont(font)
         self.switch_auto.setObjectName("switch_auto")
+        self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
+        self.arrival_time.setGeometry(QtCore.QRect(297, 430, 81, 22))
+        self.arrival_time.setObjectName("arrival_time")
+        self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(237, 370, 201, 31))
         font = QtGui.QFont()
@@ -67,6 +71,10 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm.setFont(font)
         self.confirm.setObjectName("confirm")
+        not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
+        mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
+        train_index = -1 # -1 if creating new train, otherwise use train index
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, mode, train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -82,10 +90,6 @@ class CTC_Main_UI(QMainWindow):
         self.testbench_button.setGeometry(QtCore.QRect(315, 10, 81, 31))
         self.testbench_button.setObjectName("testbench_button")
         self.testbench_button.clicked.connect(self.open_testbench)
-        self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
-        self.arrival_time.setGeometry(QtCore.QRect(297, 430, 81, 22))
-        self.arrival_time.setObjectName("arrival_time")
-        self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.system_speed_spnbx_3 = QtWidgets.QDoubleSpinBox(self.train_view_page)
         self.system_speed_spnbx_3.setGeometry(QtCore.QRect(605, 14, 62, 22))
         self.system_speed_spnbx_3.setObjectName("system_speed_spnbx_3")
@@ -473,9 +477,9 @@ class CTC_Main_UI(QMainWindow):
 
 
     # confirm button pressed, run checks then call ctc.py function
-    def confirm_route(self, station_name, time_in, train_index):
+    def confirm_route(self, station_name, time_in, function, train_index):
         if datetime.now().time() < time_in and station_name != "Destination Station":
-            self.ctc._trains[train_index].create_schedule(station_name, time_in, self.ctc._track)
+            self.ctc.create_schedule(station_name, time_in, function, train_index)
             self.update()
     
 
