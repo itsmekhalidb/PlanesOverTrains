@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import *
 from train_controller import TrainController
 from Train_Controller_Main_Window import Ui_MainWindow
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
 class Ui_Test_Bench(object):
     def __init__(self, train_controller: TrainController):
@@ -1044,8 +1045,8 @@ class Ui_Test_Bench(object):
         self.ebrake_on.setVisible(bool(self.train_controller.get_ebrake_status()))
         self.ebrake_off.setVisible(not bool(self.train_controller.get_ebrake_status()))
         #service brake
-        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_status()))
-        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_status()))
+        self.ebrake_on_2.setVisible(bool(self.train_controller.get_service_brake_value()>0))
+        self.ebrake_off_2.setVisible(not bool(self.train_controller.get_service_brake_value()>0))
         #ebrake failure
         self.ebrake_fail_on.setVisible(bool(self.train_controller.get_emergency_brake_failure_status()))
         self.ebrake_fail_off.setVisible(not bool(self.train_controller.get_emergency_brake_failure_status()))
@@ -1083,10 +1084,10 @@ class Ui_Test_Bench(object):
         if self.train_controller.get_ebrake_status() == True:
                 self.pushButton.clicked.connect(lambda: self.train_controller.set_emergency_brake_status(False))
         #service brake clicked
-        self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
-        if self.train_controller.get_service_brake_status()==True:
-                self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
-                #self.train_controller.set_current_velocity(self.train_controller.get_current_velocity(),self.train_controller.get_maximum_velocity())
+        # self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(True))
+        # if self.train_controller.get_service_brake_status()>0:
+        #         self.pushButton_2.clicked.connect(lambda: self.train_controller.set_service_brake_status(False))
+        #         #self.train_controller.set_current_velocity(self.train_controller.get_current_velocity(),self.train_controller.get_maximum_velocity())
     def calculate(self):
 
         speed_limit = self.speed_limit_edit.toPlainText()
@@ -1181,7 +1182,7 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Test_Bench = QtWidgets.QMainWindow()
-    tc = TrainController()
+    tc = TrainController(TrainModelTrainControllerAPI())
     ui = Ui_Test_Bench(tc)
     ui.setupUi(Test_Bench)
     Test_Bench.show()

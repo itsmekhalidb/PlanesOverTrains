@@ -67,13 +67,13 @@ class Track_Controller(object):
         #Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
-        for i in self._lights.keys():
-            self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
-        for i in self._switches.keys():
-            self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
-        for i in self._crossing_lights_gates.keys():
-            self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
-
+        # for i in self._lights.keys():
+        #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
+        # for i in self._switches.keys():
+        #     self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
+        # for i in self._crossing_lights_gates.keys():
+        #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
+        #
 
     def get_passengers(self):
         return self._passengers
