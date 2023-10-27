@@ -2,10 +2,11 @@ import threading
 import math
 import time
 import numpy as np
+from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
 class TrainController:
 
-    def __init__(self, train_model):
+    def __init__(self, train_model_api: TrainModelTrainControllerAPI):
         #priv variables
         self._current_velocity = 0.0
         self._maximum_velocity = 0.0
@@ -40,7 +41,7 @@ class TrainController:
         self._temperature = 0.0 # internal temperature of the train
 
         # Update Function
-        self.train_model = train_model
+        self.train_model = train_model_api
         self.update()
 
     def update(self, thread=False):
@@ -62,7 +63,7 @@ class TrainController:
         self.set_maximum_veloctity(float(self.get_maximum_velocity()))
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
-        self.set_authority(float(self.get_authority()))
+        self.set_authority(self.train_model.authority)
         #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
