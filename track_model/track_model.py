@@ -51,6 +51,7 @@ class TrackModel(object):
         self.update()
 
     def update(self, thread=False):
+        print("Something")
         #---- Failure Modes ----#
 
         #broken rail failure
@@ -140,37 +141,37 @@ class TrackModel(object):
         if thread:
             threading.Timer(0.1, self.update).start()
 
-        def beacon_simulate(self):
-            if self.line == "":
-                self.set_line("BLUE")
-            if self.line.lower() == "green":        #---- GREEN LINE ----#
-                self.set_beacon("PIONEER")          #Beacon
-                self.set_authority(700)             #Authority
-                self.set_speed_limit(45)            #Speed Limit
-                self.set_elevation(1)               #Elevation
-                self.set_grade(0.01)                #Grade
-                self.set_underground(False)         #Underground
-                self.set_current_block(2)           #Block Number
-                self.set_occupancy(False)           #Occupancy
-
-            if self.line.lower() == "red":          #---- RED LINE ----#
-                self.set_beacon("SHADYSIDE")        #Beacon
-                self.set_authority(615)             #Authority
-                self.set_speed_limit(40)            #Speed Limit
-                self.set_elevation(0.38)            #Elevation
-                self.set_grade(0.005)               #Grade
-                self.set_underground(False)         #Underground
-                self.set_current_block(7)           #Block Number
-                self.set_occupancy(False)           #Occupancy
-
-            if self.line.lower() == "blue":         #---- BLUE LINE ----#
-                self.set_beacon("Station B")        #Beacon
-                self.set_authority(250)             #Authority
-                self.set_speed_limit(50)            #Speed Limit
-                self.set_elevation(0.0)             #Elevation
-                self.set_underground(True)          #Underground
-                self.set_current_block(10)          #Block Number
-                self.set_occupancy(False)           #Occupancy
+    # def beacon_simulate(self):
+    #     if self.line == "":
+    #         self.set_line("BLUE")
+    #     if self.line.lower() == "green":        #---- GREEN LINE ----#
+    #         self.set_beacon("PIONEER")          #Beacon
+    #         self.set_authority(700)             #Authority
+    #         self.set_speed_limit(45)            #Speed Limit
+    #         self.set_elevation(1)               #Elevation
+    #         self.set_grade(0.01)                #Grade
+    #         self.set_underground(False)         #Underground
+    #         self.set_current_block(2)           #Block Number
+    #         self.set_occupancy(False)           #Occupancy
+    #
+    #     if self.line.lower() == "red":          #---- RED LINE ----#
+    #         self.set_beacon("SHADYSIDE")        #Beacon
+    #         self.set_authority(615)             #Authority
+    #         self.set_speed_limit(40)            #Speed Limit
+    #         self.set_elevation(0.38)            #Elevation
+    #         self.set_grade(0.005)               #Grade
+    #         self.set_underground(False)         #Underground
+    #         self.set_current_block(7)           #Block Number
+    #         self.set_occupancy(False)           #Occupancy
+    #
+    #     if self.line.lower() == "blue":         #---- BLUE LINE ----#
+    #         self.set_beacon("Station B")        #Beacon
+    #         self.set_authority(250)             #Authority
+    #         self.set_speed_limit(50)            #Speed Limit
+    #         self.set_elevation(0.0)             #Elevation
+    #         self.set_underground(True)          #Underground
+    #         self.set_current_block(10)          #Block Number
+    #         self.set_occupancy(False)           #Occupancy
 
     #---- Getters & Setters ----#
 

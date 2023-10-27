@@ -13,12 +13,14 @@ from track_model.track_model import TrackModel
 
 
 class Ui_MainWindow(QMainWindow):
-
     def __init__(self, track_model: TrackModel) -> None:
         super().__init__()
         self.track_model = track_model
         self.setupUi()
         self.show()
+
+        self._filepath = ""
+
     def setupUi(self):
         self.setObjectName("MainWindow")
         self.resize(1143, 938)
@@ -51,13 +53,26 @@ class Ui_MainWindow(QMainWindow):
         r3.setPen(red_pen)
         scene.addItem(r3)
 
-        path_r4 = QPainterPath()
-        path_r4.moveTo(915,145)
+        #path = QPainterPath()
+        #path.moveTo(0,0)
+        #path.cubicTo(50,0,0,100,100,100)
 
+        path_test = QPainterPath()
+        path_test.moveTo(100,200)
+        path_test.cubicTo(50,100,200,100,100,100)
+        testing = QGraphicsPathItem(path_test)
+        testing.setPen(red_pen)
+        scene.addItem(testing)
 
 
         self.graph_view = QtWidgets.QGraphicsView(scene, self.trackmodel_main)
         self.graph_view.setGeometry(QtCore.QRect(0, 61, 1142, 600))
+
+        self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
+        self.load_file.setGeometry(QtCore.QRect(100,10,60,41))
+        self.load_file.setText("load file")
+        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 1px solid black;\n")
+        # self.load_file.clicked()
 
         self.title = QtWidgets.QLabel(self.trackmodel_main)
         self.title.setGeometry(QtCore.QRect(0, 0, 1141, 61))
@@ -413,6 +428,19 @@ class Ui_MainWindow(QMainWindow):
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
+        self._handler()
+
+    def update(self):
+        _translate = QtCore.QCoreApplication.translate
+
+        # self.clock.setText(self.track_model.get_time())
+        self.track_model.set_filepath(self._filepath)
+
+    def _handler(self):
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # refreshes every time period
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "Track Model"))
@@ -441,6 +469,11 @@ class Ui_MainWindow(QMainWindow):
         self.t_heater_fail.setText(_translate("MainWindow", "Track Heater Failure"))
         self.track_heater.setText(_translate("MainWindow", "Off"))
         self.t_temp_control.setText(_translate("MainWindow", "Temperature Control"))
+
+    def browse_files(self):
+        browse = QFileDialog.getOpenFileName(self.load_file)
+        self._filepath = (browse[0])
+
 
 
 if __name__ == "__main__":
