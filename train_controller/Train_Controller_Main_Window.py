@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from train_controller.train_controller import TrainController
+from train_controller import TrainController
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
@@ -119,7 +119,7 @@ class Ui_MainWindow(QMainWindow):
         self.brake_fail_off.setGeometry(QtCore.QRect(566, 406+27, 25, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
-        font.setBold(True)
+        font.setBold(True) #comment
         font.setWeight(75)
         self.brake_fail_off.setFont(font)
         self.brake_fail_off.setStyleSheet("color: rgb(255, 255, 255);\n"

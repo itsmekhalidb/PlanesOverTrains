@@ -13,6 +13,6 @@ class TrackModelTrainModelAPI:
         self.authority = 0
         self.cmd_speed = 0
         self.time = 0
-        self.red_track_info = {} # Need input from Nadin on how to handle
-        self.green_track_info = {} # Need input from Nadin on how to handle
-        self.current_block = 0 # Need input from Nadin on how to handle
+        self.red_track_info = {}
+        self.green_track_info = {}
+        self.current_block = 0
