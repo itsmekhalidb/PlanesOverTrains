@@ -12,6 +12,7 @@ class TrainModelTrainControllerAPI:
         self.underground = False
         self.station_side = ""
         self.time = 0
+        self.train_ids = {} # keys must be train ids
 
         ## Failure Information
         self.signal_pickup_failure = False

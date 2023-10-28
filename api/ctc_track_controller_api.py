@@ -7,6 +7,9 @@ class CTCTrackControllerAPI:
         self._track_section_status = {'A1': False} #blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
 
+        # TODO: For train model and train controller managers we need id for each train
+        self._train_ids = {} # keys must be train ids
+
         #Track Controller to CTC
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {'A1': 0} # blocks{occupancy(bool)}

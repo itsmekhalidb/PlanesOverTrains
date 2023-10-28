@@ -6,7 +6,9 @@ from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
 class TrainController:
 
-    def __init__(self, train_model_api: TrainModelTrainControllerAPI):
+    # def __init__(self, train_model_api: TrainModelTrainControllerAPI):
+    def __init__(self, train_model_api):
+
         #priv variables
         self._current_velocity = 0.0
         self._maximum_velocity = 0.0

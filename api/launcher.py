@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import traceback
 
 # Form implementation generated from reading ui file 'launcher.ui'
 #
@@ -50,6 +51,11 @@ class Launcher(QMainWindow):
         self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
         self.train_model_manager = TrainModelManager(self.train_model_train_controller_api, self.track_model_train_model_api)
         self.train_controller_manager = TrainControllerManager(self.train_model_train_controller_api)
+
+        # # TODO: Comment in once Track Model implements segregating trains by ID
+        # train_controller = {}
+        # self.train_model_manager = TrainModelManager(train_controller, self.track_controller_track_model_api._train_info)
+        # self.train_controller_manager = TrainControllerManager(train_controller)
 
         super().__init__()
         self.setupUi()
@@ -218,18 +224,20 @@ class Launcher(QMainWindow):
 
         print("Updating Launcher")
 
+        '''
         # Comment this out until train is dispatched
         # Disable Button for Train Model if no train selected
-        # if self.train_model_select.currentText() == "":
-        #     self.train_model_launch.setEnabled(False)
-        # else:
-        #     self.train_model_launch.setEnabled(True)
+        if self.train_model_select.currentText() == "":
+            self.train_model_launch.setEnabled(False)
+        else:
+            self.train_model_launch.setEnabled(True)
 
         # Disable Button for Train Model if no train selected
-        # if self.train_controller_select.currentText() == "":
-        #     self.train_controller_launch.setEnabled(False)
-        # else:
-        #     self.train_controller_launch.setEnabled(True)
+        if self.train_controller_select.currentText() == "":
+            self.train_controller_launch.setEnabled(False)
+        else:
+            self.train_controller_launch.setEnabled(True)
+        '''
 
     def get_train_models(self):
         self.train_model_select.clear()
@@ -255,15 +263,24 @@ class Launcher(QMainWindow):
         self.track_controller_hw.launch_ui()
 
     def launch_train_model(self):
-        # comment out this line until train is dispatched
-        # id = int(self.train_model_select.currentText()[-1]) - 1
-        # self.train_model_manager.launch_ui(id)
-        self.train_model_manager.launch_ui(0)
+        try:
+            id = int(self.train_model_select.currentText()[-1]) - 1
+            self.train_model_manager.launch_ui(id)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+            print("Train model not initialized yet, attempting launch of train id 0")
+            self.train_model_manager.launch_ui(0)
     def launch_train_controller(self):
         # comment out this line until train is dispatched
-        # id = int(self.train_model_select.currentText()[-1]) - 1
-        # self.train_model_manager.launch_ui(id)
-        self.train_controller_manager.launch_ui(0)
+        try:
+            id = int(self.train_controller_select.currentText()[-1]) - 1
+            self.train_controller_manager.launch_ui(id)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+            print("Train model not initialized yet, attempting launch of train id 0")
+            self.train_controller_manager.launch_ui(0)
 
 class ComboBox(QtWidgets.QComboBox):
     popupAboutToBeShown = QtCore.pyqtSignal()
