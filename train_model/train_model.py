@@ -208,39 +208,8 @@ class TrainModel(object):
         # REMINDER: uncomment line in set_time to use time from track model
         self.set_time(self._track_model_signals.time)
 
-        # Red Line Track Info Decode
-        if (self.get_block() in self._track_model_signals.red_track_info) and self.get_line().lower() == "red":
-            # Speed Limit
-            self.set_speed_limit(self._track_model_signals.red_track_info[self.get_block()]["speed_limit"])
-
-            # Elevation
-            self.set_elevation(self._track_model_signals.red_track_info[self.get_block()]["elevation"])
-
-            # Grade
-            self.set_grade(self._track_model_signals.red_track_info[self.get_block()]["grade"])
-
-            # Underground
-            self.set_underground(self._track_model_signals.red_track_info[self.get_block()]["underground"])
-
-            # Station Side
-            self.set_station_side(self._track_model_signals.red_track_info[self.get_block()]["station_side"])
-
-        # Green Line Track Info Decode
-        if (self.get_block() in self._track_model_signals.green_track_info) and self.get_line().lower() == "green":
-            # Speed Limit
-            self.set_speed_limit(self._track_model_signals.green_track_info[self.get_block()]["speed_limit"])
-
-            # Elevation
-            self.set_elevation(self._track_model_signals.green_track_info[self.get_block()]["elevation"])
-
-            # Grade
-            self.set_grade(self._track_model_signals.green_track_info[self.get_block()]["grade"])
-
-            # Underground
-            self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
-
-            # Station Side
-            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station side"])
+        # Track Info
+        self.set_track_info(self._track_model_signals)
 
         #########################
         # Output to Track Model #
@@ -281,6 +250,65 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
+    def set_track_info(self, _track_model_signals: TrackModelTrainModelAPI):
+        # Define empy track info
+        track_info = None
+        # Fill track info based on the line
+        if self.get_line().lower() == "green":
+            track_info = _track_model_signals.green_track_info
+        elif self.get_line().lower() == "red":
+            track_info = _track_model_signals.red_track_info
+
+        # Same convention for each line
+        if track_info is not None and self.get_block() in track_info:
+            # Get the info for the block
+            info = track_info[self.get_block()]
+            # Speed Limit
+            self.set_speed_limit(info["speed_limit"])
+            # Elevation
+            self.set_elevation(info["elevation"])
+            # Grade
+            self.set_grade(info["grade"])
+            # Underground
+            self.set_underground(info["underground"])
+            # Station Side
+            self.set_station_side(info["station_side"])
+
+        # This can be deleted if above works
+        # # Red Line Track Info Decode
+        # if (self.get_block() in self._track_model_signals.red_track_info) and self.get_line().lower() == "red":
+        #     # Speed Limit
+        #     self.set_speed_limit(self._track_model_signals.red_track_info[self.get_block()]["speed_limit"])
+        #
+        #     # Elevation
+        #     self.set_elevation(self._track_model_signals.red_track_info[self.get_block()]["elevation"])
+        #
+        #     # Grade
+        #     self.set_grade(self._track_model_signals.red_track_info[self.get_block()]["grade"])
+        #
+        #     # Underground
+        #     self.set_underground(self._track_model_signals.red_track_info[self.get_block()]["underground"])
+        #
+        #     # Station Side
+        #     self.set_station_side(self._track_model_signals.red_track_info[self.get_block()]["station_side"])
+        #
+        # # Green Line Track Info Decode
+        # if (self.get_block() in self._track_model_signals.green_track_info) and self.get_line().lower() == "green":
+        #     # Speed Limit
+        #     self.set_speed_limit(self._track_model_signals.green_track_info[self.get_block()]["speed_limit"])
+        #
+        #     # Elevation
+        #     self.set_elevation(self._track_model_signals.green_track_info[self.get_block()]["elevation"])
+        #
+        #     # Grade
+        #     self.set_grade(self._track_model_signals.green_track_info[self.get_block()]["grade"])
+        #
+        #     # Underground
+        #     self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
+        #
+        #     # Station Side
+        #     self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station side"])
+
     def set_service_brake_value(self, _service_brake_value: float):
         self._service_brake_value = _service_brake_value
 
