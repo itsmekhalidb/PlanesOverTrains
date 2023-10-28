@@ -45,7 +45,6 @@ class TrainController:
         self.update()
 
     def update(self, thread=False):
-
         self.set_auto_status(bool(self.get_auto_status()))
         self.train_model.right_doors = self.get_right_door_status()
         self.train_model.left_doors = self.get_left_door_status()
@@ -60,7 +59,7 @@ class TrainController:
         self.set_engine_status(self.train_model.engine_failure)
         self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
         self.train_model.cmd_speed = self.get_commanded_velocity()
-        self.set_maximum_veloctity(float(self.get_maximum_velocity()))
+        self.set_maximum_veloctity(self.train_model.speed_limit)
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
         self.set_authority(self.train_model.authority)

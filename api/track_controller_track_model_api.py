@@ -3,6 +3,7 @@ class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
 
+        self._line = ""  # line
         self._broken_rail = False  # ebrake failure
         self._engine_failure = False  # train engine failure
         self._circuit_failure = False  # service brake failure

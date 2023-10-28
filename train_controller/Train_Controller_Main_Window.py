@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from train_controller import TrainController
+from train_controller.train_controller import TrainController
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
