@@ -48,14 +48,10 @@ class Launcher(QMainWindow):
         self.ctc = CTC(self.ctc_track_controller_api)
         self.track_controller = Track_Controller(self.ctc_track_controller_api, self.track_controller_track_model_api)
         self.track_controller_hw = Track_Controller_HW(self.ctc_track_controller_api, self.track_controller_track_model_api)
-        self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
-        self.train_model_manager = TrainModelManager(self.train_model_train_controller_api, self.track_model_train_model_api)
-        self.train_controller_manager = TrainControllerManager(self.train_model_train_controller_api)
-
-        # # TODO: Comment in once Track Model implements segregating trains by ID
-        # train_controller = {}
-        # self.train_model_manager = TrainModelManager(train_controller, self.track_controller_track_model_api._train_info)
-        # self.train_controller_manager = TrainControllerManager(train_controller)
+        self.track_model = TrackModel(self.track_controller_track_model_api)
+        train_controller = {}
+        self.train_controller_manager = TrainControllerManager(train_controller)
+        self.train_model_manager = TrainModelManager(train_controller, self.track_controller_track_model_api._train_info)
 
         super().__init__()
         self.setupUi()
@@ -150,7 +146,8 @@ class Launcher(QMainWindow):
         font.setWeight(75)
         self.train_controller_launch.setFont(font)
         self.train_controller_launch.setObjectName("train_controller_launch")
-        self.train_model_select = QtWidgets.QComboBox(self)
+        self.train_model_select = ComboBox(self)
+        self.train_model_select.popupAboutToBeShown.connect(self.get_train_models)
         # Disable button until train is selected
         # self.train_model_select.setStyleSheet(
         #     "QPushButton:disabled {\n"
@@ -169,7 +166,8 @@ class Launcher(QMainWindow):
         font.setPointSize(12)
         self.train_model_select.setFont(font)
         self.train_model_select.setObjectName("train_model_select")
-        self.train_controller_select = QtWidgets.QComboBox(self)
+        self.train_controller_select = ComboBox(self)
+        self.train_controller_select.popupAboutToBeShown.connect(self.get_train_controllers)
         # Disable button until train is selected
         # self.train_controller_select.setStyleSheet(
         #     "QPushButton:disabled {\n"
@@ -220,34 +218,31 @@ class Launcher(QMainWindow):
         self.timer.timeout.connect(self._update)
         self.timer.start()
 
-    def _update(self):
-
-        print("Updating Launcher")
-
-        '''
-        # Comment this out until train is dispatched
-        # Disable Button for Train Model if no train selected
-        if self.train_model_select.currentText() == "":
-            self.train_model_launch.setEnabled(False)
+    def _update(self, test=True):
+        if test:
+            pass
         else:
-            self.train_model_launch.setEnabled(True)
+            # Disable Button for Train Model if no train selected
+            if self.train_model_select.currentText() == "":
+                self.train_model_launch.setEnabled(False)
+            else:
+                self.train_model_launch.setEnabled(True)
 
-        # Disable Button for Train Model if no train selected
-        if self.train_controller_select.currentText() == "":
-            self.train_controller_launch.setEnabled(False)
-        else:
-            self.train_controller_launch.setEnabled(True)
-        '''
+            # Disable Button for Train Model if no train selected
+            if self.train_controller_select.currentText() == "":
+                self.train_controller_launch.setEnabled(False)
+            else:
+                self.train_controller_launch.setEnabled(True)
 
     def get_train_models(self):
         self.train_model_select.clear()
         self.train_model_select.addItems(
-            [f'train #{id + 1}' for id in self.train_model_manager.get_ids()]
+            [f'Train #{id + 1}' for id in self.train_model_manager.get_ids()]
         )
     def get_train_controllers(self):
         self.train_controller_select.clear()
         self.train_controller_select.addItems(
-            [f'train #{id + 1}' for id in self.train_controller_manager.get_ids()]
+            [f'Train #{id + 1}' for id in self.train_controller_manager.get_ids()]
         )
 
     def launch_ctc(self):

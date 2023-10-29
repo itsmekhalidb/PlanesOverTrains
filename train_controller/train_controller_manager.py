@@ -7,24 +7,24 @@ import threading
 class TrainControllerManager:
 
     def __init__(self, train_signals) -> None:
-        self._train_signals = train_signals
         self._train_controllers = DefaultDict(TrainController)
+        self._train_signals = train_signals
         self.update()
 
     def update(self, thread=True):
         # Get keys
-        # train_signals = set(self._train_signals.keys())
+        train_signals = set(self._train_signals.keys())
         train_controller_keys = set(self._train_controllers.keys())
 
         # Update trains
-        # trains_to_add = train_signals - train_controller_keys
-        # trains_to_remove = train_controller_keys - train_signals
+        trains_to_add = train_signals - train_controller_keys
+        trains_to_remove = train_controller_keys - train_signals
 
-        # for i in trains_to_add:
-        #     self.add(self._train_signals[i], i)
+        for i in trains_to_add:
+            self.add(self._train_signals[i], i)
 
-        # for i in trains_to_remove:
-        #     self.remove(i)
+        for i in trains_to_remove:
+            self.remove(i)
 
         # Update trains
         for train in self._train_controllers.values():
@@ -47,7 +47,7 @@ class TrainControllerManager:
         print("Launching UI for train " + str(train_id))
         try:
             # Create a TrainModel instance with the required 'train_signals' argument
-            self._train_controllers[train_id] = TrainController(self._train_signals)
+            self._train_controllers[train_id] = TrainController(self._train_signals[train_id])
 
             # Now you can call the 'launch_tm_ui' method
             self._train_controllers[train_id].launch_tc_ui()
@@ -55,4 +55,4 @@ class TrainControllerManager:
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
-            print("Train model not initialized yet")
+            print("Train model not initialized yet in track_controller_track_model_api's train_info dictionary")

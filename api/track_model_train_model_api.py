@@ -11,7 +11,6 @@ class TrackModelTrainModelAPI:
 
         # From Track Model to Train Model
         self.line = ""
-        self.beacon = ""
         self.authority = 0.0
         self.cmd_speed = 0
         self.time = 0

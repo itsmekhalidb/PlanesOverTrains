@@ -17,18 +17,18 @@ class TrainModelManager:
 
     def update(self, thread=True):
         # Get keys
-        # track_to_train_keys = set(self._track_signals.keys())
+        track_to_train_keys = set(self._track_signals.keys())
         train_model_keys = set(self._train_models.keys())
 
         # Update trains
-        # trains_to_add = track_to_train_keys - train_model_keys
-        # trains_to_remove = train_model_keys - track_to_train_keys
+        trains_to_add = track_to_train_keys - train_model_keys
+        trains_to_remove = train_model_keys - track_to_train_keys
 
-        # for i in trains_to_add:
-        #     self.add(self._track_signals[i], i)
-        #
-        # for i in trains_to_remove:
-        #     self.remove(i)
+        for i in trains_to_add:
+            self.add(self._track_signals[i], i)
+
+        for i in trains_to_remove:
+            self.remove(i)
 
         for train in self._train_models.values():
             train.update()
@@ -55,7 +55,7 @@ class TrainModelManager:
 
         try:
             # Create a TrainModel instance with the required 'train_signals' argument
-            self._train_models[train_id] = TrainModel(self._train_signals, self._track_signals)
+            self._train_models[train_id] = TrainModel(self._train_signals[train_id], self._track_signals[train_id])
 
             # Now you can call the 'launch_tm_ui' method
             self._train_models[train_id].launch_tm_ui()
@@ -63,4 +63,4 @@ class TrainModelManager:
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
-            print("Train model not initialized yet")
+            print("Train model not initialized yet in track_controller_track_model_api's train_info dictionary")

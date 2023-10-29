@@ -5,6 +5,7 @@ class block_info:
         if filepath == "":
             self.block_dict = {}
         else:
+            print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
 
     def load_block_info(self, filepath: str):
@@ -39,6 +40,7 @@ class block_info:
         if line in self.block_dict and block_number in self.block_dict[line]:
             return self.block_dict[line][block_number]
         else:
+            # print("Block " + str(block_number) + " on line " + line + " not found")
             return None
 
     def get_all_blocks_for_line(self, line):

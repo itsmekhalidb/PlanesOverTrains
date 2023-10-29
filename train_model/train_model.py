@@ -192,9 +192,6 @@ class TrainModel(object):
         # Line
         self.set_line(self._track_model_signals.line)
 
-        # Beacon
-        self.set_beacon(self._track_model_signals.beacon)
-
         # Authority
         self.set_authority(self._track_model_signals.authority)
 
@@ -209,7 +206,7 @@ class TrainModel(object):
         self.set_time(self._track_model_signals.time)
 
         # Track Info
-        self.set_track_info(self._track_model_signals)
+        self.set_track_info(self._track_model_signals.track_info)
 
         #########################
         # Output to Track Model #
@@ -250,14 +247,14 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
-    def set_track_info(self, _track_model_signals: TrackModelTrainModelAPI):
-        # Read track info from API
-        track_info = _track_model_signals.track_info
-
+    def set_track_info(self, _track_info):
         # Check if the info exists
-        if track_info is not None and track_info.get_block_info(self.get_line(),self.get_block()) is not None:
+        if _track_info is not None and _track_info.get_block_info(self.get_line(),self.get_block()) is not None:
             # Get the info for the block
-            info = track_info.get_block_info(self.get_line(),self.get_block())
+            info = _track_info.get_block_info(self.get_line(),self.get_block())
+
+            # Beacon
+            self.set_beacon(info["beacon"][9:])
             # Speed Limit
             self.set_speed_limit(info["speed limit"])
             # Elevation
