@@ -2,36 +2,28 @@
 import traceback
 import os
 import threading
+import time
 from datetime import datetime, timedelta
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 
 
-_stations = {} # dictionary of stations and block ids
+_stations = {} # dictionary of stations and blocks
 
 
 class CTC(object):
     def __init__(self, TrackCTRLSignal : CTCTrackControllerAPI):
         # -- CTC Variables -- #
-        self._track = None # object for the track
         self._trains = [] # list of train objects
+        self._occupied_blocks = [] # list of occupied blocks
+        self._closed_blocks = [] # list of closed blocks
+        self._total_passengers = 0 # passenger count
+        self._time = time.time() # time object
 
         self.TrackCTRLSignal = TrackCTRLSignal
 
         # run update function
         self.update()
-
-    # hardcoded blue line function
-    def test_blue_line_CTC(self):
-        global _stations
-        track = Track()
-        track.test_blue_line_track()
-        self._track = track
-        
-        _stations = {
-            "B" : 10,
-            "C" : 15
-        }
 
     # getter functions
     def get_trains(self):
@@ -39,7 +31,11 @@ class CTC(object):
     def get_stations_names(self):
         return _stations.keys()
     
-    # train schedule functions
+    #automatic train schedule function
+    def import_schedule(self, doc):
+        return
+
+    # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index):
         global _stations
         if function == 0: # new train
@@ -53,6 +49,12 @@ class CTC(object):
             return
         elif function == 2: # add a stop
             return
+    
+    def close_block(self, section, block):
+        return
+    
+    def calculate_throughput(self):
+        return
     
     # track controller interface functions
     def get_authority(self, train_num):
@@ -69,14 +71,27 @@ class CTC(object):
         self._track.update_occupancy(occupied_block)
     def update_passenger_info(self, station, tickets_sold):
         self._track.update_tickets(station, tickets_sold)
+    
+    # testbench functions
+    def testbench_change_occupied(self, section, block):
+        return
+    def testbench_change_ticket_sales(self, train, passengers):
+        return
+    def testbench_change_current_velocity(self, train, vel):
+        return
+    def testbench_change_switch(self, switch, dir):
+        return
+    def testbench_change_light(self, color):
+        return
 
     # update function
-    def update(self, thread=False):
+    def update(self, thread=True):
 
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
 
+    # launch ui from launcher
     def launch_ui(self):
         print("Launching CTC UI")
         try:
@@ -87,225 +102,6 @@ class CTC(object):
             traceback.print_exc()
             print("CTC not initialized")
 
-
-
-class Track(object):
-    def __init__(self):
-        self._lines = [] # list of lines in the track
-        self._switches = [] # list of switches in the track
-        self._yard = None # object for the yard
-
-    # hardcoded blue line function
-    def test_blue_line_track(self):
-        blue = Line()
-        blue.test_blue_line_line()
-        self._lines.append(blue)
-
-        sw = Switch()
-        sw.test_blue_line_sw()
-        self._switches.append(sw)
-
-        yard = Yard()
-        yard.test_blue_line_yard()
-        self._yard = yard
-
-    # getter functions
-    def get_lines(self):
-        return self._lines
-    
-    def get_block_status(self, block_num):
-        for l in self._lines:
-            status = l.get_block_status(block_num)
-            if status != "no":
-                return status
-            
-    def switch_switch(self, switch_index):
-        self._switches[switch_index].switch_switch(switch_index)
-
-    def update_tickets(self, station, tickets_sold):
-        global _stations
-        station_id = _stations[station]
-        for l in self._lines:
-            status = l.update_block(station_id, tickets_sold)
-            if status == 1:
-                break
-
-
-
-class Line(object):
-    def __init__(self):
-        self._name = "" # color of the line
-        self._sections = [] # list of sections in the line
-
-    # hardcoded blue line function
-    def test_blue_line_line(self):
-        self._name = "Blue"
-
-        A = Section()
-        B = Section()
-        C = Section()
-        A.test_blue_line_sect('A')
-        B.test_blue_line_sect('B')
-        C.test_blue_line_sect('C')
-        self._sections.append(A)
-        self._sections.append(B)
-        self._sections.append(C)
-    
-    # getter functions
-    def get_sections(self):
-        return self._sections
-    
-    def get_block_status(self, block_num):
-        for s in self._sections:
-            status = s.get_block_status(block_num)
-            if status != "no":
-                return status
-        return "no"
-    
-    def update_block(self, station_id, tickets_sold):
-        for s in self._sections:
-            status = s.update_block(station_id, tickets_sold)
-            if status == 1:
-                return 1
-
-
-class Section(object):
-    def __init__(self):
-        self._name = '' # name (letter) of the section
-        self._blocks = [] # list of blocks in the section
-
-    # hardcoded blue line function
-    def test_blue_line_sect(self, name):
-        self._name = name
-
-        if name == 'A':
-            for x in range(4):
-                blk = Block()
-                blk.test_blue_line_blk(x+1)
-                self._blocks.append(blk)
-        elif name == 'B':
-            for x in range(4):
-                blk = Block()
-                blk.test_blue_line_blk(x+6)
-                self._blocks.append(blk)
-        else:
-            for x in range(4):
-                blk = Block()
-                blk.test_blue_line_blk(x+11)
-                self._blocks.append(blk)
-    
-    # getter functions
-    def get_blocks(self):
-        return self._blocks
-    
-    def get_block_status(self, block_num):
-        for b in self._blocks:
-            status = b.get_block_status(block_num)
-            if status != "no":
-                return status
-        return "no"
-
-
-
-class Block(object):
-    def __init__(self):
-        self._number = -1 # block number inside line from file
-        self._block_id = -1 # block id for internal use
-        self._length = -1 # length of block in m
-        self._speed_limit = -1 # speed limit inside block in km/hr
-        self._station = None # station inside block if applicable
-        self._occupied = 0 # indicates what train is occupying a block, 0 if unoccupied
-        self._closed = 0 # indicates if block is closed for maintenance mode, 0 if not closed, 1 if closed
-        self._input_blocks = [] # indicates what blocks can input to this block, 0 indicates yard
-        self._output_blocks = [] # indicates what blocks this block can output to, 0 indicates yard
-
-    # hardcoded blue line function
-    def test_blue_line_blk(self, num):
-        self._number = num
-        self._length = 50
-        self._speed_limit = 50
-        if num == 10:
-            B = Station()
-            B.test_blue_line_stat("B")
-            self._station = B
-        elif num == 15:
-            C = Station()
-            C.test_blue_line_stat("C")
-            self._station = C
-        self._occupied = 0
-        if (num != 1 or num != 10 or num != 11 or num != 15):
-            self._input_blocks.append(num-1)
-            self._input_blocks.append(num+1)
-            self._output_blocks.append(num-1)
-            self._output_blocks.append(num+1)
-        elif (num == 1):
-            self._input_blocks.append(0)
-            self._output_blocks.append(0)
-            self._input_blocks.append(num+1)
-            self._output_blocks.append(num+1)
-        elif (num == 10 or num == 15):
-            self._input_blocks.append(num-1)
-            self._output_blocks.append(num-1)
-        elif (num == 11): # do not add 5 because the switch is pointing to 6 to start
-            self._input_blocks.append(num+1)
-            self._output_blocks.append(num+1)
-
-    # return ideal traversal time in seconds
-    def get_ideal_traversal_time(self):
-        ms_vel = self._speed_limit * 1000 / 360
-        res = self._length / ms_vel
-        return res
-    
-    # getter functions
-    def get_length(self):
-        return self._length
-    
-    def get_block_status(self, block_num):
-        if self._number == block_num:
-            return self._closed
-        else:
-            return "no"
-
-
-class Station(object):
-    def __init__(self):
-        self._name = "" # name of station
-        self._side = 2 # side of the track the station is on, 0 is left, 1 is right, 2 is both
-    
-    # hardcoded blue line function
-    def test_blue_line_stat(self, name):
-        self._name = name
-
-
-class Switch(object):
-    def __init__(self):
-        self._position = 0 # current position of the switch, corresponds with index of block_connections
-        self._input_block = -1 # block feeding into the switch after which it forks
-        self._block_connections = [] # output blocks
-    
-    # hardcoded blue line function
-    def test_blue_line_sw(self):
-        self._position = 0
-        self._input_block = 5
-        self._block_connections.append(6)
-        self._block_connections.append(11)
-    
-    def switch_switch(self, switch_index):
-        if (self._position == 0):
-            self._position = 1
-        elif (self._position == 1):
-            self._position = 0
-
-
-class Yard(object):
-    def __init__(self):
-        self._input_blocks = [] # blocks feeding into the yard
-        self._output_blocks = [] # blocks where trains can leave the yard
-
-    # hardcoded blue line function
-    def test_blue_line_yard(self):
-        self._input_blocks.append(1)
-        self._output_blocks.append(1)
 
 
 class Train(object):
@@ -319,13 +115,6 @@ class Train(object):
     # hardcoded blue line function
     def test_blue_line_train(self, num):
         self._number = num
-
-    # return train list info
-    def train_list_info(self):
-        if self._current_block == 0:
-            return "Train " + str(self._number) + " - Idle"
-        else:
-            return "Train " + str(self._number) + " - Outbound"
         
     # create schedule
     def create_schedule(self, destination_block, dest_station, arrival_time, departure_time, suggested_velocity):

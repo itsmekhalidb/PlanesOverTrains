@@ -9,6 +9,7 @@
 
 
 import typing
+import threading
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView, QHeaderView, QMainWindow, QWidget
 from PyQt5.QtGui import QPixmap, QStandardItemModel, QStandardItem
@@ -50,11 +51,11 @@ class CTC_Main_UI(QMainWindow):
         self.switch_auto.setFont(font)
         self.switch_auto.setObjectName("switch_auto")
         self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
-        self.arrival_time.setGeometry(QtCore.QRect(297, 430, 81, 22))
+        self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
         self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
-        self.station_list.setGeometry(QtCore.QRect(237, 370, 201, 31))
+        self.station_list.setGeometry(QtCore.QRect(5, 370, 201, 31))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.station_list.setFont(font)
@@ -63,7 +64,7 @@ class CTC_Main_UI(QMainWindow):
         for station_name in self.ctc.get_stations_names():
             self.station_list.addItem(station_name)
         self.confirm = QtWidgets.QPushButton(self.train_view_page)
-        self.confirm.setGeometry(QtCore.QRect(297, 460, 81, 23))
+        self.confirm.setGeometry(QtCore.QRect(5, 460, 81, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.confirm.setFont(font)
@@ -102,7 +103,7 @@ class CTC_Main_UI(QMainWindow):
 "border: 3px solid black;")
         self.header.setObjectName("header")
         self.arrival_time_label = QtWidgets.QTextEdit(self.train_view_page)
-        self.arrival_time_label.setGeometry(QtCore.QRect(287, 410, 101, 41))
+        self.arrival_time_label.setGeometry(QtCore.QRect(5, 410, 101, 41))
         self.arrival_time_label.setObjectName("arrival_time_label")
         self.sys_time_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.sys_time_label_3.setGeometry(QtCore.QRect(405, 10, 83, 31))
@@ -146,27 +147,27 @@ class CTC_Main_UI(QMainWindow):
         #         self.train_list_2_data.setItem(row_index, column_index, item)
 
         self.occupied_blocks = QtWidgets.QScrollArea(self.train_view_page)
-        self.occupied_blocks.setGeometry(QtCore.QRect(514, 460, 161, 191))
+        self.occupied_blocks.setGeometry(QtCore.QRect(514, 320, 161, 331))
         self.occupied_blocks.setWidgetResizable(True)
         self.occupied_blocks.setObjectName("occupied_blocks")
         self.blocks_table_widget = QtWidgets.QWidget()
         self.blocks_table_widget.setGeometry(QtCore.QRect(0, 0, 159, 189))
         self.blocks_table_widget.setObjectName("blocks_table_widget")
         self.blocks_table = QtWidgets.QTableWidget(self.blocks_table_widget)
-        self.blocks_table.setGeometry(QtCore.QRect(0, 0, 161, 192))
+        self.blocks_table.setGeometry(QtCore.QRect(0, 0, 161, 331))
         self.blocks_table.setObjectName("blocks_table")
         self.blocks_table.setColumnCount(0)
         self.blocks_table.setRowCount(0)
         self.occupied_blocks.setWidget(self.blocks_table_widget)
         self.edit_schedule = QtWidgets.QPushButton(self.train_view_page)
-        self.edit_schedule.setGeometry(QtCore.QRect(277, 400, 121, 23))
+        self.edit_schedule.setGeometry(QtCore.QRect(5, 400, 121, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.edit_schedule.setFont(font)
         self.edit_schedule.setObjectName("edit_schedule")
         self.edit_schedule.hide()
         self.add_stop = QtWidgets.QPushButton(self.train_view_page)
-        self.add_stop.setGeometry(QtCore.QRect(287, 360, 101, 23))
+        self.add_stop.setGeometry(QtCore.QRect(5, 360, 101, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.add_stop.setFont(font)
@@ -179,11 +180,38 @@ class CTC_Main_UI(QMainWindow):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.train_view_page)
-        self.label_2.setGeometry(QtCore.QRect(248, 330, 181, 21))
+        self.label_2.setGeometry(QtCore.QRect(5, 330, 181, 21))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
+        self.block_close_label = QtWidgets.QLabel(self.train_view_page)
+        self.block_close_label.setGeometry(QtCore.QRect(360, 330, 181, 21))
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        self.block_close_label.setFont(font)
+        self.block_close_label.setObjectName("block_close_label")
+        self.section_list = QtWidgets.QComboBox(self.train_view_page)
+        self.section_list.setGeometry(QtCore.QRect(410, 370, 95, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.section_list.setFont(font)
+        self.section_list.setObjectName("section_list")
+        self.section_list.addItem("Section")
+        self.block_list = QtWidgets.QComboBox(self.train_view_page)
+        self.block_list.setGeometry(QtCore.QRect(425, 410, 80, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.block_list.setFont(font)
+        self.block_list.setObjectName("block_list")
+        self.block_list.addItem("Block")
+        self.confirm_close = QtWidgets.QPushButton(self.train_view_page)
+        self.confirm_close.setGeometry(QtCore.QRect(425, 450, 81, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.confirm_close.setFont(font)
+        self.confirm_close.setObjectName("confirm_close")
+        not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
         self.header.raise_()
         self.switch_auto.raise_()
@@ -200,6 +228,9 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.raise_()
         self.label.raise_()
         self.label_2.raise_()
+        self.block_close_label.raise_()
+        self.section_list.raise_()
+        self.confirm_close.raise_()
         self.view_switcher.addWidget(self.train_view_page)
 
         #testbench
@@ -224,7 +255,7 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_4.setGeometry(QtCore.QRect(605, 14, 62, 22))
         self.system_speed_spnbx_4.setObjectName("system_speed_spnbx_4")
         self.block_label = QtWidgets.QComboBox(self.testbench)
-        self.block_label.setGeometry(QtCore.QRect(0, 50, 171, 51))
+        self.block_label.setGeometry(QtCore.QRect(181, 53, 171, 51))
         font = QtGui.QFont()
         font.setPointSize(24)
         font.setBold(True)
@@ -232,6 +263,15 @@ class CTC_Main_UI(QMainWindow):
         self.block_label.setFont(font)
         self.block_label.setObjectName("block_label")
         self.block_label.addItem("")
+        self.section_label = QtWidgets.QComboBox(self.testbench)
+        self.section_label.setGeometry(QtCore.QRect(0, 53, 171, 51))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        font.setBold(True)
+        font.setWeight(75)
+        self.section_label.setFont(font)
+        self.section_label.setObjectName("section_label")
+        self.section_label.addItem("")
         self.numPassengers = QtWidgets.QSpinBox(self.testbench)
         self.numPassengers.setGeometry(QtCore.QRect(180, 270, 51, 31))
         font = QtGui.QFont()
@@ -247,18 +287,9 @@ class CTC_Main_UI(QMainWindow):
         self.light_label.setFont(font)
         self.light_label.setObjectName("light_label")
         self.light_label.addItem("")
-        self.curr_time_label = QtWidgets.QTextEdit(self.testbench)
-        self.curr_time_label.setGeometry(QtCore.QRect(10, 140, 91, 31))
-        self.curr_time_label.setObjectName("curr_time_label")
         self.num_passengers_label = QtWidgets.QTextEdit(self.testbench)
         self.num_passengers_label.setGeometry(QtCore.QRect(-1, 270, 171, 31))
         self.num_passengers_label.setObjectName("num_passengers_label")
-        self.yellow = QtWidgets.QRadioButton(self.testbench)
-        self.yellow.setGeometry(QtCore.QRect(0, 600, 82, 17))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.yellow.setFont(font)
-        self.yellow.setObjectName("yellow")
         self.occupied_box = QtWidgets.QCheckBox(self.testbench)
         self.occupied_box.setGeometry(QtCore.QRect(10, 110, 91, 17))
         font = QtGui.QFont()
@@ -284,14 +315,11 @@ class CTC_Main_UI(QMainWindow):
         self.back_button.setObjectName("back_button")
         self.back_button.clicked.connect(lambda:self.open_main())
         self.green = QtWidgets.QRadioButton(self.testbench)
-        self.green.setGeometry(QtCore.QRect(0, 630, 82, 17))
+        self.green.setGeometry(QtCore.QRect(0, 600, 82, 17))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.green.setFont(font)
         self.green.setObjectName("green")
-        self.curr_time_selector = QtWidgets.QTimeEdit(self.testbench)
-        self.curr_time_selector.setGeometry(QtCore.QRect(10, 160, 91, 22))
-        self.curr_time_selector.setObjectName("curr_time_selector")
         self.switchPos = QtWidgets.QSlider(self.testbench)
         self.switchPos.setGeometry(QtCore.QRect(40, 430, 81, 22))
         self.switchPos.setOrientation(QtCore.Qt.Horizontal)
@@ -339,17 +367,15 @@ class CTC_Main_UI(QMainWindow):
         self.red.raise_()
         self.train_label.raise_()
         self.block_label.raise_()
+        self.section_label.raise_()
         self.numPassengers.raise_()
         self.light_label.raise_()
-        self.curr_time_label.raise_()
         self.num_passengers_label.raise_()
-        self.yellow.raise_()
         self.occupied_box.raise_()
         self.system_speed_label_4.raise_()
         self.left_right_label.raise_()
         self.back_button.raise_()
         self.green.raise_()
-        self.curr_time_selector.raise_()
         self.switchPos.raise_()
         self.switch_label.raise_()
         self.sys_time_label_4.raise_()
@@ -378,6 +404,7 @@ class CTC_Main_UI(QMainWindow):
         self.switch_auto.setText(_translate("self", "Switch to Automatic"))
         self.station_list.setItemText(0, _translate("self", "Destination Station"))
         self.confirm.setText(_translate("self", "Confirm"))
+        self.confirm_close.setText(_translate("self", "Confirm"))
         self.system_speed_label_3.setText(_translate("self", " System Speed"))
         self.testbench_button.setText(_translate("self", "TESTBENCH"))
         self.header.setText(_translate("self", "Train View"))
@@ -392,28 +419,24 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.setText(_translate("self", "Add Stop"))
         self.label.setText(_translate("self", "System Throughput: "))
         self.label_2.setText(_translate("self", "Schedule Train"))
+        self.block_close_label.setText(_translate("self", "Close Blocks"))
         self.red.setText(_translate("self", "Red"))
         self.train_label.setItemText(0, _translate("self", "Train #"))
-        self.block_label.setItemText(0, _translate("self", "Block X"))
+        self.block_label.setItemText(0, _translate("self", "Block #"))
+        self.section_label.setItemText(0, _translate("self", "Section"))
         self.light_label.setItemText(0, _translate("self", "Light #"))
-        self.curr_time_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Current Time</p></body></html>"))
         self.num_passengers_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Number of Passengers</span></p></body></html>"))
-        self.yellow.setText(_translate("self", "Yellow"))
         self.occupied_box.setText(_translate("self", "Occupied"))
         self.system_speed_label_4.setText(_translate("self", " System Speed"))
         self.left_right_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Left            Right</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Left                   Right</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
         self.back_button.setText(_translate("self", "BACK"))
         self.green.setText(_translate("self", "Green"))
@@ -431,9 +454,16 @@ class CTC_Main_UI(QMainWindow):
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">km/hr</p></body></html>"))
             
+    
+    def update(self, thread=True):
 
-    # update function
-    def update(self):
+        # Enable Threading
+        if thread:
+            threading.Timer(0.1, self.update).start()
+
+
+    # update after an event function
+    def update_event(self):
         _translate = QtCore.QCoreApplication.translate
 
         # destination station and arrival time
@@ -478,7 +508,7 @@ class CTC_Main_UI(QMainWindow):
     def confirm_route(self, station_name, time_in, function, train_index):
         if datetime.now().time() < time_in and station_name != "Destination Station":
             self.ctc.create_schedule(station_name, time_in, function, train_index)
-            self.update()
+            self.update_event()
     
 
     # unit conversion functions
