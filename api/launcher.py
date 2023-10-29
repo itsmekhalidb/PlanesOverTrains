@@ -218,21 +218,18 @@ class Launcher(QMainWindow):
         self.timer.timeout.connect(self._update)
         self.timer.start()
 
-    def _update(self, test=True):
-        if test:
-            pass
+    def _update(self):
+        # Disable Button for Train Model if no train selected
+        if self.train_model_select.currentText() == "":
+            self.train_model_launch.setEnabled(False)
         else:
-            # Disable Button for Train Model if no train selected
-            if self.train_model_select.currentText() == "":
-                self.train_model_launch.setEnabled(False)
-            else:
-                self.train_model_launch.setEnabled(True)
+            self.train_model_launch.setEnabled(True)
 
-            # Disable Button for Train Model if no train selected
-            if self.train_controller_select.currentText() == "":
-                self.train_controller_launch.setEnabled(False)
-            else:
-                self.train_controller_launch.setEnabled(True)
+        # Disable Button for Train Model if no train selected
+        if self.train_controller_select.currentText() == "":
+            self.train_controller_launch.setEnabled(False)
+        else:
+            self.train_controller_launch.setEnabled(True)
 
     def get_train_models(self):
         self.train_model_select.clear()
