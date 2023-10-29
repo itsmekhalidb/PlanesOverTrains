@@ -47,7 +47,7 @@ class Track_Controller(object):
         self.set_commanded_speed(self.get_commanded_speed())
 
         #CTC Office Inputs
-        self.set_authority(self.ctc_ctrl_signals._authority)
+        # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
         self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 

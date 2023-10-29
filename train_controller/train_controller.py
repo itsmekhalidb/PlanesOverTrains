@@ -3,7 +3,12 @@ import math
 import time
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
+from .Controller import Controller
+from .Backup_Controller import Backup_Controller
 
+
+KP = 8000
+KI = 10
 class TrainController:
 
     # def __init__(self, train_model_api: TrainModelTrainControllerAPI):
@@ -15,6 +20,7 @@ class TrainController:
         self._commanded_velocity = 0.0
         self._commanded_power = 0.0
         self._authority = 0.0
+        self._setpoint_speed = 0.0
         self._engine_failure = False
         self._signal_pickup_failure = False
         self._service_brake_failure = False
@@ -41,6 +47,10 @@ class TrainController:
         self._station_status = ""
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
+        self._time = time.time()
+        self._controller = Controller(self._time)
+        self._backup_controller = Backup_Controller(self._time)
+        self.set_gains(KP,KI)
 
         # Update Function
         self.train_model = train_model_api
@@ -145,14 +155,48 @@ class TrainController:
 
     # TODO: Desired power is not being passed in at any point in your code, needs fix
     def set_power(self):
-        if self.get_service_brake_failure_status() or self.get_emergency_brake_failure_status() or self.get_signal_pickup_failure() or self.get_engine_status():
-            self._commanded_power = 0
-        elif (self._kp * self._ek + self._ki + self._uk) <= 120000:
-            self._commanded_power = self._kp * self._ek + self._ki + self._uk
+        #TODO: check if we are at a stop
+        #if not self.get_auto_status():
+           # self.check_stops()
+        # Define function local vars
+        backup_power = 0.0
+        if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status():
+            self._emergency_brake_status = True
+        if not self.get_auto_status():
+            speed = self._setpoint_speed #TODO: make spinbox in UI point to this var
         else:
-            self._commanded_power = 120000
+            speed = self._commanded_velocity
+        if self._authority <= 0 or self.get_emergency_brake_failure_status() or self.get_service_brake_value()>0:
+            self._controller.update(self._current_velocity, 0.0)
+            self._backup_controller.update(self._current_velocity, 0.0)
+            power = 0.0
+        else:
+            power = self._controller.update(self._current_velocity, speed)
+            backup_power = self._backup_controller.update(self._current_velocity, speed)
+        if abs(power - backup_power)>2000:
+            power = (power + backup_power)/2
+        if power>0 and power<=120000:
+            power = round(power,2)
+        elif power>120000:
+            power = 120000
+        else:
+            power = 0.0
+        # TODO: Implement coming to a stop
+        # service_braking_distance - self.calculate_service_braking_distance(self.get_actual_velocity())
+        # emergency_braking_distance = self.calculate_emergency_braking_distance(self.get_actual_velocity())
+        # if self.get_actual_velocity()>speed+.5:
+        #     self._decreasing_speed = True
+        # elif self.get_authority()<=0 and service_braking_distance > .0124:
+        #     self._emergency_decreasing_speed = True
+        # elif self.get_authority() < service_braking_distance:
+        #     self._decreasing_speed = True
+        # else:
+        #     self._decreasing_speed = False
+        #     self._emergency_decreasing_speed = False
+        self._commanded_power = power
 
-
+    def set_setpoint_speed(self, speed: float):
+        self._setpoint_speed = speed
     def set_right_door_status(self,stat: bool):
         self._right_door_open = stat
     def set_left_door_status(self, stat: bool):
@@ -165,6 +209,9 @@ class TrainController:
         self._emergency_brake_failure = f
     def set_service_brake_failure(self, stat: bool):
         self._service_brake_failure = stat
+    def set_gains(self, kp: float, ki: float):
+        self._controller.set_gains(kp, ki)
+        self._backup_controller.set_gains(kp, ki)
     def set_train_line(self, line: str):
         self._train_line = line
     def get_current_velocity(self)->float:
@@ -174,9 +221,9 @@ class TrainController:
     def get_maximum_velocity(self)->float:
         return self._maximum_velocity
     def get_kp(self) -> float:
-        return self._kp
+        return self._controller._kp
     def get_ki(self)->float:
-        return self._ki
+        return self._controller._ki
     def get_right_door_status(self)->bool:
         return self._right_door_open
     def get_left_door_status(self)->bool:
