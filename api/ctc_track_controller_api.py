@@ -3,7 +3,7 @@ class CTCTrackControllerAPI:
         # Define variable passed between CTC and Track Controller\
 
         #CTC to Track Controller
-        self.train_info = {} # train id : authority
+        self._authority = {} # train id : authority
         self._track_section_status = {'A1': False} #blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
 
