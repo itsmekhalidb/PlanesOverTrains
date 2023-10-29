@@ -3,6 +3,7 @@ import traceback
 import os
 import threading
 import time
+from typing import Callable
 from datetime import datetime, timedelta
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
@@ -18,7 +19,8 @@ class CTC(object):
         self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
-        self._time = time.time() # time object
+        self._time = time.gmtime(int(time.time()) - int(time.time()) % 86400) # time object set to midnight
+        self._time_scaling = 1 # how fast time is moving
 
         self.TrackCTRLSignal = TrackCTRLSignal
 
@@ -84,7 +86,7 @@ class CTC(object):
     def testbench_change_light(self, color):
         return
 
-    # update function
+    # update function every 100 ms
     def update(self, thread=True):
 
         # Enable Threading
@@ -105,7 +107,7 @@ class CTC(object):
 
 
 class Train(object):
-    def __init__(self):
+    def __init__(self, func : Callable):
         self._number = -1 # train id number
         self._authority = -1 # distance train is allowed to move in meters
         self._actual_velocity = 0 # actual velocity of train from train controller
