@@ -6,8 +6,8 @@ class TrainModelTrainControllerAPI:
         ## Track Model Information
         self.line = ""
         self.beacon = ""
-        self.authority = 0
-        self.cmd_speed = 0
+        self.authority = 0.0
+        self.cmd_speed = 0.0
         self.speed_limit = 0
         self.underground = False
         self.station_side = ""
