@@ -1,3 +1,4 @@
+import time
 class CTCTrackControllerAPI:
     def __init__(self) -> None:
         # Define variable passed between CTC and Track Controller\
@@ -6,6 +7,7 @@ class CTCTrackControllerAPI:
         self._authority = {} # train id : authority
         self._track_section_status = {'A1': False} #blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
+        self._time = time.gmtime(int(time.time()) - int(time.time()) % 86400)
 
         # TODO: For train model and train controller managers we need id for each train
         self._train_ids = {} # keys must be train ids

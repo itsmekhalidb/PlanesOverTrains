@@ -19,8 +19,9 @@ class CTC(object):
         self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
-        self._time = time.gmtime(int(time.time()) - int(time.time()) % 86400) # time object set to midnight
+        self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
         self._time_scaling = 1 # how fast time is moving
+        self._tick_counter = 0 # number of ticks since last second
 
         self.TrackCTRLSignal = TrackCTRLSignal
 
@@ -32,6 +33,12 @@ class CTC(object):
         return self._trains
     def get_stations_names(self):
         return _stations.keys()
+    def get_time(self):
+        return self._time
+    
+    # setter functions
+    def set_time_scaling(self, num):
+        self._time_scaling = num
     
     #automatic train schedule function
     def import_schedule(self, doc):
@@ -88,6 +95,11 @@ class CTC(object):
 
     # update function every 100 ms
     def update(self, thread=True):
+        if (self._tick_counter < 10/self._time_scaling):
+            self._tick_counter += 1
+        else:
+            self._tick_counter = 0
+            self._time = self._time + timedelta(seconds=1)
 
         # Enable Threading
         if thread:

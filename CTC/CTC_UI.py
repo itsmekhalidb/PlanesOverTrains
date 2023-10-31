@@ -11,7 +11,7 @@
 import typing
 import threading
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView, QHeaderView, QMainWindow, QWidget
+from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView, QHeaderView, QMainWindow, QWidget, QTableWidgetItem
 from PyQt5.QtGui import QPixmap, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime, time
@@ -72,7 +72,7 @@ class CTC_Main_UI(QMainWindow):
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
         train_index = -1 # -1 if creating new train, otherwise use train index
-        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, mode, train_index))
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.ctc, self.station_list.currentText(), not_qtime, mode, train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -91,6 +91,9 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_3 = QtWidgets.QDoubleSpinBox(self.train_view_page)
         self.system_speed_spnbx_3.setGeometry(QtCore.QRect(605, 14, 62, 22))
         self.system_speed_spnbx_3.setObjectName("system_speed_spnbx_3")
+        self.system_speed_spnbx_3.setMaximum(10)
+        self.system_speed_spnbx_3.setMinimum(1)
+        self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value(), 0))
         self.header = QtWidgets.QLabel(self.train_view_page)
         self.header.setGeometry(QtCore.QRect(0, 0, 676, 51))
         font = QtGui.QFont()
@@ -156,8 +159,13 @@ class CTC_Main_UI(QMainWindow):
         self.blocks_table = QtWidgets.QTableWidget(self.blocks_table_widget)
         self.blocks_table.setGeometry(QtCore.QRect(0, 0, 161, 331))
         self.blocks_table.setObjectName("blocks_table")
-        self.blocks_table.setColumnCount(0)
+        self.blocks_table.setColumnCount(1)
         self.blocks_table.setRowCount(0)
+        self.blocks_table.setHorizontalHeaderItem(0, QTableWidgetItem("Occupied Blocks"))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.blocks_table.horizontalHeaderItem(0).setFont(font)
+        self.blocks_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.occupied_blocks.setWidget(self.blocks_table_widget)
         self.edit_schedule = QtWidgets.QPushButton(self.train_view_page)
         self.edit_schedule.setGeometry(QtCore.QRect(5, 400, 121, 23))
@@ -254,6 +262,9 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_4 = QtWidgets.QDoubleSpinBox(self.testbench)
         self.system_speed_spnbx_4.setGeometry(QtCore.QRect(605, 14, 62, 22))
         self.system_speed_spnbx_4.setObjectName("system_speed_spnbx_4")
+        self.system_speed_spnbx_4.setMaximum(10)
+        self.system_speed_spnbx_4.setMinimum(1)
+        self.system_speed_spnbx_4.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_4.value(), 1))
         self.block_label = QtWidgets.QComboBox(self.testbench)
         self.block_label.setGeometry(QtCore.QRect(181, 53, 171, 51))
         font = QtGui.QFont()
@@ -398,6 +409,8 @@ class CTC_Main_UI(QMainWindow):
         self.view_switcher.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(self)
 
+        self._handler()
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("self", "self"))
@@ -456,10 +469,30 @@ class CTC_Main_UI(QMainWindow):
             
     
     def update(self, thread=True):
+        temp_time = self.ctc.get_time()
+        hr = str(temp_time.hour)
+        min = str(temp_time.minute)
+        sec = str(temp_time.second)
+        if len(hr) == 1:
+            hr = "0" + hr
+        if len(min) == 1:
+            min = "0" + min
+        if len(sec) == 1:
+            sec = "0" + sec
+        temp_timestr = hr + ":" + min + ":" + sec
+        self.sys_time_label_3.setText(temp_timestr)
+        self.sys_time_label_4.setText(temp_timestr)
 
         # Enable Threading
         if thread:
             threading.Timer(0.1, self.update).start()
+
+
+    def _handler(self):
+            self.timer = QTimer()
+            self.timer.setInterval(100)  # refreshes every time period
+            self.timer.timeout.connect(self.update)
+            self.timer.start()
 
 
     # update after an event function
@@ -510,6 +543,15 @@ class CTC_Main_UI(QMainWindow):
             self.ctc.create_schedule(station_name, time_in, function, train_index)
             self.update_event()
     
+
+    # change time speed when spinbox changed
+    def change_time_speed(self, speed, screen):
+        self.ctc.set_time_scaling(speed)
+        if screen == 0:
+            self.system_speed_spnbx_4.setValue(speed)
+        else:
+            self.system_speed_spnbx_3.setValue(speed)
+
 
     # unit conversion functions
     def meters_to_miles(self, meters):
