@@ -1,13 +1,13 @@
-import time
+from datetime import datetime
 class CTCTrackControllerAPI:
     def __init__(self) -> None:
         # Define variable passed between CTC and Track Controller\
 
         #CTC to Track Controller
-        self._authority = {} # train id : authority
-        self._track_section_status = {'A1': False} #blocks{track status(bool)}
+        self._authority = {} # train id : authority : suggested speed
+        self._track_section_status = {'A1': False} # blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
-        self._time = time.gmtime(int(time.time()) - int(time.time()) % 86400)
+        self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
 
         # TODO: For train model and train controller managers we need id for each train
         self._train_ids = {} # keys must be train ids

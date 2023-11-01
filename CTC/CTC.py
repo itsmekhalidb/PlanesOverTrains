@@ -81,16 +81,16 @@ class CTC(object):
     def update_passenger_info(self, station, tickets_sold):
         self._track.update_tickets(station, tickets_sold)
     
-    # testbench functions
-    def testbench_change_occupied(self, section, block):
+    # testbench/api functions
+    def change_occupied(self, section, block):
         return
-    def testbench_change_ticket_sales(self, train, passengers):
+    def change_ticket_sales(self, train, passengers):
         return
-    def testbench_change_current_velocity(self, train, vel):
+    def change_current_velocity(self, train, vel):
         return
-    def testbench_change_switch(self, switch, dir):
+    def change_switch(self, switch, dir):
         return
-    def testbench_change_light(self, color):
+    def change_light(self, color):
         return
 
     # update function every 100 ms
@@ -100,6 +100,7 @@ class CTC(object):
         else:
             self._tick_counter = 0
             self._time = self._time + timedelta(seconds=1)
+            self.TrackCTRLSignal._time = self._time
 
         # Enable Threading
         if thread:
@@ -121,7 +122,6 @@ class CTC(object):
 class Train(object):
     def __init__(self, func : Callable):
         self._number = -1 # train id number
-        self._authority = -1 # distance train is allowed to move in meters
         self._actual_velocity = 0 # actual velocity of train from train controller
         self._current_block = 0 # current position of train, 0 indicates yard
         self._schedule = None # object containing train's schedule
@@ -156,6 +156,7 @@ class Schedule(object):
         self._dest_station = dest_station # name of destination station
         self._departure_time = departure_time # calculated train departure time
         self._suggested_velocity = suggested_velocity # calculated velocity
+        self._route_authority = {} # dictionary of blocks and the authority in each block
 
     # recursive function to schedule each block TO BE IMPLEMENTED
 
