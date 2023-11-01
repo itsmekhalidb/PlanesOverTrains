@@ -4,7 +4,7 @@ class CTCTrackControllerAPI:
         # Define variable passed between CTC and Track Controller\
 
         #CTC to Track Controller
-        self._authority = {} # train id : authority : suggested speed
+        self._authority = {} # train id : [[authority] : suggested speed] should rename to train info or something
         self._track_section_status = {'A1': False} # blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
@@ -13,6 +13,7 @@ class CTCTrackControllerAPI:
         self._train_ids = {} # keys must be train ids
 
         #Track Controller to CTC
+        self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {'A1': 0} # blocks{occupancy(bool)}
         self._light = ("light color", 0) # light color, color (0 for green, 1 for red)

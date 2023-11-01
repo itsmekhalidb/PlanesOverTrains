@@ -20,6 +20,7 @@ from CTC import CTC
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 
 last_page = 0
+train_nums = []
 
 
 class CTC_Main_UI(QMainWindow):
@@ -53,6 +54,7 @@ class CTC_Main_UI(QMainWindow):
         self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
+        self.arrival_time.setDisplayFormat("HH:mm:ss")
         self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(5, 370, 201, 31))
@@ -61,6 +63,7 @@ class CTC_Main_UI(QMainWindow):
         self.station_list.setFont(font)
         self.station_list.setObjectName("station_list")
         self.station_list.addItem("Destination Station")
+        self.station_list.addItem("Glenbury")
         for station_name in self.ctc.get_stations_names():
             self.station_list.addItem(station_name)
         self.confirm = QtWidgets.QPushButton(self.train_view_page)
@@ -69,10 +72,10 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm.setFont(font)
         self.confirm.setObjectName("confirm")
-        not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
+        not_qtime = self.qtime_to_datetime(self.arrival_time.time())
         mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
         train_index = -1 # -1 if creating new train, otherwise use train index
-        self.confirm.clicked.connect(lambda:self.confirm_route(self.ctc, self.station_list.currentText(), not_qtime, mode, train_index))
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, mode, train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -164,6 +167,7 @@ class CTC_Main_UI(QMainWindow):
         self.blocks_table.setHorizontalHeaderItem(0, QTableWidgetItem("Occupied Blocks"))
         font = QtGui.QFont()
         font.setPointSize(14)
+        font.setBold(True)
         self.blocks_table.horizontalHeaderItem(0).setFont(font)
         self.blocks_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.occupied_blocks.setWidget(self.blocks_table_widget)
@@ -469,6 +473,7 @@ class CTC_Main_UI(QMainWindow):
             
     
     def update(self, thread=True):
+        global train_nums
         temp_time = self.ctc.get_time()
         hr = str(temp_time.hour)
         min = str(temp_time.minute)
@@ -482,6 +487,23 @@ class CTC_Main_UI(QMainWindow):
         temp_timestr = hr + ":" + min + ":" + sec
         self.sys_time_label_3.setText(temp_timestr)
         self.sys_time_label_4.setText(temp_timestr)
+        for train in self.ctc.get_trains():
+            train_num = train.get_train_number()
+            if train_num not in train_nums:
+                train_nums.append(train_num)
+                row = [
+                    QStandardItem(str(train_num)),
+                    QStandardItem(str(train.get_departure_time().hour) + ":" + str(train.get_departure_time().minute)),
+                    QStandardItem(str(train.get_arrival_time().hour) + ":" + str(train.get_arrival_time().minute)),
+                    QStandardItem(str(self.meters_to_miles(train.get_total_authority())) + " mi"),
+                    QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
+                    QStandardItem(str(self.ctc.update_curr_speed(train_num)))
+                ]
+                self.train_list_2_data.appendRow(row)
+            else:
+                self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
+                self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
+                self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)))
 
         # Enable Threading
         if thread:
@@ -493,38 +515,6 @@ class CTC_Main_UI(QMainWindow):
             self.timer.setInterval(100)  # refreshes every time period
             self.timer.timeout.connect(self.update)
             self.timer.start()
-
-
-    # update after an event function
-    def update_event(self):
-        _translate = QtCore.QCoreApplication.translate
-
-        # destination station and arrival time
-        if self.ctc._trains[self.train_list.currentIndex()]._schedule != None:
-            self.station_list.setCurrentText(self.ctc._trains[self.train_list.currentIndex()]._schedule.get_destination_station())
-            self.station_list.setDisabled(True)
-
-            arr_time = self.ctc._trains[self.train_list.currentIndex()]._schedule.get_arrival_time()
-            real_arr_time = QTime(arr_time.hour, arr_time.minute)
-            self.arrival_time.setTime(real_arr_time)
-            self.arrival_time.setReadOnly(True)
-            self.arrival_time.setButtonSymbols(QTimeEdit.NoButtons)
-        else:
-            self.station_list.setCurrentText("Destination Station")
-            self.station_list.setDisabled(False)
-
-            self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
-            self.arrival_time.setReadOnly(False)
-            self.arrival_time.setButtonSymbols(QTimeEdit.UpDownArrows)
-
-        # train schedule info
-        temp_train = self.ctc._trains[self.train_list.currentIndex()]
-        if temp_train._schedule != None:
-            temp_dep_time_w_ms = temp_train.get_departure_time()
-            temp_dep_time = time(temp_dep_time_w_ms.hour, temp_dep_time_w_ms.minute, temp_dep_time_w_ms.second)
-            temp_auth = self.meters_to_miles(temp_train.get_authority())
-            temp_sug_speed = self.kmhr_to_mihr(temp_train.get_suggested_velocity())
-            temp_curr_speed = self.kmhr_to_mihr(temp_train.get_actual_velocity())
 
 
     # switch to testbench
@@ -539,9 +529,8 @@ class CTC_Main_UI(QMainWindow):
 
     # confirm button pressed, run checks then call ctc.py function
     def confirm_route(self, station_name, time_in, function, train_index):
-        if datetime.now().time() < time_in and station_name != "Destination Station":
+        if self.ctc.get_time().time() < time_in and station_name != "Destination Station":
             self.ctc.create_schedule(station_name, time_in, function, train_index)
-            self.update_event()
     
 
     # change time speed when spinbox changed
@@ -558,6 +547,11 @@ class CTC_Main_UI(QMainWindow):
         return "{:.2f}".format(meters / 1609.344)
     def kmhr_to_mihr(self, kmhr):
         return "{:.2f}".format(kmhr / 0.621371)
+    def datetime_to_qtime(self, dt):
+        return QTime(dt.hour, dt.minute, dt.second)
+    def qtime_to_datetime(self, qt):
+        current_date = datetime.now().date()
+        return datetime(current_date.year, current_date.month, current_date.day, qt.hour(), qt.minute(), qt.second())
 
 
 if __name__ == "__main__":
