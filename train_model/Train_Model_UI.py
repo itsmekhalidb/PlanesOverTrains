@@ -907,10 +907,10 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
                 self.force_label.setText(_translate("TrainModel_MainUI", "         Force (N)            CMD Power (kW)"))
                 # self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
-                self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (m/s)"))
+                self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (mph)"))
                 self.vacc_info_label.setText(_translate("TrainModel_MainUI", "Vacc = laplace(Vacc)"))
                 self.accel_info_label.setText(_translate("TrainModel_MainUI", "a = F/M"))
-                self.acceleration_label.setText(_translate("TrainModel_MainUI", "Acceleration (m/s²)"))
+                self.acceleration_label.setText(_translate("TrainModel_MainUI", "Acceleration mi/(h * s)"))
                 self.vcmd_info_label.setText(_translate("TrainModel_MainUI", "Vcmd = 100 m/s"))
         #         self.next_station_infobox.setHtml(_translate("TrainModel_MainUI", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
         # "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
