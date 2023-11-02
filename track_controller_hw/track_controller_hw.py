@@ -6,20 +6,20 @@ from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 
 class Track_Controller_HW(object):
 
-    def __init__(self, ctc_signal: CTCTrackControllerAPI, track_signal: TrackControllerTrackModelAPI):
+    def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
         # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
         # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
-        self._blue = {'B-A1': {1: 50, 2: 0}, 'B-A2': {1: 50, 2: 0}, 'B-A3': {1: 50, 2: 0}, 'B-A4': {1: 50, 2: 0},
-                      'B-A5': {1: 50, 2: 0}, 'B-B6': {1: 50, 2: 0}, 'B-B7': {1: 50, 2: 0}, 'B-B8': {1: 50, 2: 0},
-                      'B-B9': {1: 50, 2: 0}, 'B-B10': {1: 50, 2: 0}, 'B-C11': {1: 50, 2: 0}, 'B-C12': {1: 50, 2: 0},
-                      'B-C13': {1: 50, 2: 0}, 'B-C14': {1: 50, 2: 0}, 'B-C15': {1: 50, 2: 0}}
+        self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
+                      'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
+                      'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
+                      'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'Light B-A5': 0, 'Light B-B6': 0, 'Light B-C11': 0}
+        self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
         # plc input
         self._plc_input = ""
         # 0 = left, 1 = right
-        self._switches = {'Switch BC-A': 0}
+        self._switches = {'A5': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
@@ -38,13 +38,71 @@ class Track_Controller_HW(object):
         self._suggested_speed = 0
         self._test_speed_limit = 0
         self._track_status = False
-    # Variables
+        self._passengers = 0
 
+        self.ctc_ctrl_signals = ctcsignals
+        self.track_ctrl_signals = tracksignals
+
+        self.update()
+    # Variables
+    def update(self, thread=False):
+        #Interal inputs
+        self.set_commanded_speed(self.get_commanded_speed())
+
+        #CTC Office Inputs
+        # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
+        self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
+        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+
+        #CTC Office Outputs
+        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
+        self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+
+        #Track Model Inputs
+        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
+        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
+        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
+        self.set_power_failure(self.track_ctrl_signals._power_failure)
+        self.set_blue_track(self.track_ctrl_signals._blue)
+        # wait until we have things connected to mess around with this
+        # self.set_blue_track(self.track_ctrl_signals._green)
+
+        #Track Model Outputs
+        self.track_ctrl_signals._authority = self.get_authority()
+        self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        # for i in self._lights.keys():
+        #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
+        # for i in self._switches.keys():
+        #     self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
+        # for i in self._crossing_lights_gates.keys():
+        #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
+        #
+
+    def get_passengers(self):
+        return self._passengers
+
+    def set_passengers(self, tickets):
+        self._passengers = tickets
+    def get_track_section_status(self):
+        return self._track_status
+    def set_track_section_status(self, block):
+        self._track_status = block
+        for i in block.keys():
+            self._blue[i][2] = block[i]
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
 
     def get_blue_track(self) -> dict:
         return self._blue
+
+    def set_blue_track(self, track):
+        self._blue = track
+
+    def get_block_occupancy(self) -> dict:
+        temp = {}
+        for x in self._occupied_blocks:
+            temp.update({x:self.get_occupancy(x)})
+        return temp
 
     def get_occupied_blocks(self) -> list:
         temp = []
