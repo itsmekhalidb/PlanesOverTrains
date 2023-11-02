@@ -574,7 +574,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
         self.sys_time_label.setText(_translate("self", "13:24:55"))
 
-    def upload_plc(self):  # have not tested this yet
+    def PLC(self):  # have not tested this yet
         for i in range(len(self.blue_line_plc.get_block_number())):
             block_number = self.blue_line_plc.get_block_number()[i]
             block_occupancy = self.blue_line_plc.get_block_occupancy()[i]

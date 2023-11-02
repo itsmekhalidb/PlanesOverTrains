@@ -30,15 +30,14 @@ class Track_Controller_HW(object):
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
-        self._command_speed = 0#{'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
-                               #'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
-                               #'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
-                               #'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
+        self._command_speed = 0  # {'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
+        # 'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
+        # 'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
+        # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         self._occupied_blocks = []
 
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
-
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         self._broken_rail = False  # ebrake failure
@@ -263,6 +262,84 @@ class Track_Controller_HW(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+
+    def PLC(self):  # have not tested this yet
+        for i in range(len(self.blue_line_plc.get_block_number())):
+            block_number = self.blue_line_plc.get_block_number()[i]
+            block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
+            operation = self.blue_line_plc.get_operations()[i]
+            operation_number = self.blue_line_plc.get_operations_number()[i]
+            if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
+                    (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
+                if operation == 'switch':
+                    self.track_controller_hw.set_switch(1, operation_number)
+                elif operation == '!switch':
+                    self.track_controller_hw.set_switch(0, operation_number)
+                elif operation == "green":
+                    self.track_controller_hw.set_lights(1, operation_number)
+                elif operation == "red":
+                    self.track_controller_hw.set_lights(0, operation_number)
+
+        """""
+            self.track_controller_hw.set_commanded_speed(
+                min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
+
+            self.sect_A_occ = bool(self.track_controller_hw.get_occupancy('B-A1') or self.track_controller_hw.get_occupancy(
+                'B-A2') or self.track_controller_hw.get_occupancy('B-A3') or self.track_controller_hw.get_occupancy(
+                'B-A4') or self.track_controller_hw.get_occupancy('B-A5'))
+            self.sect_B_occ = bool(self.track_controller_hw.get_occupancy('B-B6') or self.track_controller_hw.get_occupancy(
+                'B-B7') or self.track_controller_hw.get_occupancy('B-B8') or self.track_controller_hw.get_occupancy(
+                'B-B9') or self.track_controller_hw.get_occupancy('B-B10'))
+            self.sect_C_occ = bool(
+                self.track_controller_hw.get_occupancy('B-C11') or self.track_controller_hw.get_occupancy(
+                    'B-C12') or self.track_controller_hw.get_occupancy('B-C13') or self.track_controller_hw.get_occupancy(
+                    'B-C14') or self.track_controller_hw.get_occupancy('B-C15'))
+            if self.sect_A_occ:
+                self.plc_output.addItem("Train detected in section A")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(1, 'Light B-B6')
+                self.track_controller_hw.set_lights(1, 'Light C-C11')
+                if self.sect_B_occ:
+                    self.plc_output.addItem("Train detected in section B")
+                    self.track_controller_hw.set_lights(0, 'Light B-A5', )
+                    self.track_controller_hw.set_lights(1, 'Light B-B6')
+                    self.track_controller_hw.set_lights(1, 'Light B-C11')
+                    self.track_controller_hw.set_switch(1, 'Switch BC-A')
+                    self.plc_output.addItem("Stopping traffic from track section B")
+                    self.plc_output.addItem("Switching to track section C")
+                elif self.sect_C_occ:
+                    self.plc_output.addItem("Train detected in section C")
+                    self.track_controller_hw.set_lights(0, 'Light B-A5')
+                    self.track_controller_hw.set_lights(1, 'Light B-B6')
+                    self.track_controller_hw.set_lights(1, 'Light B-C11')
+                    self.track_controller_hw.set_switch(0, 'Switch BC-A')
+                    self.plc_output.addItem("Stopping traffic from track section C")
+                    self.plc_output.addItem("Switching to track section B")
+                else:
+                    self.plc_output.addItem("Stopping traffic from track sections B and C")
+                    self.plc_output.addItem("Switching to track section B")
+            elif self.sect_B_occ:
+                self.plc_output.addItem("Train detected in section B")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(1, 'Light B-B6')
+                self.track_controller_hw.set_lights(0, 'Light B-C11')
+                self.track_controller_hw.set_switch(0, 'Light BC-A')
+                self.plc_output.addItem("Stopping traffic from track sections A and C")
+                self.plc_output.addItem("Switching to track section B")
+            elif self.sect_C_occ:
+                self.plc_output.addItem("Train detected in section C")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(0, 'Light B-B6')
+                self.track_controller_hw.set_lights(1, 'Light B-C11')
+                self.track_controller_hw.set_switch(1, 'Switch BC-A')
+                self.plc_output.addItem("Stopping traffic from track sections A and B")
+                self.plc_output.addItem("Switching to track section C")
+            else:
+                self.plc_output.addItem("No trains on the track")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(0, 'Light B-B6')
+                self.track_controller_hw.set_lights(0, 'Light B-C11')
+    """
 
     def launch_ui(self):
         print("Launching Track Controller HW UI")
