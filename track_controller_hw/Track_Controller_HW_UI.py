@@ -36,6 +36,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
         self.setupUi()
         self.show()
+        self.change = True
 
     def set_previous_show(self, s: str):
         self._previous = s
@@ -351,16 +352,24 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.wayside_select.addItem("Blue")
         self.wayside_select.addItem("Green")
 
-        for i in self.track_controller_hw.get_blue_track():
-            self.select_output.addItem(i)
+
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
 
         self.plc_output.clear()
 
-        self.system_speed_label.setVisible(False)
-        self.system_speed_spnbx.setVisible(False)
+        if self.wayside_select.currentText() == "Blue" and self.change:
+            self.select_output.clear()
+            for i in self.track_controller_hw.get_blue_track():
+                self.select_output.addItem(i)
+            self.change = False
+
+        if self.wayside_select.currentText() == "Green" and not self.change:
+            self.select_output.clear()
+            for i in range(55, 121):
+                self.select_output.addItem(self.track_controller_hw.get_green_track())
+            self.change = True
 
         self.occupancy_display.clear()
         self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
@@ -380,6 +389,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
             self.show_ard_switch.setVisible(False)
             self.command_label.setVisible(False)
             self.command_spin.setVisible(False)
+            self.track_controller_hw.set_commanded_speed(self.command_spin.value())
 
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
         # label visibility
@@ -608,7 +618,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.wayside_select.setItemText(0, _translate("track_controller_mainwindow", "Blue 1"))
         self.wayside_select.setItemText(1, _translate("track_controller_mainwindow", "Blue 2"))
         self.manual_mode_on.setText(_translate("track_controller_mainwindow", "ON"))
-        self.load_plc_label.setText(_translate("track_controller_mainwindow", "PLC BLUE"))
+        self.load_plc_label.setText(_translate("track_controller_mainwindow", "PLC"))
         self.plc_output_label.setText(_translate("track_controller_mainwindow", "PLC Output"))
         self.load_plc_button.setText(_translate("track_controller_mainwindow", "Load PLC"))
         self.Select_wayside_label.setText(_translate("track_controller_mainwindow", "Wayside Controller/Line"))

@@ -9,11 +9,12 @@ class Track_Controller_HW(object):
     def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
         # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
-        # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
+        # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit,
         self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
                       'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
+        self._green = {}
         # 0 = red, 1 = green, 2 = super green
         self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
         # plc input
@@ -25,9 +26,13 @@ class Track_Controller_HW(object):
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
-        self._command_speed = 0
+        self._command_speed = 0#{'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
+                               #'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
+                               #'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
+                               #'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         self._occupied_blocks = []
+
 
         # Testbench Variables
         self._broken_rail = False  # ebrake failure
@@ -44,21 +49,22 @@ class Track_Controller_HW(object):
         self.track_ctrl_signals = tracksignals
 
         self.update()
+
     # Variables
     def update(self, thread=False):
-        #Interal inputs
+        # Interal inputs
         self.set_commanded_speed(self.get_commanded_speed())
 
-        #CTC Office Inputs
+        # CTC Office Inputs
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
         self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
-        #CTC Office Outputs
+        # CTC Office Outputs
         self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
 
-        #Track Model Inputs
+        # Track Model Inputs
         self.set_broken_rail(self.track_ctrl_signals._broken_rail)
         self.set_engine_failure(self.track_ctrl_signals._engine_failure)
         self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
@@ -66,8 +72,9 @@ class Track_Controller_HW(object):
         self.set_blue_track(self.track_ctrl_signals._blue)
         # wait until we have things connected to mess around with this
         # self.set_blue_track(self.track_ctrl_signals._green)
+        self.set_green_track(self.track_ctrl_signals._green)
 
-        #Track Model Outputs
+        # Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
         # for i in self._lights.keys():
@@ -83,12 +90,15 @@ class Track_Controller_HW(object):
 
     def set_passengers(self, tickets):
         self._passengers = tickets
+
     def get_track_section_status(self):
         return self._track_status
+
     def set_track_section_status(self, block):
         self._track_status = block
         for i in block.keys():
             self._blue[i][2] = block[i]
+
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
 
@@ -98,10 +108,16 @@ class Track_Controller_HW(object):
     def set_blue_track(self, track):
         self._blue = track
 
+    def get_green_track(self) -> dict:
+        return self._green
+
+    def set_green_track(self, track):
+        self._green = track
+
     def get_block_occupancy(self) -> dict:
         temp = {}
         for x in self._occupied_blocks:
-            temp.update({x:self.get_occupancy(x)})
+            temp.update({x: self.get_occupancy(x)})
         return temp
 
     def get_occupied_blocks(self) -> list:
