@@ -1,5 +1,7 @@
 import traceback
 
+import serial
+
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 
@@ -32,6 +34,8 @@ class Track_Controller_HW(object):
                                #'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         self._occupied_blocks = []
+
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
 
         # Testbench Variables
@@ -88,6 +92,42 @@ class Track_Controller_HW(object):
     def get_passengers(self):
         return self._passengers
 
+    def send_update(self, block_number: str):
+        send_string = "1"
+        if len(block_number) == 2:
+            send_string += "00" + block_number
+        elif len(block_number) == 3:
+            send_string += "0" + block_number
+        elif len(block_number) == 4:
+            send_string += block_number
+        command = str(self.get_commanded_speed())
+        if len(command) == 1:
+            send_string += "0" + command
+        elif len(command) == 2:
+            send_string += command
+        if block_number in self.get_light_list():
+            send_string += "1"
+            if self.get_lights(block_number) == 1:
+                send_string += "1"
+            elif self.get_lights(block_number) == 0:
+                send_string += "0"
+        else:
+            send_string += "00"
+        if block_number in self.get_switch_list():
+            send_string += "1"
+            if self.get_switch(block_number) == 1:
+                send_string += "1"
+            elif self.get_switch(block_number) == 0:
+                send_string += "0"
+        else:
+            send_string += "00"
+        send_string += "00"
+        self.get_ard().write(send_string.encode('utf-8'))
+        print(send_string)
+
+    def get_ard(self):
+        return self._ard
+
     def set_passengers(self, tickets):
         self._passengers = tickets
 
@@ -101,6 +141,9 @@ class Track_Controller_HW(object):
 
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
+
+    def set_crossing_lights_gate(self, light: str, value: int):
+        self._crossing_lights_gates[light] = value
 
     def get_blue_track(self) -> dict:
         return self._blue
