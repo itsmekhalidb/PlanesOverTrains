@@ -17,6 +17,8 @@ class Track_Controller_HW(object):
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
         self._green = {}
+
+        self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
         self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
         # plc input
@@ -91,6 +93,9 @@ class Track_Controller_HW(object):
 
     def get_passengers(self):
         return self._passengers
+
+    def get_train_id(self):
+        return self._train_ids
 
     def send_update(self, block_number: str):
         send_string = "1"

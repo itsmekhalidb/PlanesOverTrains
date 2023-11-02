@@ -98,6 +98,16 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.title_label.setAutoFillBackground(False)
         self.title_label.setStyleSheet("background-color: rgb(255, 255, 0);\n"
                                        "border: 3px solid black;")
+        self.sys_time_label = QtWidgets.QLabel(self.centralwidget)
+        self.sys_time_label.setGeometry(QtCore.QRect(400, 8, 83, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.sys_time_label.setFont(font)
+        self.sys_time_label.setStyleSheet("border: 1px solid black;\n"
+                                          "background-color: rgb(255, 255, 255);")
+        self.sys_time_label.setObjectName("sys_time_label")
         self.title_label.setObjectName("title_label")
         self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
@@ -328,6 +338,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.occupancy_display.raise_()
         self.occupancy_label.raise_()
         self.testbench_button.raise_()
+        self.sys_time_label.raise_()
         self.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
@@ -532,7 +543,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("track_controller_mainwindow", "MainWindow"))
+        self.setWindowTitle(_translate("track_controller_mainwindow", "Track Controller Hardware"))
         self.title_label.setText(_translate("track_controller_mainwindow", "Wayside Controller - Hardware"))
         self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
         self.manual_mode_check.setText(_translate("track_controller_mainwindow", "Manual Mode"))
@@ -561,8 +572,9 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.selected_output_label.setText(_translate("track_controller_mainwindow", "Selected Output"))
         self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
+        self.sys_time_label.setText(_translate("self", "13:24:55"))
 
-    def PLC(self):  # have not tested this yet
+    def upload_plc(self):  # have not tested this yet
         for i in range(len(self.blue_line_plc.get_block_number())):
             block_number = self.blue_line_plc.get_block_number()[i]
             block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
