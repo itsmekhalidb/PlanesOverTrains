@@ -10,7 +10,10 @@ from PyQt5.QtCore import Qt
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from track_model.track_model import TrackModel
-
+from track_model.custom_graphics_view import CustomGraphicsScene
+from pylint import pyreverse
+from track_model.block_info import block_info
+import pandas as pd
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self, track_model: TrackModel) -> None:
@@ -27,52 +30,102 @@ class Ui_MainWindow(QMainWindow):
         self.trackmodel_main = QtWidgets.QWidget(self)
         self.trackmodel_main.setObjectName("trackmodel_main")
 
-        scene = QGraphicsScene(self.trackmodel_main)
+        scene = CustomGraphicsScene()
+        #scene = QGraphicsScene(self.trackmodel_main)
         scene.setSceneRect(0, 61, 1142, 600)
+
+
         red_pen = QPen(Qt.red)
-        red_pen.setWidth(3)
+        red_pen.setWidth(4)
+        red_pen_2 = QPen(QColor(200,0,0))
+        red_pen_2.setWidth(4)
 
-        path_r1 = QPainterPath()
-        path_r1.moveTo(800,220)
-        path_r1.quadTo(QPointF(815,220), QPointF(835,205))
-        r1 = QGraphicsPathItem(path_r1)
-        r1.setPen(red_pen)
-        scene.addItem(r1)
+        path_data = [
+            {
+                'start': QPointF(800, 220),
+                'points': [QPointF(800, 220), QPointF(832, 202)],       #A
+                'label': "1"
+            },
+            {
+                'start': QPointF(835, 205),
+                'points': [QPointF(835, 205), QPointF(865, 185)],
+                'label': "2"
+            },
+            {
+                'start': QPointF(865, 185),
+                'points': [QPointF(865,185), QPointF(895, 165)],
+                'label': "3"
+            },
+            {
+                'start': QPointF(895, 165),
+                'points': [QPointF(895,165), QPointF(915,145)],         #B
+                'label': "4"
+            },
+            {
+                'start': QPointF(915,145),
+                'points': [QPointF(915,145), QPointF(935, 125)],
+                'label': "5"
+            },
+            {
+                'start': QPointF(935, 125),
+                'points': [QPointF(935,125), QPointF(955,115)],
+                'label': "6"
+            },
+            {
+                'start': QPointF(955,115),
+                'points': [QPointF(955,115), QPointF(980,120)],         #C
+                'label': "7"
+            },
+            {
+                'start': QPointF(980,120),
+                'points': [QPointF(980,120), QPointF(995,125)],
+                'label': "8"
+            }
 
-        path_r2 = QPainterPath()
-        path_r2.moveTo(835,205)
-        path_r2.quadTo(QPointF(835,205), QPointF(865, 185))
-        r2 = QGraphicsPathItem(path_r2)
-        r2.setPen(red_pen)
-        scene.addItem(r2)
+        ]
 
-        path_r3 = QPainterPath()
-        path_r3.moveTo(865,185)
-        path_r3.quadTo(QPointF(865,185),QPointF(915,145))
-        r3 = QGraphicsPathItem(path_r3)
-        r3.setPen(red_pen)
-        scene.addItem(r3)
 
-        #path = QPainterPath()
-        #path.moveTo(0,0)
-        #path.cubicTo(50,0,0,100,100,100)
 
-        path_test = QPainterPath()
-        path_test.moveTo(100,200)
-        path_test.cubicTo(50,100,200,100,100,100)
-        testing = QGraphicsPathItem(path_test)
-        testing.setPen(red_pen)
-        scene.addItem(testing)
+
+
+
+        for i, data in enumerate(path_data):
+            path = QPainterPath()
+            path.moveTo(data['start'])
+            for point in data['points']:
+                path.quadTo(point, point)
+
+            r = QGraphicsPathItem(path)
+            r.setData(0, data['label'])
+            r.setPen(red_pen)
+            if i%2 == 0:
+                r.setPen(red_pen)
+            else:
+                r.setPen(red_pen_2)
+
+            scene.addItem(r)
+
+        red_pen = QPen(Qt.red)
+        red_pen.setWidth(4)
+        red_2 = QPen(Qt.darkRed)
+        red_2.setWidth(4)
+
+
+
 
 
         self.graph_view = QtWidgets.QGraphicsView(scene, self.trackmodel_main)
         self.graph_view.setGeometry(QtCore.QRect(0, 61, 1142, 600))
 
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
-        self.load_file.setGeometry(QtCore.QRect(100,10,60,41))
-        self.load_file.setText("load file")
-        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 1px solid black;\n")
-        # self.load_file.clicked()
+        self.load_file.setGeometry(QtCore.QRect(600,10,60,41))
+        self.load_file.setText("Load File")
+        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 8pt \"Arial\";")
+
+        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.block_display.setGeometry(QtCore.QRect(155,10,60,41))
+        self.block_display.setText("")
+        self.block_display.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
 
         self.title = QtWidgets.QLabel(self.trackmodel_main)
         self.title.setGeometry(QtCore.QRect(0, 0, 1141, 61))
@@ -82,23 +135,13 @@ class Ui_MainWindow(QMainWindow):
 "font: 87 16pt \"Arial Black\";")
         self.title.setObjectName("title")
         self.clock = QtWidgets.QLabel(self.trackmodel_main)
-        self.clock.setGeometry(QtCore.QRect(740, 10, 111, 41))
+        self.clock.setGeometry(QtCore.QRect(1020, 10, 111, 41))
         self.clock.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.clock.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
 "background-color: rgb(255, 255, 255);")
         self.clock.setAlignment(QtCore.Qt.AlignCenter)
         self.clock.setObjectName("clock")
-        self.t_sys_spd = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_sys_spd.setGeometry(QtCore.QRect(870, 10, 261, 41))
-        self.t_sys_spd.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
-"border: 2px solid black;\n"
-"background-color: rgb(255, 255, 255);")
-        self.t_sys_spd.setObjectName("t_sys_spd")
-        self.system_speed = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.system_speed.setGeometry(QtCore.QRect(1060, 10, 71, 41))
-        self.system_speed.setStyleSheet("border: 2px solid black;")
-        self.system_speed.setObjectName("system_speed")
         self.static_title = QtWidgets.QLabel(self.trackmodel_main)
         self.static_title.setGeometry(QtCore.QRect(0, 660, 461, 41))
         self.static_title.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
@@ -366,7 +409,7 @@ class Ui_MainWindow(QMainWindow):
 "color: rgb(255, 255, 255)")
         self.track_heater.setObjectName("track_heater")
         self.t_temp_control = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_temp_control.setGeometry(QtCore.QRect(400, 10, 321, 41))
+        self.t_temp_control.setGeometry(QtCore.QRect(680, 10, 321, 41))
         self.t_temp_control.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.t_temp_control.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
@@ -374,13 +417,12 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.t_temp_control.setObjectName("t_temp_control")
         self.temp_control = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.temp_control.setGeometry(QtCore.QRect(650, 10, 71, 41))
+        self.temp_control.setGeometry(QtCore.QRect(930, 10, 71, 41))
         self.temp_control.setStyleSheet("border: 2px solid black;")
         self.temp_control.setObjectName("temp_control")
         self.title.raise_()
         self.clock.raise_()
-        self.t_sys_spd.raise_()
-        self.system_speed.raise_()
+
         self.static_title.raise_()
         self.t_spd_limit.raise_()
         self.t_block_length.raise_()
@@ -417,6 +459,7 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.raise_()
         self.temp_control.raise_()
         self.load_file.raise_()
+        self.block_display.raise_()
         self.setCentralWidget(self.trackmodel_main)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1143, 21))
@@ -447,7 +490,7 @@ class Ui_MainWindow(QMainWindow):
         self.setWindowTitle(_translate("MainWindow", "Track Model"))
         self.title.setText(_translate("MainWindow", "Track Map"))
         self.clock.setText(_translate("MainWindow", "13:24:55"))
-        self.t_sys_spd.setText(_translate("MainWindow", "System Speed"))
+
         self.static_title.setText(_translate("MainWindow", "Static Variables"))
         self.t_spd_limit.setText(_translate("MainWindow", "Speed Limit (mph)"))
         self.t_block_length.setText(_translate("MainWindow", "Block Length (ft)"))
@@ -474,6 +517,8 @@ class Ui_MainWindow(QMainWindow):
     def browse_files(self):
         browse = QFileDialog.getOpenFileName(self.load_file)
         self._filepath = (browse[0])
+
+
 
 
 
