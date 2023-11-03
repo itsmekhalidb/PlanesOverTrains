@@ -186,13 +186,17 @@ class Ui_Test_Bench(object):
                                           "")
         self.authoriy_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.authoriy_label.setObjectName("authoriy_label")
+        self.train_drop = QtWidgets.QComboBox(self.centralwidget)
+        self.train_drop.setGeometry(QtCore.QRect(240, 380, 100, 25))
+        self.train_drop.setEditable(True)
+        self.train_drop.setObjectName("train_drop")
         self.switch_drop = QtWidgets.QComboBox(self.centralwidget)
         self.switch_drop.setGeometry(QtCore.QRect(10, 180, 231, 25))
         self.switch_drop.setEditable(True)
         self.switch_drop.setObjectName("switch_drop")
         self.switch_drop.addItem("")
         self.authority_input = QtWidgets.QLineEdit(self.centralwidget)
-        self.authority_input.setGeometry(QtCore.QRect(240, 380, 211, 25))
+        self.authority_input.setGeometry(QtCore.QRect(350, 380, 100, 25))
         self.authority_input.setText("")
         self.authority_input.setObjectName("authority_input")
         self.suggested_speed_label = QtWidgets.QLabel(self.centralwidget)
@@ -433,8 +437,6 @@ class Ui_Test_Bench(object):
             self.track_controller_hw.set_switch(0, self.switch_drop.currentText())
 
     def update(self):
-        self.authority_input.setVisible(False)
-        self.authoriy_label.setVisible(False)
 
         self.broken_label_off.setVisible(not bool(self.broken_rail_check.checkState()))
         self.broken_label_on.setVisible(bool(self.broken_rail_check.checkState()))
@@ -464,7 +466,7 @@ class Ui_Test_Bench(object):
                                               self.track_controller_hw.get_test_speed_limit())
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Testbench"))
         self.maintence_mode_button.setText(_translate("MainWindow", "Toggle Maintance Mode"))
         self.title_label_2.setText(_translate("MainWindow", "Testbench"))
         self.light_red_button.setText(_translate("MainWindow", "Red"))

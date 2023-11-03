@@ -1,0 +1,12 @@
+@startuml packages_ALL
+set namespaceSeparator none
+package "Train_Controller_Main_Window" as Train_Controller_Main_Window {
+}
+package "Train_Controller_Test_Bench" as Train_Controller_Test_Bench {
+}
+package "train_controller" as train_controller {
+}
+Train_Controller_Main_Window --> train_controller
+Train_Controller_Test_Bench --> Train_Controller_Main_Window
+Train_Controller_Test_Bench --> train_controller
+@enduml

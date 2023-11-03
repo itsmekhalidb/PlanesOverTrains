@@ -2,7 +2,11 @@ import pandas as pd
 
 class block_info:
     def __init__(self, filepath: str):
-        self.block_dict = self.load_block_info(filepath)
+        if filepath == "":
+            self.block_dict = {}
+        else:
+            print("Loading block info from " + filepath)
+            self.block_dict = self.load_block_info(filepath)
 
     def load_block_info(self, filepath: str):
         df = pd.read_excel(filepath)
@@ -20,7 +24,9 @@ class block_info:
                 'speed limit': row['speed limit'],
                 'switch position': bool(row['switch position']),
                 'underground': bool(row['underground']),
-                'beacon': row['beacon']
+                'beacon': row['beacon'],
+                # TODO: Add these to the excel sheet
+                # 'station side': row['station side'],
             }
 
             if line in block_dict:
@@ -34,6 +40,7 @@ class block_info:
         if line in self.block_dict and block_number in self.block_dict[line]:
             return self.block_dict[line][block_number]
         else:
+            # print("Block " + str(block_number) + " on line " + line + " not found")
             return None
 
     def get_all_blocks_for_line(self, line):
@@ -43,5 +50,5 @@ class block_info:
 
 # How to Use:
 # tm = block_info('block_information.xlsx')
-# red_48 = tm.get_block_info('red', 48)['grade']
+# red_48 = tm.get_block_info('red', 1)['grade']
 # print(red_48)

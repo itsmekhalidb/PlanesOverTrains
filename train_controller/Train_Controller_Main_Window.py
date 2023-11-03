@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-from train_controller import TrainController
+from train_controller.train_controller import TrainController
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 
@@ -465,7 +465,7 @@ class Ui_MainWindow(QMainWindow):
         self.external_lights_label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_3.setObjectName("external_lights_label_3")
         self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox_2.setMaximum(1000.0)
+        self.doubleSpinBox_2.setMaximum(100000.0)
         self.doubleSpinBox_2.setGeometry(QtCore.QRect(126, 174, 68, 24))
         self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
         self.external_lights_label_4 = QtWidgets.QLabel(self.centralwidget)
@@ -481,7 +481,7 @@ class Ui_MainWindow(QMainWindow):
         self.external_lights_label_4.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_4.setObjectName("external_lights_label_4")
         self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox_3.setMaximum(1000.0)
+        self.doubleSpinBox_3.setMaximum(100000.0)
         self.doubleSpinBox_3.setGeometry(QtCore.QRect(126, 204, 68, 24))
         self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
         self.external_lights_label_9 = QtWidgets.QLabel(self.centralwidget)
@@ -952,7 +952,7 @@ class Ui_MainWindow(QMainWindow):
         self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
 
         comspeed = self.commanded_speed_spnbx.value()
-        self.train_controller.set_commanded_velocity(float(comspeed))
+        self.train_controller.set_setpoint_speed(float(comspeed))
 
         #kp
         kp = self.doubleSpinBox_2.value()

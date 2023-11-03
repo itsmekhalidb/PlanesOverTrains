@@ -11,12 +11,12 @@ import traceback
 from track_model.block_info import block_info
 
 class TrackModel(object):
-    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, trainModelSignal: TrackModelTrainModelAPI):
+    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
         self._light_colors = "" #color of signal lights
-        self._authority = 0 #how far train is permitted to travel
+        self._authority = 0.0 #how far train is permitted to travel
         self._gate_control = False #controls railway crossing gate
         self._commanded_speed = 0.0 #speed commanded by CTC
         self._railway_xing_lights = False #lights for railway crossing
@@ -32,9 +32,9 @@ class TrackModel(object):
         self._underground = False #if that section of track is underground
         self._onboarding = 0 #number of passengers boarding train
         self._occupancy = False #if block is occupied or not
-        self._track_layout = "" #layout of the track
+        self._filepath = ""  # filepath to block info
+        self._track_layout = block_info(self._filepath) #layout of the track
         self._temperature = 0
-        self._filepath = "" #filepath to block info
         self._track_layout_loaded = 0 #done for track layout
 
         #Failures
@@ -48,15 +48,13 @@ class TrackModel(object):
         self._temperature = 0 #temperature of cabin
 
         #Data from Other Modules
-        self._train_model_signals = trainModelSignal #api from Train Model
         self._track_controller_signals = trackCtrlSignal #api from track controller
+        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
 
         self.update()
 
-    def update(self, thread=False):
-        print("Something")
+    def update(self, thread=True):
         #---- Failure Modes ----#
-
         #broken rail failure
         self.set_broken_rail(bool(self.get_broken_rail()))
 
@@ -82,9 +80,7 @@ class TrackModel(object):
 
         #authority
         self.set_authority(self._track_controller_signals._authority)
-
-        # Send Authority
-        self._train_model_signals.authority = self.get_authority()
+        # self._train_model_signals[1].authority = self.get_authority()
 
         #gate control
         self.set_gate_control(self.get_gate_control())
@@ -109,13 +105,19 @@ class TrackModel(object):
 
         #track layout
         self.set_track_layout(self._filepath)
+        # self._train_model_signals[1].track_info = self.get_track_layout()
 
         #---- Outputs ----#
         #speed limit
         self.set_speed_limit(self.get_speed_limit())
 
         #current block
+        # TODO: Calculate current block based on actual velocity
+        # TODO: Update starting block based on route
         self.set_current_block(self.get_current_block())
+        # self.set_current_block(48) # For testing purposes
+        # 1 is the train id, would need to do this in a for loop for each train
+        # self._train_model_signals[1].current_block = self.get_current_block()
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -141,8 +143,10 @@ class TrackModel(object):
         #occupancy
         self.set_occupancy(self.get_occupancy())
 
-        #track layout
-        self._train_model_signals = self.get_track_layout()
+        #line
+        self.set_line(self._track_controller_signals._line)
+        # self._train_model_signals[1].line = self.get_line()
+
 
         #Enable threading
         if thread:
@@ -181,6 +185,12 @@ class TrackModel(object):
     #         self.set_occupancy(False)           #Occupancy
 
     #---- Getters & Setters ----#
+    #Line
+    def set_line(self, _line: str):
+        self._line = _line
+    def get_line(self) -> str:
+        return self._line
+
     #Filepath
     def set_filepath(self, _filepath: str):
         self._filepath = _filepath
@@ -328,13 +338,12 @@ class TrackModel(object):
     #Track Layout
     def set_track_layout(self, path: str):
         if self._track_layout_loaded == 0 and self._filepath != "":
-            print("here")
             self._track_layout = block_info(filepath=path)
             self._track_layout_loaded = 1
         else:
             self._track_layout = self.get_track_layout()
 
-    def get_track_layout(self) -> str:
+    def get_track_layout(self) -> block_info:
         return self._track_layout
 
     #Broken Rail

@@ -1,0 +1,235 @@
+@startuml classes_ALL
+set namespaceSeparator none
+class "TrainController" as train_controller.TrainController {
+  train_model
+  get_actual_velocity() -> float
+  get_authority() -> float
+  get_auto_status() -> bool
+  get_commanded_power() -> float
+  get_commanded_velocity() -> float
+  get_current_velocity() -> float
+  get_ebrake_status() -> bool
+  get_emergency_brake_failure_status() -> bool
+  get_engine_status() -> bool
+  get_external_lights() -> bool
+  get_internal_lights() -> bool
+  get_ki() -> float
+  get_kp() -> float
+  get_left_door_status() -> bool
+  get_maximum_velocity() -> float
+  get_next_station() -> str
+  get_right_door_status() -> bool
+  get_service_brake_failure_status() -> bool
+  get_service_brake_value() -> float
+  get_signal_pickup_failure() -> bool
+  get_station_status() -> str
+  get_temperature() -> float
+  get_temperature_sp() -> float
+  get_train_line() -> str
+  get_underground_status() -> bool
+  launch_tc_ui()
+  set_authority(a: float)
+  set_auto_status(stat: bool)
+  set_commanded_velocity(v: float)
+  set_current_velocity(c: float)
+  set_eK(desired: int, actual: int)
+  set_ebrake_failure(f: bool)
+  set_emergency_brake_failure(status: bool)
+  set_emergency_brake_status(status: bool)
+  set_engine_status(stat: bool)
+  set_external_lights(status: bool)
+  set_internal_lights(status: bool)
+  set_ki(ki: float)
+  set_kp(kp: float)
+  set_left_door_status(stat: bool)
+  set_maximum_veloctity(max_speed: float)
+  set_next_station(station: str)
+  set_power()
+  set_right_door_status(stat: bool)
+  set_service_brake_failure(stat: bool)
+  set_service_brake_value(value: float)
+  set_signal_pickup_failure_status(status: bool)
+  set_station_status(status: str)
+  set_temperature(temp: float)
+  set_temperature_sp(temp_sp: float)
+  set_train_line(line: str)
+  set_uk(current_ek: float)
+  set_underground_status(stat: bool)
+  update(thread)
+}
+class "Ui_MainWindow" as Train_Controller_Main_Window.Ui_MainWindow {
+  brake_fail_label
+  brake_fail_off
+  brake_fail_on
+  centralwidget
+  checkBox_12
+  checkBox_3
+  checkBox_4
+  checkBox_6
+  checkBox_7
+  commanded_speed_spnbx
+  controls_label
+  controls_label_2
+  controls_label_3
+  controls_label_4
+  doubleSpinBox_2
+  doubleSpinBox_3
+  ebrake_fail_label
+  ebrake_fail_label_2
+  ebrake_fail_off
+  ebrake_fail_off_2
+  ebrake_fail_on
+  ebrake_fail_on_2
+  ebrake_label
+  ebrake_label_2
+  ebrake_label_3
+  ebrake_off
+  ebrake_off_2
+  ebrake_off_3
+  ebrake_on
+  ebrake_on_2
+  ebrake_on_3
+  engine_fail_label
+  engine_fail_off
+  engine_fail_on
+  external_lights_label
+  external_lights_label_10
+  external_lights_label_11
+  external_lights_label_12
+  external_lights_label_13
+  external_lights_label_14
+  external_lights_label_3
+  external_lights_label_4
+  external_lights_label_9
+  external_lights_off
+  external_lights_on
+  failure_mode_label
+  failure_mode_label_2
+  internal_lights_label
+  internal_lights_off
+  internal_lights_on
+  left_door_closed
+  left_door_label
+  left_door_open
+  pushButton
+  pushButton_2
+  right_door_closed
+  right_door_label
+  right_door_open
+  signal_fail_label
+  signal_fail_off
+  signal_fail_on
+  slider
+  temperature
+  temperature_spnbx
+  timer
+  title_label
+  train_controller
+  retranslateUi()
+  setupUi()
+  toggle_buttons()
+  update()
+}
+class "Ui_Test_Bench" as Train_Controller_Test_Bench.Ui_Test_Bench {
+  acc_pwr_edit
+  acc_pwr_edit_2
+  acc_pwr_label
+  acc_pwr_label_2
+  actual_velocity_edit
+  actual_velocity_label
+  authority_edit
+  authority_label
+  brake_fail_label
+  brake_fail_off
+  brake_fail_on
+  calc_btn
+  centralwidget
+  checkBox
+  checkBox_10
+  checkBox_11
+  checkBox_12
+  checkBox_2
+  checkBox_3
+  checkBox_4
+  checkBox_5
+  checkBox_6
+  checkBox_7
+  checkBox_8
+  checkBox_9
+  cmd_pwr_edit
+  cmd_pwr_edit_2
+  cmd_pwr_label
+  cmd_pwr_label_2
+  controls_label
+  controls_label_2
+  controls_label_3
+  doubleSpinBox
+  doubleSpinBox_2
+  doubleSpinBox_3
+  doubleSpinBox_4
+  ebrake_fail_label
+  ebrake_fail_label_2
+  ebrake_fail_off
+  ebrake_fail_off_2
+  ebrake_fail_on
+  ebrake_fail_on_2
+  ebrake_label
+  ebrake_label_2
+  ebrake_label_3
+  ebrake_off
+  ebrake_off_2
+  ebrake_off_3
+  ebrake_on
+  ebrake_on_2
+  ebrake_on_3
+  engine_fail_label
+  engine_fail_off
+  engine_fail_on
+  external_lights_label
+  external_lights_label_10
+  external_lights_label_11
+  external_lights_label_12
+  external_lights_label_13
+  external_lights_label_2
+  external_lights_label_3
+  external_lights_label_4
+  external_lights_label_5
+  external_lights_label_9
+  external_lights_off
+  external_lights_on
+  failure_mode_label
+  failure_mode_label_2
+  internal_lights_label
+  internal_lights_off
+  internal_lights_on
+  left_door_closed
+  left_door_label
+  left_door_open
+  line
+  main_ui_btn
+  pushButton
+  pushButton_2
+  right_door_closed
+  right_door_label
+  right_door_open
+  signal_fail_label
+  signal_fail_off
+  signal_fail_on
+  speed_limit_edit
+  speed_limit_label
+  timer
+  title_label
+  train_controller
+  train_line_edit
+  train_line_label
+  ui
+  window
+  calculate()
+  open_window()
+  retranslateUi(Test_Bench)
+  setupUi(Test_Bench)
+  update()
+}
+Train_Controller_Main_Window.Ui_MainWindow -* Train_Controller_Test_Bench.Ui_Test_Bench : ui
+train_controller.TrainController -o Train_Controller_Test_Bench.Ui_Test_Bench : train_controller
+@enduml

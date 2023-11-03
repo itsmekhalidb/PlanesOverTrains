@@ -6,12 +6,13 @@ class TrainModelTrainControllerAPI:
         ## Track Model Information
         self.line = ""
         self.beacon = ""
-        self.authority = 0
-        self.cmd_speed = 0
+        self.authority = 0.0
+        self.cmd_speed = 0.0
         self.speed_limit = 0
         self.underground = False
         self.station_side = ""
         self.time = 0
+        self.train_ids = {} # keys must be train ids
 
         ## Failure Information
         self.signal_pickup_failure = False

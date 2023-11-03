@@ -1,5 +1,7 @@
+from track_model.block_info import block_info
+
 class TrackModelTrainModelAPI:
-    def __init__(self):
+    def __init__(self) -> None:
         ''' Define variables passed between Train Model and Track Model '''
 
         # From Train Model to Track Model
@@ -9,10 +11,9 @@ class TrackModelTrainModelAPI:
 
         # From Track Model to Train Model
         self.line = ""
-        self.beacon = ""
-        self.authority = 0
-        self.cmd_speed = 0
+        self.authority = 0.0
+        self.cmd_speed = 0.0
         self.time = 0
-        self.red_track_info = {}
-        self.green_track_info = {}
+        self.filepath = ""
+        self.track_info = block_info(self.filepath)
         self.current_block = 0
