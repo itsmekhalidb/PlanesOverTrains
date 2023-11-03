@@ -7,6 +7,7 @@ class CTCTrackControllerAPI:
         self._authority = {} # train id : [[authority] : suggested speed] should rename to train info or something
         self._track_section_status = {'A1': False} # blocks{track status(bool)}
         self._suggested_speed = 0.0 # meters/sec
+        self.commanded_speed = {'A1': 0} # block: commanded speed in m/s
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
 
         # TODO: For train model and train controller managers we need id for each train
