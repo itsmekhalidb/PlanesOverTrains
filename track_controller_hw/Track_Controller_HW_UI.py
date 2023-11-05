@@ -149,17 +149,17 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.manual_mode_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                              "border: 1px solid black;\n"
                                              "")
-        self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
-        self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.manual_mode_label_1.setFont(font)
-        self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                               "border: 1px solid black;\n"
-                                               "")
-        self.manual_mode_label_1.setText("Crossing Lights")
+        #self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
+        #self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
+        #font = QtGui.QFont()
+        #font.setPointSize(10)
+        #font.setBold(True)
+        #font.setWeight(75)
+        #self.manual_mode_label_1.setFont(font)
+        #self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+         #                                      "border: 1px solid black;\n"
+         #                                      "")
+        #self.manual_mode_label_1.setText("Crossing Lights")
         self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.manual_mode_label.setObjectName("manual_mode_label")
         self.manual_mode_off = QtWidgets.QLabel(self.centralwidget)
@@ -227,6 +227,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.show_ard_switch.setGeometry(QtCore.QRect(600, 490, 93, 28))
         self.show_ard_switch.setObjectName("show_ard")
         self.show_ard_switch.setText("Change Switch")
+        """
         self.command_spin = QtWidgets.QSpinBox(self,
                                                valueChanged=lambda: self.track_controller_hw.set_commanded_speed(
                                                    self.command_spin.value()))
@@ -243,6 +244,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.command_drop = QtWidgets.QComboBox(self.centralwidget)
         self.command_drop.setGeometry(QtCore.QRect(100, 490, 61, 25))
         self.command_drop.setObjectName("command_drop")
+        """
         self.plc_output = QtWidgets.QListWidget(self.centralwidget)
         self.plc_output.setGeometry(QtCore.QRect(520, 190, 191, 261))
         self.plc_output.setObjectName("plc_output")
@@ -372,31 +374,32 @@ class Ui_track_controller_mainwindow(QMainWindow):
             for i in self.track_controller_hw.get_blue_track():
                 self.select_output.addItem(i)
             self.change = False
-
+        """
         if self.wayside_select.currentText() == "Green" and not self.change:
             self.select_output.clear()
             for i in range(55, 121):
                 self.select_output.addItem(self.track_controller_hw.get_green_track())
             self.change = True
+        """
 
         self.occupancy_display.clear()
         self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
 
         self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
 
-        self.command_drop.setVisible(False)
+        #self.command_drop.setVisible(False)
 
         if not self.track_controller_hw.get_automatic():
             self.show_ard_light.setVisible(True)
             self.show_ard_switch.setVisible(True)
-            self.command_label.setVisible(True)
-            self.command_spin.setVisible(True)
+            #self.command_label.setVisible(True)
+            #self.command_spin.setVisible(True)
             # self.command_drop.setVisible(True)
         else:
             self.show_ard_light.setVisible(False)
             self.show_ard_switch.setVisible(False)
-            self.command_label.setVisible(False)
-            self.command_spin.setVisible(False)
+            #self.command_label.setVisible(False)
+            #self.command_spin.setVisible(False)
             self.track_controller_hw.set_commanded_speed(self.command_spin.value())
 
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))

@@ -37,7 +37,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
 
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         self._broken_rail = False  # ebrake failure
@@ -70,10 +70,10 @@ class Track_Controller_HW(object):
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
 
         # Track Model Inputs
-        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
-        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
-        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
-        self.set_power_failure(self.track_ctrl_signals._power_failure)
+#        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
+#        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
+#        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
+#        self.set_power_failure(self.track_ctrl_signals._power_failure)
         self.set_blue_track(self.track_ctrl_signals._blue)
         # wait until we have things connected to mess around with this
         # self.set_blue_track(self.track_ctrl_signals._green)
