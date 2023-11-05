@@ -42,6 +42,7 @@ class Ui_Test_Bench(object):
         self.light_red_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(0))
         self.light_red_button.setGeometry(QtCore.QRect(10, 290, 93, 28))
         self.light_red_button.setObjectName("light_red_button")
+        """
         self.broken_label_on = QtWidgets.QLabel(self.centralwidget)
         self.broken_label_on.setEnabled(True)
         self.broken_label_on.setGeometry(QtCore.QRect(540, 108, 25, 21))
@@ -91,6 +92,7 @@ class Ui_Test_Bench(object):
         self.train_engine_failure_label.setAlignment(
             QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.train_engine_failure_label.setObjectName("train_engine_failure_label")
+        """
         self.block_drop = QtWidgets.QComboBox(self.centralwidget)
         self.block_drop.setGeometry(QtCore.QRect(10, 100, 231, 25))
         self.block_drop.setEditable(True)
@@ -119,6 +121,7 @@ class Ui_Test_Bench(object):
         self.light_select_drop.addItem("")
         self.light_select_drop.addItem("")
         self.light_select_drop.setItemText(3, "")
+        """
         self.broken_rail_label = QtWidgets.QLabel(self.centralwidget)
         self.broken_rail_label.setGeometry(QtCore.QRect(325, 104, 241, 27))
         font = QtGui.QFont()
@@ -155,6 +158,7 @@ class Ui_Test_Bench(object):
                                                     "background-color: rgb(170, 0, 0);")
         self.train_engine_failure_off.setAlignment(QtCore.Qt.AlignCenter)
         self.train_engine_failure_off.setObjectName("train_engine_failure_off")
+        """
         self.track_status_drop = QtWidgets.QComboBox(self.centralwidget)
         self.track_status_drop.setGeometry(QtCore.QRect(240, 460, 91, 25))
         self.track_status_drop.setEditable(True)
@@ -211,6 +215,7 @@ class Ui_Test_Bench(object):
                                                  "")
         self.suggested_speed_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.suggested_speed_label.setObjectName("suggested_speed_label")
+        """
         self.broken_label_off = QtWidgets.QLabel(self.centralwidget)
         self.broken_label_off.setEnabled(True)
         self.broken_label_off.setGeometry(QtCore.QRect(510, 108, 31, 21))
@@ -239,6 +244,7 @@ class Ui_Test_Bench(object):
         self.train_engine_failure_check.setEnabled(True)
         self.train_engine_failure_check.setGeometry(QtCore.QRect(570, 200, 14, 15))
         self.train_engine_failure_check.setObjectName("train_engine_failure_check")
+        """
         self.ctc_label = QtWidgets.QLabel(self.centralwidget)
         self.ctc_label.setGeometry(QtCore.QRect(10, 340, 571, 27))
         font = QtGui.QFont()
@@ -266,13 +272,14 @@ class Ui_Test_Bench(object):
                                                  "")
         self.selected_output_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.selected_output_label.setObjectName("selected_output_label")
+        self.light_green_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(1))
+        self.light_green_button.setGeometry(QtCore.QRect(110, 290, 93, 28))
+        self.light_green_button.setObjectName("light_green_button")
+        """
         self.broken_rail_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.broken_rail_check.setEnabled(True)
         self.broken_rail_check.setGeometry(QtCore.QRect(570, 110, 14, 15))
         self.broken_rail_check.setObjectName("broken_rail_check")
-        self.light_green_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_light(1))
-        self.light_green_button.setGeometry(QtCore.QRect(110, 290, 93, 28))
-        self.light_green_button.setObjectName("light_green_button")
         self.circuit_failure_on = QtWidgets.QLabel(self.centralwidget)
         self.circuit_failure_on.setEnabled(True)
         self.circuit_failure_on.setGeometry(QtCore.QRect(540, 140, 25, 21))
@@ -285,6 +292,7 @@ class Ui_Test_Bench(object):
                                               "background-color: rgb(0, 170, 0);")
         self.circuit_failure_on.setAlignment(QtCore.Qt.AlignCenter)
         self.circuit_failure_on.setObjectName("circuit_failure_on")
+        """
         self.change_switch_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_switch())
         self.change_switch_button.setGeometry(QtCore.QRect(10, 210, 131, 31))
         self.change_switch_button.setObjectName("change_switch_button")
@@ -299,10 +307,12 @@ class Ui_Test_Bench(object):
         self.change_occupancy_button = QtWidgets.QPushButton(test_bench, clicked=lambda: self.change_occupancy())
         self.change_occupancy_button.setGeometry(QtCore.QRect(10, 130, 161, 31))
         self.change_occupancy_button.setObjectName("change_occupancy_button")
+        """
         self.circuit_failure_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.circuit_failure_check.setEnabled(True)
         self.circuit_failure_check.setGeometry(QtCore.QRect(570, 142, 14, 15))
         self.circuit_failure_check.setObjectName("circuit_failure_check")
+        """
         self.track_status_label = QtWidgets.QLabel(self.centralwidget)
         self.track_status_label.setGeometry(QtCore.QRect(20, 460, 198, 27))
         font = QtGui.QFont()
@@ -315,6 +325,7 @@ class Ui_Test_Bench(object):
                                               "")
         self.track_status_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.track_status_label.setObjectName("track_status_label")
+        """
         self.circuit_failure_off = QtWidgets.QLabel(self.centralwidget)
         self.circuit_failure_off.setEnabled(True)
         self.circuit_failure_off.setGeometry(QtCore.QRect(510, 140, 31, 21))
@@ -339,6 +350,7 @@ class Ui_Test_Bench(object):
                                                    "background-color: rgb(0, 170, 0);")
         self.train_engine_failure_on.setAlignment(QtCore.Qt.AlignCenter)
         self.train_engine_failure_on.setObjectName("train_engine_failure_on")
+        """
         self.track_model_label = QtWidgets.QLabel(self.centralwidget)
         self.track_model_label.setGeometry(QtCore.QRect(10, 60, 571, 27))
         font = QtGui.QFont()
@@ -351,6 +363,7 @@ class Ui_Test_Bench(object):
                                              "")
         self.track_model_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.track_model_label.setObjectName("track_model_label")
+        """
         self.power_failure_check = QtWidgets.QCheckBox(test_bench, stateChanged=lambda:self.change_occupancy())
         self.power_failure_check.setEnabled(True)
         self.power_failure_check.setGeometry(QtCore.QRect(570, 172, 14, 15))
@@ -367,17 +380,19 @@ class Ui_Test_Bench(object):
                                              "background-color: rgb(170, 0, 0);")
         self.power_failure_off.setAlignment(QtCore.Qt.AlignCenter)
         self.power_failure_off.setObjectName("power_failure_off")
+        """
+        print("0")
         test_bench.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(test_bench)
         self.statusbar.setObjectName("statusbar")
         test_bench.setStatusBar(self.statusbar)
 
-        self.broken_rail_label.lower()
-        self.power_failure_label.lower()
+        #self.broken_rail_label.lower()
+        #self.power_failure_label.lower()
 
         self.retranslateUi(test_bench)
         QtCore.QMetaObject.connectSlotsByName(test_bench)
-        self.ebrake_fail_on.setVisible(False)
+        #self.ebrake_fail_on.setVisible(False)
         self.block_drop.clear()
         self.switch_drop.clear()
         self.light_select_drop.clear()
@@ -438,17 +453,18 @@ class Ui_Test_Bench(object):
 
     def update(self):
 
-        self.broken_label_off.setVisible(not bool(self.broken_rail_check.checkState()))
-        self.broken_label_on.setVisible(bool(self.broken_rail_check.checkState()))
+        #self.broken_label_off.setVisible(not bool(self.broken_rail_check.checkState()))
+        #self.broken_label_on.setVisible(bool(self.broken_rail_check.checkState()))
 
-        self.circuit_failure_off.setVisible(not bool(self.circuit_failure_check.checkState()))
-        self.circuit_failure_on.setVisible(bool(self.circuit_failure_check.checkState()))
+        #self.circuit_failure_off.setVisible(not bool(self.circuit_failure_check.checkState()))
+        #self.circuit_failure_on.setVisible(bool(self.circuit_failure_check.checkState()))
 
-        self.power_failure_off.setVisible(not bool(self.power_failure_check.checkState()))
-        self.power_failure_on.setVisible(bool(self.power_failure_check.checkState()))
+        #self.power_failure_off.setVisible(not bool(self.power_failure_check.checkState()))
+        #self.power_failure_on.setVisible(bool(self.power_failure_check.checkState()))
 
-        self.train_engine_failure_off.setVisible(not bool(self.train_engine_failure_check.checkState()))
-        self.train_engine_failure_on.setVisible(bool(self.train_engine_failure_check.checkState()))
+        #self.train_engine_failure_off.setVisible(not bool(self.train_engine_failure_check.checkState()))
+        #self.train_engine_failure_on.setVisible(bool(self.train_engine_failure_check.checkState()))
+        print("1")
 
         try:
             self.track_controller_hw.set_suggested_speed(float(self.suggested_soeed_input.text()))
@@ -470,10 +486,10 @@ class Ui_Test_Bench(object):
         self.maintence_mode_button.setText(_translate("MainWindow", "Toggle Maintance Mode"))
         self.title_label_2.setText(_translate("MainWindow", "Testbench"))
         self.light_red_button.setText(_translate("MainWindow", "Red"))
-        self.broken_label_on.setText(_translate("MainWindow", "ON"))
-        self.ebrake_fail_on.setText(_translate("MainWindow", "ON"))
-        self.power_failure_on.setText(_translate("MainWindow", "ON"))
-        self.train_engine_failure_label.setText(_translate("MainWindow", "Train Engine Failure"))
+        #self.broken_label_on.setText(_translate("MainWindow", "ON"))
+        #self.ebrake_fail_on.setText(_translate("MainWindow", "ON"))
+        #self.power_failure_on.setText(_translate("MainWindow", "ON"))
+        #self.train_engine_failure_label.setText(_translate("MainWindow", "Train Engine Failure"))
         self.block_drop.setItemText(0, _translate("MainWindow", "B-A1"))
         self.block_drop.setItemText(1, _translate("MainWindow", "B-A2"))
         self.block_drop.setItemText(2, _translate("MainWindow", "B-A3"))
@@ -492,9 +508,9 @@ class Ui_Test_Bench(object):
         self.light_select_drop.setItemText(0, _translate("MainWindow", "B-A5"))
         self.light_select_drop.setItemText(1, _translate("MainWindow", "B-C11"))
         self.light_select_drop.setItemText(2, _translate("MainWindow", "B-B6"))
-        self.broken_rail_label.setText(_translate("MainWindow", "Broken Rail"))
-        self.circuit_failure_label.setText(_translate("MainWindow", "Circuit Failure"))
-        self.train_engine_failure_off.setText(_translate("MainWindow", "OFF"))
+        #self.broken_rail_label.setText(_translate("MainWindow", "Broken Rail"))
+        #self.circuit_failure_label.setText(_translate("MainWindow", "Circuit Failure"))
+        #self.train_engine_failure_off.setText(_translate("MainWindow", "OFF"))
         self.track_status_drop.setItemText(0, _translate("MainWindow", "B-A1"))
         self.track_status_drop.setItemText(1, _translate("MainWindow", "B-A2"))
         self.track_status_drop.setItemText(2, _translate("MainWindow", "B-A3"))
@@ -513,24 +529,24 @@ class Ui_Test_Bench(object):
         self.authoriy_label.setText(_translate("MainWindow", "Authority"))
         self.switch_drop.setItemText(0, _translate("MainWindow", "B-A5"))
         self.suggested_speed_label.setText(_translate("MainWindow", "Suggested Speed"))
-        self.broken_label_off.setText(_translate("MainWindow", "OFF"))
-        self.power_failure_label.setText(_translate("MainWindow", "Power Failure"))
-        self.train_engine_failure_check.setText(_translate("MainWindow", "Manual Mode"))
+        #self.broken_label_off.setText(_translate("MainWindow", "OFF"))
+        #self.power_failure_label.setText(_translate("MainWindow", "Power Failure"))
+        #self.train_engine_failure_check.setText(_translate("MainWindow", "Manual Mode"))
         self.ctc_label.setText(_translate("MainWindow", "CTC Office Inputs"))
         self.super_green_light_button.setText(_translate("MainWindow", "Super Green"))
         self.selected_output_label.setText(_translate("MainWindow", "Enter Speed Limit"))
-        self.broken_rail_check.setText(_translate("MainWindow", "Manual Mode"))
+        #self.broken_rail_check.setText(_translate("MainWindow", "Manual Mode"))
         self.light_green_button.setText(_translate("MainWindow", "Green"))
-        self.circuit_failure_on.setText(_translate("MainWindow", "ON"))
+        #self.circuit_failure_on.setText(_translate("MainWindow", "ON"))
         self.change_switch_button.setText(_translate("MainWindow", "Change Switch"))
         self.change_occupancy_button.setText(_translate("MainWindow", "Change Occupancy"))
-        self.circuit_failure_check.setText(_translate("MainWindow", "Manual Mode"))
+        #self.circuit_failure_check.setText(_translate("MainWindow", "Manual Mode"))
         self.track_status_label.setText(_translate("MainWindow", "Track Status"))
-        self.circuit_failure_off.setText(_translate("MainWindow", "OFF"))
-        self.train_engine_failure_on.setText(_translate("MainWindow", "ON"))
+        #self.circuit_failure_off.setText(_translate("MainWindow", "OFF"))
+        #self.train_engine_failure_on.setText(_translate("MainWindow", "ON"))
         self.track_model_label.setText(_translate("MainWindow", "Track Model Inputs"))
-        self.power_failure_check.setText(_translate("MainWindow", "Manual Mode"))
-        self.power_failure_off.setText(_translate("MainWindow", "OFF"))
+        #self.power_failure_check.setText(_translate("MainWindow", "Manual Mode"))
+        #self.power_failure_off.setText(_translate("MainWindow", "OFF"))
 
 
 if __name__ == "__main__":

@@ -5,6 +5,8 @@
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
 
+
+
 const int LIGHTNUMBER = 9;
 const int SWITCHNUMBER = 3;
 
@@ -134,7 +136,9 @@ void setup() {
 
   Light lights[LIGHTNUMBER];
   Switch switches[SWITCHNUMBER];
+  lights[0].name = 
 }
+
 
 void loop() {
   lcd1.init();

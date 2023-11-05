@@ -27,7 +27,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
     def __init__(self, track_controller_hw: Track_Controller_HW) -> None:
         super().__init__()
         self.track_controller_hw = track_controller_hw
-        # self.blue_line_plc = File_Parser("")
+        self.blue_line_plc = File_Parser("")
         # self._light = False
         # self._switch = False
         # self._command = False
@@ -369,6 +369,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.plc_output.clear()
 
+
+
         if self.wayside_select.currentText() == "Blue" and self.change:
             self.select_output.clear()
             for i in self.track_controller_hw.get_blue_track():
@@ -400,7 +402,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
             self.show_ard_switch.setVisible(False)
             #self.command_label.setVisible(False)
             #self.command_spin.setVisible(False)
-            self.track_controller_hw.set_commanded_speed(self.command_spin.value())
+            #self.track_controller_hw.set_commanded_speed(self.command_spin.value())
 
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
         # label visibility

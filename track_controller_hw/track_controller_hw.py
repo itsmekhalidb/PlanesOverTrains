@@ -40,15 +40,17 @@ class Track_Controller_HW(object):
         self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
-        self._broken_rail = False  # ebrake failure
-        self._engine_failure = False  # train engine failure
-        self._circuit_failure = False  # service brake failure
-        self._power_failure = False  # signal pickup failure
+       # self._broken_rail = False  # ebrake failure
+       # self._engine_failure = False  # train engine failure
+        #self._circuit_failure = False  # service brake failure
+       # self._power_failure = False  # signal pickup failure
         self._authority = 0
+        self._authority_blocks = {}
+        self._suggested_speed_blocks = {}
         self._suggested_speed = 0
-        self._test_speed_limit = 0
+        #self._test_speed_limit = 0
         self._track_status = False
-        self._passengers = 0
+       # self._passengers = 0
 
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
@@ -65,9 +67,12 @@ class Track_Controller_HW(object):
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
         self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
+
         # CTC Office Outputs
         self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+
+
 
         # Track Model Inputs
 #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
@@ -82,6 +87,11 @@ class Track_Controller_HW(object):
         # Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        for i in self.ctc_ctrl_signals._train_info:
+            self._suggested_speed_blocks.clear()
+            self._suggested_speed_blocks[i] = self.ctc_ctrl_signals._train_info[i][1]
+            self._authority_blocks.clear()
+            self._authority_blocks[i] = self.ctc_ctrl_signals._train_info[i][2]
         # for i in self._lights.keys():
         #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
         # for i in self._switches.keys():
@@ -128,6 +138,18 @@ class Track_Controller_HW(object):
         send_string += "00"
         self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
+
+    def get_authority_blocks(self):
+        return self._authority_blocks
+
+    def set_authority_blocks(self, train: str, value: float):
+        self._authority_blocks[train] = value
+
+    def get_suggested_speed_blocks(self):
+        return self._suggested_speed_blocks
+
+    def set_suggested_speed_blocks(self, train: str, value: float):
+        self._suggested_speed_blocks[train] = value
 
     def get_ard(self):
         return self._ard
@@ -232,7 +254,7 @@ class Track_Controller_HW(object):
 
     def get_suggested_speed(self) -> float:
         return self._suggested_speed
-
+    """
     def set_test_speed_limit(self, _test_speed_limit: float):
         self._test_speed_limit = _test_speed_limit
 
@@ -262,6 +284,7 @@ class Track_Controller_HW(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+    """
 
     def PLC(self):  # have not tested this yet
         for i in range(len(self.blue_line_plc.get_block_number())):
