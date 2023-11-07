@@ -43,7 +43,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
 
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -102,10 +102,10 @@ class Track_Controller_HW(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
-        #self.receive()
+        # self.receive()
 
         if self.get_automatic() and self.get_plc_set():
-            print("Here")
+            print("get plc = true and automatic = true")
             self.get_plc()
 
         if thread:
@@ -157,7 +157,7 @@ class Track_Controller_HW(object):
         else:
             send_string += "00"
         send_string += "00"
-        #self.get_ard().write(send_string.encode('utf-8'))
+        # self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
 
     def get_plc_set(self):
@@ -171,6 +171,7 @@ class Track_Controller_HW(object):
 
     def get_blue_plc(self):
         return self.blue_line_plc
+
     def get_authority_blocks(self):
         return self._authority_blocks
 
@@ -239,9 +240,9 @@ class Track_Controller_HW(object):
         return self._blue[block][2]
 
     def get_plc(self):  # have not tested this yet
-        print("PLC")
+        print("In plc function")
         if self.blue_line_plc.parse():
-            print(self.blue_line_plc.get_block_occupancy())
+            print("parse = true")
         """
             for i in range(len(self.blue_line_plc.get_block_number())):
                 block_number = self.blue_line_plc.get_block_number()[i]

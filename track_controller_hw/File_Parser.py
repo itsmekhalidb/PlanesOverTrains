@@ -23,7 +23,10 @@ class File_Parser():
 
     def parse(self) -> bool:
         f = open(self.get_path(), "r")
+        i = 0
         for line in f:
+            i += 1
+            print("More" + str(i))
             words = line.split()
             print(words)
             if words[0] != 'IF':
