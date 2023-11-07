@@ -1,0 +1,14 @@
+#Switch D13-A1/C12
+IF not (D13 or A1) or D13 THEN D13
+
+#Light D13
+IF (A1 and not (D13)) or (C12 and D13) THEN D13
+
+#Light A1
+(D13) => A1
+
+IF !block 63 THEN !switch 63
+IF block 0 THEN green 45
+IF !block 0 THEN red 45
+IF block 12 THEN !switch 45
+If switch 23 THEN green 0

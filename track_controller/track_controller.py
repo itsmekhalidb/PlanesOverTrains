@@ -39,10 +39,12 @@ class Track_Controller(object):
         #api signals
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
+        try:
+            self.update()
+        except:
+            print("Can't update")
 
-        self.update()
-
-    def update(self, thread=False):
+    def update(self, thread=True):
         #Interal inputs
         self.set_commanded_speed(self.get_commanded_speed())
 
@@ -86,7 +88,7 @@ class Track_Controller(object):
     def set_track_section_status(self, block):
         self._track_status = block
         for i in block.keys():
-            self._blue[i][2] = block[i]
+            self._blue[i][2] = int(block[i])
 
     def get_blue_track(self) -> dict:
         return self._blue
@@ -192,6 +194,9 @@ class Track_Controller(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+
+    def set_railway_crossing(self, crossing, _crossing_lights_gates: int):
+        self._crossing_lights_gates[crossing] = _crossing_lights_gates
 
     def get_railway_crossing(self, crossing):
         return self._crossing_lights_gates[crossing]
