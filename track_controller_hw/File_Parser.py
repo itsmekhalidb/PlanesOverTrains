@@ -21,21 +21,24 @@ class File_Parser():
     def get_path(self) -> str:
         return self._path
 
-    def parse(self):
+    def parse(self) -> bool:
         f = open(self.get_path(), "r")
         for line in f:
             words = line.split()
             print(words)
             if words[0] != 'IF':
                 print("Incorrect PLC Format - IF")
+                return False
             self._block_occupancy.append(words[1])
             self._block_number.append(words[2])
             if words[3] != 'THEN':
                 print("Incorrect PLC Format - THEN")
+                return False
             self._operations.append(words[4])
             self._operations_number.append(words[5])
 
         f.close()
+        return True
 
 """
 jes = File_Parser('traPLCFile.txt')

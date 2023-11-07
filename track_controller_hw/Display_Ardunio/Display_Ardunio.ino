@@ -5,7 +5,14 @@
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
 
+int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
+int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 const int LIGHTNUMBER = 9;
 const int SWITCHNUMBER = 3;
@@ -25,6 +32,10 @@ struct Switch{
   String name;
   int value;
 };
+
+void transmit(){
+  Serial.print("Hello");
+}
 
 
 void Receiver() {
@@ -134,9 +145,6 @@ void setup() {
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
 
-  Light lights[LIGHTNUMBER];
-  Switch switches[SWITCHNUMBER];
-  lights[0].name = 
 }
 
 
@@ -144,4 +152,6 @@ void loop() {
   lcd1.init();
   lcd1.backlight();
   Receiver();
-  delay(500);
+  transmit();
+  delay(250);
+}

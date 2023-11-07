@@ -27,7 +27,6 @@ class Ui_track_controller_mainwindow(QMainWindow):
     def __init__(self, track_controller_hw: Track_Controller_HW) -> None:
         super().__init__()
         self.track_controller_hw = track_controller_hw
-        self.blue_line_plc = File_Parser("")
         # self._light = False
         # self._switch = False
         # self._command = False
@@ -81,7 +80,9 @@ class Ui_track_controller_mainwindow(QMainWindow):
         browse = QFileDialog.getOpenFileName(self.load_plc_button)
         print(browse[0])
         data = File_Parser(browse[0])
-        self.blue_line_plc = data
+        self.track_controller_hw.set_blue_plc(data)
+        self.track_controller_hw.set_plc_set(True)
+        print("Test End")
 
     def setupUi(self):
         self.setObjectName("track_controller_mainwindow")
@@ -409,20 +410,13 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.manual_mode_off.setVisible(not bool(self.manual_mode_check.checkState()))
         self.manual_mode_on.setVisible(bool(self.manual_mode_check.checkState()))
 
-        if self.track_controller_hw.get_automatic():
-            print("PLC")
-        #    self.PLC()
 
         try:
-            if self.select_output.currentItem().text() == "Hello":
-                print("Value is None")
-            else:
-                block_number = self.select_output.currentItem().text()
-                self.selected_output.setText(block_number)
-                if self.get_previous_show() != block_number:
-                    self.set_previous_show(block_number)
-                    self.track_controller_hw.send_update(block_number)
-
+            block_number = self.select_output.currentItem().text()
+            self.selected_output.setText(block_number)
+            if self.get_previous_show() != block_number:
+                self.set_previous_show(block_number)
+                self.track_controller_hw.send_update(block_number)
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
@@ -579,83 +573,6 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
         self.sys_time_label.setText(_translate("self", "13:24:55"))
 
-    def PLC(self):  # have not tested this yet
-        for i in range(len(self.blue_line_plc.get_block_number())):
-            block_number = self.blue_line_plc.get_block_number()[i]
-            block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
-            operation = self.blue_line_plc.get_operations()[i]
-            operation_number = self.blue_line_plc.get_operations_number()[i]
-            if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
-                    (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
-                if operation == 'switch':
-                    self.track_controller_hw.set_switch(1, operation_number)
-                elif operation == '!switch':
-                    self.track_controller_hw.set_switch(0, operation_number)
-                elif operation == "green":
-                    self.track_controller_hw.set_lights(1, operation_number)
-                elif operation == "red":
-                    self.track_controller_hw.set_lights(0, operation_number)
-
-        """""
-        self.track_controller_hw.set_commanded_speed(
-            min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
-
-        self.sect_A_occ = bool(self.track_controller_hw.get_occupancy('B-A1') or self.track_controller_hw.get_occupancy(
-            'B-A2') or self.track_controller_hw.get_occupancy('B-A3') or self.track_controller_hw.get_occupancy(
-            'B-A4') or self.track_controller_hw.get_occupancy('B-A5'))
-        self.sect_B_occ = bool(self.track_controller_hw.get_occupancy('B-B6') or self.track_controller_hw.get_occupancy(
-            'B-B7') or self.track_controller_hw.get_occupancy('B-B8') or self.track_controller_hw.get_occupancy(
-            'B-B9') or self.track_controller_hw.get_occupancy('B-B10'))
-        self.sect_C_occ = bool(
-            self.track_controller_hw.get_occupancy('B-C11') or self.track_controller_hw.get_occupancy(
-                'B-C12') or self.track_controller_hw.get_occupancy('B-C13') or self.track_controller_hw.get_occupancy(
-                'B-C14') or self.track_controller_hw.get_occupancy('B-C15'))
-        if self.sect_A_occ:
-            self.plc_output.addItem("Train detected in section A")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(1, 'Light B-B6')
-            self.track_controller_hw.set_lights(1, 'Light C-C11')
-            if self.sect_B_occ:
-                self.plc_output.addItem("Train detected in section B")
-                self.track_controller_hw.set_lights(0, 'Light B-A5', )
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light B-C11')
-                self.track_controller_hw.set_switch(1, 'Switch BC-A')
-                self.plc_output.addItem("Stopping traffic from track section B")
-                self.plc_output.addItem("Switching to track section C")
-            elif self.sect_C_occ:
-                self.plc_output.addItem("Train detected in section C")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light B-C11')
-                self.track_controller_hw.set_switch(0, 'Switch BC-A')
-                self.plc_output.addItem("Stopping traffic from track section C")
-                self.plc_output.addItem("Switching to track section B")
-            else:
-                self.plc_output.addItem("Stopping traffic from track sections B and C")
-                self.plc_output.addItem("Switching to track section B")
-        elif self.sect_B_occ:
-            self.plc_output.addItem("Train detected in section B")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(1, 'Light B-B6')
-            self.track_controller_hw.set_lights(0, 'Light B-C11')
-            self.track_controller_hw.set_switch(0, 'Light BC-A')
-            self.plc_output.addItem("Stopping traffic from track sections A and C")
-            self.plc_output.addItem("Switching to track section B")
-        elif self.sect_C_occ:
-            self.plc_output.addItem("Train detected in section C")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(0, 'Light B-B6')
-            self.track_controller_hw.set_lights(1, 'Light B-C11')
-            self.track_controller_hw.set_switch(1, 'Switch BC-A')
-            self.plc_output.addItem("Stopping traffic from track sections A and B")
-            self.plc_output.addItem("Switching to track section C")
-        else:
-            self.plc_output.addItem("No trains on the track")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(0, 'Light B-B6')
-            self.track_controller_hw.set_lights(0, 'Light B-C11')
-"""
 
 
 if __name__ == "__main__":

@@ -1,9 +1,11 @@
+import threading
 import traceback
 
 import serial
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+from track_controller_hw.File_Parser import File_Parser
 
 
 class Track_Controller_HW(object):
@@ -18,6 +20,10 @@ class Track_Controller_HW(object):
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
         self._green = {}
 
+        self.blue_line_plc = File_Parser("")
+
+        self._plc_set = False
+
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
         self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
@@ -28,7 +34,7 @@ class Track_Controller_HW(object):
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
-        self._automatic = False
+        self._automatic = True
         # commanded speed is speed limit - occupancy
         self._command_speed = 0  # {'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
         # 'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
@@ -37,20 +43,20 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
 
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
-       # self._broken_rail = False  # ebrake failure
-       # self._engine_failure = False  # train engine failure
-        #self._circuit_failure = False  # service brake failure
-       # self._power_failure = False  # signal pickup failure
+        # self._broken_rail = False  # ebrake failure
+        # self._engine_failure = False  # train engine failure
+        # self._circuit_failure = False  # service brake failure
+        # self._power_failure = False  # signal pickup failure
         self._authority = 0
         self._authority_blocks = {}
         self._suggested_speed_blocks = {}
         self._suggested_speed = 0
-        #self._test_speed_limit = 0
+        # self._test_speed_limit = 0
         self._track_status = False
-       # self._passengers = 0
+        # self._passengers = 0
 
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
@@ -58,7 +64,7 @@ class Track_Controller_HW(object):
         self.update()
 
     # Variables
-    def update(self, thread=False):
+    def update(self, thread=True):
         # Interal inputs
         self.set_commanded_speed(self.get_commanded_speed())
 
@@ -67,18 +73,15 @@ class Track_Controller_HW(object):
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
         self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
-
         # CTC Office Outputs
-        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
+        #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
 
-
-
         # Track Model Inputs
-#        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
-#        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
-#        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
-#        self.set_power_failure(self.track_ctrl_signals._power_failure)
+        #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
+        #        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
+        #        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
+        #        self.set_power_failure(self.track_ctrl_signals._power_failure)
         self.set_blue_track(self.track_ctrl_signals._blue)
         # wait until we have things connected to mess around with this
         # self.set_blue_track(self.track_ctrl_signals._green)
@@ -99,12 +102,30 @@ class Track_Controller_HW(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
+        #self.receive()
 
-    def get_passengers(self):
-        return self._passengers
+        if self.get_automatic() and self.get_plc_set():
+            print("Here")
+            self.get_plc()
+
+        if thread:
+            threading.Timer(0.1, self.update).start()
+
+    #   def get_passengers(self):
+    #       return self._passengers
 
     def get_train_id(self):
         return self._train_ids
+
+    def receive(self):
+        try:
+            if self.get_ard().inWaiting() > 0:
+                data_bytes = self.get_ard().readline()
+                data_str = data_bytes.decode('utf-8').strip()
+                print(data_str)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
 
     def send_update(self, block_number: str):
         send_string = "1"
@@ -136,9 +157,20 @@ class Track_Controller_HW(object):
         else:
             send_string += "00"
         send_string += "00"
-        self.get_ard().write(send_string.encode('utf-8'))
+        #self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
 
+    def get_plc_set(self):
+        return self._plc_set
+
+    def set_plc_set(self, set_bool: bool):
+        self._plc_set = set_bool
+
+    def set_blue_plc(self, plc):
+        self.blue_line_plc = plc
+
+    def get_blue_plc(self):
+        return self.blue_line_plc
     def get_authority_blocks(self):
         return self._authority_blocks
 
@@ -206,102 +238,27 @@ class Track_Controller_HW(object):
     def get_occupancy(self, block) -> int:
         return self._blue[block][2]
 
-    def get_speed_limit(self, block) -> float:
-        return self._blue[block][1]
-
-    def set_speed_limit(self, block, value: float):
-        self._blue[block][1] = value
-
-    def get_switch_list(self) -> dict:
-        return self._switches
-
-    def get_switch(self, switch) -> int:
-        return self._switches[switch]
-
-    def set_switch(self, value: int, switch: str):
-        self._switches[switch] = value
-
-    def get_light_list(self) -> dict:
-        return self._lights
-
-    def get_lights(self, light) -> int:
-        return self._lights[light]
-
-    def set_lights(self, value: int, light: str):
-        self._lights[light] = value
-
-    def get_automatic(self) -> bool:
-        return self._automatic
-
-    def set_automatic(self, auto: bool):
-        self._automatic = auto
-
-    def get_commanded_speed(self) -> float:
-        return self._command_speed
-
-    def set_commanded_speed(self, speed: float):
-        self._command_speed = speed
-
-    # Testbench
-    def set_authority(self, _authoirty: float):
-        self._authority = _authoirty
-
-    def get_authority(self) -> float:
-        return self._authority
-
-    def set_suggested_speed(self, _suggested_speed: float):
-        self._suggested_speed = _suggested_speed
-
-    def get_suggested_speed(self) -> float:
-        return self._suggested_speed
-    """
-    def set_test_speed_limit(self, _test_speed_limit: float):
-        self._test_speed_limit = _test_speed_limit
-
-    def get_test_speed_limit(self) -> float:
-        return self._test_speed_limit
-
-    def set_broken_rail(self, _broken_rail: bool):
-        self._broken_rail = _broken_rail
-
-    def get_broken_rail(self) -> bool:
-        return self._broken_rail
-
-    def set_engine_failure(self, _engine_failure: bool):
-        self._engine_failure = _engine_failure
-
-    def get_engine_failure(self) -> bool:
-        return self._engine_failure
-
-    def set_circuit_failure(self, _circuit_failure: bool):
-        self._circuit_failure = _circuit_failure
-
-    def get_circuit_failure(self) -> bool:
-        return self._circuit_failure
-
-    def set_power_failure(self, _power_failure: bool):
-        self._power_failure = _power_failure
-
-    def get_power_failure(self) -> bool:
-        return self._power_failure
-    """
-
-    def PLC(self):  # have not tested this yet
-        for i in range(len(self.blue_line_plc.get_block_number())):
-            block_number = self.blue_line_plc.get_block_number()[i]
-            block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
-            operation = self.blue_line_plc.get_operations()[i]
-            operation_number = self.blue_line_plc.get_operations_number()[i]
-            if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
-                    (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
-                if operation == 'switch':
-                    self.track_controller_hw.set_switch(1, operation_number)
-                elif operation == '!switch':
-                    self.track_controller_hw.set_switch(0, operation_number)
-                elif operation == "green":
-                    self.track_controller_hw.set_lights(1, operation_number)
-                elif operation == "red":
-                    self.track_controller_hw.set_lights(0, operation_number)
+    def get_plc(self):  # have not tested this yet
+        print("PLC")
+        if self.blue_line_plc.parse():
+            print(self.blue_line_plc.get_block_occupancy())
+        """
+            for i in range(len(self.blue_line_plc.get_block_number())):
+                block_number = self.blue_line_plc.get_block_number()[i]
+                block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
+                operation = self.blue_line_plc.get_operations()[i]
+                operation_number = self.blue_line_plc.get_operations_number()[i]
+                if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
+                        (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
+                    if operation == 'switch':
+                        self.track_controller_hw.set_switch(1, operation_number)
+                    elif operation == '!switch':
+                        self.track_controller_hw.set_switch(0, operation_number)
+                    elif operation == "green":
+                        self.track_controller_hw.set_lights(1, operation_number)
+                    elif operation == "red":
+                        self.track_controller_hw.set_lights(0, operation_number)
+            """
 
         """""
             self.track_controller_hw.set_commanded_speed(
@@ -362,6 +319,87 @@ class Track_Controller_HW(object):
                 self.track_controller_hw.set_lights(0, 'Light B-A5')
                 self.track_controller_hw.set_lights(0, 'Light B-B6')
                 self.track_controller_hw.set_lights(0, 'Light B-C11')
+    """
+
+    def get_speed_limit(self, block) -> float:
+        return self._blue[block][1]
+
+    def set_speed_limit(self, block, value: float):
+        self._blue[block][1] = value
+
+    def get_switch_list(self) -> dict:
+        return self._switches
+
+    def get_switch(self, switch) -> int:
+        return self._switches[switch]
+
+    def set_switch(self, value: int, switch: str):
+        self._switches[switch] = value
+
+    def get_light_list(self) -> dict:
+        return self._lights
+
+    def get_lights(self, light) -> int:
+        return self._lights[light]
+
+    def set_lights(self, value: int, light: str):
+        self._lights[light] = value
+
+    def get_automatic(self) -> bool:
+        return self._automatic
+
+    def set_automatic(self, auto: bool):
+        self._automatic = auto
+
+    def get_commanded_speed(self) -> float:
+        return self._command_speed
+
+    def set_commanded_speed(self, speed: float):
+        self._command_speed = speed
+
+    # Testbench
+    def set_authority(self, _authoirty: float):
+        self._authority = _authoirty
+
+    def get_authority(self) -> float:
+        return self._authority
+
+    def set_suggested_speed(self, _suggested_speed: float):
+        self._suggested_speed = _suggested_speed
+
+    def get_suggested_speed(self) -> float:
+        return self._suggested_speed
+
+    """
+    def set_test_speed_limit(self, _test_speed_limit: float):
+        self._test_speed_limit = _test_speed_limit
+
+    def get_test_speed_limit(self) -> float:
+        return self._test_speed_limit
+
+    def set_broken_rail(self, _broken_rail: bool):
+        self._broken_rail = _broken_rail
+
+    def get_broken_rail(self) -> bool:
+        return self._broken_rail
+
+    def set_engine_failure(self, _engine_failure: bool):
+        self._engine_failure = _engine_failure
+
+    def get_engine_failure(self) -> bool:
+        return self._engine_failure
+
+    def set_circuit_failure(self, _circuit_failure: bool):
+        self._circuit_failure = _circuit_failure
+
+    def get_circuit_failure(self) -> bool:
+        return self._circuit_failure
+
+    def set_power_failure(self, _power_failure: bool):
+        self._power_failure = _power_failure
+
+    def get_power_failure(self) -> bool:
+        return self._power_failure
     """
 
     def launch_ui(self):
