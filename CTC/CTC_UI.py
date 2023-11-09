@@ -56,7 +56,7 @@ class CTC_Main_UI(QMainWindow):
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
         self.arrival_time.setDisplayFormat("HH:mm:ss")
-        self.arrival_time.setTime(QTime.currentTime().addSecs(2 * 3600))
+        self.arrival_time.setTime(self.datetime_to_qtime(self.ctc.get_time()).addSecs(2 * 3600))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(5, 370, 201, 31))
         font = QtGui.QFont()

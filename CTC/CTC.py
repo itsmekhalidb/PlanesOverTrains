@@ -134,7 +134,7 @@ class CTC(object):
     def create_departures(self):
         output = {}
         for train in self._trains:
-            if self._time >= train.get_departure_time():
+            #if self._time >= train.get_departure_time():
                 output[train.get_train_number()] = train.get_route_info()
         return output
 
