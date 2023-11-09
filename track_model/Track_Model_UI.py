@@ -5,12 +5,23 @@ from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QGraphicsRectItem, QGraphicsPolygonItem, QGraphicsPathItem
-from PyQt5.QtGui import QPen, QBrush, QColor
+from PyQt5.QtGui import QPen, QBrush, QColor, QTransform
 from PyQt5.QtCore import Qt
 from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from track_model.track_model import TrackModel
+from track_model.custom_graphics_view import CustomGraphicsScene
+from pylint import pyreverse
+from track_model.block_info import block_info
+import pandas as pd
 
+
+class DiagonalLabel(QLabel):
+    def __init__(self, text, angle, parent=None):
+        super().__init__(text, parent)
+        transform = QTransform()
+        transform.rotate(angle)
+        self.setTransform(transform)
 
 class Ui_MainWindow(QMainWindow):
     def __init__(self, track_model: TrackModel) -> None:
@@ -27,52 +38,439 @@ class Ui_MainWindow(QMainWindow):
         self.trackmodel_main = QtWidgets.QWidget(self)
         self.trackmodel_main.setObjectName("trackmodel_main")
 
-        scene = QGraphicsScene(self.trackmodel_main)
+        scene = CustomGraphicsScene()
+        #scene = QGraphicsScene(self.trackmodel_main)
         scene.setSceneRect(0, 61, 1142, 600)
+
+
         red_pen = QPen(Qt.red)
-        red_pen.setWidth(3)
+        red_pen.setWidth(5)
+        red_pen_2 = QPen(QColor(200,0,0))
+        red_pen_2.setWidth(5)
 
-        path_r1 = QPainterPath()
-        path_r1.moveTo(800,220)
-        path_r1.quadTo(QPointF(815,220), QPointF(835,205))
-        r1 = QGraphicsPathItem(path_r1)
-        r1.setPen(red_pen)
-        scene.addItem(r1)
+        path_data = [
+            {
+                'start': QPointF(725, 220),
+                'points': [QPointF(725, 220), QPointF(760, 205)],       #A
+                'label': "1"
+            },
+            {
+                'start': QPointF(760, 205),
+                'points': [QPointF(760, 205), QPointF(790, 185)],
+                'label': "2"
+            },
+            {
+                'start': QPointF(790, 185),
+                'points': [QPointF(790,185), QPointF(820, 165)],
+                'label': "3"
+            },
+            {
+                'start': QPointF(820, 165),
+                'points': [QPointF(820,165), QPointF(840,145)],         #B
+                'label': "4"
+            },
+            {
+                'start': QPointF(840,145),
+                'points': [QPointF(840,145), QPointF(860, 125)],
+                'label': "5"
+            },
+            {
+                'start': QPointF(860, 125),
+                'points': [QPointF(860,125), QPointF(890,115)],
+                'label': "6"
+            },
+            {
+                'start': QPointF(890,115),
+                'points': [QPointF(890,115), QPointF(920,120)],         #C
+                'label': "7"
+            },
+            {
+                'start': QPointF(920,120),
+                'points': [QPointF(920,120), QPointF(950,125)],
+                'label': "8"
+            },
+            {
+                'start': QPointF(950,125),
+                'points': [QPointF(950,125), QPointF(980,145)],
+                'label': "9"
+            },
+            {
+                'start': QPointF(980,145), #38, 18, 855, 220            #D
+                'points': [QPointF(980,145),QPointF(935,175)],
+                'label': "10"
+            },
+            {
+                'start': QPointF(935,175),
+                'points': [QPointF(935,175), QPointF(885, 200)],
+                'label': "11"
+            },
+            {
+                'start': QPointF(885,200),
+                'points': [QPointF(885,200), QPointF(840, 220)],
+                'label': "12"
+            },
+            {#725,220
+                'start': QPointF(840,220),                              #E
+                'points': [QPointF(840,220),QPointF(805,220)],
+                'label': "13"
+            },
+            {
+                'start': QPointF(805,220),
+                'points': [QPointF(805,220),QPointF(765,220)],
+                'label': "14"
+            },
+            {
+                'start': QPointF(765,220),
+                'points': [QPointF(765,220), QPointF(725,220)],
+                'label': "15"
+            },
+            {
+                'start': QPointF(725,220),                              #F
+                'points': [QPointF(725,220), QPointF(700,220)],
+                'label': "16"
+            },
+            {
+                'start': QPointF(700,220),
+                'points': [QPointF(700,220), QPointF(680,220)],
+                'label': "17"
+            },
+            {
+                'start': QPointF(680,220),
+                'points': [QPointF(680,220), QPointF(660,220)],
+                'label': "18"
+            },
+            {
+                'start': QPointF(660,220),
+                'points': [QPointF(660,220), QPointF(640,220)],
+                'label': "19"
+            },
+            {
+                'start': QPointF(640,220),
+                'points': [QPointF(640,220), QPointF(620,220)],
+                'label': "20"
+            },
+            {
+                'start': QPointF(620,220),                              #G
+                'points': [QPointF(620,220), QPointF(595,225)],
+                'label': "21"
+            },
+            {
+                'start': QPointF(595,225),
+                'points': [QPointF(595,225), QPointF(570,235)],
+                'label': "22"
+            },
+            {
+                'start': QPointF(570,235),
+                'points': [QPointF(570,235), QPointF(545, 250)],
+                'label': "23"
+            },
+            {
+                'start': QPointF(545,250),                              #H
+                'points': [QPointF(545,250), QPointF(545,262)],
+                'label': "24"
+            },
+            {
+                'start': QPointF(545,262),
+                'points': [QPointF(545,262), QPointF(545,274)],
+                'label': "25"
+            },
+            {
+                'start': QPointF(545,274),
+                'points': [QPointF(545,274), QPointF(545,286)],
+                'label': "26"
+            },
+            {
+                'start': QPointF(545,286),
+                'points': [QPointF(545,286),QPointF(545,298)],
+                'label': "27"
+            },
+            {
+                'start': QPointF(545,298),
+                'points': [QPointF(545,298),QPointF(545,310)],
+                'label': "28"
+            },
+            {
+                'start': QPointF(545,310),
+                'points': [QPointF(545,310), QPointF(545,322)],
+                'label': "29"
+            },
+            {
+                'start': QPointF(545,322),
+                'points': [QPointF(545,322), QPointF(545,334)],
+                'label': "30"
+            },
+            {
+                'start': QPointF(545,334),
+                'points': [QPointF(545,334), QPointF(545, 346)],
+                'label': "31"
+            },
+            {
+                'start': QPointF(545,346),
+                'points': [QPointF(545,346), QPointF(545,358)],
+                'label': "32"
+            },
+            {
+                'start': QPointF(545,358),
+                'points': [QPointF(545,358), QPointF(545, 370)],
+                'label': "33"
+            },
+            {
+                'start': QPointF(545,370),
+                'points': [QPointF(545,370), QPointF(545, 382)],
+                'label': "34"
+            },
+            {
+                'start': QPointF(545,382),
+                'points': [QPointF(545, 382), QPointF(545, 394)],
+                'label': "35"
+            },
+            {
+                'start': QPointF(545,394),
+                'points': [QPointF(545,394), QPointF(545,406)],
+                'label': "36"
+            },
+            {
+                'start': QPointF(545,406),
+                'points': [QPointF(545,406), QPointF(545, 418)],
+                'label': "37"
+            },
+            {
+                'start': QPointF(545,418),
+                'points': [QPointF(545,418), QPointF(545, 430)],
+                'label': "38"
+            },
+            {
+                'start': QPointF(545,430),
+                'points': [QPointF(545,430), QPointF(545, 442)],
+                'label': "39"
+            },
+            {
+                'start': QPointF(545, 442),
+                'points': [QPointF(545, 442), QPointF(545, 454)],
+                'label': "40"
+            },
+            {
+                'start': QPointF(545,454),
+                'points': [QPointF(545,454), QPointF(545, 466)],
+                'label': "41"
+            },
+            {
+                'start': QPointF(545, 466),
+                'points': [QPointF(545,466), QPointF(545, 478)],
+                'label': "42"
+            },
+            {
+                'start': QPointF(545,478),
+                'points': [QPointF(545,478), QPointF(545, 490)],
+                'label': "43"
+            },
+            {
+                'start': QPointF(545,490),
+                'points': [QPointF(545,490), QPointF(545, 502)],
+                'label': "44"
+            },
+            {
+                'start': QPointF(545,502),
+                'points': [QPointF(545,502), QPointF(545,514)],
+                'label': "45"
+            },
+            {
+                'start': QPointF(545,514),                              #I
+                'points': [QPointF(545,514), QPointF(520, 545)],
+                'label': "46"
+            },
+            {
+                'start': QPointF(520,545),
+                'points': [QPointF(520,545), QPointF(500,565)],
+                'label': "47"
+            },
+            {
+                'start': QPointF(500,565),
+                'points': [QPointF(500,565), QPointF(465,575)],
+                'label': "48"
+            },
+            {
+                'start': QPointF(465,575),                              #J
+                'points': [QPointF(465,575), QPointF(440, 575)],
+                'label': "49"
+            },
+            {
+                'start': QPointF(440,575),
+                'points': [QPointF(440,575), QPointF(415,575)],
+                'label': "50"
+            },
+            {
+                'start': QPointF(415, 575),
+                'points': [QPointF(415,575), QPointF(390,575)],
+                'label': "51"
+            },
+            {
+                'start': QPointF(390,575),
+                'points': [QPointF(390,575), QPointF(365,575)],
+                'label': "52"
+            },
+            {
+                'start': QPointF(365,575),
+                'points': [QPointF(365,575), QPointF(340,575)],
+                'label': "53"
+            },
+            {
+                'start': QPointF(340,575),
+                'points': [QPointF(340,575), QPointF(315,575)],
+                'label': "54"
+            },
+            {
+                'start': QPointF(315,575),                                 #K
+                'points': [QPointF(315,575), QPointF(290, 550)],
+                'label': "55"
+            },
+            {
+                'start': QPointF(290,550),
+                'points': [QPointF(290,550), QPointF(265, 520)],
+                'label': "56"
+            },
+            {
+                'start': QPointF(265,520),
+                'points': [QPointF(265,520), QPointF(240, 485)],
+                'label': "57"
+            },
+            {
+                'start': QPointF(240,485),                                  #L
+                'points': [QPointF(240,485), QPointF(250, 455)],
+                'label': "58"
+            },
+            {
+                'start': QPointF(250,455),
+                'points': [QPointF(250,455), QPointF(270,435)],
+                'label': "59"
+            },
+            {
+                'start': QPointF(270,435),
+                'points': [QPointF(270,435), QPointF(290,420)],
+                'label': "60"
+            },
+            {
+                'start': QPointF(290,420),                                  #M
+                'points': [QPointF(290,420), QPointF(320, 460)],
+                'label': "61"
+            },
+            {
+                'start': QPointF(320,460),
+                'points': [QPointF(320,460), QPointF(335,510)],
+                'label': "62"
+            },
+            {
+                'start': QPointF(335,510),
+                'points': [QPointF(335,510), QPointF(345,535)],
+                'label': "63"
+            },
+            {#x = 415 | y = 575
+                'start': QPointF(345,535),                                  #N
+                'points': [QPointF(345,535), QPointF(365,550)],
+                'label': "64"
+            },
+            {
+                'start': QPointF(365,550),
+                'points': [QPointF(365,550), QPointF(390, 565)],
+                'label': "65"
+            },
+            {
+                'start': QPointF(390,565),
+                'points': [QPointF(390,565), QPointF(415, 575)],
+                'label': "66"
+            },
+            {
+                'start': QPointF(542,490),                                  #O
+                'points': [QPointF(542,490), QPointF(507,470)],
+                'label': "67"
+            },
+            {
+                'start': QPointF(507,470),                                  #P
+                'points': [QPointF(507,470), QPointF(507,455)],
+                'label': "68"
+            },
+            {
+                'start': QPointF(507,455),
+                'points': [QPointF(507,455), QPointF(507, 440)],
+                'label': "69"
+            },
+            {
+                'start': QPointF(507,440),
+                'points': [QPointF(507,440), QPointF(507,425)],
+                'label': "70"
+            },
+            {
+                'start': QPointF(507,425),                                  #Q
+                'points': [QPointF(507,425), QPointF(542,405)],
+                'label': "71"
+            },
+            {
+                'start': QPointF(542,345),                                  #R
+                'points': [QPointF(542,345),QPointF(507,335)],
+                'label': "72"
+            },
+            {
+                'start': QPointF(507,335),                                  #S
+                'points': [QPointF(507,335), QPointF(507,310)],
+                'label': "73"
+            },
+            {
+                'start': QPointF(507,310),
+                'points': [QPointF(507,310), QPointF(507,295)],
+                'label': "74"
+            },
+            {
+                'start': QPointF(507,295),
+                'points': [QPointF(507,295), QPointF(507,280)],
+                'label': "75"
+            },
+            {
+                'start': QPointF(507,280),                                  #T
+                'points': [QPointF(507,280), QPointF(542,260)],
+                'label': "76"
+            }
 
-        path_r2 = QPainterPath()
-        path_r2.moveTo(835,205)
-        path_r2.quadTo(QPointF(835,205), QPointF(865, 185))
-        r2 = QGraphicsPathItem(path_r2)
-        r2.setPen(red_pen)
-        scene.addItem(r2)
+        ]
 
-        path_r3 = QPainterPath()
-        path_r3.moveTo(865,185)
-        path_r3.quadTo(QPointF(865,185),QPointF(915,145))
-        r3 = QGraphicsPathItem(path_r3)
-        r3.setPen(red_pen)
-        scene.addItem(r3)
 
-        #path = QPainterPath()
-        #path.moveTo(0,0)
-        #path.cubicTo(50,0,0,100,100,100)
 
-        path_test = QPainterPath()
-        path_test.moveTo(100,200)
-        path_test.cubicTo(50,100,200,100,100,100)
-        testing = QGraphicsPathItem(path_test)
-        testing.setPen(red_pen)
-        scene.addItem(testing)
+        for i, data in enumerate(path_data):
+            path = QPainterPath()
+            path.moveTo(data['start'])
+            for point in data['points']:
+                path.quadTo(point, point)
+
+            r = QGraphicsPathItem(path)
+            r.setData(0, data['label'])
+            r.setPen(red_pen)
+            if i%2 == 0:
+                r.setPen(red_pen)
+            else:
+                r.setPen(red_pen_2)
+
+            scene.addItem(r)
+
+        red_pen = QPen(Qt.red)
+        red_pen.setWidth(4)
+        red_2 = QPen(Qt.darkRed)
+        red_2.setWidth(4)
+
+
+
 
 
         self.graph_view = QtWidgets.QGraphicsView(scene, self.trackmodel_main)
         self.graph_view.setGeometry(QtCore.QRect(0, 61, 1142, 600))
 
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
-        self.load_file.setGeometry(QtCore.QRect(100,10,60,41))
-        self.load_file.setText("load file")
-        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 1px solid black;\n")
-        # self.load_file.clicked()
+        self.load_file.setGeometry(QtCore.QRect(600,10,60,41))
+        self.load_file.setText("Load File")
+        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 8pt \"Arial\";")
+
+        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.block_display.setGeometry(QtCore.QRect(155,10,60,41))
+        self.block_display.setText("")
+        self.block_display.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
 
         self.title = QtWidgets.QLabel(self.trackmodel_main)
         self.title.setGeometry(QtCore.QRect(0, 0, 1141, 61))
@@ -82,23 +480,13 @@ class Ui_MainWindow(QMainWindow):
 "font: 87 16pt \"Arial Black\";")
         self.title.setObjectName("title")
         self.clock = QtWidgets.QLabel(self.trackmodel_main)
-        self.clock.setGeometry(QtCore.QRect(740, 10, 111, 41))
+        self.clock.setGeometry(QtCore.QRect(1020, 10, 111, 41))
         self.clock.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.clock.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
 "background-color: rgb(255, 255, 255);")
         self.clock.setAlignment(QtCore.Qt.AlignCenter)
         self.clock.setObjectName("clock")
-        self.t_sys_spd = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_sys_spd.setGeometry(QtCore.QRect(870, 10, 261, 41))
-        self.t_sys_spd.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
-"border: 2px solid black;\n"
-"background-color: rgb(255, 255, 255);")
-        self.t_sys_spd.setObjectName("t_sys_spd")
-        self.system_speed = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.system_speed.setGeometry(QtCore.QRect(1060, 10, 71, 41))
-        self.system_speed.setStyleSheet("border: 2px solid black;")
-        self.system_speed.setObjectName("system_speed")
         self.static_title = QtWidgets.QLabel(self.trackmodel_main)
         self.static_title.setGeometry(QtCore.QRect(0, 660, 461, 41))
         self.static_title.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
@@ -366,7 +754,7 @@ class Ui_MainWindow(QMainWindow):
 "color: rgb(255, 255, 255)")
         self.track_heater.setObjectName("track_heater")
         self.t_temp_control = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_temp_control.setGeometry(QtCore.QRect(400, 10, 321, 41))
+        self.t_temp_control.setGeometry(QtCore.QRect(680, 10, 321, 41))
         self.t_temp_control.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.t_temp_control.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
@@ -374,13 +762,12 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.t_temp_control.setObjectName("t_temp_control")
         self.temp_control = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.temp_control.setGeometry(QtCore.QRect(650, 10, 71, 41))
+        self.temp_control.setGeometry(QtCore.QRect(930, 10, 71, 41))
         self.temp_control.setStyleSheet("border: 2px solid black;")
         self.temp_control.setObjectName("temp_control")
         self.title.raise_()
         self.clock.raise_()
-        self.t_sys_spd.raise_()
-        self.system_speed.raise_()
+
         self.static_title.raise_()
         self.t_spd_limit.raise_()
         self.t_block_length.raise_()
@@ -417,6 +804,7 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.raise_()
         self.temp_control.raise_()
         self.load_file.raise_()
+        self.block_display.raise_()
         self.setCentralWidget(self.trackmodel_main)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1143, 21))
@@ -447,7 +835,7 @@ class Ui_MainWindow(QMainWindow):
         self.setWindowTitle(_translate("MainWindow", "Track Model"))
         self.title.setText(_translate("MainWindow", "Track Map"))
         self.clock.setText(_translate("MainWindow", "13:24:55"))
-        self.t_sys_spd.setText(_translate("MainWindow", "System Speed"))
+
         self.static_title.setText(_translate("MainWindow", "Static Variables"))
         self.t_spd_limit.setText(_translate("MainWindow", "Speed Limit (mph)"))
         self.t_block_length.setText(_translate("MainWindow", "Block Length (ft)"))
@@ -474,6 +862,8 @@ class Ui_MainWindow(QMainWindow):
     def browse_files(self):
         browse = QFileDialog.getOpenFileName(self.load_file)
         self._filepath = (browse[0])
+
+
 
 
 

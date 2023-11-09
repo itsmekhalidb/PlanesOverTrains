@@ -1,50 +1,226 @@
+import threading
 import traceback
+
+import serial
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
+from track_controller_hw.File_Parser import File_Parser
 
 
 class Track_Controller_HW(object):
 
-    def __init__(self, ctc_signal: CTCTrackControllerAPI, track_signal: TrackControllerTrackModelAPI):
+    def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
         # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
-        # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit
-        self._blue = {'B-A1': {1: 50, 2: 0}, 'B-A2': {1: 50, 2: 0}, 'B-A3': {1: 50, 2: 0}, 'B-A4': {1: 50, 2: 0},
-                      'B-A5': {1: 50, 2: 0}, 'B-B6': {1: 50, 2: 0}, 'B-B7': {1: 50, 2: 0}, 'B-B8': {1: 50, 2: 0},
-                      'B-B9': {1: 50, 2: 0}, 'B-B10': {1: 50, 2: 0}, 'B-C11': {1: 50, 2: 0}, 'B-C12': {1: 50, 2: 0},
-                      'B-C13': {1: 50, 2: 0}, 'B-C14': {1: 50, 2: 0}, 'B-C15': {1: 50, 2: 0}}
+        # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit,
+        self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
+                      'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
+                      'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
+                      'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
+        self._green = {}
+
+        self.blue_line_plc = File_Parser("")
+
+        self._plc_set = False
+
+        self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'Light B-A5': 0, 'Light B-B6': 0, 'Light B-C11': 0}
+        self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
         # plc input
         self._plc_input = ""
         # 0 = left, 1 = right
-        self._switches = {'Switch BC-A': 0}
+        self._switches = {'A5': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
-        self._automatic = False
+        self._automatic = True
         # commanded speed is speed limit - occupancy
-        self._command_speed = 0
+        self._command_speed = 0  # {'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
+        # 'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
+        # 'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
+        # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         self._occupied_blocks = []
 
+        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+
         # Testbench Variables
-        self._broken_rail = False  # ebrake failure
-        self._engine_failure = False  # train engine failure
-        self._circuit_failure = False  # service brake failure
-        self._power_failure = False  # signal pickup failure
+        # self._broken_rail = False  # ebrake failure
+        # self._engine_failure = False  # train engine failure
+        # self._circuit_failure = False  # service brake failure
+        # self._power_failure = False  # signal pickup failure
         self._authority = 0
+        self._authority_blocks = {}
+        self._suggested_speed_blocks = {}
         self._suggested_speed = 0
-        self._test_speed_limit = 0
+        # self._test_speed_limit = 0
         self._track_status = False
+        # self._passengers = 0
+
+        self.ctc_ctrl_signals = ctcsignals
+        self.track_ctrl_signals = tracksignals
+
+        self.update()
+
     # Variables
+    def update(self, thread=True):
+        # Interal inputs
+        self.set_commanded_speed(self.get_commanded_speed())
+
+        # CTC Office Inputs
+        # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
+        self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
+        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+
+        # CTC Office Outputs
+        #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
+        self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+
+        # Track Model Inputs
+        #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
+        #        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
+        #        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
+        #        self.set_power_failure(self.track_ctrl_signals._power_failure)
+        self.set_blue_track(self.track_ctrl_signals._blue)
+        # wait until we have things connected to mess around with this
+        # self.set_blue_track(self.track_ctrl_signals._green)
+        self.set_green_track(self.track_ctrl_signals._green)
+
+        # Track Model Outputs
+        self.track_ctrl_signals._authority = self.get_authority()
+        self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        for i in self.ctc_ctrl_signals._train_info:
+            self._suggested_speed_blocks.clear()
+            self._suggested_speed_blocks[i] = self.ctc_ctrl_signals._train_info[i][1]
+            self._authority_blocks.clear()
+            self._authority_blocks[i] = self.ctc_ctrl_signals._train_info[i][2]
+        # for i in self._lights.keys():
+        #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
+        # for i in self._switches.keys():
+        #     self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
+        # for i in self._crossing_lights_gates.keys():
+        #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
+        #
+        # self.receive()
+
+        if self.get_automatic() and self.get_plc_set():
+            print("get plc = true and automatic = true")
+            self.get_plc()
+
+        if thread:
+            threading.Timer(0.1, self.update).start()
+
+    #   def get_passengers(self):
+    #       return self._passengers
+
+    def get_train_id(self):
+        return self._train_ids
+
+    def receive(self):
+        try:
+            if self.get_ard().inWaiting() > 0:
+                data_bytes = self.get_ard().readline()
+                data_str = data_bytes.decode('utf-8').strip()
+                print(data_str)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+
+    def send_update(self, block_number: str):
+        send_string = "1"
+        if len(block_number) == 2:
+            send_string += "00" + block_number
+        elif len(block_number) == 3:
+            send_string += "0" + block_number
+        elif len(block_number) == 4:
+            send_string += block_number
+        command = str(self.get_commanded_speed())
+        if len(command) == 1:
+            send_string += "0" + command
+        elif len(command) == 2:
+            send_string += command
+        if block_number in self.get_light_list():
+            send_string += "1"
+            if self.get_lights(block_number) == 1:
+                send_string += "1"
+            elif self.get_lights(block_number) == 0:
+                send_string += "0"
+        else:
+            send_string += "00"
+        if block_number in self.get_switch_list():
+            send_string += "1"
+            if self.get_switch(block_number) == 1:
+                send_string += "1"
+            elif self.get_switch(block_number) == 0:
+                send_string += "0"
+        else:
+            send_string += "00"
+        send_string += "00"
+        # self.get_ard().write(send_string.encode('utf-8'))
+        print(send_string)
+
+    def get_plc_set(self):
+        return self._plc_set
+
+    def set_plc_set(self, set_bool: bool):
+        self._plc_set = set_bool
+
+    def set_blue_plc(self, plc):
+        self.blue_line_plc = plc
+
+    def get_blue_plc(self):
+        return self.blue_line_plc
+
+    def get_authority_blocks(self):
+        return self._authority_blocks
+
+    def set_authority_blocks(self, train: str, value: float):
+        self._authority_blocks[train] = value
+
+    def get_suggested_speed_blocks(self):
+        return self._suggested_speed_blocks
+
+    def set_suggested_speed_blocks(self, train: str, value: float):
+        self._suggested_speed_blocks[train] = value
+
+    def get_ard(self):
+        return self._ard
+
+    def set_passengers(self, tickets):
+        self._passengers = tickets
+
+    def get_track_section_status(self):
+        return self._track_status
+
+    def set_track_section_status(self, block):
+        self._track_status = block
+        for i in block.keys():
+            self._blue[i][2] = block[i]
 
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
 
+    def set_crossing_lights_gate(self, light: str, value: int):
+        self._crossing_lights_gates[light] = value
+
     def get_blue_track(self) -> dict:
         return self._blue
+
+    def set_blue_track(self, track):
+        self._blue = track
+
+    def get_green_track(self) -> dict:
+        return self._green
+
+    def set_green_track(self, track):
+        self._green = track
+
+    def get_block_occupancy(self) -> dict:
+        temp = {}
+        for x in self._occupied_blocks:
+            temp.update({x: self.get_occupancy(x)})
+        return temp
 
     def get_occupied_blocks(self) -> list:
         temp = []
@@ -62,6 +238,89 @@ class Track_Controller_HW(object):
 
     def get_occupancy(self, block) -> int:
         return self._blue[block][2]
+
+    def get_plc(self):  # have not tested this yet
+        print("In plc function")
+        if self.blue_line_plc.parse():
+            print("parse = true")
+        """
+            for i in range(len(self.blue_line_plc.get_block_number())):
+                block_number = self.blue_line_plc.get_block_number()[i]
+                block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
+                operation = self.blue_line_plc.get_operations()[i]
+                operation_number = self.blue_line_plc.get_operations_number()[i]
+                if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
+                        (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
+                    if operation == 'switch':
+                        self.track_controller_hw.set_switch(1, operation_number)
+                    elif operation == '!switch':
+                        self.track_controller_hw.set_switch(0, operation_number)
+                    elif operation == "green":
+                        self.track_controller_hw.set_lights(1, operation_number)
+                    elif operation == "red":
+                        self.track_controller_hw.set_lights(0, operation_number)
+            """
+
+        """""
+            self.track_controller_hw.set_commanded_speed(
+                min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
+
+            self.sect_A_occ = bool(self.track_controller_hw.get_occupancy('B-A1') or self.track_controller_hw.get_occupancy(
+                'B-A2') or self.track_controller_hw.get_occupancy('B-A3') or self.track_controller_hw.get_occupancy(
+                'B-A4') or self.track_controller_hw.get_occupancy('B-A5'))
+            self.sect_B_occ = bool(self.track_controller_hw.get_occupancy('B-B6') or self.track_controller_hw.get_occupancy(
+                'B-B7') or self.track_controller_hw.get_occupancy('B-B8') or self.track_controller_hw.get_occupancy(
+                'B-B9') or self.track_controller_hw.get_occupancy('B-B10'))
+            self.sect_C_occ = bool(
+                self.track_controller_hw.get_occupancy('B-C11') or self.track_controller_hw.get_occupancy(
+                    'B-C12') or self.track_controller_hw.get_occupancy('B-C13') or self.track_controller_hw.get_occupancy(
+                    'B-C14') or self.track_controller_hw.get_occupancy('B-C15'))
+            if self.sect_A_occ:
+                self.plc_output.addItem("Train detected in section A")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(1, 'Light B-B6')
+                self.track_controller_hw.set_lights(1, 'Light C-C11')
+                if self.sect_B_occ:
+                    self.plc_output.addItem("Train detected in section B")
+                    self.track_controller_hw.set_lights(0, 'Light B-A5', )
+                    self.track_controller_hw.set_lights(1, 'Light B-B6')
+                    self.track_controller_hw.set_lights(1, 'Light B-C11')
+                    self.track_controller_hw.set_switch(1, 'Switch BC-A')
+                    self.plc_output.addItem("Stopping traffic from track section B")
+                    self.plc_output.addItem("Switching to track section C")
+                elif self.sect_C_occ:
+                    self.plc_output.addItem("Train detected in section C")
+                    self.track_controller_hw.set_lights(0, 'Light B-A5')
+                    self.track_controller_hw.set_lights(1, 'Light B-B6')
+                    self.track_controller_hw.set_lights(1, 'Light B-C11')
+                    self.track_controller_hw.set_switch(0, 'Switch BC-A')
+                    self.plc_output.addItem("Stopping traffic from track section C")
+                    self.plc_output.addItem("Switching to track section B")
+                else:
+                    self.plc_output.addItem("Stopping traffic from track sections B and C")
+                    self.plc_output.addItem("Switching to track section B")
+            elif self.sect_B_occ:
+                self.plc_output.addItem("Train detected in section B")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(1, 'Light B-B6')
+                self.track_controller_hw.set_lights(0, 'Light B-C11')
+                self.track_controller_hw.set_switch(0, 'Light BC-A')
+                self.plc_output.addItem("Stopping traffic from track sections A and C")
+                self.plc_output.addItem("Switching to track section B")
+            elif self.sect_C_occ:
+                self.plc_output.addItem("Train detected in section C")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(0, 'Light B-B6')
+                self.track_controller_hw.set_lights(1, 'Light B-C11')
+                self.track_controller_hw.set_switch(1, 'Switch BC-A')
+                self.plc_output.addItem("Stopping traffic from track sections A and B")
+                self.plc_output.addItem("Switching to track section C")
+            else:
+                self.plc_output.addItem("No trains on the track")
+                self.track_controller_hw.set_lights(0, 'Light B-A5')
+                self.track_controller_hw.set_lights(0, 'Light B-B6')
+                self.track_controller_hw.set_lights(0, 'Light B-C11')
+    """
 
     def get_speed_limit(self, block) -> float:
         return self._blue[block][1]
@@ -112,6 +371,7 @@ class Track_Controller_HW(object):
     def get_suggested_speed(self) -> float:
         return self._suggested_speed
 
+    """
     def set_test_speed_limit(self, _test_speed_limit: float):
         self._test_speed_limit = _test_speed_limit
 
@@ -141,6 +401,7 @@ class Track_Controller_HW(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
+    """
 
     def launch_ui(self):
         print("Launching Track Controller HW UI")

@@ -46,6 +46,8 @@ class block_info:
     def get_all_blocks_for_line(self, line):
         return self.block_dict.get(line, {})
 
+
+
 # How to Use:
 # tm = block_info('block_information.xlsx')
 # red_48 = tm.get_block_info('red', 1)['grade']
