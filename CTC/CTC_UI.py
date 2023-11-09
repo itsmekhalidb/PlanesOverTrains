@@ -417,13 +417,13 @@ class CTC_Main_UI(QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("self", "self"))
+        self.setWindowTitle(_translate("self", "CTC"))
         self.switch_auto.setText(_translate("self", "Switch to Automatic"))
         self.station_list.setItemText(0, _translate("self", "Destination Station"))
         self.confirm.setText(_translate("self", "Confirm"))
         self.confirm_close.setText(_translate("self", "Confirm"))
         self.system_speed_label_3.setText(_translate("self", " System Speed"))
-        self.testbench_button.setText(_translate("self", "TESTBENCH"))
+        self.testbench_button.setText(_translate("self", "Testbench"))
         self.header.setText(_translate("self", "Train View"))
         self.arrival_time_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

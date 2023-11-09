@@ -1,0 +1,8 @@
+@startuml packages_ALL
+set namespaceSeparator none
+package "CTC" as CTC {
+}
+package "CTC_UI" as CTC_UI {
+}
+CTC_UI --> CTC
+@enduml

@@ -1,0 +1,106 @@
+@startuml classes_ALL
+set namespaceSeparator none
+class "CTC" as CTC.CTC {
+  TrackCTRLSignal
+  calculate_throughput()
+  close_block(section, block)
+  create_schedule(station_name, time_in, function, train_index)
+  get_authority(train_num)
+  get_block_status(block_num)
+  get_stations_names()
+  get_suggested_speed(train_num)
+  get_trains()
+  import_schedule(doc)
+  launch_ui()
+  testbench_change_current_velocity(train, vel)
+  testbench_change_light(color)
+  testbench_change_occupied(section, block)
+  testbench_change_switch(switch, dir)
+  testbench_change_ticket_sales(train, passengers)
+  update(thread)
+  update_light_color(light_num, status)
+  update_occupancy(occupied_block)
+  update_passenger_info(station, tickets_sold)
+  update_switch_position(switch_index)
+}
+class "CTC_Main_UI" as CTC_UI.CTC_Main_UI {
+  add_stop
+  arrival_time
+  arrival_time_label
+  back_button
+  block_close_label
+  block_label
+  block_list
+  blocks_table
+  blocks_table_widget
+  centralwidget
+  confirm
+  confirm_close
+  ctc
+  curr_vel_label
+  edit_schedule
+  green
+  header
+  kmhr_label
+  label
+  label_2
+  left_right_label
+  light_label
+  menubar
+  numPassengers
+  num_passengers_label
+  occupied_blocks
+  occupied_box
+  red
+  section_label
+  section_list
+  station_list
+  statusbar
+  switchPos
+  switch_auto
+  switch_label
+  sys_time_label_3
+  sys_time_label_4
+  system_speed_label_3
+  system_speed_label_4
+  system_speed_spnbx_3
+  system_speed_spnbx_4
+  testbench
+  testbench_button
+  title_label_4
+  train_label
+  train_list_2
+  train_list_2_data
+  train_view_page
+  velocity_selector
+  view_switcher
+  confirm_route(station_name, time_in, function, train_index)
+  kmhr_to_mihr(kmhr)
+  meters_to_miles(meters)
+  open_main()
+  open_testbench()
+  retranslateUi()
+  setupUi()
+  update(thread)
+  update_event()
+}
+class "Schedule" as CTC.Schedule {
+  get_arrival_time()
+  get_departure_time()
+  get_destination_station()
+  get_suggested_velocity()
+  test_blue_sched(track)
+}
+class "Train" as CTC.Train {
+  create_schedule(destination_block, dest_station, arrival_time, departure_time, suggested_velocity)
+  get_actual_velocity()
+  get_arrival_time()
+  get_authority()
+  get_departure_time()
+  get_suggested_velocity()
+  test_blue_line_train(num)
+}
+CTC.CTC -o CTC_UI.CTC_Main_UI : ctc
+CTC.Schedule -o CTC.Train : _schedule
+CTC.CTC --o CTC.Train : _trains
+@enduml
