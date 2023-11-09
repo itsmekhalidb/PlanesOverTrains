@@ -43,7 +43,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
 
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -159,7 +159,7 @@ class Track_Controller_HW(object):
 
     def select_block(self, block_number):
         block_send = "0" + block_number
-        self.get_ard().write(block_send.encode('utf-8'))
+        #self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
