@@ -17,3 +17,12 @@ class TrackModelTrainModelAPI:
         self.filepath = ""
         self.track_info = block_info(self.filepath)
         self.current_block = 0
+        self.cum_distance = 0
+
+class Trainz:
+    def __init__(self) -> None:
+        ''' Holds key value pairs of Train ID's and Train Model API's'''
+
+        self._train_info = {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
+
+

@@ -3,7 +3,6 @@ from api.track_model_train_model_api import TrackModelTrainModelAPI
 class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
-        self._train_ids = {}  # keys must be train ids
         self._train_info = {} # EX) {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
         #self._broken_rail = False  # ebrake failure
         #self._engine_failure = False  # train engine failure

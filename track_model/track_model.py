@@ -10,6 +10,8 @@ from api.track_model_train_model_api import TrackModelTrainModelAPI
 from api.ctc_track_model_api import CTCTrackModelAPI
 import traceback
 from track_model.block_info import block_info
+from typing import DefaultDict
+
 
 class TrackModel(object):
     def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
@@ -38,6 +40,12 @@ class TrackModel(object):
         self._temperature = 0
         self._track_layout_loaded = 0 #done for track layout
         self._block_length = 0.0 #block length
+        self._local_time = 0
+        self._time = time.time()
+        self._current_time = self._time
+        self._train_models = []
+        self.train_models = DefaultDict(TrackModelTrainModelAPI)
+
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -154,6 +162,13 @@ class TrackModel(object):
         # self._train_model_signals[1].line = self.get_line()
 
 
+
+        # for i in self._train_models.keys():
+        #     self.train_models[i] = TrackModelTrainModelAPI()
+
+
+
+
         #Enable threading
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -259,6 +274,9 @@ class TrackModel(object):
 
     def get_current_block(self) -> int:
         return self._current_block
+
+
+    #get veolocity, multiple velocity & time to get distance, compare distance and block length, constantly add distance, dt could be 1 second,
 
     #Train Line
     def set_train_line(self, _train_line: str):
