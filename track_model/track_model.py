@@ -36,6 +36,7 @@ class TrackModel(object):
         self._track_layout = block_info(self._filepath) #layout of the track
         self._temperature = 0
         self._track_layout_loaded = 0 #done for track layout
+        self._block_length = 0.0 #block length
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -99,6 +100,9 @@ class TrackModel(object):
         #offboarding
         self.set_offboarding(self.get_offboarding())
 
+        #block length
+        self.set_block_length(self.get_block_length())
+
         #---- Internal Functions ----#
         #temperature
         self.set_temperature(int(self.get_temperature()))
@@ -152,37 +156,6 @@ class TrackModel(object):
         if thread:
             threading.Timer(0.1, self.update).start()
 
-    # def beacon_simulate(self):
-    #     if self.line == "":
-    #         self.set_line("BLUE")
-    #     if self.line.lower() == "green":        #---- GREEN LINE ----#
-    #         self.set_beacon("PIONEER")          #Beacon
-    #         self.set_authority(700)             #Authority
-    #         self.set_speed_limit(45)            #Speed Limit
-    #         self.set_elevation(1)               #Elevation
-    #         self.set_grade(0.01)                #Grade
-    #         self.set_underground(False)         #Underground
-    #         self.set_current_block(2)           #Block Number
-    #         self.set_occupancy(False)           #Occupancy
-    #
-    #     if self.line.lower() == "red":          #---- RED LINE ----#
-    #         self.set_beacon("SHADYSIDE")        #Beacon
-    #         self.set_authority(615)             #Authority
-    #         self.set_speed_limit(40)            #Speed Limit
-    #         self.set_elevation(0.38)            #Elevation
-    #         self.set_grade(0.005)               #Grade
-    #         self.set_underground(False)         #Underground
-    #         self.set_current_block(7)           #Block Number
-    #         self.set_occupancy(False)           #Occupancy
-    #
-    #     if self.line.lower() == "blue":         #---- BLUE LINE ----#
-    #         self.set_beacon("Station B")        #Beacon
-    #         self.set_authority(250)             #Authority
-    #         self.set_speed_limit(50)            #Speed Limit
-    #         self.set_elevation(0.0)             #Elevation
-    #         self.set_underground(True)          #Underground
-    #         self.set_current_block(10)          #Block Number
-    #         self.set_occupancy(False)           #Occupancy
 
     #---- Getters & Setters ----#
     #Line
@@ -190,6 +163,12 @@ class TrackModel(object):
         self._line = _line
     def get_line(self) -> str:
         return self._line
+
+    def set_block_length(self, _block_length: float):
+        self._block_length = _block_length
+
+    def get_block_length(self) -> float:
+        return self._block_length
 
     #Filepath
     def set_filepath(self, _filepath: str):
