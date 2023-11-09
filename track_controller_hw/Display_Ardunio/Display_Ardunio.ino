@@ -12,16 +12,23 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
+//String commanded[150];
+
 int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-const int LIGHTNUMBER = 9;
-const int SWITCHNUMBER = 3;
+const int LIGHTNUMBER = 3;
+const int SWITCHNUMBER = 1;
 
 int Detect_LED = 2;
 int Red_LED = 3;
 int Green_LED = 4;
 int Crossing_LED = 5;
 
+struct Block{
+  String name;
+  int occupancy;
+  int commanded;
+};
 
 struct Light{
   String name;
@@ -33,6 +40,9 @@ struct Switch{
   int value;
 };
 
+Light lights[LIGHTNUMBER];
+Switch switches[SWITCHNUMBER];
+
 void transmit(){
   Serial.print("Hello");
 }
@@ -43,55 +53,95 @@ void Receiver() {
     incomingData = Serial.readStringUntil('\n');
   }
   String detect = incomingData.substring(0,1);
-  String block_number = incomingData.substring(1,5);
-  String commanded_speed = incomingData.substring(5,7);
-  String light_is = incomingData.substring(7,8);
-  String light_state = incomingData.substring(8,9);
-  String switch_is = incomingData.substring(9,10);
-  String switch_state = incomingData.substring(10,11);
-  String crossing_is = incomingData.substring(11,12);
-  String crossing_state = incomingData.substring(12,13);
+  
 
   if (detect.equals("1")) {
     digitalWrite(Detect_LED, HIGH);
     digitalWrite(Red_LED, LOW);
     digitalWrite(Green_LED, LOW);
     digitalWrite(Crossing_LED, LOW);
-  }
+    String commanded_speed = incomingData.substring(1,3);
+    String light_is = incomingData.substring(3,4);
+    String light_state = incomingData.substring(4,5);
+    String switch_is = incomingData.substring(5,6);
+    String switch_state = incomingData.substring(6,7);
+    String crossing_is = incomingData.substring(7,8);
+    String crossing_state = incomingData.substring(8,9);
+    String block_number = incomingData.substring(9,incomingData.length());
+    
+  
 
-    lcd1.clear();
-    lcd1.setCursor(0, 0);
-    lcd1.print("Block #: " + block_number);
-    lcd1.setCursor(0, 1);
-    lcd1.print("Commanded Speed: " + commanded_speed);
+    //lcd1.clear();
+    //lcd1.setCursor(0, 0);
+    //lcd1.print("Block #: " + block_number);
+    //lcd1.setCursor(0, 1);
+    //lcd1.print("Commanded Speed: " + commanded_speed);
+    String number_of_block = incomingData.substring(10, incomingData.length());
+
+    //commanded[atoi(number_of_block)] = atoi(commanded_speed);
 
     if(light_is == "1"){
-      if(light_state == "0"){
-        digitalWrite(Red_LED, HIGH);
-        digitalWrite(Green_LED, LOW);
-      }
-      else{
-        digitalWrite(Red_LED, HIGH);
-        digitalWrite(Green_LED, HIGH);
+      for(int i = 0; i < LIGHTNUMBER; i++){
+        if(lights[i].name == block_number){
+          if(light_state == "0"){
+            lights[i].value == 0;
+          }
+          else{
+            lights[i].value == 1;
+          }
+          break;
+        }
       }
     }
     if(switch_is == "1"){
-      lcd1.setCursor(0,2);
-      if(switch_state == "0"){
-        lcd1.print("Switch: Left");
-      }
-      else{
-        lcd1.print("Switch: Right");
-      }
-    }
-    if(crossing_is == "1"){
-      if(crossing_state == "1"){
-        digitalWrite(Crossing_LED, HIGH);
-      }
-      else{
-        digitalWrite(Crossing_LED, LOW);
+      for(int i = 0; i < SWITCHNUMBER; i++){
+        if(switches[i].name == block_number){
+          if(switch_state == "0"){
+            switches[i].value == 0;
+          }
+          else{
+            switches[i].value == 1;
+          }
+          break;
+        }
       }
     }
+  }
+
+  else if (detect.equals("0")){
+    String block_number = incomingData.substring(1,incomingData.length());
+    lcd1.setCursor(0,0);
+    lcd1.print("Block #: " + block_number);
+    lcd1.setCursor(0,1);
+    //lcd1.print("Commanded Speed: " + commanded[atoi(block_number)]);
+    for(int i = 0; i < LIGHTNUMBER; i++){
+      if(lights[i].name == block_number){
+        if(lights[i].value == 1){
+          digitalWrite(Red_LED, HIGH);
+          digitalWrite(Green_LED, HIGH);
+        }
+        else if(lights[i].value == 0){
+          digitalWrite(Red_LED, HIGH);
+          digitalWrite(Green_LED, LOW);         
+        }
+        break;
+      }
+    }
+    for(int i = 0; i < SWITCHNUMBER; i++){
+      if(switches[i].name == block_number){
+        lcd1.setCursor(0,2);
+        if(switches[i].value == 0){
+          lcd1.print("Switch: Left");
+        }
+        else if(switches[i].value == 1){
+          lcd1.print("Switch: Right");
+        }
+        break;
+      }
+    }
+
+  }
+}
 
   
 
@@ -136,7 +186,7 @@ void Receiver() {
     }
   }
   */
-}
+
 
 void setup() {
   Serial.begin(9600);
@@ -144,6 +194,20 @@ void setup() {
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
+
+ // for (int i = 0; i < 13; i++) {
+  //  commanded[i] = "0"; // Initialize each string as empty
+  //}
+
+  lights[0].name = "A5";
+  lights[0].value = 0;
+  lights[1].name = "B6";
+  lights[1].value = 0;
+  lights[2].name = "C11";
+  lights[2].value = 0;
+  switches[0].name = "A5";
+  switches[0].value = 0;
+
 
 }
 

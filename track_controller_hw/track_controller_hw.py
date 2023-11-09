@@ -43,7 +43,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
 
-        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -135,11 +135,6 @@ class Track_Controller_HW(object):
             send_string += "0" + block_number
         elif len(block_number) == 4:
             send_string += block_number
-        command = str(self.get_commanded_speed())
-        if len(command) == 1:
-            send_string += "0" + command
-        elif len(command) == 2:
-            send_string += command
         if block_number in self.get_light_list():
             send_string += "1"
             if self.get_lights(block_number) == 1:
@@ -156,9 +151,16 @@ class Track_Controller_HW(object):
                 send_string += "0"
         else:
             send_string += "00"
+        command = str(self.get_commanded_speed())
+        send_string += command
         send_string += "00"
         # self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
+
+    def select_block(self, block_number):
+        block_send = "0" + block_number
+        self.get_ard().write(block_send.encode('utf-8'))
+        print(block_send)
 
     def get_plc_set(self):
         return self._plc_set
@@ -186,9 +188,6 @@ class Track_Controller_HW(object):
 
     def get_ard(self):
         return self._ard
-
-    def set_passengers(self, tickets):
-        self._passengers = tickets
 
     def get_track_section_status(self):
         return self._track_status
