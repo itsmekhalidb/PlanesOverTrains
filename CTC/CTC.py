@@ -7,13 +7,14 @@ from typing import Callable
 from datetime import datetime, timedelta
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
+from api.ctc_track_model_api import CTCTrackModelAPI
 
 
 _stations = {} # dictionary of stations and blocks
 
 
 class CTC(object):
-    def __init__(self, TrackCTRLSignal : CTCTrackControllerAPI):
+    def __init__(self, TrackCTRLSignal : CTCTrackControllerAPI, TrackModelSignal : CTCTrackModelAPI):
         # -- CTC Variables -- #
         self._trains = [] # list of train objects
         self._occupied_blocks = [] # list of occupied blocks
@@ -24,6 +25,7 @@ class CTC(object):
         self._tick_counter = 0 # number of ticks since last second
 
         self.TrackCTRLSignal = TrackCTRLSignal
+        self.TrackModelSignal = TrackModelSignal
 
         # run update function
         self.update()
@@ -123,7 +125,7 @@ class CTC(object):
             self._time = self._time + timedelta(seconds=1)
             self.TrackCTRLSignal._time = self._time
 
-        self.TrackCTRLSignal._authority = self.create_departures()
+        self.TrackCTRLSignal._train_info = self.create_departures()
 
         # Enable Threading
         if thread:

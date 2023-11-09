@@ -7,11 +7,12 @@ import threading
 import pandas as pd
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.ctc_track_model_api import CTCTrackModelAPI
 import traceback
 from track_model.block_info import block_info
 
 class TrackModel(object):
-    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI):
+    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
@@ -51,6 +52,7 @@ class TrackModel(object):
         #Data from Other Modules
         self._track_controller_signals = trackCtrlSignal #api from track controller
         self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+        self._ctc_signals = CTCSignal #api from ctc
 
         self.update()
 

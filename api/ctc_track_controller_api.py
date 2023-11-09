@@ -1,7 +1,7 @@
 from datetime import datetime
 class CTCTrackControllerAPI:
     def __init__(self) -> None:
-        # Define variable passed between CTC and Track Controller\
+        # Define variables passed between CTC and Track Controller
 
         #CTC to Track Controller
         self._train_info = {} # train id : [[authority] : suggested speed] should rename to train info or something
@@ -9,9 +9,6 @@ class CTCTrackControllerAPI:
         self._suggested_speed = 0.0 # meters/sec
         self.commanded_speed = {'A1': 0} # block: commanded speed in m/s
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
-
-        # TODO: For train model and train controller managers we need id for each train
-        self._train_ids = {} # keys must be train ids
 
         #Track Controller to CTC
         self._curr_speed = {}
