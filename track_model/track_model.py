@@ -6,7 +6,7 @@ import numpy as np
 import threading
 import pandas as pd
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
-from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI, Trainz
 from api.ctc_track_model_api import CTCTrackModelAPI
 import traceback
 from track_model.block_info import block_info
@@ -14,7 +14,7 @@ from typing import DefaultDict
 
 
 class TrackModel(object):
-    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
+    def __init__(self, TrainModels: Trainz, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
@@ -43,9 +43,7 @@ class TrackModel(object):
         self._local_time = 0
         self._time = time.time()
         self._current_time = self._time
-        self._train_models = []
-        self.train_models = DefaultDict(TrackModelTrainModelAPI)
-
+        self._train_models = TrainModels.train_apis # dictionary of train model apis
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -161,13 +159,10 @@ class TrackModel(object):
         self.set_line(self._track_controller_signals._line)
         # self._train_model_signals[1].line = self.get_line()
 
-
-
-        # for i in self._train_models.keys():
-        #     self.train_models[i] = TrackModelTrainModelAPI()
-
-
-
+        # update train model signals
+        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+        for i in self._train_model_signals.keys():
+            self._train_models[i] = TrackModelTrainModelAPI()
 
         #Enable threading
         if thread:

@@ -1,3 +1,4 @@
+import threading
 import traceback
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
@@ -76,6 +77,10 @@ class Track_Controller(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
+
+        #Enable threading
+        if thread:
+            threading.Timer(0.1, self.update).start()
 
     def get_passengers(self):
         return self._passengers
