@@ -25,5 +25,5 @@ class Trainz:
     def __init__(self) -> None:
         ''' Holds key value pairs of Train ID's and Train Model API's'''
 
-        self.train_apis = {} #EX) {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
+        self.train_apis = {}  #EX) {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
 

@@ -43,6 +43,7 @@ class TrackModel(object):
         self._local_time = 0
         self._time = time.time()
         self._current_time = self._time
+        self._prev_time = self._time
         self._train_models = TrainModels.train_apis # dictionary of train model apis
         self._train_info = {}
 
@@ -164,9 +165,15 @@ class TrackModel(object):
         self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
 
         for i in self._train_model_signals.keys():
-            self._train_models[int(i) - 1] = TrackModelTrainModelAPI()
-
-
+            index = int(i) - 1
+            if index not in self._train_ids:
+                self._train_ids.append(index)
+                self._train_models[index] = TrackModelTrainModelAPI()
+            self._train_models[index].authority = 10.0
+            self._train_models[index].line = 'red'
+            self._train_models[index].track_info = self.get_track_layout()
+            self._train_models[index].current_block = 48
+            self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
 
         #Enable threading
         if thread:
@@ -174,6 +181,13 @@ class TrackModel(object):
 
 
     #---- Getters & Setters ----#
+    def update_traveled_distance(self, velocity):
+        self._current_time = time.time()
+        dt = self._current_time - self._prev_time
+        dist_traveled = velocity * dt
+        self._prev_time = self._current_time
+        return dist_traveled
+
     #Line
     def set_line(self, _line: str):
         self._line = _line
