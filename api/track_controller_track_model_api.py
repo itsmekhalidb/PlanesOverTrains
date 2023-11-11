@@ -13,7 +13,7 @@ class TrackControllerTrackModelAPI:
         self._line = "red"  # line
         self._authority = 0  # authority
         self._commanded_speed = 0  # commanded speed
-        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = gate/crossing, 4 = switch, 5 = light, block length, 6 = beacon
+        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, block length, 5 = gate/crossing, 6 = beacon,
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 1, 5: 1}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 1},
                       'B7': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B8': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B9': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},

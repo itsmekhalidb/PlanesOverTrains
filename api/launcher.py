@@ -48,7 +48,7 @@ class Launcher(QMainWindow):
         self.ctc = CTC(self.ctc_track_controller_api)
         self.track_controller = Track_Controller(self.ctc_track_controller_api, self.track_controller_track_model_api)
         self.track_controller_hw = Track_Controller_HW(self.ctc_track_controller_api, self.track_controller_track_model_api)
-        self.track_model = TrackModel(self.track_controller_track_model_api)
+        self.track_model = TrackModel(self.track_controller_track_model_api, self.track_model_train_model_api)
         train_controller = {}
         self.train_controller_manager = TrainControllerManager(train_controller)
         self.train_model_manager = TrainModelManager(train_controller, self.track_controller_track_model_api._train_info)
