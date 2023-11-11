@@ -106,6 +106,8 @@ class TrainController:
         self.set_train_line(self.train_model.line)
         self.set_internal_lights()
         self.set_external_lights()
+        self.set_setpoint_speed(self._setpoint_speed)
+        self.set_beacon(self.train_model.beacon)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -124,6 +126,9 @@ class TrainController:
 
     def get_temperature(self) -> float:
         return self._temperature
+
+    def set_beacon(self, beacon: str):
+        self._beacon = beacon
 
     def set_station_status(self, status: str):
         self._station_status = status
@@ -181,14 +186,14 @@ class TrainController:
         self._previous_ek = self._ek
 
     def update_stop(self):
-        if (self.get_beacon()) != "" and not self.stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
+        if (self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
             self._stop = True
-            self._stop_time = time.get_time()
+            self._stop_time = self.get_time()
             self.set_service_brake_value(1.0)
 
             self.set_station_side()
 
-        if self.stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
+        if self._stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
             self._stop = False
             self.set_service_brake_value(0.0)
             self.set_right_door_status(False)
@@ -201,8 +206,8 @@ class TrainController:
     # TODO: Desired power is not being passed in at any point in your code, needs fix
     def set_power(self):
         #TODO: check if we are at a stop
-        #if not self.get_auto_status():
-           # self.check_stops()
+        if not self.get_auto_status():
+           self.update_stop()
         # Define function local vars
         backup_power = 0.0
         if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status():
@@ -229,16 +234,19 @@ class TrainController:
         # TODO: Implement coming to a stop
         braking_distance_val = self.braking_distance(self.get_actual_velocity())
         ebrake_distance_val = self.ebrake_distance(self.get_actual_velocity())
-        if self.get_actual_velocity()>speed+.5:
+        if self.get_actual_velocity()>speed+BRAKING_DIFFERENCE:
             self._decreasing_speed = True
-        elif self.get_authority()<=0 and braking_distance_val > .0124:
+        elif self.get_authority()<=0 and braking_distance_val > SLOWDOWN:
             self._emergency_decreasing_speed = True
         elif self.get_authority() < braking_distance_val:
             self._decreasing_speed = True
         else:
             self._decreasing_speed = False
             self._emergency_decreasing_speed = False
+        self.get_service_brake_value()
         self._commanded_power = power if power < 120000 else 120000
+        return power
+
 
     def set_setpoint_speed(self, speed: float):
         if speed <= self._maximum_velocity:
@@ -321,7 +329,7 @@ class TrainController:
         return self._beacon
 
     def get_time(self)->int:
-        return self._time[0]
+        return self._time
 
     def get_time_of_day(self)->bool:
         hour = self.get_time()//3600
@@ -344,7 +352,8 @@ class TrainController:
         return self._side
     def set_side(self, side: str):
         self._side = side
-
+    def get_setpoint_speed(self)->float:
+        return self._setpoint_speed
     def launch_tc_ui(self):
         from train_controller.Train_Controller_Main_Window import Ui_MainWindow
         print("Launching Train Controller UI")
