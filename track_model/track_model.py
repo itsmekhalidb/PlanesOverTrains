@@ -44,6 +44,7 @@ class TrackModel(object):
         self._time = time.time()
         self._current_time = self._time
         self._train_models = TrainModels.train_apis # dictionary of train model apis
+        self._train_info = {}
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -178,6 +179,7 @@ class TrackModel(object):
         self._line = _line
     def get_line(self) -> str:
         return self._line
+
 
     def set_block_length(self, _block_length: float):
         self._block_length = _block_length

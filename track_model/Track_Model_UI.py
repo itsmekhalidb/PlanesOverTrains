@@ -822,7 +822,7 @@ class Ui_MainWindow(QMainWindow):
     def update(self):
         _translate = QtCore.QCoreApplication.translate
 
-        # self.clock.setText(self.track_model.get_time())
+        #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
 
     def _handler(self):
