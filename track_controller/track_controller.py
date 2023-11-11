@@ -7,6 +7,7 @@ from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 class Track_Controller(object):
 
     def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
+        # track that is currently being observed
         self._track = {}
         # blocks that are currently occupied
         self._occupied_blocks = []
@@ -22,6 +23,8 @@ class Track_Controller(object):
         self._automatic = False
         # commanded speed is speed limit - occupancy
         self._command_speed = 0
+        # list of trains and their info
+        self._train_info = {}
 
         # Testbench Variables
         self._authority = 0
@@ -44,6 +47,7 @@ class Track_Controller(object):
         # CTC Office Inputs
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_commanded_speed(self.ctc_ctrl_signals._suggested_speed)
+        self.set_train_info(self.ctc_ctrl_signals._train_info)
         # self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
         # CTC Office Outputs
@@ -54,6 +58,7 @@ class Track_Controller(object):
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
         self.track_ctrl_signals._green = self.get_track()
+        self.track_ctrl_signals._train_info = self.get_train_info()
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -104,7 +109,7 @@ class Track_Controller(object):
     def get_switch_list(self) -> dict:
         return self._switches
 
-    def get_switch(self, switch) -> int:
+    def get_switch(self, switch):
         return self._track[switch][3]
 
     def set_switch(self, switch, value: int):
@@ -179,6 +184,12 @@ class Track_Controller(object):
 
     def get_railway_crossing(self, crossing):
         return self._crossing_lights_gates[crossing]
+
+    def set_train_info(self, trains):
+        self._train_info = trains
+
+    def get_train_info(self) -> dict:
+        return self._train_info
 
     def launch_ui(self):
         print("Launching Track Controller UI")
