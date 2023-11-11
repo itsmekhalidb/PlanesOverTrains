@@ -45,7 +45,8 @@ class TrackModel(object):
         self._current_time = self._time
         self._prev_time = self._time
         self._train_models = TrainModels.train_apis # dictionary of train model apis
-        self._train_info = {}
+        self._train_ids = [] # list of train ids
+        self._distance = 0.0
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -291,6 +292,7 @@ class TrackModel(object):
 
 
     #get veolocity, multiple velocity & time to get distance, compare distance and block length, constantly add distance, dt could be 1 second,
+    # def set_distance(self, _distance):
 
     #Train Line
     def set_train_line(self, _train_line: str):
