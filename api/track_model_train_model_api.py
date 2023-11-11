@@ -27,4 +27,3 @@ class Trainz:
 
         self.train_apis = {} #EX) {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
 
-

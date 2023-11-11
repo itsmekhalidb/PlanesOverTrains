@@ -161,8 +161,11 @@ class TrackModel(object):
 
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+
         for i in self._train_model_signals.keys():
-            self._train_models[i] = TrackModelTrainModelAPI()
+            self._train_models[int(i) - 1] = TrackModelTrainModelAPI()
+
+
 
         #Enable threading
         if thread:

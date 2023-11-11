@@ -133,9 +133,10 @@ class CTC(object):
     
     def create_departures(self):
         output = {}
+        # TODO: Fix sys time and real world time not matching
         for train in self._trains:
-            if self._time >= train.get_departure_time():
-                output[train.get_train_number()] = train.get_route_info()
+            # if self._time >= train.get_departure_time():
+            output[train.get_train_number()] = train.get_route_info()
         return output
 
 

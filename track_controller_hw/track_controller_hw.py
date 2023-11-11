@@ -90,11 +90,13 @@ class Track_Controller_HW(object):
         # Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        """
         for i in self.ctc_ctrl_signals._train_info:
             self._suggested_speed_blocks.clear()
             self._suggested_speed_blocks[i] = self.ctc_ctrl_signals._train_info[i][1]
             self._authority_blocks.clear()
             self._authority_blocks[i] = self.ctc_ctrl_signals._train_info[i][2]
+        """
         # for i in self._lights.keys():
         #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
         # for i in self._switches.keys():
