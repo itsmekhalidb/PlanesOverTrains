@@ -9,10 +9,23 @@ from .Backup_Controller import Backup_Controller
 
 KP = 8000
 KI = 10
+DWELL_TIME = 60
+BRAKING_DIFFERENCE = 0.5
+BACKUP_THRESHOLD = 2000
+STOPPING_SPEED = 15
+SLOWDOWN = .0124
+
+NIGHT = 7
+DAY = 7
+
+TRAIN_MASS = 40900.0
+SB_FORCE = TRAIN_MASS * 1.2
+EB_FORCE = TRAIN_MASS * 2.73
+
 class TrainController:
 
     # def __init__(self, train_model_api: TrainModelTrainControllerAPI):
-    def __init__(self, train_model_api):
+    def __init__(self, train_model_api, test=False):
 
         #priv variables
         self._current_velocity = 0.0
@@ -29,6 +42,7 @@ class TrainController:
         self._emergency_brake_failure = False
         self._emergency_brake_status = False
         self._underground_status = False
+        # non-vital
         self._right_door_open = False
         self._left_door_open = False
         self._internal_lights_on = False
@@ -43,8 +57,11 @@ class TrainController:
         self._previous_uk = 0.0
         self._previous_ek = 0.0
         self._train_line = ""
-        self._next_station = ""
-        self._station_status = ""
+        self._prev_station = ""
+        self._station = ""
+        self._side = ""
+        self._stop = False
+        self._time = [0]
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._time = time.time()
@@ -54,7 +71,8 @@ class TrainController:
 
         # Update Function
         self.train_model = train_model_api
-        self.update()
+        if not test:
+            self.update()
 
     def update(self, thread=False):
         self.set_auto_status(bool(self.get_auto_status()))
@@ -74,7 +92,7 @@ class TrainController:
         self.set_maximum_veloctity(self.train_model.speed_limit)
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
-        self.set_authority(self.train_model.authority)
+        self.set_authority(round(self.train_model.authority*3.28084,3))
         #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
@@ -86,6 +104,8 @@ class TrainController:
         self.train_model.temp_sp = self.get_temperature_sp()
         self.set_temperature(self.train_model.temperature)
         self.set_train_line(self.train_model.line)
+        self.set_internal_lights()
+        self.set_external_lights()
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -120,20 +140,27 @@ class TrainController:
         self._current_velocity = c
 
     # TODO: Lights do not turn on if underground, needs fix
-    def set_internal_lights(self, status: bool):
-        if self._underground_status:
-            self._internal_lights_on = True
-        self._internal_lights_on = status
-    def set_external_lights(self, status: bool):
-        if self._underground_status:
-            self._external_lights_on = True
-        self._external_lights_on = status
+    def set_internal_lights(self):
+        if not self.get_auto_status():
+            if self._underground_status or self.get_time_of_day():
+                self._internal_lights_on = True
+            else:
+                self._internal_lights_on = False
+
+    def set_external_lights(self):
+        if not self.get_auto_status():
+            if self._underground_status or self.get_time_of_day():
+                self._external_lights_on = True
+            else:
+                self._external_lights_on = False
+
     # def set_engine_failure_status(self, status: bool):
     #     self._engine_failure = status
     def set_signal_pickup_failure_status(self, status: bool):
         self._signal_pickup_failure = status
     def set_service_brake_value(self, value: float):
-        self._service_brake_value = value
+        if value != 0 :
+            self._service_brake_value = value
     def set_emergency_brake_status(self, status: bool):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):
@@ -152,6 +179,24 @@ class TrainController:
     def set_eK(self, desired: int, actual: int):
         self._ek = self._commanded_velocity - self._current_velocity
         self._previous_ek = self._ek
+
+    def update_stop(self):
+        if (self.get_beacon()) != "" and not self.stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
+            self._stop = True
+            self._stop_time = time.get_time()
+            self.set_service_brake_value(1.0)
+
+            self.set_station_side()
+
+        if self.stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
+            self._stop = False
+            self.set_service_brake_value(0.0)
+            self.set_right_door_status(False)
+            self.set_left_door_status(False)
+
+        self._prev_station = self.get_beacon()
+
+
 
     # TODO: Desired power is not being passed in at any point in your code, needs fix
     def set_power(self):
@@ -182,21 +227,24 @@ class TrainController:
         else:
             power = 0.0
         # TODO: Implement coming to a stop
-        # service_braking_distance - self.calculate_service_braking_distance(self.get_actual_velocity())
-        # emergency_braking_distance = self.calculate_emergency_braking_distance(self.get_actual_velocity())
-        # if self.get_actual_velocity()>speed+.5:
-        #     self._decreasing_speed = True
-        # elif self.get_authority()<=0 and service_braking_distance > .0124:
-        #     self._emergency_decreasing_speed = True
-        # elif self.get_authority() < service_braking_distance:
-        #     self._decreasing_speed = True
-        # else:
-        #     self._decreasing_speed = False
-        #     self._emergency_decreasing_speed = False
-        self._commanded_power = power
+        braking_distance_val = self.braking_distance(self.get_actual_velocity())
+        ebrake_distance_val = self.ebrake_distance(self.get_actual_velocity())
+        if self.get_actual_velocity()>speed+.5:
+            self._decreasing_speed = True
+        elif self.get_authority()<=0 and braking_distance_val > .0124:
+            self._emergency_decreasing_speed = True
+        elif self.get_authority() < braking_distance_val:
+            self._decreasing_speed = True
+        else:
+            self._decreasing_speed = False
+            self._emergency_decreasing_speed = False
+        self._commanded_power = power if power < 120000 else 120000
 
     def set_setpoint_speed(self, speed: float):
-        self._setpoint_speed = speed
+        if speed <= self._maximum_velocity:
+            self._setpoint_speed = speed
+        else:
+            self._setpoint_speed = self._maximum_velocity
     def set_right_door_status(self,stat: bool):
         self._right_door_open = stat
     def set_left_door_status(self, stat: bool):
@@ -260,8 +308,42 @@ class TrainController:
     def get_next_station(self)->str:
         return self._next_station
 
+    def braking_distance(self, velocity: float)->float:
+        return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/SB_FORCE
+
     def get_station_status(self)->str:
         return self._station_status
+
+    def ebrake_distance(self, velocity: float)->float:
+        return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/EB_FORCE
+
+    def get_beacon(self)->str:
+        return self._beacon
+
+    def get_time(self)->int:
+        return self._time[0]
+
+    def get_time_of_day(self)->bool:
+        hour = self.get_time()//3600
+        return hour >= NIGHT + 12  or hour <= DAY
+
+    def set_station_side(self):
+
+        if self._side == "Left":
+            self.set_left_door_status(True)
+        elif self._side == "Right":
+            self.set_right_door_status(True)
+        elif self._side == "Left/Right":
+            self.set_left_door_status(True)
+            self.set_right_door_status(True)
+        else:
+            self.set_left_door_status(False)
+            self.set_right_door_status(False)
+
+    def get_side(self)->str:
+        return self._side
+    def set_side(self, side: str):
+        self._side = side
 
     def launch_tc_ui(self):
         from train_controller.Train_Controller_Main_Window import Ui_MainWindow

@@ -416,7 +416,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
             self.selected_output.setText(block_number)
             if self.get_previous_show() != block_number:
                 self.set_previous_show(block_number)
-                self.track_controller_hw.send_update(block_number)
+                self.track_controller_hw.select_block(block_number)
+                #self.track_controller_hw.send_update(block_number)
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()

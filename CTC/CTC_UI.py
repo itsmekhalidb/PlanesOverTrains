@@ -18,6 +18,7 @@ from datetime import datetime, time
 from CTC import CTC
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
+from api.ctc_track_model_api import CTCTrackModelAPI
 
 last_page = 0
 train_nums = []
