@@ -89,7 +89,7 @@ class TrackModel(object):
 
         #authority
         self.set_authority(self._track_controller_signals._authority)
-        # self._train_model_signals[1].authority = self.get_authority()
+        # self._train_models[1].authority = 10.0
 
         #gate control
         self.set_gate_control(self.get_gate_control())
@@ -117,7 +117,7 @@ class TrackModel(object):
 
         #track layout
         self.set_track_layout(self._filepath)
-        # self._train_model_signals[1].track_info = self.get_track_layout()
+        # self._train_models[1].track_info = self.get_track_layout()
 
         #---- Outputs ----#
         #speed limit
@@ -126,10 +126,10 @@ class TrackModel(object):
         #current block
         # TODO: Calculate current block based on actual velocity
         # TODO: Update starting block based on route
-        self.set_current_block(self.get_current_block())
-        # self.set_current_block(48) # For testing purposes
+        # self.set_current_block(self.get_current_block())
+        self.set_current_block(48) # For testeing purposes
         # 1 is the train id, would need to do this in a for loop for each train
-        # self._train_model_signals[1].current_block = self.get_current_block()
+        # self._train_models[1].current_block = self.get_current_block()
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -157,7 +157,7 @@ class TrackModel(object):
 
         #line
         self.set_line(self._track_controller_signals._line)
-        # self._train_model_signals[1].line = self.get_line()
+        # self._train_models[1].line = self.get_line()
 
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model

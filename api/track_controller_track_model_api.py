@@ -10,7 +10,7 @@ class TrackControllerTrackModelAPI:
         #self._power_failure = False  # signal pickup failure
         # TODO: train specific should be sent to train info
         self._line = "red"  # line
-        self._authority = 0  # authority
+        self._authority = 10.0  # authority
         self._commanded_speed = 0  # commanded speed
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = gate/crossing, 4 = switch, 5 = light, block length, 6 = beacon
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
