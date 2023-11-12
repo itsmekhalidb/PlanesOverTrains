@@ -75,7 +75,7 @@ class Track_Controller_HW(object):
         # CTC Office Inputs
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
-        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+#        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
         # CTC Office Outputs
         #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
@@ -109,7 +109,7 @@ class Track_Controller_HW(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
-        self.receive()
+        #self.receive()
 
         if self.get_automatic() and self.get_plc_set():
             print("get plc = true and automatic = true")
