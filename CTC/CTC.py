@@ -52,8 +52,8 @@ class CTC(object):
     # setter functions
     def set_time_scaling(self, num):
         self._time_scaling = num
-    
     def change_block(self, block):
+        print(block)
         if block in self._closed_blocks:
             self._closed_blocks.remove(block)
         else:
@@ -87,9 +87,6 @@ class CTC(object):
         elif function == 2: # add a stop
             return
     
-    def close_block(self, section, block):
-        return
-    
     def calculate_throughput(self):
         return
     
@@ -113,6 +110,7 @@ class CTC(object):
         self._track.update_tickets(station, tickets_sold)
     def update_section_status(self):
         self.TrackCTRLSignal._track_section_status = self._closed_blocks
+
     
     # testbench/api functions
     def change_occupied(self, section, block):
@@ -140,7 +138,6 @@ class CTC(object):
 
         # update functions
         self.update_section_status()
-        print(self._occupied_blocks)
 
         # Enable Threading
         if thread:
