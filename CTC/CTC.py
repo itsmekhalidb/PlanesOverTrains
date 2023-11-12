@@ -37,6 +37,8 @@ class CTC(object):
         return _stations.keys()
     def get_time(self):
         return self._time
+    def get_time_scaling(self):
+        return self._time_scaling
     def get_highest_train_num(self):
         max = 1
         if not self._trains:
