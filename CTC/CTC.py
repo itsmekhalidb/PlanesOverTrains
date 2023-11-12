@@ -118,12 +118,14 @@ class CTC(object):
 
     # update function every 100 ms
     def update(self, thread=True):
+        # clock 
         if (self._tick_counter < 10/self._time_scaling):
             self._tick_counter += 1
         else:
-            self._tick_counter = 0
+            self._tick_counter -= 10/self._time_scaling
             self._time = self._time + timedelta(seconds=1)
             self.TrackCTRLSignal._time = self._time
+        print (self._tick_counter)
 
         self.TrackCTRLSignal._train_info = self.create_departures()
 
