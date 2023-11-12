@@ -143,6 +143,7 @@ class CTC_Main_UI(QMainWindow):
         header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
+        self.train_list_2.verticalHeader().setVisible(False)
 
         # data = [ # code to add data
         #     ["1", "08:00", "10:30", "East Liberty", "890 m", "89 mi/hr", "50 mi/hr"]
@@ -212,6 +213,7 @@ class CTC_Main_UI(QMainWindow):
         self.section_list.setFont(font)
         self.section_list.setObjectName("section_list")
         self.section_list.addItem("Section")
+        self.section_list.addItems(self.initialize_section_list("Green", self.ctc))
         self.block_list = QtWidgets.QComboBox(self.train_view_page)
         self.block_list.setGeometry(QtCore.QRect(425, 410, 80, 31))
         font = QtGui.QFont()
@@ -219,12 +221,14 @@ class CTC_Main_UI(QMainWindow):
         self.block_list.setFont(font)
         self.block_list.setObjectName("block_list")
         self.block_list.addItem("Block")
+        self.section_list.currentIndexChanged.connect(lambda:self.block_list.addItems(self.initialize_block_list("Green", self.ctc, self.section_list.currentText(), self.block_list)))
         self.confirm_close = QtWidgets.QPushButton(self.train_view_page)
         self.confirm_close.setGeometry(QtCore.QRect(425, 450, 81, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
+        self.confirm_close.pressed.connect(self.change_block(self.section_list.currentText(), self.block_list.currentText(), self.ctc))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
         self.header.raise_()
@@ -542,6 +546,36 @@ class CTC_Main_UI(QMainWindow):
             self.system_speed_spnbx_4.setValue(speed)
         else:
             self.system_speed_spnbx_3.setValue(speed)
+    
+
+    # display section names
+    def initialize_section_list(self, line, ctc):
+        result = []
+        if line == "Green":
+            for block in ctc.TrackCTRLSignal._green:
+                if not block[0:1] in result:
+                    result.append(block[0:1])
+            
+        return result
+    
+
+    # display block numbers
+    def initialize_block_list(self, line, ctc, section_name, block_list):
+        block_list.clear()
+        block_list.addItem("Block")
+        result = []
+        if line == "Green":
+            for block in ctc.TrackCTRLSignal._green:
+                if block[0:1] == section_name:
+                    result.append(block[1:])
+            
+        return result
+    
+    
+    # close block
+    def change_block(self, section, block, ctc):
+        name = section + block
+        ctc.change_block(name)
 
 
     # unit conversion functions

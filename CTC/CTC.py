@@ -53,6 +53,12 @@ class CTC(object):
     def set_time_scaling(self, num):
         self._time_scaling = num
     
+    def change_block(self, block):
+        if block in self._closed_blocks:
+            self._closed_blocks.remove(block)
+        else:
+            self._closed_blocks.append(block)
+    
     #automatic train schedule function
     def import_schedule(self, doc):
         return
@@ -105,6 +111,8 @@ class CTC(object):
         self._track.update_occupancy(occupied_block)
     def update_passenger_info(self, station, tickets_sold):
         self._track.update_tickets(station, tickets_sold)
+    def update_section_status(self):
+        self.TrackCTRLSignal._track_section_status = self._closed_blocks
     
     # testbench/api functions
     def change_occupied(self, section, block):
@@ -129,6 +137,10 @@ class CTC(object):
             self.TrackCTRLSignal._time = self._time
 
         self.TrackCTRLSignal._train_info = self.create_departures()
+
+        # update functions
+        self.update_section_status()
+        print(self._occupied_blocks)
 
         # Enable Threading
         if thread:
