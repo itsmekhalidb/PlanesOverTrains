@@ -17,7 +17,7 @@ import sys
 # APIs
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
-from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import Trainz
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 from api.ctc_track_model_api import CTCTrackModelAPI
 
@@ -40,7 +40,7 @@ class Launcher(QMainWindow):
         self.track_controller_track_model_api = TrackControllerTrackModelAPI()
 
         # API for Track Model and Train Model
-        self.track_model_train_model_api = TrackModelTrainModelAPI()
+        self.track_model_train_model_api = Trainz()
 
         # API for Train Model and Train Controller
         self.train_model_train_controller_api = TrainModelTrainControllerAPI()
@@ -52,10 +52,10 @@ class Launcher(QMainWindow):
         self.ctc = CTC(self.ctc_track_controller_api, self.ctc_track_model_api)
         self.track_controller = Track_Controller(self.ctc_track_controller_api, self.track_controller_track_model_api)
         self.track_controller_hw = Track_Controller_HW(self.ctc_track_controller_api, self.track_controller_track_model_api)
-        self.track_model = TrackModel(self.track_controller_track_model_api, self.ctc_track_model_api)
+        self.track_model = TrackModel(self.track_model_train_model_api, self.track_controller_track_model_api, self.ctc_track_model_api)
         train_controller = {}
         self.train_controller_manager = TrainControllerManager(train_controller)
-        self.train_model_manager = TrainModelManager(train_controller, self.track_controller_track_model_api._train_info)
+        self.train_model_manager = TrainModelManager(train_controller, self.track_model_train_model_api.train_apis)
 
         super().__init__()
         self.setupUi()

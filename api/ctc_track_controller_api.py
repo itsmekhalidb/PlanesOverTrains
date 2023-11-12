@@ -16,7 +16,7 @@ class CTCTrackControllerAPI:
         self._occupancy = {'A1': 0} # blocks{occupancy(bool)}
         self._light = ("light color", 0) # light color, color (0 for green, 1 for red)
         self._switch = (0, 0) # switch position (first is switch number, second is position)
-        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = gate/crossing, 4 = switch, 5 = light
+        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = light, 4 = switch, 5 = gate/crossing
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'B7': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B8': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},'B9': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},

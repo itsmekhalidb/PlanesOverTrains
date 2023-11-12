@@ -2,4 +2,4 @@ IF !block 63 THEN !switch 63
 IF block 0 THEN green 45
 IF !block 0 THEN red 45
 IF block 12 THEN !switch 45
-If switch 23 THEN green 0
+IF switch 23 THEN green 0

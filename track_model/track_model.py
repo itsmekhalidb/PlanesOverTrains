@@ -6,13 +6,15 @@ import numpy as np
 import threading
 import pandas as pd
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
-from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI, Trainz
 from api.ctc_track_model_api import CTCTrackModelAPI
 import traceback
 from track_model.block_info import block_info
+from typing import DefaultDict
+
 
 class TrackModel(object):
-    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
+    def __init__(self, TrainModels: Trainz, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
@@ -38,6 +40,13 @@ class TrackModel(object):
         self._temperature = 0
         self._track_layout_loaded = 0 #done for track layout
         self._block_length = 0.0 #block length
+        self._local_time = 0
+        self._time = time.time()
+        self._current_time = self._time
+        self._prev_time = self._time
+        self._train_models = TrainModels.train_apis # dictionary of train model apis
+        self._train_ids = [] # list of train ids
+        self._distance = 0.0
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -83,7 +92,7 @@ class TrackModel(object):
 
         #authority
         self.set_authority(self._track_controller_signals._authority)
-        # self._train_model_signals[1].authority = self.get_authority()
+        # self._train_models[1].authority = 10.0
 
         #gate control
         self.set_gate_control(self.get_gate_control())
@@ -111,7 +120,7 @@ class TrackModel(object):
 
         #track layout
         self.set_track_layout(self._filepath)
-        # self._train_model_signals[1].track_info = self.get_track_layout()
+        # self._train_models[1].track_info = self.get_track_layout()
 
         #---- Outputs ----#
         #speed limit
@@ -120,10 +129,10 @@ class TrackModel(object):
         #current block
         # TODO: Calculate current block based on actual velocity
         # TODO: Update starting block based on route
-        self.set_current_block(self.get_current_block())
-        # self.set_current_block(48) # For testing purposes
+        # self.set_current_block(self.get_current_block())
+        self.set_current_block(48) # For testeing purposes
         # 1 is the train id, would need to do this in a for loop for each train
-        # self._train_model_signals[1].current_block = self.get_current_block()
+        # self._train_models[1].current_block = self.get_current_block()
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -151,8 +160,21 @@ class TrackModel(object):
 
         #line
         self.set_line(self._track_controller_signals._line)
-        # self._train_model_signals[1].line = self.get_line()
+        # self._train_models[1].line = self.get_line()
 
+        # update train model signals
+        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+
+        for i in self._train_model_signals.keys():
+            index = int(i) - 1
+            if index not in self._train_ids:
+                self._train_ids.append(index)
+                self._train_models[index] = TrackModelTrainModelAPI()
+            self._train_models[index].authority = 10.0
+            self._train_models[index].line = 'red'
+            self._train_models[index].track_info = self.get_track_layout()
+            self._train_models[index].current_block = 48
+            self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
 
         #Enable threading
         if thread:
@@ -160,11 +182,19 @@ class TrackModel(object):
 
 
     #---- Getters & Setters ----#
+    def update_traveled_distance(self, velocity):
+        self._current_time = time.time()
+        dt = self._current_time - self._prev_time
+        dist_traveled = velocity * dt
+        self._prev_time = self._current_time
+        return dist_traveled
+
     #Line
     def set_line(self, _line: str):
         self._line = _line
     def get_line(self) -> str:
         return self._line
+
 
     def set_block_length(self, _block_length: float):
         self._block_length = _block_length
@@ -259,6 +289,10 @@ class TrackModel(object):
 
     def get_current_block(self) -> int:
         return self._current_block
+
+
+    #get veolocity, multiple velocity & time to get distance, compare distance and block length, constantly add distance, dt could be 1 second,
+    # def set_distance(self, _distance):
 
     #Train Line
     def set_train_line(self, _train_line: str):

@@ -1,5 +1,6 @@
 from track_model.block_info import block_info
 
+
 class TrackModelTrainModelAPI:
     def __init__(self) -> None:
         ''' Define variables passed between Train Model and Track Model '''
@@ -17,3 +18,12 @@ class TrackModelTrainModelAPI:
         self.filepath = ""
         self.track_info = block_info(self.filepath)
         self.current_block = 0
+        self.cum_distance = 0
+
+
+class Trainz:
+    def __init__(self) -> None:
+        ''' Holds key value pairs of Train ID's and Train Model API's'''
+
+        self.train_apis = {}  #EX) {0: TrackModelTrainModelAPI(), 1: TrackModelTrainModelAPI()} # keys must be train ids, values are TrackModelTrainModelAPI objects
+
