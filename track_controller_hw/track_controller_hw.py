@@ -12,7 +12,6 @@ from track_controller_hw.File_Parser import File_Parser
 class Track_Controller_HW(object):
 
     def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
-        # self._blue = ["A1","A2","A3","A4","A5","B6","B7","B8","B9","B10","C11","C12","C13","C14","C15"]
 
         # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit,
         self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
@@ -20,12 +19,16 @@ class Track_Controller_HW(object):
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
 
+        # green line track
         self._green = {}
 
+        # plc object
         self.blue_line_plc = File_Parser("")
 
+        # used to make sure plc is loaded
         self._plc_set = False
 
+        # time
         self._time = 0
 
         self._train_ids = {}
@@ -45,8 +48,9 @@ class Track_Controller_HW(object):
         # 'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
         # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
+        # list of occupied blocks to show on UI
         self._occupied_blocks = []
-
+        # serial port connection object
         #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
@@ -62,6 +66,7 @@ class Track_Controller_HW(object):
         self._track_status = False
         # self._passengers = 0
 
+        # signals from the APIs to get/set
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
 
@@ -75,7 +80,7 @@ class Track_Controller_HW(object):
         # CTC Office Inputs
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
-#        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+        #        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
         # CTC Office Outputs
         #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
@@ -109,8 +114,11 @@ class Track_Controller_HW(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
+
+        # used to recieve info from the Ardunio
         #self.receive()
 
+        # checks to see if in automatic or in manual mode -if in automatic -> run PLC
         if self.get_automatic() and self.get_plc_set():
             print("get plc = true and automatic = true")
             self.get_plc()
@@ -124,6 +132,7 @@ class Track_Controller_HW(object):
     def get_train_id(self):
         return self._train_ids
 
+    # used to recieve info from the Ardunio
     def receive(self):
         try:
             if self.get_ard().inWaiting() > 0:
@@ -134,6 +143,7 @@ class Track_Controller_HW(object):
             print("An error occurred:")
             traceback.print_exc()
 
+    # when in manual mode, used to send switch/light info to ardunio to update functions
     def send_update(self, block_number: str):
         send_string = "1"
         """
@@ -172,6 +182,7 @@ class Track_Controller_HW(object):
         time.sleep(3)
         self.select_block(block_number)
 
+    # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
         #self.get_ard().write(block_send.encode('utf-8'))
@@ -260,6 +271,7 @@ class Track_Controller_HW(object):
 
     def set_time(self, times):
         self._time = times
+
     def get_plc(self):  # have not tested this yet
         print("In plc function")
         if self.blue_line_plc.parse():
@@ -424,6 +436,7 @@ class Track_Controller_HW(object):
         return self._power_failure
     """
 
+    # used to launch UI from launcher
     def launch_ui(self):
         print("Launching Track Controller HW UI")
         try:

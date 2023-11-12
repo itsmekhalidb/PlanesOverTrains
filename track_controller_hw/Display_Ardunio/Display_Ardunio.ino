@@ -17,7 +17,7 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void PLC(){
-  
+ 
 }
 
 const int LIGHTNUMBER = 3;
@@ -62,7 +62,7 @@ void Receiver(){
   lcd1.setCursor(0,3);
   lcd1.print(incomingData);
   
-
+// toggle a light or switch - manual mode
   if (detect.equals("1")) {
     digitalWrite(Detect_LED, HIGH);
     digitalWrite(Red_LED, LOW);
@@ -113,7 +113,7 @@ void Receiver(){
       }
     }
   }
-
+//display each block
   else if (detect.equals("0")){
     String block_number = incomingData.substring(1,incomingData.length());
     lcd1.setCursor(0,0);
@@ -151,6 +151,14 @@ void Receiver(){
     }
 
   }
+  //read the block occupancy -- PLC
+  else if(detect.equals("2")){
+    for(int i = 0; i < incomingData.length(); i++){
+      blue[i] = incomingData.substring(i,i+1);
+      
+    }
+  }
+  
 }
 
   
