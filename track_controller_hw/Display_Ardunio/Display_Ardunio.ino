@@ -16,8 +16,14 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
+void PLC(){
+  
+}
+
 const int LIGHTNUMBER = 3;
 const int SWITCHNUMBER = 1;
+
+int manual = 0;
 
 int Detect_LED = 2;
 int Red_LED = 3;
@@ -48,11 +54,13 @@ void transmit(){
 }
 
 
-void Receiver() {
+void Receiver(){
   if (Serial.available() > 0) {
     incomingData = Serial.readStringUntil('\n');
   }
   String detect = incomingData.substring(0,1);
+  lcd1.setCursor(0,3);
+  lcd1.print(incomingData);
   
 
   if (detect.equals("1")) {
@@ -70,13 +78,11 @@ void Receiver() {
     String block_number = incomingData.substring(9,incomingData.length());
     
   
-
     //lcd1.clear();
     //lcd1.setCursor(0, 0);
     //lcd1.print("Block #: " + block_number);
     //lcd1.setCursor(0, 1);
     //lcd1.print("Commanded Speed: " + commanded_speed);
-    String number_of_block = incomingData.substring(10, incomingData.length());
 
     //commanded[atoi(number_of_block)] = atoi(commanded_speed);
 
@@ -84,10 +90,10 @@ void Receiver() {
       for(int i = 0; i < LIGHTNUMBER; i++){
         if(lights[i].name == block_number){
           if(light_state == "0"){
-            lights[i].value == 0;
+            lights[i].value = 0;
           }
           else{
-            lights[i].value == 1;
+            lights[i].value = 1;
           }
           break;
         }
@@ -97,10 +103,10 @@ void Receiver() {
       for(int i = 0; i < SWITCHNUMBER; i++){
         if(switches[i].name == block_number){
           if(switch_state == "0"){
-            switches[i].value == 0;
+            switches[i].value = 0;
           }
           else{
-            switches[i].value == 1;
+            switches[i].value = 1;
           }
           break;
         }
@@ -125,6 +131,10 @@ void Receiver() {
           digitalWrite(Green_LED, LOW);         
         }
         break;
+      }
+      else{
+          digitalWrite(Red_LED, LOW);
+          digitalWrite(Green_LED, LOW); 
       }
     }
     for(int i = 0; i < SWITCHNUMBER; i++){
