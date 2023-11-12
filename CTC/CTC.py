@@ -125,7 +125,6 @@ class CTC(object):
             self._tick_counter -= 10/self._time_scaling
             self._time = self._time + timedelta(seconds=1)
             self.TrackCTRLSignal._time = self._time
-        print (self._tick_counter)
 
         self.TrackCTRLSignal._train_info = self.create_departures()
 
