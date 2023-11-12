@@ -2,6 +2,7 @@ import threading
 import traceback
 
 import serial
+import time
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
@@ -23,6 +24,8 @@ class Track_Controller_HW(object):
         self.blue_line_plc = File_Parser("")
 
         self._plc_set = False
+
+        self._time = 0
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
@@ -76,6 +79,7 @@ class Track_Controller_HW(object):
         # CTC Office Outputs
         #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+        self.set_time(self.ctc_ctrl_signals._time)
 
         # Track Model Inputs
         #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
@@ -131,12 +135,19 @@ class Track_Controller_HW(object):
 
     def send_update(self, block_number: str):
         send_string = "1"
+        """
         if len(block_number) == 2:
             send_string += "00" + block_number
         elif len(block_number) == 3:
             send_string += "0" + block_number
         elif len(block_number) == 4:
             send_string += block_number
+        """
+        commanded = str(self.get_commanded_speed())
+        if len(commanded) == 1:
+            send_string += "0" + commanded
+        elif len(commanded) == 2:
+            send_string += commanded
         if block_number in self.get_light_list():
             send_string += "1"
             if self.get_lights(block_number) == 1:
@@ -153,15 +164,16 @@ class Track_Controller_HW(object):
                 send_string += "0"
         else:
             send_string += "00"
-        command = str(self.get_commanded_speed())
-        send_string += command
         send_string += "00"
-        # self.get_ard().write(send_string.encode('utf-8'))
+        send_string += block_number
+       # self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
+        time.sleep(3)
+        self.select_block(block_number)
 
     def select_block(self, block_number):
         block_send = "0" + block_number
-        #self.get_ard().write(block_send.encode('utf-8'))
+      #  self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
@@ -240,6 +252,11 @@ class Track_Controller_HW(object):
     def get_occupancy(self, block) -> int:
         return self._blue[block][2]
 
+    def get_time(self):
+        return self._time
+
+    def set_time(self, times):
+        self._time = times
     def get_plc(self):  # have not tested this yet
         print("In plc function")
         if self.blue_line_plc.parse():

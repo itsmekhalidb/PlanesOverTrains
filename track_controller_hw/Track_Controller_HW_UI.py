@@ -32,7 +32,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         # self._command = False
         self._previous = ""
         self._send_bits = ""
-       # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
         self.setupUi()
         self.show()
         self.change = True
@@ -110,20 +110,20 @@ class Ui_track_controller_mainwindow(QMainWindow):
                                           "background-color: rgb(255, 255, 255);")
         self.sys_time_label.setObjectName("sys_time_label")
         self.title_label.setObjectName("title_label")
-        self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
-        self.system_speed_spnbx.setObjectName("system_speed_spnbx")
-        self.system_speed_label = QtWidgets.QLabel(self.centralwidget)
-        self.system_speed_label.setGeometry(QtCore.QRect(498, 10, 201, 31))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.system_speed_label.setFont(font)
-        self.system_speed_label.setAutoFillBackground(False)
-        self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                              "border: 1px solid black;")
-        self.system_speed_label.setObjectName("system_speed_label")
+        #self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        #self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
+        #self.system_speed_spnbx.setObjectName("system_speed_spnbx")
+        #self.system_speed_label = QtWidgets.QLabel(self.centralwidget)
+        #self.system_speed_label.setGeometry(QtCore.QRect(498, 10, 201, 31))
+        #font = QtGui.QFont()
+        #font.setPointSize(10)
+        #font.setBold(True)
+        #font.setWeight(75)
+        #self.system_speed_label.setFont(font)
+        #self.system_speed_label.setAutoFillBackground(False)
+        #self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                                      "border: 1px solid black;")
+        #self.system_speed_label.setObjectName("system_speed_label")
         self.manual_mode_check = QtWidgets.QCheckBox(self.centralwidget)
         self.manual_mode_check.setEnabled(True)
         self.manual_mode_check.setGeometry(QtCore.QRect(210, 62, 14, 15))
@@ -150,17 +150,17 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.manual_mode_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                              "border: 1px solid black;\n"
                                              "")
-        #self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
-        #self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
-        #font = QtGui.QFont()
-        #font.setPointSize(10)
-        #font.setBold(True)
-        #font.setWeight(75)
-        #self.manual_mode_label_1.setFont(font)
-        #self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-         #                                      "border: 1px solid black;\n"
-         #                                      "")
-        #self.manual_mode_label_1.setText("Crossing Lights")
+        # self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
+        # self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.manual_mode_label_1.setFont(font)
+        # self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                                      "border: 1px solid black;\n"
+        #                                      "")
+        # self.manual_mode_label_1.setText("Crossing Lights")
         self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.manual_mode_label.setObjectName("manual_mode_label")
         self.manual_mode_off = QtWidgets.QLabel(self.centralwidget)
@@ -321,8 +321,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.testbench_button.setGeometry(QtCore.QRect(10, 480, 81, 31))
         self.testbench_button.setObjectName("testbench_button")
         self.title_label.raise_()
-        self.system_speed_label.raise_()
-        self.system_speed_spnbx.raise_()
+#        self.system_speed_label.raise_()
+#        self.system_speed_spnbx.raise_()
         self.manual_mode_check.raise_()
         self.ebrake_fail_on.raise_()
         self.manual_mode_label.raise_()
@@ -363,14 +363,22 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.wayside_select.addItem("Blue")
         self.wayside_select.addItem("Green")
 
-
-
     def update(self):
         _translate = QtCore.QCoreApplication.translate
+        temp_time = self.track_controller_hw.get_time()
+        hr = str(temp_time.hour)
+        minute = str(temp_time.minute)
+        sec = str(temp_time.second)
+        if len(hr) == 1:
+            hr = "0" + hr
+        if len(minute) == 1:
+            minute = "0" + minute
+        if len(sec) == 1:
+            sec = "0" + sec
+        temp_timestr = hr + ":" + minute + ":" + sec
+        self.sys_time_label.setText(_translate("self",temp_timestr))
 
         self.plc_output.clear()
-
-
 
         if self.wayside_select.currentText() == "Blue" and self.change:
             self.select_output.clear()
@@ -390,26 +398,25 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
 
-        #self.command_drop.setVisible(False)
+        # self.command_drop.setVisible(False)
 
         if not self.track_controller_hw.get_automatic():
             self.show_ard_light.setVisible(True)
             self.show_ard_switch.setVisible(True)
-            #self.command_label.setVisible(True)
-            #self.command_spin.setVisible(True)
+            # self.command_label.setVisible(True)
+            # self.command_spin.setVisible(True)
             # self.command_drop.setVisible(True)
         else:
             self.show_ard_light.setVisible(False)
             self.show_ard_switch.setVisible(False)
-            #self.command_label.setVisible(False)
-            #self.command_spin.setVisible(False)
-            #self.track_controller_hw.set_commanded_speed(self.command_spin.value())
+            # self.command_label.setVisible(False)
+            # self.command_spin.setVisible(False)
+            # self.track_controller_hw.set_commanded_speed(self.command_spin.value())
 
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
         # label visibility
         self.manual_mode_off.setVisible(not bool(self.manual_mode_check.checkState()))
         self.manual_mode_on.setVisible(bool(self.manual_mode_check.checkState()))
-
 
         try:
             block_number = self.select_output.currentItem().text()
@@ -417,7 +424,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
             if self.get_previous_show() != block_number:
                 self.set_previous_show(block_number)
                 self.track_controller_hw.select_block(block_number)
-                #self.track_controller_hw.send_update(block_number)
+                # self.track_controller_hw.send_update(block_number)
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
@@ -545,7 +552,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("track_controller_mainwindow", "Track Controller Hardware"))
         self.title_label.setText(_translate("track_controller_mainwindow", "Wayside Controller - Hardware"))
-        self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
+       # self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
         self.manual_mode_check.setText(_translate("track_controller_mainwindow", "Manual Mode"))
         self.ebrake_fail_on.setText(_translate("track_controller_mainwindow", "ON"))
         self.manual_mode_label.setText(_translate("track_controller_mainwindow", "Manual Mode"))
@@ -572,8 +579,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.selected_output_label.setText(_translate("track_controller_mainwindow", "Selected Output"))
         self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
-        self.sys_time_label.setText(_translate("self", "13:24:55"))
-
+        #self.sys_time_label.setText(_translate("self", "13:24:55"))
 
 
 if __name__ == "__main__":

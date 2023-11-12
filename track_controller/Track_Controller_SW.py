@@ -803,7 +803,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.track_controller.set_automatic(True)
     def _handler(self):
         self.timer = QTimer()
-        self.timer.setInterval(500)  # refreshes every time period
+        self.timer.setInterval(100)  # refreshes every time period
         self.timer.timeout.connect(self.update)
         self.timer.start()
 
@@ -884,10 +884,25 @@ class Ui_TrackController_MainUI(QMainWindow):
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
+        temp_time = self.track_controller.get_time()
+        hr = str(temp_time.hour)
+        minute = str(temp_time.minute)
+        sec = str(temp_time.second)
+        if len(hr) == 1:
+                hr = "0" + hr
+        if len(minute) == 1:
+                minute = "0" + minute
+        if len(sec) == 1:
+                sec = "0" + sec
+        temp_timestr = hr + ":" + minute + ":" + sec
+
         self.occupied_blocks.clear()
         self.PLC_output.clear()
         self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks())
         self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
+
+        if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
+                self.railway_crossing_checkBox.setCheckState(self.track_controller.get_railway_crossing('E18'))
 
         # self.commanded_speed.setText(str(self.track_controller.get_commanded_speed()))
 
@@ -920,6 +935,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         # self.sys_time_label.setVisible(False)
 
         # iteration 3 - shhh dont tell anyone
+        self.sys_time_label.setText(_translate("self", temp_timestr))
+        self.testbench.setVisible(False)
+        self.traffic_light_label_5.setVisible(False)
+        self.traffic_light_red_5.setVisible(False)
+        self.toggle_light_5.setVisible(False)
         self.traffic_light_label_6.setVisible(False)
         self.traffic_light_red_6.setVisible(False)
         self.toggle_light_6.setVisible(False)
@@ -972,8 +992,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                                          not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
         self.track_controller.set_lights(self.traffic_light_label_4.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_5.text(),
-                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        # self.track_controller.set_lights(self.traffic_light_label_5.text(),
+        #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
         self.track_controller.set_switch(self.switch_label_1.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
@@ -981,6 +1001,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
         # self.track_controller.set_switch(self.switch_label_3.text(),
         #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+
+        self.track_controller.set_railway_crossing('E18', self.sect_E_occ)
 
     def ChangeVisibility(self):
         self.switch_position_left.setVisible(bool(self.track_controller.get_switch(self.switch_label_1.text())))
