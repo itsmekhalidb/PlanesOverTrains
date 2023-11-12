@@ -19,6 +19,7 @@ class Track_Controller_HW(object):
                       'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
                       'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
                       'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
+
         self._green = {}
 
         self.blue_line_plc = File_Parser("")
@@ -108,7 +109,7 @@ class Track_Controller_HW(object):
         # for i in self._crossing_lights_gates.keys():
         #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
         #
-        # self.receive()
+        self.receive()
 
         if self.get_automatic() and self.get_plc_set():
             print("get plc = true and automatic = true")
@@ -166,14 +167,14 @@ class Track_Controller_HW(object):
             send_string += "00"
         send_string += "00"
         send_string += block_number
-       # self.get_ard().write(send_string.encode('utf-8'))
+        #self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
         time.sleep(3)
         self.select_block(block_number)
 
     def select_block(self, block_number):
         block_send = "0" + block_number
-      #  self.get_ard().write(block_send.encode('utf-8'))
+        #self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
@@ -206,10 +207,12 @@ class Track_Controller_HW(object):
     def get_track_section_status(self):
         return self._track_status
 
+    """ 
     def set_track_section_status(self, block):
         self._track_status = block
         for i in block.keys():
             self._blue[i][2] = block[i]
+    """
 
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates

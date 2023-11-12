@@ -467,17 +467,23 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
     def toggle_light(self):
         block = self.selected_output.text()
-        color = self.track_controller_hw.get_lights(block)
-        if color == 0:
-            self.change_light(1, block)
-        elif color == 1:
-            self.change_light(0, block)
-        self.track_controller_hw.send_update(block)
+        if block in self.track_controller_hw.get_light_list():
+            color = self.track_controller_hw.get_lights(block)
+            if color == 0:
+                self.change_light(1, block)
+            elif color == 1:
+                self.change_light(0, block)
+            self.track_controller_hw.send_update(block)
+        else:
+            print("No Light")
 
     def toggle_switch(self):
         block = self.selected_output.text()
-        self.change_switch(block)
-        self.track_controller_hw.send_update(block)
+        if block in self.track_controller_hw.get_switch_list():
+            self.change_switch(block)
+            self.track_controller_hw.send_update(block)
+        else:
+            print("No Switch")
 
     def change_light(self, i: int, light: str):
         if i == 0:
