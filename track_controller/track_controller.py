@@ -13,8 +13,6 @@ class Track_Controller(object):
         self._occupied_blocks = []
         # 1 = red, 0 = green
         self._lights = {'A1': 0, 'D13': 0, 'F29': 0, 'Z150': 0, 'J57': 0}
-        # plc input
-        self._plc_input = ""
         # 1 = left, 0 = right
         self._switches = {'D13': 0, 'F29': 0, 'J57': 0}
         # crossing lights/gate
@@ -25,6 +23,8 @@ class Track_Controller(object):
         self._command_speed = 0
         # list of trains and their info
         self._train_info = {}
+        # dict of wayside controllers and their associated PLC files
+        self._plc_input = {'Green 1': "", 'Green 2': "", 'Red 1': "", 'Red 2': ""}
 
         # Testbench Variables
         self._authority = 0
@@ -52,12 +52,12 @@ class Track_Controller(object):
 
         # CTC Office Outputs
         self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
-        self.ctc_ctrl_signals._green = self.get_track()
+        # self.ctc_ctrl_signals._green = self.get_track()
 
         # Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
-        self.track_ctrl_signals._green = self.get_track()
+        # self.track_ctrl_signals._green = self.get_track()
         self.track_ctrl_signals._train_info = self.get_train_info()
 
         if thread:
@@ -94,6 +94,7 @@ class Track_Controller(object):
 
     def set_occupancy(self, block, value: int):
         self._track[block][2] = value
+        self.ctc_ctrl_signals._green[block][2] = value
         if value == 1:
             self._occupied_blocks.append(block)
         else:
@@ -115,11 +116,13 @@ class Track_Controller(object):
     def set_switch(self, switch, value: int):
         self._switches[switch] = value
         self._track[switch][3] = value
+        self.ctc_ctrl_signals._green[switch][3] = value
+        self.track_ctrl_signals._green[switch][3] = value
 
-    def get_lights(self, light) -> int:
+    def get_lights(self, light):
         return  self.ctc_ctrl_signals._green[light][4]
 
-    def set_lights(self, light, value: int):
+    def set_lights(self, light, value):
         self._track[light][4] = value
         self.ctc_ctrl_signals._green[light][4] = value
         self.track_ctrl_signals._green[light][4] = value
@@ -190,6 +193,12 @@ class Track_Controller(object):
 
     def get_train_info(self) -> dict:
         return self._train_info
+
+    def set_plc_input(self, wayside: str, plc: str):
+        self._plc_input[wayside] = plc
+
+    def get_plc_input(self, wayside: str):
+        return self._plc_input[wayside]
 
     def launch_ui(self):
         print("Launching Track Controller UI")

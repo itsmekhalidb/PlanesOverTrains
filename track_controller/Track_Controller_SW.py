@@ -36,6 +36,14 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.ui.setupUi(self.window)
         self.window.show()
 
+    def browse_files(self):
+        print("Test")
+        browse = QFileDialog.getOpenFileName(self.load_PLC_btn)
+        print(browse[0])
+        data = browse[0]
+        self.track_controller.set_plc_input(self.wayside_ctrl_comboBox.currentText(), data)
+        print("Test End")
+
     def setupUi(self):
         self.setObjectName("Track Controller")
         self.resize(987, 610)
@@ -259,7 +267,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.railway_crossing_checkBox.setFont(font)
         self.railway_crossing_checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.railway_crossing_checkBox.setObjectName("railway_crossing_checkBox")
-        self.load_PLC_btn = QtWidgets.QPushButton(self)
+        self.load_PLC_btn = QtWidgets.QPushButton(self, clicked=lambda: self.browse_files())
         self.load_PLC_btn.setGeometry(QtCore.QRect(754, 63, 102, 28))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -937,8 +945,9 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_light_11.setVisible(False)
         self.traffic_light_green_11.setVisible(False)
 
-        # if self.track_controller.get_automatic():
-        #     self.PLC()
+        if self.track_controller.get_automatic():
+            self.PLC()
+
 
 
 
@@ -952,24 +961,26 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.sect_F_occ = bool(self.track_controller.get_occupancy('F21') or self.track_controller.get_occupancy('F22') or self.track_controller.get_occupancy('F23')
                                or self.track_controller.get_occupancy('F24') or self.track_controller.get_occupancy('F25') or self.track_controller.get_occupancy('F26')
                                or self.track_controller.get_occupancy('F27') or self.track_controller.get_occupancy('F28'))
+        self.sect_Z_occ = bool(self.track_controller.get_occupancy('Y147') or self.track_controller.get_occupancy('Y148') or self.track_controller.get_occupancy('Y149')
+                               or self.track_controller.get_occupancy('Z150'))
 
-        self.track_controller.set_lights(self.traffic_light_label,
-                                         int(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_2,
-                                         int((self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_3,
-                                         int((self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_4,
-                                         int(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_5,
-                                         int((self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
+        self.track_controller.set_lights(self.traffic_light_label.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+        self.track_controller.set_lights(self.traffic_light_label_2.text(),
+                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        self.track_controller.set_lights(self.traffic_light_label_3.text(),
+                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        self.track_controller.set_lights(self.traffic_light_label_4.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+        self.track_controller.set_lights(self.traffic_light_label_5.text(),
+                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
-        self.track_controller.set_switch(self.switch_label_1,
-                                         int((self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_switch(self.switch_label_2,
-                                         int((self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
-        self.track_controller.set_switch(self.switch_label_3,
-                                         int(not(self.sect_F_occ or self.sect_E_occ or self.sect_D_occ)))
+        self.track_controller.set_switch(self.switch_label_1.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+        self.track_controller.set_switch(self.switch_label_2.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+        # self.track_controller.set_switch(self.switch_label_3.text(),
+        #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
     def ChangeVisibility(self):
         self.switch_position_left.setVisible(bool(self.track_controller.get_switch(self.switch_label_1.text())))
