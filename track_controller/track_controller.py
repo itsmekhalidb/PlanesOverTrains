@@ -12,11 +12,11 @@ class Track_Controller(object):
         # blocks that are currently occupied
         self._occupied_blocks = []
         # 1 = red, 0 = green
-        self._lights = {'A1': 0, 'D13': 0, 'F29': 0, 'Z150': 0, 'J57': 0}
+        self._lights = {'A1': 0, 'D13': 0, 'F29': 0, 'Z150': 0}
         # 1 = left, 0 = right
-        self._switches = {'D13': 0, 'F29': 0, 'J57': 0}
+        self._switches = {'D13': 0, 'F29': 0, 'I57': 0}
         # crossing lights/gate
-        self._crossing_lights_gates = {'A1': 0}
+        self._crossing_lights_gates = {'E18': 0}
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -31,6 +31,7 @@ class Track_Controller(object):
         self._suggested_speed = 30
         # self._test_speed_limit = 0
         self._track_status = {}
+        self._time = 0
 
         # api signals
         self.ctc_ctrl_signals = ctcsignals
@@ -48,6 +49,7 @@ class Track_Controller(object):
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
         self.set_commanded_speed(self.ctc_ctrl_signals._suggested_speed)
         self.set_train_info(self.ctc_ctrl_signals._train_info)
+        self.set_time(self.ctc_ctrl_signals._time)
         # self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
         # CTC Office Outputs
@@ -59,6 +61,7 @@ class Track_Controller(object):
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
         # self.track_ctrl_signals._green = self.get_track()
         self.track_ctrl_signals._train_info = self.get_train_info()
+        self.track_ctrl_signals._time = self.get_time()
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -199,6 +202,12 @@ class Track_Controller(object):
 
     def get_plc_input(self, wayside: str):
         return self._plc_input[wayside]
+
+    def set_time(self, time):
+        self._time = time
+
+    def get_time(self):
+        return self._time
 
     def launch_ui(self):
         print("Launching Track Controller UI")

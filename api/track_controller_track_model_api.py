@@ -4,14 +4,11 @@ class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
         self._train_info = {}
-        #self._broken_rail = False  # ebrake failure
-        #self._engine_failure = False  # train engine failure
-        #self._circuit_failure = False  # service brake failure
-        #self._power_failure = False  # signal pickup failure
         # TODO: train specific should be sent to train info
         self._line = "red"  # line
         self._authority = 10.0  # authority
         self._commanded_speed = 0  # commanded speed
+        self._time = 0
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, block length, 5 = gate/crossing, 6 = beacon,
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 1, 5: 1}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 1},
