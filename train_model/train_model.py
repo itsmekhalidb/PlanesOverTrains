@@ -254,7 +254,9 @@ class TrainModel(object):
             info = _track_info.get_block_info(self.get_line(),self.get_block())
 
             # Beacon
-            self.set_beacon(info["beacon"][9:])
+            if info["beacon"] != "None":
+                # self.set_beacon(info["beacon"][9:])
+                self.set_beacon(info["beacon"])
             # Speed Limit
             self.set_speed_limit(info["speed limit"])
             # Elevation

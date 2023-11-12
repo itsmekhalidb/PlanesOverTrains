@@ -173,12 +173,13 @@ class TrackModel(object):
             self._train_models[index].authority = 10.0
             self._train_models[index].line = 'red'
             self._train_models[index].track_info = self.get_track_layout()
-            self._train_models[index].current_block = 48
             self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
+            self._train_models[index].current_block = self.update_current_block(self._train_models[index])
+            print(self._train_models[index].cum_distance, self._train_models[index].current_block)
 
         #Enable threading
         if thread:
-            threading.Timer(0.1, self.update).start()
+            threading.Timer(0.05, self.update).start()
 
 
     #---- Getters & Setters ----#
@@ -187,7 +188,21 @@ class TrackModel(object):
         dt = self._current_time - self._prev_time
         dist_traveled = velocity * dt
         self._prev_time = self._current_time
-        return dist_traveled
+        return abs(dist_traveled)
+
+    def update_current_block(self, train):
+        # print(train.track_info.get_block_info(train.line, train.current_block))
+        if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+            train.cum_distance = 0
+            return train.current_block + 1
+        return train.current_block
+
+    #Occupancy
+    def set_current_block(self, _current_block: int):
+        self._current_block = _current_block
+
+    def get_current_block(self) -> int:
+        return self._current_block
 
     #Line
     def set_line(self, _line: str):
@@ -284,11 +299,7 @@ class TrackModel(object):
         return self._offboarding
 
     #Current Block
-    def set_current_block(self, _current_block: int):
-        self._current_block = _current_block
 
-    def get_current_block(self) -> int:
-        return self._current_block
 
 
     #get veolocity, multiple velocity & time to get distance, compare distance and block length, constantly add distance, dt could be 1 second,

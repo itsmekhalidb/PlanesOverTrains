@@ -462,6 +462,17 @@ class Ui_MainWindow(QMainWindow):
         self.graph_view = QtWidgets.QGraphicsView(scene, self.trackmodel_main)
         self.graph_view.setGeometry(QtCore.QRect(0, 61, 1142, 600))
 
+        # self.track_heater.setGeometry(QtCore.QRect(1100, 700, 41, 41))
+        # self.track_heater.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+        #                                 "background-color: rgb(255, 0, 0);\n"
+        #                                 "border: 1px solid black;\n"
+        #                                 "color: rgb(255, 255, 255)")
+        # self.track_heater.setObjectName("track_heater")
+        self.red_button = QtWidgets.QPushButton(self.trackmodel_main)
+        self.red_button.setGeometry(QtCore.QRect(400,10,60,41))
+        self.red_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
+        self.red_button.setText("Red Line")
+
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
         self.load_file.setGeometry(QtCore.QRect(600,10,60,41))
         self.load_file.setText("Load File")

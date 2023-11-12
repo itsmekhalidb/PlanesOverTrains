@@ -17,7 +17,7 @@ class TrackModelTrainModelAPI:
         self.time = 0
         self.filepath = ""
         self.track_info = block_info(self.filepath)
-        self.current_block = 0
+        self.current_block = 1
         self.cum_distance = 0
 
 

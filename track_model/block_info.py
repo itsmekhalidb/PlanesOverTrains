@@ -25,8 +25,7 @@ class block_info:
                 'switch position': bool(row['switch position']),
                 'underground': bool(row['underground']),
                 'beacon': row['beacon'],
-                # TODO: Add these to the excel sheet
-                # 'station side': row['station side'],
+                'station side': row['station side']
             }
 
             if line in block_dict:
@@ -50,5 +49,5 @@ class block_info:
 
 # How to Use:
 # tm = block_info('block_information.xlsx')
-# red_48 = tm.get_block_info('red', 1)['grade']
+# red_48 = tm.get_block_info('red', 1)['length']
 # print(red_48)

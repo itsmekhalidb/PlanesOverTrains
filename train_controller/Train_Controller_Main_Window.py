@@ -524,7 +524,7 @@ class Ui_MainWindow(QMainWindow):
         self.commanded_speed_spnbx = QtWidgets.QSpinBox(self.centralwidget)
         self.commanded_speed_spnbx.setGeometry(QtCore.QRect(350, 116, 62, 22))
         self.commanded_speed_spnbx.setObjectName("commanded_speed_spnbx")
-        self.commanded_speed_spnbx.setMaximum(1000.0)
+        self.commanded_speed_spnbx.setMaximum(1000)
         self.external_lights_label_11 = QtWidgets.QLabel(self.centralwidget)
         self.external_lights_label_11.setGeometry(QtCore.QRect(210, 142, 209, 31))
         font = QtGui.QFont()
@@ -877,7 +877,7 @@ class Ui_MainWindow(QMainWindow):
         # #uk
         # self.doubleSpinBox_4.setValue(float(self.train_controller.get_ki()))
         # temperature
-        self.temperature_spnbx.setValue(72.0) # Default temperature
+        self.temperature_spnbx.setValue(72) # Default temperature
 
     def _handler(self):
         self.timer = QTimer()
