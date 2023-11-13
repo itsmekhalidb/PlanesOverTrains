@@ -493,6 +493,8 @@ class CTC_Main_UI(QMainWindow):
         temp_timestr = hr + ":" + min + ":" + sec
         self.sys_time_label_3.setText(temp_timestr)
         self.sys_time_label_4.setText(temp_timestr)
+
+        # update train info
         for train in self.ctc.get_trains():
             train_num = train.get_train_number()
             if train_num not in train_nums:
@@ -501,6 +503,7 @@ class CTC_Main_UI(QMainWindow):
                     QStandardItem(str(train_num)),
                     QStandardItem(str(train.get_departure_time().hour) + ":" + str(train.get_departure_time().minute)),
                     QStandardItem(str(train.get_arrival_time().hour) + ":" + str(train.get_arrival_time().minute)),
+                    QStandardItem(train.get_dest_station()),
                     QStandardItem(str(self.meters_to_miles(train.get_total_authority())) + " mi"),
                     QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
                     QStandardItem(str(self.ctc.update_curr_speed(train_num)))
@@ -510,6 +513,12 @@ class CTC_Main_UI(QMainWindow):
                 self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
                 self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
                 self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)))
+        
+        # update occupied blocks
+        cntr = 0
+        for block in self.ctc.get_occupancy():
+            self.blocks_table.setItem(cntr, 0, QTableWidgetItem(block))
+
 
         # Enable Threading
         if thread:
