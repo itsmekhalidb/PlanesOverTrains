@@ -1,4 +1,6 @@
 # -- Imports -- #
+import datetime
+from datetime import datetime
 import os
 import math
 import random
@@ -27,9 +29,9 @@ class TrainModel(object):
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
-        self._time = time.time()
-        self._current_time = self._time
-        self._prev_time = self._time
+        self._time = datetime.now() # time object set to midnight
+        self._current_time = datetime.now()
+        self._prev_time = datetime.now()
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "BLUE" # line the train is on
@@ -202,7 +204,6 @@ class TrainModel(object):
         self.set_block(self._track_model_signals.current_block)
 
         # Time
-        # REMINDER: uncomment line in set_time to use time from track model
         self.set_time(self._track_model_signals.time)
 
         # Track Info
@@ -254,17 +255,18 @@ class TrainModel(object):
             info = _track_info.get_block_info(self.get_line(),self.get_block())
 
             # Beacon
-            if info["beacon"] != "None":
-                # self.set_beacon(info["beacon"][9:])
-                self.set_beacon(info["beacon"])
+            if info["beacon"] != "nan":
+                self.set_beacon(str(info["beacon"])[9:])
+            else:
+                self.set_beacon("")
             # Speed Limit
-            self.set_speed_limit(info["speed limit"])
+            self.set_speed_limit(float(info["speed limit"]))
             # Elevation
-            self.set_elevation(info["elevation"])
+            self.set_elevation(float(info["elevation"]))
             # Grade
-            self.set_grade(info["grade"])
+            self.set_grade(float(info["grade"]))
             # Underground
-            self.set_underground(info["underground"])
+            self.set_underground(bool(info["underground"]))
             # Station Side
             # TODO: Uncomment when station side is added to excel
             # self.set_station_side(info["station side"])
@@ -386,20 +388,18 @@ class TrainModel(object):
         return self._block
 
     # time
-    def set_time(self, _time: float):
-        # Uncomment to use time from track model
-        # self._time = _time
-        self._time = time.time()
+    def set_time(self, _time: datetime):
+        self._time = _time
 
-    def get_time(self) -> float:
+    def get_time(self) -> datetime:
         return self._time
 
     # temperature
     def set_temperature(self, temp:float):
         if self._temp_sp != temp:
-            self._local_time = self._time
+            self._local_time = self._time.timestamp()
             self._temp_sp = temp
-        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time - self._local_time))), 0)
+        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time.timestamp() - self._local_time))), 0)
 
     def get_temperature(self) -> float:
         return self._temperature
@@ -421,15 +421,15 @@ class TrainModel(object):
     def calc_actual_velocity(self):
         # v = integrate acceleration over time
         # calculating dt
-        self._current_time = self._time
-        self.set_time(self._current_time) #TODO: Remove this line when using time from track model
-        dt = self._current_time - self._prev_time
+        #TODO: Granularity of velocity has degraded since incorporating time from CTC
+        self._current_time = self.get_time()
+        dt = (self._current_time - self._prev_time).total_seconds()
+        self._prev_time = self._current_time
         # check if time difference is less than zero
         if dt < 0:
             return 0
         # calculate actual velocity according to change in acceleration over time
         self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
-        self._prev_time =  self._current_time
         if self.get_acceleration() < 0.0 and self.get_actual_velocity() < 0.0:
             self.set_actual_velocity(0)
 

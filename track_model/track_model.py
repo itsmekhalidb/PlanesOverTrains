@@ -170,6 +170,7 @@ class TrackModel(object):
             if index not in self._train_ids:
                 self._train_ids.append(index)
                 self._train_models[index] = TrackModelTrainModelAPI()
+            self._train_models[index].time = self._track_controller_signals._time #TODO: Change this to an internal function get_time()
             self._train_models[index].authority = 10.0
             self._train_models[index].line = 'red'
             self._train_models[index].track_info = self.get_track_layout()

@@ -1,6 +1,8 @@
 import threading
 import math
 import time
+from datetime import datetime
+
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
 from .Controller import Controller
@@ -64,7 +66,7 @@ class TrainController:
         self._time = [0]
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
-        self._time = time.time()
+        self._time = datetime.now()
         self._controller = Controller(self._time)
         self._backup_controller = Backup_Controller(self._time)
         self.set_gains(KP,KI)
@@ -108,6 +110,7 @@ class TrainController:
         self.set_external_lights()
         self.set_setpoint_speed(self._setpoint_speed)
         self.set_beacon(self.train_model.beacon)
+        self.set_time(self.train_model.time)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -144,7 +147,7 @@ class TrainController:
     def set_current_velocity(self, c : float):
         self._current_velocity = c
 
-    # TODO: Lights do not turn on if underground, needs fix
+    # TODO: Lights do not turn off after being underground, needs fix
     def set_internal_lights(self):
         if not self.get_auto_status():
             if self._underground_status or self.get_time_of_day():
@@ -188,12 +191,12 @@ class TrainController:
     def update_stop(self):
         if (self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
             self._stop = True
-            self._stop_time = self.get_time()
+            self._stop_time = self.get_time().timestamp()
             self.set_service_brake_value(1.0)
 
             self.set_station_side()
 
-        if self._stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
+        if self._stop and self.get_time().timestamp() >= self._stop_time + DWELL_TIME or self.get_auto_status():
             self._stop = False
             self.set_service_brake_value(0.0)
             self.set_right_door_status(False)
@@ -201,9 +204,6 @@ class TrainController:
 
         self._prev_station = self.get_beacon()
 
-
-
-    # TODO: Desired power is not being passed in at any point in your code, needs fix
     def set_power(self):
         #TODO: check if we are at a stop
         if not self.get_auto_status():
@@ -270,6 +270,8 @@ class TrainController:
         self._backup_controller.set_gains(kp, ki)
     def set_train_line(self, line: str):
         self._train_line = line
+    def set_time(self, time: int):
+        self._time = time
     def get_current_velocity(self)->float:
         return self._current_velocity
     def get_auto_status(self)->bool:
@@ -328,12 +330,12 @@ class TrainController:
     def get_beacon(self)->str:
         return self._beacon
 
-    def get_time(self)->int:
+    def get_time(self)->datetime:
         return self._time
 
     def get_time_of_day(self)->bool:
-        hour = self.get_time()//3600
-        return hour >= NIGHT + 12  or hour <= DAY
+        hour = self.get_time().timestamp()//3600
+        return hour >= NIGHT + 12 or hour <= DAY
 
     def set_station_side(self):
 
