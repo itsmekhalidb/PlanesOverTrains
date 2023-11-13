@@ -21,8 +21,10 @@ class CTC(object):
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
+        self._elapsed_time = 0.0 # time in hours since time started
         self._time_scaling = 1 # how fast time is moving
         self._tick_counter = 0 # number of ticks since last second
+        self._ticket_sales = 0 # number of tickets sold
 
         self.TrackCTRLSignal = TrackCTRLSignal
         self.TrackModelSignal = TrackModelSignal
@@ -31,6 +33,11 @@ class CTC(object):
         self.update()
 
     # getter functions
+    def get_throughput(self):
+        if self._elapsed_time > 0:
+            return round(self._total_passengers/self._elapsed_time, 0)
+        else:
+            return 0
     def get_trains(self):
         return self._trains
     def get_stations_names(self):
@@ -59,9 +66,9 @@ class CTC(object):
         else:
             self._closed_blocks.append(block)
     
-    #automatic train schedule function
+    # automatic train schedule function
     def import_schedule(self, doc):
-        return
+        return 
 
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index):
@@ -134,6 +141,7 @@ class CTC(object):
         else:
             self._tick_counter -= 10/self._time_scaling
             self._time = self._time + timedelta(seconds=1)
+            self._elapsed_time = self._elapsed_time + (1/3600)
             self.TrackCTRLSignal._time = self._time
 
         self.TrackCTRLSignal._train_info = self.create_departures()

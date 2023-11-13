@@ -15,6 +15,9 @@ from PyQt5.QtWidgets import QTimeEdit, QApplication, QTableView, QHeaderView, QM
 from PyQt5.QtGui import QPixmap, QStandardItemModel, QStandardItem
 from PyQt5.QtCore import QTime, QTimer
 from datetime import datetime, time
+import tkinter as tk
+from tkinter import filedialog
+import pandas as pd
 from CTC import CTC
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
@@ -52,6 +55,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.switch_auto.setFont(font)
         self.switch_auto.setObjectName("switch_auto")
+        self.switch_auto.clicked.connect(lambda:self.open_file())
         self.arrival_time = QtWidgets.QTimeEdit(self.train_view_page)
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
@@ -156,14 +160,14 @@ class CTC_Main_UI(QMainWindow):
         #         self.train_list_2_data.setItem(row_index, column_index, item)
 
         self.occupied_blocks = QtWidgets.QScrollArea(self.train_view_page)
-        self.occupied_blocks.setGeometry(QtCore.QRect(514, 320, 161, 331))
+        self.occupied_blocks.setGeometry(QtCore.QRect(514, 320, 161, 281))
         self.occupied_blocks.setWidgetResizable(True)
         self.occupied_blocks.setObjectName("occupied_blocks")
         self.blocks_table_widget = QtWidgets.QWidget()
-        self.blocks_table_widget.setGeometry(QtCore.QRect(0, 0, 159, 189))
+        self.blocks_table_widget.setGeometry(QtCore.QRect(0, 0, 159, 139))
         self.blocks_table_widget.setObjectName("blocks_table_widget")
         self.blocks_table = QtWidgets.QTableWidget(self.blocks_table_widget)
-        self.blocks_table.setGeometry(QtCore.QRect(0, 0, 161, 331))
+        self.blocks_table.setGeometry(QtCore.QRect(0, 0, 161, 281))
         self.blocks_table.setObjectName("blocks_table")
         self.blocks_table.setColumnCount(1)
         self.blocks_table.setRowCount(0)
@@ -518,7 +522,10 @@ class CTC_Main_UI(QMainWindow):
         cntr = 0
         for block in self.ctc.get_occupancy():
             self.blocks_table.setItem(cntr, 0, QTableWidgetItem(block))
-
+        
+        # update throughput
+        tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
+        self.label.setText(tp)
 
         # Enable Threading
         if thread:
@@ -540,6 +547,30 @@ class CTC_Main_UI(QMainWindow):
     # switch to main screen
     def open_main(self):
         self.view_switcher.setCurrentIndex(0)
+    
+
+    # open scheduling file
+    def open_file(self):
+        # create a Tkinter root window (it will not be shown)
+        root = tk.Tk()
+        root.withdraw()  # hide the main window
+        
+        # ask the user to select an Excel file
+        file_path = filedialog.askopenfilename(
+            title="Select Excel file",
+            filetypes=[("Excel files", "*.xlsx;*.xls")],
+        )
+        
+        # check if the user selected a file
+        if file_path:
+            try:
+                doc = pd.read_excel(file_path)
+                print("Successfully imported Excel file")
+                self.ctc.import_schedule(doc)
+            except Exception as e:
+                print(f"Error reading Excel file: {e}")
+        else:
+            print("No file selected.")
 
 
     # confirm button pressed, run checks then call ctc.py function
