@@ -191,11 +191,14 @@ class TrackModel(object):
         return abs(dist_traveled)
 
     def update_current_block(self, train):
-        # print(train.track_info.get_block_info(train.line, train.current_block))
-        if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-            train.cum_distance = 0
-            return train.current_block + 1
-        return train.current_block
+        try:
+            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                train.cum_distance = 0
+                return train.current_block + 1
+            return train.current_block
+        except Exception as e:
+            print("You must upload the Track Model before dispatching a train")
+            print(e)
 
     #Occupancy
     def set_current_block(self, _current_block: int):
