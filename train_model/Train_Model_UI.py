@@ -886,9 +886,8 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.service_brake_off.setVisible(not bool(self.train_model.get_service_brake()))
 
                 # Emergency Brake
-                self.ebrake.clicked.connect(lambda: self.train_model.set_emergency_brake(True))
-                if self.train_model.get_emergency_brake() == True:
-                        self.ebrake.clicked.connect(lambda: self.train_model.set_emergency_brake(False))
+                self.ebrake.clicked.connect(lambda: self.train_model.set_pass_emergency_brake(True))
+                self.train_model.set_pass_emergency_brake(False)
 
                 # Force Calculation
                 self.train_model.calc_force()

@@ -74,6 +74,7 @@ class TrainModel(object):
         self._int_lights = False # internal lights
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
+        self._pass_emergency_brake = False # passenger emergency brake
         self._tc_wait = False # wait for train controller to release emergency brake
         self._service_brake = False # service brake
         self._service_brake_value = 0.0 # % service brake
@@ -185,7 +186,7 @@ class TrainModel(object):
         self._train_ctrl_signals.temperature = self.get_temperature()
 
         # Passenger Ebrake
-        # self._train_ctrl_signals.passenger_emergency_brake = self.get_emergency_brake()
+        self._train_ctrl_signals.passenger_emergency_brake = self.get_pass_emergency_brake()
 
         #############################
         # Input Track Model Signals #
@@ -572,19 +573,38 @@ class TrainModel(object):
     def get_ext_lights(self) -> bool:
         return self._ext_lights
 
-    # emergency brake
-    def set_emergency_brake(self, _emergency_brake_tc: bool, tc_call=False):
-        if _emergency_brake_tc is True and tc_call is False and self._tc_wait is False:
-            self._emergency_brake = True
-            self._tc_wait = True
-            print(1)
-        elif _emergency_brake_tc and tc_call is True:
-            self._emergency_brake = True
-            print(2)
-        elif _emergency_brake_tc is False and tc_call is True:
-            self._emergency_brake = False
-            self._tc_wait = False
-            print(3)
+    # emergency brakes
+    def set_pass_emergency_brake(self, _pass_emergency_brake: bool):
+        self._pass_emergency_brake = _pass_emergency_brake
+
+    def get_pass_emergency_brake(self) -> bool:
+        return self._pass_emergency_brake
+    def set_emergency_brake(self, emergency_brake_signal: bool, set_tc_wait: bool = False, tc_call=False):
+        """
+        Set the state of the emergency brake and optionally set the tc_wait flag.
+
+        :param emergency_brake_signal: Boolean indicating whether the emergency brake is engaged.
+        :param set_tc_wait: Boolean indicating whether to set the tc_wait flag.
+        :param tc_call: Boolean indicating if the function is called from the train controller.
+        """
+        if not tc_call:
+            # If called from UI or elsewhere, and Train Controller is not waiting, update the emergency brake
+            if not self._tc_wait:
+                self._emergency_brake = emergency_brake_signal
+                if set_tc_wait:
+                    self._tc_wait = True
+            else:
+                print("Train Controller is waiting. Cannot release emergency brake.")
+        else:
+            # If called from train controller, check if it's safe to release the emergency brake
+            if not self._tc_wait or set_tc_wait:
+                # Train controller is not waiting or we want to set tc_wait; it's safe to update the emergency brake
+                self._emergency_brake = emergency_brake_signal
+                self._tc_wait = set_tc_wait
+            else:
+                # Train controller is waiting; do not update the emergency brake
+                print("Train Controller is waiting. Cannot release emergency brake.")
+
 
     def get_emergency_brake(self) -> bool:
         return self._emergency_brake
