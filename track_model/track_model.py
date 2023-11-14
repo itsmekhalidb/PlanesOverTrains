@@ -28,7 +28,7 @@ class TrackModel(object):
         self._railway_xing = False #is the train at a railway crossing
         self._actual_velocity = 0.0 #how fast train is actually going
         self._offboarding = 0 #number of passengers offboarding
-        self._current_block = 0 #block number on the track
+        self._current_block = list() #block number on the track
         self._train_line = "" #color of the current line
         self._speed_limit = 0.0 #speed limit set by track model
         self._beacon = "" #static info on either side of station
@@ -132,7 +132,7 @@ class TrackModel(object):
         # TODO: Calculate current block based on actual velocity
         # TODO: Update starting block based on route
         # self.set_current_block(self.get_current_block())
-        self.set_current_block(48) # For testeing purposes
+        # self.set_current_block(48) # For testeing purposes
         # 1 is the train id, would need to do this in a for loop for each train
         # self._train_models[1].current_block = self.get_current_block()
 
@@ -178,6 +178,11 @@ class TrackModel(object):
             self._train_models[index].track_info = self.get_track_layout()
             self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
             self._train_models[index].current_block = self.update_current_block(self._train_models[index])
+            if index + 1 > len(self._current_block):
+                self._current_block.append(self._train_models[index].current_block)
+            else:
+                self._current_block[index] = self._train_models[index].current_block
+
 
         #Enable threading
         if thread:
@@ -202,9 +207,11 @@ class TrackModel(object):
             print("You must upload the Track Model before dispatching a train")
             print(e)
 
+    def get_occupancy(self):
+        return self._current_block
     #Occupancy
     def set_current_block(self, _current_block: int):
-        self._current_block = _current_block
+        self._current_block.append(_current_block)
 
     def get_current_block(self) -> int:
         return self._current_block
