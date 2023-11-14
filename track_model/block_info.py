@@ -4,6 +4,7 @@ class block_info:
     def __init__(self, filepath: str):
         if filepath == "":
             self.block_dict = {}
+            self.station_list = {}
         else:
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
@@ -35,6 +36,22 @@ class block_info:
 
         return block_dict
 
+    # return stations on each line and their blocks
+    def get_station_list(self):
+        output = {}
+        for line in self.block_dict:
+            line_stations = {}
+            for block in self.block_dict[line]:
+                beacon = block['beacon']
+                if beacon[:9] == "Station: ":
+                    index_of_parenthesis = beacon.find('(')
+                    if index_of_parenthesis != -1:
+                        line_stations[beacon[9:index_of_parenthesis]] = block
+                    else:
+                        line_stations[beacon[9:]] = block
+            output[line] = line_stations
+        return output
+
     def get_block_info(self, line, block_number):
         if line in self.block_dict and block_number in self.block_dict[line]:
             return self.block_dict[line][block_number]
@@ -44,7 +61,6 @@ class block_info:
 
     def get_all_blocks_for_line(self, line):
         return self.block_dict.get(line, {})
-
 
 
 # How to Use:
