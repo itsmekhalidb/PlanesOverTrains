@@ -21,6 +21,7 @@ class CTC(object):
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
+        self._elapsed_time = 0 # time object set to midnight
         self._elapsed_time = 0.0 # time in hours since time started
         self._time_scaling = 1 # how fast time is moving
         self._tick_counter = 0 # number of ticks since last second
@@ -136,12 +137,13 @@ class CTC(object):
     # update function every 100 ms
     def update(self, thread=True):
         # clock
-        if (self._tick_counter < 1/self._time_scaling):
+        if self._tick_counter < 10 / self._time_scaling:
             self._tick_counter += 1
         else:
-            self._tick_counter -= 1/self._time_scaling
-            self._time = self._time + timedelta(microseconds=100000)
-            self._elapsed_time = self._elapsed_time + (1/3600000)
+            self._tick_counter -= 10 / self._time_scaling
+            self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
+            print(self._time)
+            self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
             self.TrackCTRLSignal._time = self._time
 
         self.TrackCTRLSignal._train_info = self.create_departures()
@@ -151,7 +153,7 @@ class CTC(object):
 
         # Enable Threading
         if thread:
-            threading.Timer(0.1, self.update).start()
+            threading.Timer(0.0001, self.update).start()
     
     def create_departures(self):
         output = {}
