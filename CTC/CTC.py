@@ -142,7 +142,6 @@ class CTC(object):
         else:
             self._tick_counter -= 10 / self._time_scaling
             self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
-            print(self._time)
             self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
             self.TrackCTRLSignal._time = self._time
 
