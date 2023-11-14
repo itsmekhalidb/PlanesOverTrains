@@ -20,8 +20,9 @@ class CTC(object):
         self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
+        self._seven_hours = timedelta(hours=7)
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
-        self._elapsed_time = 0 # time object set to midnight
+        self._time = self._time + self._seven_hours
         self._elapsed_time = 0.0 # time in hours since time started
         self._time_scaling = 1 # how fast time is moving
         self._tick_counter = 0 # number of ticks since last second
@@ -136,7 +137,9 @@ class CTC(object):
     # update function every 100 ms
     def update(self, thread=True):
         # clock
-        if self._tick_counter < 50 / self._time_scaling:
+        if self._time_scaling == 0:
+            pass
+        elif self._tick_counter < 10 / self._time_scaling:
             self._tick_counter += 1
         else:
             self._tick_counter -= 50 / self._time_scaling
