@@ -193,7 +193,7 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.setObjectName("add_stop")
         self.add_stop.hide()
         self.label = QtWidgets.QLabel(self.train_view_page)
-        self.label.setGeometry(QtCore.QRect(182, 611, 311, 31))
+        self.label.setGeometry(QtCore.QRect(182, 611, 351, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label.setFont(font)
@@ -205,7 +205,7 @@ class CTC_Main_UI(QMainWindow):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.block_close_label = QtWidgets.QLabel(self.train_view_page)
-        self.block_close_label.setGeometry(QtCore.QRect(360, 330, 181, 21))
+        self.block_close_label.setGeometry(QtCore.QRect(290, 330, 231, 21))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.block_close_label.setFont(font)
@@ -446,7 +446,7 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.setText(_translate("self", "Add Stop"))
         self.label.setText(_translate("self", "System Throughput: "))
         self.label_2.setText(_translate("self", "Schedule Train"))
-        self.block_close_label.setText(_translate("self", "Close Blocks"))
+        self.block_close_label.setText(_translate("self", "Maintenance Mode"))
         self.red.setText(_translate("self", "Red"))
         self.train_label.setItemText(0, _translate("self", "Train #"))
         self.block_label.setItemText(0, _translate("self", "Block #"))
@@ -575,8 +575,10 @@ class CTC_Main_UI(QMainWindow):
 
     # confirm button pressed, run checks then call ctc.py function
     def confirm_route(self, station_name, time_in, function, train_index):
-        if self.ctc.get_time().time() < time_in and station_name != "Destination Station":
+        if self.ctc.get_time().time() < time_in and station_name != "Destination Station" and self.ctc.check_track_info():
             self.ctc.create_schedule(station_name, time_in, function, train_index)
+        elif not self.ctc.check_track_info():
+            print("Track Model data not initialized")
     
 
     # change time speed when spinbox changed

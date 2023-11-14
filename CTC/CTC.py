@@ -61,7 +61,6 @@ class CTC(object):
     def set_time_scaling(self, num):
         self._time_scaling = num
     def change_block(self, block):
-        print(block)
         if block in self._closed_blocks:
             self._closed_blocks.remove(block)
         else:
@@ -95,9 +94,6 @@ class CTC(object):
         elif function == 2: # add a stop
             return
     
-    def calculate_throughput(self):
-        return
-    
     # track controller interface functions
     def get_route_info(self, train_num):
         return self._trains[train_num].get_route_info()
@@ -120,6 +116,9 @@ class CTC(object):
         self._track.update_tickets(station, tickets_sold)
     def update_section_status(self):
         self.TrackCTRLSignal._track_section_status = self._closed_blocks
+    def check_track_info(self):
+        a1_data = self.TrackCTRLSignal._green['A1']
+        return a1_data[1] != 0 # return false if speed limit is 0
 
     
     # testbench/api functions
