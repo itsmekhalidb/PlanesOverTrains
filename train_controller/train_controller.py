@@ -1,7 +1,6 @@
 import threading
 import math
 import time
-from datetime import datetime
 
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
@@ -66,7 +65,7 @@ class TrainController:
         self._time = [0]
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
-        self._time = datetime.now()
+        self._time = 0
         self._controller = Controller(self._time)
         self._backup_controller = Backup_Controller(self._time)
         self.set_gains(KP,KI)
@@ -147,7 +146,6 @@ class TrainController:
     def set_current_velocity(self, c : float):
         self._current_velocity = c
 
-    # TODO: Lights do not turn off after being underground, needs fix
     def set_internal_lights(self):
         if not self.get_auto_status():
             if self._underground_status or self.get_time_of_day():
@@ -191,12 +189,12 @@ class TrainController:
     def update_stop(self):
         if (self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
             self._stop = True
-            self._stop_time = self.get_time().timestamp()
+            self._stop_time = self.get_time()
             self.set_service_brake_value(1.0)
 
             self.set_station_side()
 
-        if self._stop and self.get_time().timestamp() >= self._stop_time + DWELL_TIME or self.get_auto_status():
+        if self._stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
             self._stop = False
             self.set_service_brake_value(0.0)
             self.set_right_door_status(False)
@@ -330,11 +328,11 @@ class TrainController:
     def get_beacon(self)->str:
         return self._beacon
 
-    def get_time(self)->datetime:
+    def get_time(self)-> int:
         return self._time
 
     def get_time_of_day(self)->bool:
-        hour = self.get_time().timestamp()//3600
+        hour = self.get_time()//3600
         return hour >= NIGHT + 12 or hour <= DAY
 
     def set_station_side(self):

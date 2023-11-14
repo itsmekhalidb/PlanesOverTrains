@@ -8,7 +8,8 @@ class CTCTrackControllerAPI:
         self._track_section_status = [] # blocks, in list is closed, not in list is open
         self._suggested_speed = 0.0 # meters/sec
         self.commanded_speed = {'A1': 0} # block: commanded speed in m/s
-        self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
+        # self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
+        self._time = 0 # current time
 
         #Track Controller to CTC
         self._curr_speed = {}

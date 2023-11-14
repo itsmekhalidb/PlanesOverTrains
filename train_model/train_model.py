@@ -1,6 +1,4 @@
 # -- Imports -- #
-import datetime
-from datetime import datetime
 import os
 import math
 import random
@@ -29,9 +27,9 @@ class TrainModel(object):
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
-        self._time = datetime.now() # time object set to midnight
-        self._current_time = datetime.now()
-        self._prev_time = datetime.now()
+        self._time = 0 # time object set to midnight
+        self._current_time = self._time
+        self._prev_time = self._time
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "BLUE" # line the train is on
@@ -352,10 +350,6 @@ class TrainModel(object):
     def set_underground(self, _underground: bool):
         self._underground = _underground
 
-        # Set lights to bool of underground
-        self.set_ext_lights(_underground)
-        self.set_int_lights(_underground)
-
     def get_underground(self) -> bool:
         return self._underground
 
@@ -388,18 +382,18 @@ class TrainModel(object):
         return self._block
 
     # time
-    def set_time(self, _time: datetime):
+    def set_time(self, _time: int):
         self._time = _time
 
-    def get_time(self) -> datetime:
+    def get_time(self) -> int:
         return self._time
 
     # temperature
     def set_temperature(self, temp:float):
         if self._temp_sp != temp:
-            self._local_time = self._time.timestamp()
+            self._local_time = self._time
             self._temp_sp = temp
-        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time.timestamp() - self._local_time))), 0)
+        self._temperature= round(self._temp_sp * (1 - math.exp(-(self._time - self._local_time))), 0)
 
     def get_temperature(self) -> float:
         return self._temperature
@@ -423,7 +417,7 @@ class TrainModel(object):
         # calculating dt
         #TODO: Granularity of velocity has degraded since incorporating time from CTC
         self._current_time = self.get_time()
-        dt = (self._current_time - self._prev_time).total_seconds()
+        dt = self._current_time - self._prev_time
         self._prev_time = self._current_time
         # check if time difference is less than zero
         if dt < 0:

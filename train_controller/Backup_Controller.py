@@ -20,7 +20,7 @@ class Backup_Controller(Controller):
             # Update current time to now
             self._current_time = self._time
             # Get dt
-            change_time = self._current_time.timestamp() - self._previous_time.timestamp()
+            change_time = self._current_time - self._previous_time
             # Get error
             error = commanded_velocity - current_velocity
             # Kp * Ek

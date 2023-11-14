@@ -1,4 +1,6 @@
 #Imports
+import datetime
+from datetime import datetime
 import math
 import time
 import random as rand
@@ -170,13 +172,12 @@ class TrackModel(object):
             if index not in self._train_ids:
                 self._train_ids.append(index)
                 self._train_models[index] = TrackModelTrainModelAPI()
-            self._train_models[index].time = self._track_controller_signals._time #TODO: Change this to an internal function get_time()
+            self._train_models[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
             self._train_models[index].authority = 10.0
             self._train_models[index].line = 'red'
             self._train_models[index].track_info = self.get_track_layout()
             self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
             self._train_models[index].current_block = self.update_current_block(self._train_models[index])
-            print(self._train_models[index].cum_distance, self._train_models[index].current_block)
 
         #Enable threading
         if thread:
