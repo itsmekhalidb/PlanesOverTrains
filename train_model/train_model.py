@@ -74,6 +74,7 @@ class TrainModel(object):
         self._int_lights = False # internal lights
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
+        self._tc_wait = False # wait for train controller to release emergency brake
         self._service_brake = False # service brake
         self._service_brake_value = 0.0 # % service brake
 
@@ -142,7 +143,7 @@ class TrainModel(object):
         self.set_ext_lights(self._train_ctrl_signals.ext_lights)
 
         # Emergency Brake
-        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)
+        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake, tc_call=True)
 
         # Service Brake
         self.set_service_brake(self._train_ctrl_signals.service_brake_value > 0)
@@ -182,6 +183,9 @@ class TrainModel(object):
 
         # Temperature
         self._train_ctrl_signals.temperature = self.get_temperature()
+
+        # Passenger Ebrake
+        # self._train_ctrl_signals.passenger_emergency_brake = self.get_emergency_brake()
 
         #############################
         # Input Track Model Signals #
@@ -569,8 +573,18 @@ class TrainModel(object):
         return self._ext_lights
 
     # emergency brake
-    def set_emergency_brake(self, _emergency_brake: bool):
-        self._emergency_brake = _emergency_brake
+    def set_emergency_brake(self, _emergency_brake_tc: bool, tc_call=False):
+        if _emergency_brake_tc is True and tc_call is False and self._tc_wait is False:
+            self._emergency_brake = True
+            self._tc_wait = True
+            print(1)
+        elif _emergency_brake_tc and tc_call is True:
+            self._emergency_brake = True
+            print(2)
+        elif _emergency_brake_tc is False and tc_call is True:
+            self._emergency_brake = False
+            self._tc_wait = False
+            print(3)
 
     def get_emergency_brake(self) -> bool:
         return self._emergency_brake

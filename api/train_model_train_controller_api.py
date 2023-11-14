@@ -27,6 +27,7 @@ class TrainModelTrainControllerAPI:
         # From Train Controller to Train Model
         self.cmd_power = 0.0
         self.emergency_brake = False
+        self.passenger_emergency_brake = False
         self.service_brake_value = 0.0
         self.left_doors = False
         self.right_doors = False
