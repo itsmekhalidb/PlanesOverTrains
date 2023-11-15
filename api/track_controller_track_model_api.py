@@ -5,6 +5,7 @@ class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
         self._train_info = {}
+        self._train_occupancy = {}
         # TODO: train specific should be sent to train info
         self._line = "green"  # line
         self._commanded_speed = 0  # commanded speed
@@ -14,8 +15,8 @@ class TrackControllerTrackModelAPI:
         self._lights = {}
         self._switches = {}
         self._railway_crossing = {}
-        # self._filepath = ""
-        # self.block_info = block_info(self._filepath)
+        self._filepath = ""
+        self.block_info = block_info(self._filepath)
 
 
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, 5 = gate/crossing, 6 = beacon, 7 = block length

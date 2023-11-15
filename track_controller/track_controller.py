@@ -25,9 +25,7 @@ class Track_Controller(object):
         self._train_info = {}
         # dict of wayside controllers and their associated PLC files
         self._plc_input = {'Green 1': "", 'Green 2': "", 'Red 1': "", 'Red 2': ""}
-
-
-        self._suggested_speed = 30
+        # time to be displayed on the clock
         self._time = 0
 
         # api signals
@@ -40,30 +38,52 @@ class Track_Controller(object):
 
     def update(self, thread=True):
         # Track Model Inputs
-        self.set_track(self.track_ctrl_signals._track_info)
-        self.set_occupancy(self.track_ctrl_signals._train_info)
+        try:
+            self.set_track(self.track_ctrl_signals._track_info)
+        except Exception as e:
+            print("Cannot update track info")
+
+        try:
+            self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
+        except Exception as e:
+            print("Cannot update occupied blocks")
 
         # CTC Office Inputs
-        self.set_time(self.ctc_ctrl_signals._time)
-        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+        try:
+            self.set_time(self.ctc_ctrl_signals._time)
+        except Exception as e:
+            print("Cannot set time")
+
+        try:
+            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+        except Exception as e:
+            print("Cannot update track section status")
 
         # CTC Office Outputs
-        self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+        try:
+            self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+        except Exception as e:
+            print("Cannot send block occupancy")
 
         # Track Model Outputs
-        self.track_ctrl_signals._lights = self.get_lights()
-        self.track_ctrl_signals._switches = self.get_switch_list()
-        self.track_ctrl_signals._time = self.get_time()
+        # self.track_ctrl_signals._lights = self.get_lights()
+        # self.track_ctrl_signals._switches = self.get_switch_list()
+        # self.track_ctrl_signals._time = self.get_time()
 
         # Dont touch it just pass it
-        self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
+        try:
+            self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
+        except Exception as e:
+            print("Cannot pass train info")
+
 
 
         if thread:
             threading.Timer(0.1, self.update).start()
 
-    def set_track_section_status(self, block: str, value: int):
-        self.set_occupancy(block, value)
+    def set_track_section_status(self, blocks: dict):
+        for block in blocks:
+            self.set_occupancy(block, blocks[block])
 
     def get_track(self) -> dict:
         return self._track
@@ -111,6 +131,9 @@ class Track_Controller(object):
             self._switches[switch] = value
         except Exception as e:
             print("Invalid switch")
+
+    def get_light(self, light: str) -> int:
+        return self._lights[light]
 
     def get_lights(self) -> list:
         return  self._lights
