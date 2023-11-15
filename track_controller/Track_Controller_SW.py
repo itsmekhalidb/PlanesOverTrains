@@ -823,11 +823,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.light_color_label.setText(_translate("self", "Light Color"))
         self.traffic_light_green.setText(_translate("self", "Green"))
         self.traffic_light_red.setText(_translate("self", "Red"))
-        self.traffic_light_label.setText(_translate("self", "A1"))
-        self.traffic_light_label_2.setText(_translate("self", "D13"))
-        self.traffic_light_label_3.setText(_translate("self", "F28"))
-        self.traffic_light_label_4.setText(_translate("self", "Z150"))
-        self.traffic_light_label_5.setText(_translate("self", "I57"))
+        self.traffic_light_label.setText(_translate("self", "1"))
+        self.traffic_light_label_2.setText(_translate("self", "13"))
+        self.traffic_light_label_3.setText(_translate("self", "28"))
+        self.traffic_light_label_4.setText(_translate("self", "150"))
+        self.traffic_light_label_5.setText(_translate("self", "57"))
         self.traffic_light_label_6.setText(_translate("self", "NULL"))
         self.traffic_light_label_7.setText(_translate("self", "NULL"))
         self.traffic_light_label_8.setText(_translate("self", "NULL"))
@@ -837,15 +837,15 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.railway_crossing_checkBox.setText(_translate("self", "Railway Crossing"))
         self.load_PLC_btn.setText(_translate("self", "Load PLC"))
         self.switch_position_label.setText(_translate("self", "Switch Position"))
-        self.switch_position_left.setText(_translate("self", "C12"))
-        self.switch_position_right.setText(_translate("self", "A1"))
-        self.switch_position_left_2.setText(_translate("self", "G30"))
-        self.switch_position_right_2.setText(_translate("self", "Z150"))
+        self.switch_position_left.setText(_translate("self", "12"))
+        self.switch_position_right.setText(_translate("self", "1"))
+        self.switch_position_left_2.setText(_translate("self", "30"))
+        self.switch_position_right_2.setText(_translate("self", "150"))
         self.switch_position_left_3.setText(_translate("self", "Yard"))
-        self.switch_position_right_3.setText(_translate("self", "J58"))
-        self.switch_label_1.setText(_translate("self", "D13"))
-        self.switch_label_2.setText(_translate("self", "F28"))
-        self.switch_label_3.setText(_translate("self", "I57"))
+        self.switch_position_right_3.setText(_translate("self", "58"))
+        self.switch_label_1.setText(_translate("self", "13"))
+        self.switch_label_2.setText(_translate("self", "28"))
+        self.switch_label_3.setText(_translate("self", "57"))
         self.PLC_output_label.setText(_translate("self", "PLC Output"))
         self.traffic_light_red_2.setText(_translate("self", "Red"))
         self.traffic_light_green_2.setText(_translate("self", "Green"))
@@ -902,7 +902,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
 
         if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
-                self.railway_crossing_checkBox.setCheckState(self.track_controller.get_railway_crossing('E18'))
+                self.railway_crossing_checkBox.setCheckState(self.track_controller.get_railway_crossing('18'))
 
         # self.commanded_speed.setText(str(self.track_controller.get_commanded_speed()))
 
@@ -973,16 +973,16 @@ class Ui_TrackController_MainUI(QMainWindow):
 
 
     def PLC(self):
-        self.sect_A_occ = bool(self.track_controller.get_occupancy('A1') or self.track_controller.get_occupancy('A2') or self.track_controller.get_occupancy('A3'))
-        self.sect_D_occ = bool(self.track_controller.get_occupancy('D13') or self.track_controller.get_occupancy('D14') or self.track_controller.get_occupancy('D15')
-                               or self.track_controller.get_occupancy('D16'))
-        self.sect_E_occ = bool(self.track_controller.get_occupancy('E17') or self.track_controller.get_occupancy('E17') or self.track_controller.get_occupancy('E19')
-                               or self.track_controller.get_occupancy('E20'))
-        self.sect_F_occ = bool(self.track_controller.get_occupancy('F21') or self.track_controller.get_occupancy('F22') or self.track_controller.get_occupancy('F23')
-                               or self.track_controller.get_occupancy('F24') or self.track_controller.get_occupancy('F25') or self.track_controller.get_occupancy('F26')
-                               or self.track_controller.get_occupancy('F27') or self.track_controller.get_occupancy('F28'))
-        self.sect_Z_occ = bool(self.track_controller.get_occupancy('Y147') or self.track_controller.get_occupancy('Y148') or self.track_controller.get_occupancy('Y149')
-                               or self.track_controller.get_occupancy('Z150'))
+        self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))
+        self.sect_D_occ = bool(self.track_controller.get_occupancy('13') or self.track_controller.get_occupancy('14') or self.track_controller.get_occupancy('15')
+                               or self.track_controller.get_occupancy('16'))
+        self.sect_E_occ = bool(self.track_controller.get_occupancy('17') or self.track_controller.get_occupancy('18') or self.track_controller.get_occupancy('19')
+                               or self.track_controller.get_occupancy('20'))
+        self.sect_F_occ = bool(self.track_controller.get_occupancy('21') or self.track_controller.get_occupancy('22') or self.track_controller.get_occupancy('23')
+                               or self.track_controller.get_occupancy('24') or self.track_controller.get_occupancy('25') or self.track_controller.get_occupancy('26')
+                               or self.track_controller.get_occupancy('27') or self.track_controller.get_occupancy('28'))
+        self.sect_Z_occ = bool(self.track_controller.get_occupancy('147') or self.track_controller.get_occupancy('148') or self.track_controller.get_occupancy('149')
+                               or self.track_controller.get_occupancy('150'))
 
         self.track_controller.set_lights(self.traffic_light_label.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
@@ -1002,7 +1002,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         # self.track_controller.set_switch(self.switch_label_3.text(),
         #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
-        self.track_controller.set_railway_crossing('E18', self.sect_E_occ)
+        self.track_controller.set_railway_crossing('18', self.sect_E_occ)
 
     def ChangeVisibility(self):
         self.switch_position_left.setVisible(bool(self.track_controller.get_switch(self.switch_label_1.text())))
