@@ -10,13 +10,11 @@ from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.ctc_track_model_api import CTCTrackModelAPI
 
 
-_stations = {} # dictionary of stations and blocks
-
-
 class CTC(object):
     def __init__(self, TrackCTRLSignal : CTCTrackControllerAPI, TrackModelSignal : CTCTrackModelAPI):
         # -- CTC Variables -- #
         self._trains = [] # list of train objects
+        self._stations = {} # dict of stations and their blocks
         self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = [] # list of closed blocks
         self._total_passengers = 0 # passenger count
@@ -42,8 +40,8 @@ class CTC(object):
             return 0
     def get_trains(self):
         return self._trains
-    def get_stations_names(self):
-        return _stations.keys()
+    def get_stations_names(self, line):
+        return self._stations[line].keys()
     def get_time(self):
         return self._time
     def get_time_scaling(self):
@@ -73,10 +71,9 @@ class CTC(object):
 
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index):
-        global _stations
         if function == 0: # new train
             # temp_trn = Train()
-            # destination_block = _stations[station_name]
+            # destination_block = self._stations[station_name]
             # departure_time = 1
             # temp_trn.create_schedule(destination_block, station_name, time_in, departure_time)
             # self._trains.append(temp_trn)
@@ -100,6 +97,8 @@ class CTC(object):
         return self.TrackCTRLSignal._track_info.get_section_list(line)
     def get_blocks(self, line, section):
         return self.TrackCTRLSignal._track_info.get_block_list(line, section)
+    def get_stations(self, line):
+        self._stations = self.TrackCTRLSignal._track_info.get_station_list(line)
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
