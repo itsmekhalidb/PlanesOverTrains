@@ -608,7 +608,6 @@ class TrainModel(object):
                 # Train controller is waiting; do not update the emergency brake
                 print("Train Controller is waiting. Cannot release emergency brake.")
 
-
     def get_emergency_brake(self) -> bool:
         return self._emergency_brake
 
