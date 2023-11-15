@@ -1,5 +1,6 @@
 import threading
 import traceback
+import datetime
 
 import serial
 import time
@@ -33,15 +34,17 @@ class Track_Controller_HW(object):
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'A5': 0, 'B6': 0, 'C11': 0}
+        self._lights = {'M76': 0, 'R101': 0, 'Q100': 0, 'N85': 0}
         # plc input
         self._plc_input = ""
         # 0 = left, 1 = right
-        self._switches = {'A5': 0}
+        self._switches = {'M76': 0, 'N85': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
         self._automatic = True
+
+        self._previous = False
         # commanded speed is speed limit - occupancy
         self._command_speed = 0  # {'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
         # 'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
@@ -49,6 +52,7 @@ class Track_Controller_HW(object):
         # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         # list of occupied blocks to show on UI
+        self._previous_blocks = []
         self._occupied_blocks = []
         # serial port connection object
         #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
@@ -116,18 +120,40 @@ class Track_Controller_HW(object):
         #
 
         # used to recieve info from the Ardunio
+
         #self.receive()
+
+       # if self.get_automatic() != self.get_previous():
+            #if not self.get_automatic():
+               # self.get_ard().write("3".encode('utf-8'))
+           # else:
+                #self.get_ard().write("4".encode('utf-8'))
+
+        self.set_previous(self.get_automatic())
 
         # checks to see if in automatic or in manual mode -if in automatic -> run PLC
         if self.get_automatic() and self.get_plc_set():
             print("get plc = true and automatic = true")
             self.get_plc()
 
+        if self.get_occupied_blocks() != self._previous_blocks:
+            self.send_occupied()
+            self._previous_blocks = self.get_occupied_blocks()
+
         if thread:
-            threading.Timer(0.1, self.update).start()
+            threading.Timer(.1, self.update).start()
+
+        time.sleep(.1)
 
     #   def get_passengers(self):
     #       return self._passengers
+
+    def send_occupied(self):
+        occupied = "2"
+        for i in self.get_occupied():
+            occupied += " " + i[1:]
+        print(occupied)
+        #self.get_ard().write(occupied.encode('utf-8'))
 
     def get_train_id(self):
         return self._train_ids
@@ -139,6 +165,17 @@ class Track_Controller_HW(object):
                 data_bytes = self.get_ard().readline()
                 data_str = data_bytes.decode('utf-8').strip()
                 print(data_str)
+                count = 0
+                for key in self.get_switch_list():
+                    if data_str[count].isdigit():
+                        self.set_switch(int(data_str[count]), key)
+                        count += 1
+                for key in self.get_light_list():
+                    if data_str[count].isdigit():
+                        self.set_lights(int(data_str[count]), key)
+                        count += 1
+
+
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
@@ -185,7 +222,7 @@ class Track_Controller_HW(object):
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
-        #self.get_ard().write(block_send.encode('utf-8'))
+       # self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
@@ -249,6 +286,9 @@ class Track_Controller_HW(object):
             temp.update({x: self.get_occupancy(x)})
         return temp
 
+    def get_occupied(self) -> list:
+        return self._occupied_blocks
+
     def get_occupied_blocks(self) -> list:
         temp = []
         for x in self._occupied_blocks:
@@ -256,7 +296,8 @@ class Track_Controller_HW(object):
         return temp
 
     def set_occupancy(self, block, value: int):
-        self._blue[block][2] = value
+        self._green[block][2] = value
+        self.ctc_ctrl_signals._green[block][2] = value
         if value == 1:
             self._occupied_blocks.append(block)
         else:
@@ -264,7 +305,7 @@ class Track_Controller_HW(object):
         self._occupied_blocks.sort()
 
     def get_occupancy(self, block) -> int:
-        return self._blue[block][2]
+        return self._green[block][2]
 
     def get_time(self):
         return self._time
@@ -356,10 +397,10 @@ class Track_Controller_HW(object):
     """
 
     def get_speed_limit(self, block) -> float:
-        return self._blue[block][1]
+        return self._green[block][1]
 
     def set_speed_limit(self, block, value: float):
-        self._blue[block][1] = value
+        self._green[block][1] = value
 
     def get_switch_list(self) -> dict:
         return self._switches
@@ -369,6 +410,9 @@ class Track_Controller_HW(object):
 
     def set_switch(self, value: int, switch: str):
         self._switches[switch] = value
+        self._green[switch][3] = value
+        self.ctc_ctrl_signals._green[switch][3] = value
+        self.track_ctrl_signals._green[switch][3] = value
 
     def get_light_list(self) -> dict:
         return self._lights
@@ -378,12 +422,21 @@ class Track_Controller_HW(object):
 
     def set_lights(self, value: int, light: str):
         self._lights[light] = value
+        self._green[light][4] = value
+        self.ctc_ctrl_signals._green[light][4] = value
+        self.track_ctrl_signals._green[light][4] = value
 
     def get_automatic(self) -> bool:
         return self._automatic
 
     def set_automatic(self, auto: bool):
         self._automatic = auto
+
+    def get_previous(self) -> bool:
+        return self._previous
+
+    def set_previous(self, auto: bool):
+        self._previous = auto
 
     def get_commanded_speed(self) -> float:
         return self._command_speed

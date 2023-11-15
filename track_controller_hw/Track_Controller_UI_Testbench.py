@@ -404,7 +404,7 @@ class Ui_Test_Bench(object):
         for x in self.track_controller_hw.get_light_list():
             self.light_select_drop.addItem(x)
 
-        for i in self.track_controller_hw.get_blue_track():
+        for i in self.track_controller_hw.get_green_track():
             self.block_drop.addItem(i)
             self.track_status_drop.addItem(i)
 
@@ -464,22 +464,21 @@ class Ui_Test_Bench(object):
 
         #self.train_engine_failure_off.setVisible(not bool(self.train_engine_failure_check.checkState()))
         #self.train_engine_failure_on.setVisible(bool(self.train_engine_failure_check.checkState()))
-        print("1")
-
+        """
         try:
             self.track_controller_hw.set_suggested_speed(float(self.suggested_soeed_input.text()))
         except:
             print("No Value")
 
         try:
-            self.track_controller_hw.set_test_speed_limit(float(self.selected_output.text()))
+           # self.track_controller_hw.set_test_speed_limit(float(self.selected_output.text()))
             self.track_controller_hw.set_authority(float(self.authority_input.text()))
-            print("Value")
         except:
             print("No Value Yet")
 
         self.track_controller_hw.set_speed_limit(self.block_drop.currentText(),
                                               self.track_controller_hw.get_test_speed_limit())
+        """
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Testbench"))

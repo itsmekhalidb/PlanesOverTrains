@@ -352,15 +352,18 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.select_output.clear()
         self._handler()
-
-        for i in self.track_controller_hw.get_blue_track():
+        """
+        for i in self.track_controller_hw.get_green_track():
             if self.track_controller_hw.get_occupancy(i) == 1:
                 item = str(i) + " " + str(self.track_controller_hw.get_speed_limit(i)) + " mi/hr"
                 self.occupancy_display.addItem(item)
+        """
+        for i in self.track_controller_hw.get_light_list():
+            self.select_output.addItem(i)
 
         self.wayside_select.clear()
 
-        self.wayside_select.addItem("Blue")
+       # self.wayside_select.addItem("Blue")
         self.wayside_select.addItem("Green")
 
     def update(self):
@@ -376,15 +379,10 @@ class Ui_track_controller_mainwindow(QMainWindow):
         if len(sec) == 1:
             sec = "0" + sec
         temp_timestr = hr + ":" + minute + ":" + sec
-        self.sys_time_label.setText(_translate("self",temp_timestr))
+        self.sys_time_label.setText(_translate("self", temp_timestr))
 
         self.plc_output.clear()
 
-        if self.wayside_select.currentText() == "Blue" and self.change:
-            self.select_output.clear()
-            for i in self.track_controller_hw.get_blue_track():
-                self.select_output.addItem(i)
-            self.change = False
         """
         if self.wayside_select.currentText() == "Green" and not self.change:
             self.select_output.clear()
