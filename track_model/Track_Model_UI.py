@@ -29,11 +29,10 @@ class Ui_MainWindow(QMainWindow):
     def __init__(self, track_model: TrackModel) -> None:
         super().__init__()
         self.track_model = track_model
-
-
-
         self._filepath = ""
-
+        self.line_picked = ''
+        self.block_data = {}
+        self.red_data={}
 
         self.setupUi()
         self.show()
@@ -62,6 +61,7 @@ class Ui_MainWindow(QMainWindow):
         self.red_button.setGeometry(QtCore.QRect(170,10,90,41))
         self.red_button.setText("Red Line")
         self.red_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
+        self.red_button.clicked.connect(lambda: self.red_clicked())
 
         #red_button.clicked.connect(lambda: scene.add_red_path_items(path_data))
 
@@ -70,6 +70,7 @@ class Ui_MainWindow(QMainWindow):
         self.green_button.setGeometry(QtCore.QRect(270,10,90,41))
         self.green_button.setText("Green Line")
         self.green_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
+        self.green_button.clicked.connect(lambda: self.green_clicked())
 
 
 
@@ -391,16 +392,12 @@ class Ui_MainWindow(QMainWindow):
         self.temp_control.setObjectName("temp_control")
 
         # ----- MAP ----- #
-        # self.layout = QtWidgets.QTableWidget(self.trackmodel_main)
-        #
-        # self.layout = QVBoxLayout(self.trackmodel_main)
-        # self.layout.setGeometry(QtCore.QRect(0,200,1140,620))
 
         self.table_widget = QtWidgets.QTableWidget(self.trackmodel_main)
 
         self.table_widget.setRowCount(13)
         self.table_widget.setColumnCount(13)
-        self.table_widget.setGeometry(QtCore.QRect(80,185,1000,330))
+        self.table_widget.setGeometry(QtCore.QRect(80,185,980,315))
         self.table_widget.resizeRowsToContents()
         self.table_widget.setShowGrid(False)  # Remove grid lines
         self.table_widget.horizontalHeader().setVisible(False)
@@ -414,136 +411,7 @@ class Ui_MainWindow(QMainWindow):
                 button.clicked.connect(self.on_button_click)
 
         self.table_widget.resizeColumnsToContents()
-        # self.layout.addWidget(self.table_widget)
-
-
-
-        # grid_layout = QGridLayout(self.trackmodel_main)
-        # grid_layout.setMaximumSize(13*30, 13*30)
-        #
-        # # Create a 3x3 grid of buttons
-        # for i in range(13):
-        #         for j in range(13):
-        #                 button = QPushButton('', self.trackmodel_main)
-        #                 button.setFixedSize(30,30)
-        #                 grid_layout.addWidget(button, i, j)
-        #                 button.clicked.connect(self.on_button_click)
-
-        # # Set minimum width for columns
-        # for j in range(13):
-        #     grid_layout.setColumnMinimumWidth(j, 0)  # Set the minimum width for each column
-        #
-        # # Set minimum height for rows
-        # for i in range(13):
-        #     grid_layout.setRowMinimumHeight(i, 0)  # Set the minimum height for each row
-        #
-        # # Set column stretch to make columns fill the available space
-        # for j in range(13):
-        #     grid_layout.setColumnStretch(j, 0)
-        #
-        # # Set row stretch to make rows fill the available space
-        # for i in range(13):
-        #     grid_layout.setRowStretch(i, 0)
-
-
-
-
-        # for i in range(13):
-        #     for j in range(13):
-        #         button = QPushButton(self.trackmodel_main)
-        #         button.setGeometry((120+(30*i)),(120+(30*j)),30,30)
-        #         grid_layout.addWidget(button, i, j)
-        #         button.clicked.connect(self.on_button_click)
-
-        # self.g1 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g1.setGeometry(QtCore.QRect(150,150,30,30))
-        # self.g1.setText("")
-        # self.g1.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g2 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g2.setGeometry(QtCore.QRect(180, 150, 30, 30))
-        # self.g2.setText("")
-        # self.g2.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g3 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g3.setGeometry(QtCore.QRect(210, 150, 30, 30))
-        # self.g3.setText("")
-        # self.g3.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g4 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g4.setGeometry(QtCore.QRect(240, 150, 30, 30))
-        # self.g4.setText("")
-        # self.g4.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g5 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g5.setGeometry(QtCore.QRect(270, 150, 30, 30))
-        # self.g5.setText("")
-        # self.g5.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g6 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g6.setGeometry(QtCore.QRect(300, 150, 30, 30))
-        # self.g6.setText("")
-        # self.g6.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g7 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g7.setGeometry(QtCore.QRect(330, 150, 30, 30))
-        # self.g7.setText("")
-        # self.g7.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g8 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g8.setGeometry(QtCore.QRect(360, 150, 30, 30))
-        # self.g8.setText("")
-        # self.g8.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g9 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g9.setGeometry(QtCore.QRect(390, 150, 30, 30))
-        # self.g9.setText("")
-        # self.g9.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g10 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g10.setGeometry(QtCore.QRect(420, 150, 30, 30))
-        # self.g10.setText("")
-        # self.g10.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g11 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g11.setGeometry(QtCore.QRect(450, 150, 30, 30))
-        # self.g11.setText("")
-        # self.g11.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g12 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g12.setGeometry(QtCore.QRect(480, 150, 30, 30))
-        # self.g12.setText("")
-        # self.g12.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g13 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g13.setGeometry(QtCore.QRect(510, 150, 30, 30))
-        # self.g13.setText("")
-        # self.g13.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g14 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g14.setGeometry(QtCore.QRect(540, 150, 30, 30))
-        # self.g14.setText("")
-        # self.g14.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-        #
-        # self.g15 = QtWidgets.QPushButton(self.trackmodel_main)
-        # self.g15.setGeometry(QtCore.QRect(570, 150, 30, 30))
-        # self.g15.setText("")
-        # self.g15.setStyleSheet(
-        #     "font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
-
+        self.table_widget.setVisible(False)
 
 
         self.title.raise_()
@@ -608,9 +476,35 @@ class Ui_MainWindow(QMainWindow):
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
 
+    def red_clicked(self):
+        self.line_picked = 'red'
+        self.table_widget.setVisible(True)
+
+
+    def green_clicked(self):
+        self.line_picked = 'green'
+        self.table_widget.setVisible(True)
+
     def on_button_click(self):
-            sender = self.sender()
-            print(f'Button "{sender.text()}" clicked')
+        sender = self.sender()
+        bnum = int(sender.text())
+        info = self.red_data[bnum]
+
+        self.speed_limit.setText(str(info['speed limit']))
+        self.block_length.setText(str(info['length']))
+        self.section.setText(str(info['section']))
+        self.block_display.setText(sender.text())
+        self.grade.setText(str(info['grade']))
+        self.elevation.setText(str(info['elevation']))
+        self.underground.setText(str(info['underground']))
+        self.switch_position.setText(str(info['switch position']))
+        if str(info['beacon']) != "nan":
+            self.station_name.setText(str(info['beacon']))
+            self.station.setText("Yes")
+        else:
+            pass
+
+
 
     def _handler(self):
         self.timer = QTimer()
@@ -649,6 +543,11 @@ class Ui_MainWindow(QMainWindow):
     def browse_files(self):
         browse = QFileDialog.getOpenFileName(self.load_file)
         self._filepath = (browse[0])
+        self.block_data = block_info(self._filepath)
+        self.red_data = self.block_data.get_all_blocks_for_line('red')
+
+
+
 
 
 

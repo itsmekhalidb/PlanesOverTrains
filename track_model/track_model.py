@@ -181,6 +181,8 @@ class TrackModel(object):
             self._train_models[index].track_info = self.get_track_layout()
             self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
             self._train_models[index].current_block = self.update_current_block(self._train_models[index])
+            # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
+
             if index + 1 > len(self._current_block):
                 self._current_block.append(self._train_models[index].current_block)
             else:

@@ -34,6 +34,7 @@ class block_info:
             else:
                 block_dict[line] = {block_number: block_info}
 
+
         return block_dict
 
     # return stations on each line and their blocks
@@ -75,8 +76,10 @@ class block_info:
             return None
 
     def get_all_blocks_for_line(self, line):
-        return self.block_dict.get(line, {})
+        return self.block_dict.get(line.lower(), {})
 
+    def __str__(self):
+        return str(self.block_dict)
 
 # How to Use:
 # tm = block_info('block_information.xlsx')

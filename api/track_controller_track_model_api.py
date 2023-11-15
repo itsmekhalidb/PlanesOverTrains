@@ -1,4 +1,5 @@
 from api.track_model_train_model_api import TrackModelTrainModelAPI
+from track_model.block_info import block_info
 
 class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
@@ -10,7 +11,9 @@ class TrackControllerTrackModelAPI:
         self._commanded_speed = 0  # commanded speed
         self._time = 0
         self._track_info = {}
-        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, block length, 5 = gate/crossing, 6 = beacon,
+        # self._filepath = ""
+        # self.block_info = block_info(self._filepath)
+        # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, 5 = gate/crossing, 6 = beacon, 7 = block length
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 1, 5: 1}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 1},
                       'B7': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B8': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B9': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
