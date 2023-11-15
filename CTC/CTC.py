@@ -142,7 +142,7 @@ class CTC(object):
         elif self._tick_counter < 10 / self._time_scaling:
             self._tick_counter += 1
         else:
-            self._tick_counter -= 50 / self._time_scaling
+            self._tick_counter -= 10 / self._time_scaling
             self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
             self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
             self.TrackCTRLSignal._time = self._time

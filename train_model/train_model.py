@@ -483,7 +483,10 @@ class TrainModel(object):
 
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
-        self._curr_passenger_count = _curr_passenger_count
+        if _curr_passenger_count < 6:
+            _curr_passenger_count = 6
+        else:
+            self._curr_passenger_count = _curr_passenger_count
 
     def get_curr_passenger_count(self) -> int:
         return self._curr_passenger_count
