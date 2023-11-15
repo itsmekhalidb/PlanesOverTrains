@@ -96,8 +96,10 @@ class CTC(object):
             return
     
     # track controller interface functions
-    def get_route_info(self, train_num):
-        return self._trains[train_num].get_route_info()
+    def get_sections(self, line):
+        return self.TrackCTRLSignal._track_info.get_section_list(line)
+    def get_blocks(self, line, section):
+        return self.TrackCTRLSignal._track_info.get_block_list(line, section)
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
@@ -117,10 +119,9 @@ class CTC(object):
         self._track.update_tickets(station, tickets_sold)
     def update_section_status(self):
         self.TrackCTRLSignal._track_section_status = self._closed_blocks
-    def check_track_info(self):
-        # a1_data = self.TrackCTRLSignal._green['A1']
-        # return a1_data[1] != 0 # return false if speed limit is 0
-        return self.TrackCTRLSignal._track_info != {}
+    def check_filepath(self):
+        return self.TrackCTRLSignal._filepath != ""
+
     
     # testbench/api functions
     def change_occupied(self, section, block):

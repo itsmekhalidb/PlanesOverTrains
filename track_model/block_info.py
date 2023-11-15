@@ -52,6 +52,21 @@ class block_info:
             output[line] = line_stations
         return output
 
+    # return sections in a line
+    def get_section_list(self, line):
+        line_sections = []
+        for section in self.block_dict[line]:
+            line_sections.append(section['section'])
+        return line_sections
+    
+    # return blocks in a section
+    def get_block_list(self, line, section):
+        blocks = []
+        for block in self.block_dict[line]:
+            if block['section'] == section:
+                blocks.append(block['block_number'])
+        return blocks
+
     def get_block_info(self, line, block_number):
         if line in self.block_dict and block_number in self.block_dict[line]:
             return self.block_dict[line][block_number]
