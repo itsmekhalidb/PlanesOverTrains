@@ -665,27 +665,27 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_switch3.setObjectName("toggle_switch3")
         self.toggle_switch3.setCheckable(True)
         self.toggle_light = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label.text(),
-                                                        not self.track_controller.get_lights(self.traffic_light_label.text())))
+                                                        not self.track_controller.get_light(self.traffic_light_label.text())))
         self.toggle_light.setGeometry(QtCore.QRect(604, 143, 51, 23))
         self.toggle_light.setObjectName("toggle_light")
         self.toggle_light.setCheckable(True)
         self.toggle_light_2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_2.text(),
-                                                        not self.track_controller.get_lights(self.traffic_light_label_2.text())))
+                                                        not self.track_controller.get_light(self.traffic_light_label_2.text())))
         self.toggle_light_2.setGeometry(QtCore.QRect(604, 184, 51, 23))
         self.toggle_light_2.setObjectName("toggle_light_2")
         self.toggle_light_2.setCheckable(True)
         self.toggle_light_3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_3.text(),
-                                                        not self.track_controller.get_lights(self.traffic_light_label_3.text())))
+                                                        not self.track_controller.get_light(self.traffic_light_label_3.text())))
         self.toggle_light_3.setGeometry(QtCore.QRect(605, 225, 51, 23))
         self.toggle_light_3.setObjectName("toggle_light_3")
         self.toggle_light_3.setCheckable(True)
         self.toggle_light_4 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_4.text(),
-                                                        not self.track_controller.get_lights(self.traffic_light_label_4.text())))
+                                                        not self.track_controller.get_light(self.traffic_light_label_4.text())))
         self.toggle_light_4.setGeometry(QtCore.QRect(604, 263, 51, 23))
         self.toggle_light_4.setObjectName("toggle_light_4")
         self.toggle_light_4.setCheckable(True)
         self.toggle_light_5 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_5.text(),
-                                                        not self.track_controller.get_lights(self.traffic_light_label_5.text())))
+                                                        not self.track_controller.get_light(self.traffic_light_label_5.text())))
         self.toggle_light_5.setGeometry(QtCore.QRect(604, 304, 51, 23))
         self.toggle_light_5.setObjectName("toggle_light_5")
         self.toggle_light_5.setCheckable(True)
@@ -1015,20 +1015,20 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.switch_position_left_3.setVisible(bool(self.track_controller.get_switch(self.switch_label_3.text())))
         self.switch_position_right_3.setVisible(not bool(self.track_controller.get_switch(self.switch_label_3.text())))
 
-        self.traffic_light_red.setVisible(bool(self.track_controller.get_lights(self.traffic_light_label.text())))
-        self.traffic_light_green.setVisible(not bool(self.track_controller.get_lights(self.traffic_light_label.text())))
+        self.traffic_light_red.setVisible(bool(self.track_controller.get_light(self.traffic_light_label.text())))
+        self.traffic_light_green.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label.text())))
 
-        self.traffic_light_red_2.setVisible(bool(self.track_controller.get_lights(self.traffic_light_label_2.text())))
-        self.traffic_light_green_2.setVisible(not bool(self.track_controller.get_lights(self.traffic_light_label_2.text())))
+        self.traffic_light_red_2.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
+        self.traffic_light_green_2.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
 
-        self.traffic_light_red_3.setVisible(bool(self.track_controller.get_lights(self.traffic_light_label_3.text())))
-        self.traffic_light_green_3.setVisible(not bool(self.track_controller.get_lights(self.traffic_light_label_3.text())))
+        self.traffic_light_red_3.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
+        self.traffic_light_green_3.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
 
-        self.traffic_light_red_4.setVisible(bool(self.track_controller.get_lights(self.traffic_light_label_4.text())))
-        self.traffic_light_green_4.setVisible(not bool(self.track_controller.get_lights(self.traffic_light_label_4.text())))
+        self.traffic_light_red_4.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
+        self.traffic_light_green_4.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
 
-        self.traffic_light_red_5.setVisible(bool(self.track_controller.get_lights(self.traffic_light_label_5.text())))
-        self.traffic_light_green_5.setVisible(not bool(self.track_controller.get_lights(self.traffic_light_label_5.text())))
+        # self.traffic_light_red_5.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
+        # self.traffic_light_green_5.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
 
         # if self.toggle_light_6.isChecked():
         #         self.traffic_light_red_6.setVisible(True)
