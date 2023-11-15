@@ -59,7 +59,7 @@ class Track_Controller(object):
         # Track Model Outputs
         self.track_ctrl_signals._authority = self.get_authority()
         self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
-        # self.track_ctrl_signals._green = self.get_track()
+        self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
         self.track_ctrl_signals._train_info = self.get_train_info()
         self.track_ctrl_signals._time = self.get_time()
 

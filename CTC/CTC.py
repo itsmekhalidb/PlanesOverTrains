@@ -118,9 +118,9 @@ class CTC(object):
     def update_section_status(self):
         self.TrackCTRLSignal._track_section_status = self._closed_blocks
     def check_track_info(self):
-        a1_data = self.TrackCTRLSignal._green['A1']
-        return a1_data[1] != 0 # return false if speed limit is 0
-
+        # a1_data = self.TrackCTRLSignal._green['A1']
+        # return a1_data[1] != 0 # return false if speed limit is 0
+        return self.TrackCTRLSignal._track_info != {}
     
     # testbench/api functions
     def change_occupied(self, section, block):

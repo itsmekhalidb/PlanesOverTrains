@@ -20,8 +20,7 @@ class CTCTrackControllerAPI:
         self._light = ("light color", 0) # light color, color (0 for green, 1 for red)
         self._switch = (0, 0) # switch position (first is switch number, second is position)
         self._green_cutoffs = {"Green 1" : ['A1::I52', 'W127::Z150'], "Green 2" : ['I53::W126']}
-        self._filepath = ""
-        self._track_info = block_info(self._filepath)
+        self._track_info = {}
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = light, 4 = switch, 5 = gate/crossing
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},

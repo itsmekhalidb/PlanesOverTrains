@@ -128,6 +128,9 @@ class TrackModel(object):
         #speed limit
         self.set_speed_limit(self.get_speed_limit())
 
+        #track layout
+        self._track_controller_signals._track_info = self.get_track_layout()
+
         #current block
         # TODO: Calculate current block based on actual velocity
         # TODO: Update starting block based on route
@@ -382,6 +385,8 @@ class TrackModel(object):
             self._track_layout = self.get_track_layout()
 
     def get_track_layout(self) -> block_info:
+        if self._filepath == "":
+            return {}
         return self._track_layout
 
     #Broken Rail

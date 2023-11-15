@@ -9,6 +9,7 @@ class TrackControllerTrackModelAPI:
         self._authority = 10.0  # authority
         self._commanded_speed = 0  # commanded speed
         self._time = 0
+        self._track_info = {}
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, block length, 5 = gate/crossing, 6 = beacon,
         self._blue = {'A1': {1: 50, 2: 1, 3: 0, 4: 0, 5: 0}, 'A2': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A3': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0},
                       'A4': {1: 50, 2: 0, 3: 0, 4: 0, 5: 0}, 'A5': {1: 50, 2: 0, 3: 0, 4: 1, 5: 1}, 'B6': {1: 50, 2: 0, 3: 0, 4: 0, 5: 1},
