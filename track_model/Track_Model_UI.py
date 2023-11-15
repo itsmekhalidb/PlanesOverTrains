@@ -32,7 +32,8 @@ class Ui_MainWindow(QMainWindow):
         self._filepath = ""
         self.line_picked = ''
         self.block_data = {}
-        self.red_data={}
+        self.red_data = {}
+        self.green_data = {}
 
         self.setupUi()
         self.show()
@@ -393,25 +394,45 @@ class Ui_MainWindow(QMainWindow):
 
         # ----- MAP ----- #
 
-        self.table_widget = QtWidgets.QTableWidget(self.trackmodel_main)
-
-        self.table_widget.setRowCount(13)
-        self.table_widget.setColumnCount(13)
-        self.table_widget.setGeometry(QtCore.QRect(80,185,980,315))
-        self.table_widget.resizeRowsToContents()
-        self.table_widget.setShowGrid(False)  # Remove grid lines
-        self.table_widget.horizontalHeader().setVisible(False)
-        self.table_widget.verticalHeader().setVisible(False)
-
+        self.red_map = QtWidgets.QTableWidget(self.trackmodel_main)
+        self.red_map.setRowCount(13)
+        self.red_map.setColumnCount(13)
+        self.red_map.setGeometry(QtCore.QRect(80,185,980,315))
+        self.red_map.resizeRowsToContents()
+        self.red_map.setShowGrid(False)  # Remove grid lines
+        self.red_map.horizontalHeader().setVisible(False)
+        self.red_map.verticalHeader().setVisible(False)
         for i in range(13):
             for j in range(13):
-                button_text = f'{i * 13 + j + 1}'
-                button = QPushButton(button_text, self.trackmodel_main)
-                self.table_widget.setCellWidget(i, j, button)
-                button.clicked.connect(self.on_button_click)
+                if i * 13 + j + 1 > 76:
+                    break
+                else:
+                    button_text = f'{i * 13 + j + 1}'
+                    button = QPushButton(button_text, self.trackmodel_main)
+                    self.red_map.setCellWidget(i, j, button)
+                    button.clicked.connect(self.on_button_click)
+        self.red_map.resizeColumnsToContents()
+        self.red_map.setVisible(False)
 
-        self.table_widget.resizeColumnsToContents()
-        self.table_widget.setVisible(False)
+        self.green_map = QtWidgets.QTableWidget(self.trackmodel_main)
+        self.green_map.setRowCount(13)
+        self.green_map.setColumnCount(13)
+        self.green_map.setGeometry(QtCore.QRect(80,185,980,315))
+        self.green_map.resizeRowsToContents()
+        self.green_map.setShowGrid(False)  # Remove grid lines
+        self.green_map.horizontalHeader().setVisible(False)
+        self.green_map.verticalHeader().setVisible(False)
+        for i in range(13):
+            for j in range(13):
+                if i * 13 + j + 1 > 150:
+                    break
+                else:
+                    button_text = f'{i * 13 + j + 1}'
+                    button = QPushButton(button_text, self.trackmodel_main)
+                    self.green_map.setCellWidget(i, j, button)
+                    button.clicked.connect(self.on_button_click)
+        self.green_map.resizeColumnsToContents()
+        self.green_map.setVisible(False)
 
 
         self.title.raise_()
@@ -478,31 +499,39 @@ class Ui_MainWindow(QMainWindow):
 
     def red_clicked(self):
         self.line_picked = 'red'
-        self.table_widget.setVisible(True)
-
+        self.green_map.setVisible(False)
+        self.red_map.setVisible(True)
 
     def green_clicked(self):
         self.line_picked = 'green'
-        self.table_widget.setVisible(True)
+        self.red_map.setVisible(False)
+        self.green_map.setVisible(True)
 
     def on_button_click(self):
         sender = self.sender()
         bnum = int(sender.text())
-        info = self.red_data[bnum]
 
-        self.speed_limit.setText(str(info['speed limit']))
-        self.block_length.setText(str(info['length']))
-        self.section.setText(str(info['section']))
-        self.block_display.setText(sender.text())
-        self.grade.setText(str(info['grade']))
-        self.elevation.setText(str(info['elevation']))
-        self.underground.setText(str(info['underground']))
-        self.switch_position.setText(str(info['switch position']))
-        if str(info['beacon']) != "nan":
-            self.station_name.setText(str(info['beacon']))
-            self.station.setText("Yes")
+        if self.line_picked == 'red' and self.red_data != {}:
+            info = self.red_data[bnum]
+        elif self.line_picked == 'green' and self.green_data != {}:
+            info = self.green_data[bnum]
         else:
-            pass
+            info = None
+
+        if info is not None:
+            self.speed_limit.setText(str(info['speed limit']))
+            self.block_length.setText(str(info['length']))
+            self.section.setText(str(info['section']))
+            self.block_display.setText(sender.text())
+            self.grade.setText(str(info['grade']))
+            self.elevation.setText(str(info['elevation']))
+            self.underground.setText(str(info['underground']))
+            self.switch_position.setText(str(info['switch position']))
+            if str(info['beacon']) != "nan":
+                self.station_name.setText(str(info['beacon']))
+                self.station.setText("Yes")
+            else:
+                pass
 
 
 
@@ -545,6 +574,7 @@ class Ui_MainWindow(QMainWindow):
         self._filepath = (browse[0])
         self.block_data = block_info(self._filepath)
         self.red_data = self.block_data.get_all_blocks_for_line('red')
+        self.green_data = self.block_data.get_all_blocks_for_line('green')
 
 
 

@@ -191,7 +191,7 @@ class TrackModel(object):
 
         #Enable threading
         if thread:
-            threading.Timer(0.05, self.update).start()
+            threading.Timer(0.1, self.update).start()
 
 
     #---- Getters & Setters ----#
