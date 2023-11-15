@@ -69,9 +69,6 @@ class CTC_Main_UI(QMainWindow):
         self.station_list.setFont(font)
         self.station_list.setObjectName("station_list")
         self.station_list.addItem("Destination Station")
-        self.station_list.addItem("Glenbury")
-        for station_name in self.ctc.get_stations_names():
-            self.station_list.addItem(station_name)
         self.confirm = QtWidgets.QPushButton(self.train_view_page)
         self.confirm.setGeometry(QtCore.QRect(5, 460, 81, 23))
         font = QtGui.QFont()
@@ -502,7 +499,9 @@ class CTC_Main_UI(QMainWindow):
         if (self.ctc.check_filepath()):
             if (self.lock == 0):
                 self.section_list.addItems(self.initialize_section_list("Green"))
-                
+                self.ctc.get_stations("Green")
+                self.section_list.addItems(self.ctc.get_stations_names("Green"))
+
                 lock = 1
 
             # update train info
