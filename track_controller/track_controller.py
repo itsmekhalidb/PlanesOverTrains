@@ -41,7 +41,7 @@ class Track_Controller(object):
     def update(self, thread=True):
         # Track Model Inputs
         self.set_track(self.track_ctrl_signals._track_info)
-        self.set_occupancy()
+        self.set_occupancy(self.track_ctrl_signals._train_info)
 
         # CTC Office Inputs
         self.set_time(self.ctc_ctrl_signals._time)
@@ -131,11 +131,11 @@ class Track_Controller(object):
         self._command_speed[block] = speed
 
     # Testbench
-    def set_authority(self, _authority: int):
-        self._authority = _authority
-
-    def get_authority(self, train: int) -> int:
-        return self._train_info[train][1]
+    # def set_authority(self, _authority: int):
+    #     self._authority = _authority
+    #
+    # def get_authority(self, train: int) -> int:
+    #     return self._train_info[train][1]
 
     def set_suggested_speed(self, _suggested_speed: int, train: int):
         self._train_info[train][2] = _suggested_speed

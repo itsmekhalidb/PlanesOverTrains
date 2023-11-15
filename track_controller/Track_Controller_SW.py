@@ -904,7 +904,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
                 self.railway_crossing_checkBox.setCheckState(self.track_controller.get_railway_crossing('18'))
 
-        # self.commanded_speed.setText(str(self.track_controller.get_commanded_speed()))
+        #self.commanded_speed.setText(str(self.track_controller.get_commanded_speed()) + " mph")
 
         #manual mode changes
         self.load_PLC_btn.setVisible(not bool(self.manual_mode_checkBox.checkState()))
@@ -940,6 +940,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.traffic_light_label_5.setVisible(False)
         self.traffic_light_red_5.setVisible(False)
         self.toggle_light_5.setVisible(False)
+        self.traffic_light_green_5.setVisible(False)
         self.traffic_light_label_6.setVisible(False)
         self.traffic_light_red_6.setVisible(False)
         self.toggle_light_6.setVisible(False)
@@ -999,8 +1000,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
         self.track_controller.set_switch(self.switch_label_2.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
-        # self.track_controller.set_switch(self.switch_label_3.text(),
-        #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        self.track_controller.set_switch(self.switch_label_3.text(),
+                                         1)
 
         self.track_controller.set_railway_crossing('18', self.sect_E_occ)
 
