@@ -12,7 +12,7 @@ from .Backup_Controller import Backup_Controller
 KP = 8000
 KI = 10
 # DWELL_TIME = 60
-DWELL_TIME = 10
+DWELL_TIME = 25
 BRAKING_DIFFERENCE = 0.5
 BACKUP_THRESHOLD = 2000
 STOPPING_SPEED = 15
@@ -193,7 +193,7 @@ class TrainController:
 
     def update_stop(self):
         try:
-            if ((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()):# or self.get_authority()<=0:
+            if (((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()) or self.get_beacon() == "Dormont"):# or self.get_authority()<=0:
                 self._stop = True
                 self._stop_time = self.get_time()
                 self.set_service_brake_value(1.0)
@@ -203,7 +203,7 @@ class TrainController:
             if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status():
                 print("Dwell time over")
                 self._stop = False
-                self.set_service_brake_value(0.0)
+                self.set_service_brake_value(0.1)
                 self.set_right_door_status(False)
                 self.set_left_door_status(False)
 
