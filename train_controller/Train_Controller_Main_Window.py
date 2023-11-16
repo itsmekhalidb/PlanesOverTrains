@@ -119,7 +119,7 @@ class Ui_MainWindow(QMainWindow):
         self.brake_fail_off.setGeometry(QtCore.QRect(566, 406+27, 25, 17))
         font = QtGui.QFont()
         font.setPointSize(10)
-        font.setBold(True)
+        font.setBold(True) #comment
         font.setWeight(75)
         self.brake_fail_off.setFont(font)
         self.brake_fail_off.setStyleSheet("color: rgb(255, 255, 255);\n"
@@ -465,7 +465,7 @@ class Ui_MainWindow(QMainWindow):
         self.external_lights_label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_3.setObjectName("external_lights_label_3")
         self.doubleSpinBox_2 = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox_2.setMaximum(1000.0)
+        self.doubleSpinBox_2.setMaximum(100000.0)
         self.doubleSpinBox_2.setGeometry(QtCore.QRect(126, 174, 68, 24))
         self.doubleSpinBox_2.setObjectName("doubleSpinBox_2")
         self.external_lights_label_4 = QtWidgets.QLabel(self.centralwidget)
@@ -481,7 +481,7 @@ class Ui_MainWindow(QMainWindow):
         self.external_lights_label_4.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.external_lights_label_4.setObjectName("external_lights_label_4")
         self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox_3.setMaximum(1000.0)
+        self.doubleSpinBox_3.setMaximum(100000.0)
         self.doubleSpinBox_3.setGeometry(QtCore.QRect(126, 204, 68, 24))
         self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
         self.external_lights_label_9 = QtWidgets.QLabel(self.centralwidget)
@@ -524,7 +524,7 @@ class Ui_MainWindow(QMainWindow):
         self.commanded_speed_spnbx = QtWidgets.QSpinBox(self.centralwidget)
         self.commanded_speed_spnbx.setGeometry(QtCore.QRect(350, 116, 62, 22))
         self.commanded_speed_spnbx.setObjectName("commanded_speed_spnbx")
-        self.commanded_speed_spnbx.setMaximum(1000.0)
+        self.commanded_speed_spnbx.setMaximum(1000)
         self.external_lights_label_11 = QtWidgets.QLabel(self.centralwidget)
         self.external_lights_label_11.setGeometry(QtCore.QRect(210, 142, 209, 31))
         font = QtGui.QFont()
@@ -877,7 +877,7 @@ class Ui_MainWindow(QMainWindow):
         # #uk
         # self.doubleSpinBox_4.setValue(float(self.train_controller.get_ki()))
         # temperature
-        self.temperature_spnbx.setValue(72.0) # Default temperature
+        self.temperature_spnbx.setValue(72) # Default temperature
 
     def _handler(self):
         self.timer = QTimer()
@@ -894,9 +894,10 @@ class Ui_MainWindow(QMainWindow):
                     self.checkBox_4.setEnabled(False)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(False)  # temperature
-                    self.commanded_speed_spnbx.setEnabled(False)  # commanded speed
+                    self.commanded_speed_spnbx.setVisible(False)  # commanded speed
                     self.doubleSpinBox_3.setEnabled(False)  # ki
                     self.doubleSpinBox_2.setEnabled(False)  # kp
+
             else:
                     self.slider.setEnabled(True)  # service brake
                     self.checkBox_7.setEnabled(True)  # right door
@@ -905,9 +906,12 @@ class Ui_MainWindow(QMainWindow):
                     self.checkBox_4.setEnabled(True)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake
                     self.temperature_spnbx.setEnabled(True)  # temperature
-                    self.commanded_speed_spnbx.setEnabled(True)  # commanded speed
+                    self.commanded_speed_spnbx.setVisible(True)  # commanded speed
                     self.doubleSpinBox_3.setEnabled(True)  # ki
                     self.doubleSpinBox_2.setEnabled(True)  # kp
+            if self.train_controller.get_ebrake_status():
+                self.pushButton_2.setEnabled(False)  # service brake
+                self.slider.setEnabled(False)  # service brake
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         #auto status
@@ -945,14 +949,19 @@ class Ui_MainWindow(QMainWindow):
         self.engine_fail_off.setVisible(not bool(self.train_controller.get_engine_status()))
         #signal pickup failure
         self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
+        self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
         self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
         #speed limit
-        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(round(self.train_controller.get_maximum_velocity()*2.23694,3))))
         #commanded speed
-        self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
-
+        if self.train_controller.get_auto_status():
+                self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
+        else:
+                self.external_lights_label_10.setText(str("Com. Speed (mph): "))
         comspeed = self.commanded_speed_spnbx.value()
-        self.train_controller.set_commanded_velocity(float(comspeed))
+        self.train_controller.set_setpoint_speed(float(comspeed)/2.23694)
+
+        self.external_lights_label_14.setText("Station: " + str(self.train_controller.get_beacon()))
 
         #kp
         kp = self.doubleSpinBox_2.value()

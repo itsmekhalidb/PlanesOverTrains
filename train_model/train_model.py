@@ -27,7 +27,7 @@ class TrainModel(object):
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
-        self._time = time.time()
+        self._time = 0 # time object set to midnight
         self._current_time = self._time
         self._prev_time = self._time
         self._block = 0 # current block the train is on
@@ -74,6 +74,8 @@ class TrainModel(object):
         self._int_lights = False # internal lights
         self._ext_lights = False # external lights
         self._emergency_brake = False  # emergency brake
+        self._pass_emergency_brake = False # passenger emergency brake
+        self._tc_wait = False # wait for train controller to release emergency brake
         self._service_brake = False # service brake
         self._service_brake_value = 0.0 # % service brake
 
@@ -142,7 +144,7 @@ class TrainModel(object):
         self.set_ext_lights(self._train_ctrl_signals.ext_lights)
 
         # Emergency Brake
-        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake)
+        self.set_emergency_brake(self._train_ctrl_signals.emergency_brake, tc_call=True)
 
         # Service Brake
         self.set_service_brake(self._train_ctrl_signals.service_brake_value > 0)
@@ -183,6 +185,9 @@ class TrainModel(object):
         # Temperature
         self._train_ctrl_signals.temperature = self.get_temperature()
 
+        # Passenger Ebrake
+        self._train_ctrl_signals.passenger_emergency_brake = self.get_pass_emergency_brake()
+
         #############################
         # Input Track Model Signals #
         #############################
@@ -191,9 +196,6 @@ class TrainModel(object):
 
         # Line
         self.set_line(self._track_model_signals.line)
-
-        # Beacon
-        self.set_beacon(self._track_model_signals.beacon)
 
         # Authority
         self.set_authority(self._track_model_signals.authority)
@@ -205,42 +207,10 @@ class TrainModel(object):
         self.set_block(self._track_model_signals.current_block)
 
         # Time
-        # REMINDER: uncomment line in set_time to use time from track model
         self.set_time(self._track_model_signals.time)
 
-        # Red Line Track Info Decode
-        if (self.get_block() in self._track_model_signals.red_track_info) and self.get_line().lower() == "red":
-            # Speed Limit
-            self.set_speed_limit(self._track_model_signals.red_track_info[self.get_block()]["speed_limit"])
-
-            # Elevation
-            self.set_elevation(self._track_model_signals.red_track_info[self.get_block()]["elevation"])
-
-            # Grade
-            self.set_grade(self._track_model_signals.red_track_info[self.get_block()]["grade"])
-
-            # Underground
-            self.set_underground(self._track_model_signals.red_track_info[self.get_block()]["underground"])
-
-            # Station Side
-            self.set_station_side(self._track_model_signals.red_track_info[self.get_block()]["station_side"])
-
-        # Green Line Track Info Decode
-        if (self.get_block() in self._track_model_signals.green_track_info) and self.get_line().lower() == "green":
-            # Speed Limit
-            self.set_speed_limit(self._track_model_signals.green_track_info[self.get_block()]["speed_limit"])
-
-            # Elevation
-            self.set_elevation(self._track_model_signals.green_track_info[self.get_block()]["elevation"])
-
-            # Grade
-            self.set_grade(self._track_model_signals.green_track_info[self.get_block()]["grade"])
-
-            # Underground
-            self.set_underground(self._track_model_signals.green_track_info[self.get_block()]["underground"])
-
-            # Station Side
-            self.set_station_side(self._track_model_signals.green_track_info[self.get_block()]["station_side"])
+        # Track Info
+        self.set_track_info(self._track_model_signals.track_info)
 
         #########################
         # Output to Track Model #
@@ -281,6 +251,29 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
+    def set_track_info(self, _track_info):
+        # Check if the info exists
+        if _track_info is not None and _track_info.get_block_info(self.get_line(),self.get_block()) is not None:
+            # Get the info for the block
+            info = _track_info.get_block_info(self.get_line(),self.get_block())
+
+            # Beacon
+            if info["beacon"] != "nan":
+                self.set_beacon(str(info["beacon"])[9:])
+            else:
+                self.set_beacon("")
+            # Speed Limit
+            self.set_speed_limit(float(info["speed limit"]))
+            # Elevation
+            self.set_elevation(float(info["elevation"]))
+            # Grade
+            self.set_grade(float(info["grade"]))
+            # Underground
+            self.set_underground(bool(info["underground"]))
+            # Station Side
+            # TODO: Uncomment when station side is added to excel
+            # self.set_station_side(info["station side"])
+
     def set_service_brake_value(self, _service_brake_value: float):
         self._service_brake_value = _service_brake_value
 
@@ -362,10 +355,6 @@ class TrainModel(object):
     def set_underground(self, _underground: bool):
         self._underground = _underground
 
-        # Set lights to bool of underground
-        self.set_ext_lights(_underground)
-        self.set_int_lights(_underground)
-
     def get_underground(self) -> bool:
         return self._underground
 
@@ -398,12 +387,10 @@ class TrainModel(object):
         return self._block
 
     # time
-    def set_time(self, _time: float):
-        # Uncomment to use time from track model
-        # self._time = _time
-        self._time = time.time()
+    def set_time(self, _time: int):
+        self._time = _time
 
-    def get_time(self) -> float:
+    def get_time(self) -> int:
         return self._time
 
     # temperature
@@ -433,15 +420,15 @@ class TrainModel(object):
     def calc_actual_velocity(self):
         # v = integrate acceleration over time
         # calculating dt
-        self._current_time = self._time
-        self.set_time(self._current_time) #TODO: Remove this line when using time from track model
+        #TODO: Granularity of velocity has degraded since incorporating time from CTC
+        self._current_time = self.get_time()
         dt = self._current_time - self._prev_time
+        self._prev_time = self._current_time
         # check if time difference is less than zero
         if dt < 0:
             return 0
         # calculate actual velocity according to change in acceleration over time
         self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
-        self._prev_time =  self._current_time
         if self.get_acceleration() < 0.0 and self.get_actual_velocity() < 0.0:
             self.set_actual_velocity(0)
 
@@ -496,7 +483,10 @@ class TrainModel(object):
 
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
-        self._curr_passenger_count = _curr_passenger_count
+        if _curr_passenger_count < 6:
+            _curr_passenger_count = 6
+        else:
+            self._curr_passenger_count = _curr_passenger_count
 
     def get_curr_passenger_count(self) -> int:
         return self._curr_passenger_count
@@ -586,9 +576,37 @@ class TrainModel(object):
     def get_ext_lights(self) -> bool:
         return self._ext_lights
 
-    # emergency brake
-    def set_emergency_brake(self, _emergency_brake: bool):
-        self._emergency_brake = _emergency_brake
+    # emergency brakes
+    def set_pass_emergency_brake(self, _pass_emergency_brake: bool):
+        self._pass_emergency_brake = _pass_emergency_brake
+
+    def get_pass_emergency_brake(self) -> bool:
+        return self._pass_emergency_brake
+    def set_emergency_brake(self, emergency_brake_signal: bool, set_tc_wait: bool = False, tc_call=False):
+        """
+        Set the state of the emergency brake and optionally set the tc_wait flag.
+
+        :param emergency_brake_signal: Boolean indicating whether the emergency brake is engaged.
+        :param set_tc_wait: Boolean indicating whether to set the tc_wait flag.
+        :param tc_call: Boolean indicating if the function is called from the train controller.
+        """
+        if not tc_call:
+            # If called from UI or elsewhere, and Train Controller is not waiting, update the emergency brake
+            if not self._tc_wait:
+                self._emergency_brake = emergency_brake_signal
+                if set_tc_wait:
+                    self._tc_wait = True
+            else:
+                print("Train Controller is waiting. Cannot release emergency brake.")
+        else:
+            # If called from train controller, check if it's safe to release the emergency brake
+            if not self._tc_wait or set_tc_wait:
+                # Train controller is not waiting or we want to set tc_wait; it's safe to update the emergency brake
+                self._emergency_brake = emergency_brake_signal
+                self._tc_wait = set_tc_wait
+            else:
+                # Train controller is waiting; do not update the emergency brake
+                print("Train Controller is waiting. Cannot release emergency brake.")
 
     def get_emergency_brake(self) -> bool:
         return self._emergency_brake

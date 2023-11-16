@@ -1,4 +1,6 @@
 #Imports
+import datetime
+from datetime import datetime
 import math
 import time
 import random as rand
@@ -6,23 +8,27 @@ import numpy as np
 import threading
 import pandas as pd
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
-from api.track_model_train_model_api import TrackModelTrainModelAPI
+from api.track_model_train_model_api import TrackModelTrainModelAPI, Trainz
+from api.ctc_track_model_api import CTCTrackModelAPI
 import traceback
+from track_model.block_info import block_info
+from typing import DefaultDict
+
 
 class TrackModel(object):
-    def __init__(self, trackCtrlSignal: TrackControllerTrackModelAPI, trainModelSignal: TrackModelTrainModelAPI):
+    def __init__(self, TrainModels: Trainz, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
         self._switch_position = False #if train is switching tracks
         self._light_colors = "" #color of signal lights
-        self._authority = 0 #how far train is permitted to travel
+        self._authority = 0.0 #how far train is permitted to travel
         self._gate_control = False #controls railway crossing gate
         self._commanded_speed = 0.0 #speed commanded by CTC
         self._railway_xing_lights = False #lights for railway crossing
         self._railway_xing = False #is the train at a railway crossing
         self._actual_velocity = 0.0 #how fast train is actually going
         self._offboarding = 0 #number of passengers offboarding
-        self._current_block = 0 #block number on the track
+        self._current_block = list() #block number on the track
         self._train_line = "" #color of the current line
         self._speed_limit = 0.0 #speed limit set by track model
         self._beacon = "" #static info on either side of station
@@ -31,8 +37,18 @@ class TrackModel(object):
         self._underground = False #if that section of track is underground
         self._onboarding = 0 #number of passengers boarding train
         self._occupancy = False #if block is occupied or not
-        self._track_layout = "" #layout of the track
+        self._filepath = ""  # filepath to block info
+        self._track_layout = block_info(self._filepath) #layout of the track
         self._temperature = 0
+        self._track_layout_loaded = 0 #done for track layout
+        self._block_length = 0.0 #block length
+        self._local_time = 0
+        self._time = time.time()
+        self._current_time = self._time
+        self._prev_time = self._time
+        self._train_models = TrainModels.train_apis # dictionary of train model apis
+        self._train_ids = [] # list of train ids
+        self._distance = 0.0
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -45,14 +61,14 @@ class TrackModel(object):
         self._temperature = 0 #temperature of cabin
 
         #Data from Other Modules
-        self._train_model_signals = trainModelSignal #api from Train Model
         self._track_controller_signals = trackCtrlSignal #api from track controller
+        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+        self._ctc_signals = CTCSignal #api from ctc
 
         self.update()
 
-    def update(self, thread=False):
+    def update(self, thread=True):
         #---- Failure Modes ----#
-
         #broken rail failure
         self.set_broken_rail(bool(self.get_broken_rail()))
 
@@ -78,9 +94,7 @@ class TrackModel(object):
 
         #authority
         self.set_authority(self._track_controller_signals._authority)
-
-        # Send Authority
-        self._train_model_signals.authority = self.get_authority()
+        # self._train_models[1].authority = 10.0
 
         #gate control
         self.set_gate_control(self.get_gate_control())
@@ -99,15 +113,27 @@ class TrackModel(object):
         #offboarding
         self.set_offboarding(self.get_offboarding())
 
-        #---- Temperature Control ----#
+        #block length
+        self.set_block_length(self.get_block_length())
+
+        #---- Internal Functions ----#
+        #temperature
         self.set_temperature(int(self.get_temperature()))
+
+        #track layout
+        self.set_track_layout(self._filepath)
+        self._track_controller_signals._filepath = self._filepath
+        # self._train_models[1].track_info = self.get_track_layout()
 
         #---- Outputs ----#
         #speed limit
         self.set_speed_limit(self.get_speed_limit())
 
-        #current block
-        self.set_current_block(self.get_current_block())
+        #track layout
+        self._track_controller_signals._track_info = self.get_track_layout()
+
+        #current block occupancy list
+        self._track_controller_signals._train_occupancy = self._current_block
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -133,46 +159,81 @@ class TrackModel(object):
         #occupancy
         self.set_occupancy(self.get_occupancy())
 
-        #track layout
-        self.set_track_layout(self.get_track_layout())
+        #line
+        self.set_line(self._track_controller_signals._line)
+        # self._train_models[1].line = self.get_line()
+
+        # update train model signals
+        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+
+        for i in self._train_model_signals.keys():
+            index = int(i) - 1
+            if index not in self._train_ids:
+                self._train_ids.append(index)
+                self._train_models[index] = TrackModelTrainModelAPI()
+            self._train_models[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
+            self._train_models[index].authority = 10.0
+            self._train_models[index].line = 'red'
+            self._train_models[index].track_info = self.get_track_layout()
+            self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
+            self._train_models[index].current_block = self.update_current_block(self._train_models[index])
+            # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
+
+            if index + 1 > len(self._current_block):
+                self._current_block.append(self._train_models[index].current_block)
+            else:
+                self._current_block[index] = self._train_models[index].current_block
 
         #Enable threading
         if thread:
             threading.Timer(0.1, self.update).start()
 
-        def beacon_simulate(self):
-            if self.line == "":
-                self.set_line("BLUE")
-            if self.line.lower() == "green":        #---- GREEN LINE ----#
-                self.set_beacon("PIONEER")          #Beacon
-                self.set_authority(700)             #Authority
-                self.set_speed_limit(45)            #Speed Limit
-                self.set_elevation(1)               #Elevation
-                self.set_grade(0.01)                #Grade
-                self.set_underground(False)         #Underground
-                self.set_current_block(2)           #Block Number
-                self.set_occupancy(False)           #Occupancy
-
-            if self.line.lower() == "red":          #---- RED LINE ----#
-                self.set_beacon("SHADYSIDE")        #Beacon
-                self.set_authority(615)             #Authority
-                self.set_speed_limit(40)            #Speed Limit
-                self.set_elevation(0.38)            #Elevation
-                self.set_grade(0.005)               #Grade
-                self.set_underground(False)         #Underground
-                self.set_current_block(7)           #Block Number
-                self.set_occupancy(False)           #Occupancy
-
-            if self.line.lower() == "blue":         #---- BLUE LINE ----#
-                self.set_beacon("Station B")        #Beacon
-                self.set_authority(250)             #Authority
-                self.set_speed_limit(50)            #Speed Limit
-                self.set_elevation(0.0)             #Elevation
-                self.set_underground(True)          #Underground
-                self.set_current_block(10)          #Block Number
-                self.set_occupancy(False)           #Occupancy
 
     #---- Getters & Setters ----#
+    def update_traveled_distance(self, velocity):
+        self._current_time = time.time()
+        dt = self._current_time - self._prev_time
+        dist_traveled = velocity * dt
+        self._prev_time = self._current_time
+        return abs(dist_traveled)
+
+    def update_current_block(self, train):
+        try:
+            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                train.cum_distance = 0
+                return train.current_block + 1
+            return train.current_block
+        except Exception as e:
+            print("You must upload the Track Model before dispatching a train")
+            print(e)
+
+    def get_occupancy(self):
+        return self._current_block
+    #Occupancy
+    def set_current_block(self, _current_block: int):
+        self._current_block.append(_current_block)
+
+    def get_current_block(self) -> int:
+        return self._current_block
+
+    #Line
+    def set_line(self, _line: str):
+        self._line = _line
+    def get_line(self) -> str:
+        return self._line
+
+
+    def set_block_length(self, _block_length: float):
+        self._block_length = _block_length
+
+    def get_block_length(self) -> float:
+        return self._block_length
+
+    #Filepath
+    def set_filepath(self, _filepath: str):
+        self._filepath = _filepath
+    def get_filepath(self) -> str:
+        return self._filepath
 
     #Authority
     def set_authority(self, _authority: float):
@@ -250,11 +311,11 @@ class TrackModel(object):
         return self._offboarding
 
     #Current Block
-    def set_current_block(self, _current_block: int):
-        self._current_block = _current_block
 
-    def get_current_block(self) -> int:
-        return self._current_block
+
+
+    #get veolocity, multiple velocity & time to get distance, compare distance and block length, constantly add distance, dt could be 1 second,
+    # def set_distance(self, _distance):
 
     #Train Line
     def set_train_line(self, _train_line: str):
@@ -313,10 +374,16 @@ class TrackModel(object):
         return self._occupancy
 
     #Track Layout
-    def set_track_layout(self, _track_layout: str):
-        self._track_layout = _track_layout
+    def set_track_layout(self, path: str):
+        if self._track_layout_loaded == 0 and self._filepath != "":
+            self._track_layout = block_info(filepath=path)
+            self._track_layout_loaded = 1
+        else:
+            self._track_layout = self.get_track_layout()
 
-    def get_track_layout(self) -> str:
+    def get_track_layout(self) -> block_info:
+        if self._filepath == "":
+            return {}
         return self._track_layout
 
     #Broken Rail

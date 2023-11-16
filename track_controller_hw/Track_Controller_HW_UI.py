@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import traceback
 
 # Form implementation generated from reading ui file 'Track_Controller_HW_UI.ui'
 #
@@ -18,8 +19,6 @@ from track_controller_hw.track_controller_hw import Track_Controller_HW
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.track_controller_track_model_api import TrackControllerTrackModelAPI
 
-
-
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
 
@@ -28,15 +27,16 @@ class Ui_track_controller_mainwindow(QMainWindow):
     def __init__(self, track_controller_hw: Track_Controller_HW) -> None:
         super().__init__()
         self.track_controller_hw = track_controller_hw
-       # self.blue_line_plc = File_Parser("")
         # self._light = False
         # self._switch = False
         # self._command = False
         self._previous = ""
         self._send_bits = ""
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
         self.setupUi()
         self.show()
+        self.change = True
+
     def set_previous_show(self, s: str):
         self._previous = s
 
@@ -80,11 +80,9 @@ class Ui_track_controller_mainwindow(QMainWindow):
         browse = QFileDialog.getOpenFileName(self.load_plc_button)
         print(browse[0])
         data = File_Parser(browse[0])
-        self.blue_line_plc = data
-
-
-    def get_ard(self):
-        return self._ard
+        self.track_controller_hw.set_blue_plc(data)
+        self.track_controller_hw.set_plc_set(True)
+        print("Test End")
 
     def setupUi(self):
         self.setObjectName("track_controller_mainwindow")
@@ -101,21 +99,31 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.title_label.setAutoFillBackground(False)
         self.title_label.setStyleSheet("background-color: rgb(255, 255, 0);\n"
                                        "border: 3px solid black;")
-        self.title_label.setObjectName("title_label")
-        self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
-        self.system_speed_spnbx.setObjectName("system_speed_spnbx")
-        self.system_speed_label = QtWidgets.QLabel(self.centralwidget)
-        self.system_speed_label.setGeometry(QtCore.QRect(498, 10, 201, 31))
+        self.sys_time_label = QtWidgets.QLabel(self.centralwidget)
+        self.sys_time_label.setGeometry(QtCore.QRect(400, 8, 83, 31))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
-        self.system_speed_label.setFont(font)
-        self.system_speed_label.setAutoFillBackground(False)
-        self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                              "border: 1px solid black;")
-        self.system_speed_label.setObjectName("system_speed_label")
+        self.sys_time_label.setFont(font)
+        self.sys_time_label.setStyleSheet("border: 1px solid black;\n"
+                                          "background-color: rgb(255, 255, 255);")
+        self.sys_time_label.setObjectName("sys_time_label")
+        self.title_label.setObjectName("title_label")
+        #self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        #self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
+        #self.system_speed_spnbx.setObjectName("system_speed_spnbx")
+        #self.system_speed_label = QtWidgets.QLabel(self.centralwidget)
+        #self.system_speed_label.setGeometry(QtCore.QRect(498, 10, 201, 31))
+        #font = QtGui.QFont()
+        #font.setPointSize(10)
+        #font.setBold(True)
+        #font.setWeight(75)
+        #self.system_speed_label.setFont(font)
+        #self.system_speed_label.setAutoFillBackground(False)
+        #self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                                      "border: 1px solid black;")
+        #self.system_speed_label.setObjectName("system_speed_label")
         self.manual_mode_check = QtWidgets.QCheckBox(self.centralwidget)
         self.manual_mode_check.setEnabled(True)
         self.manual_mode_check.setGeometry(QtCore.QRect(210, 62, 14, 15))
@@ -142,17 +150,17 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.manual_mode_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
                                              "border: 1px solid black;\n"
                                              "")
-        self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
-        self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.manual_mode_label_1.setFont(font)
-        self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                               "border: 1px solid black;\n"
-                                               "")
-        self.manual_mode_label_1.setText("Crossing Lights")
+        # self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
+        # self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
+        # font = QtGui.QFont()
+        # font.setPointSize(10)
+        # font.setBold(True)
+        # font.setWeight(75)
+        # self.manual_mode_label_1.setFont(font)
+        # self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
+        #                                      "border: 1px solid black;\n"
+        #                                      "")
+        # self.manual_mode_label_1.setText("Crossing Lights")
         self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.manual_mode_label.setObjectName("manual_mode_label")
         self.manual_mode_off = QtWidgets.QLabel(self.centralwidget)
@@ -212,10 +220,15 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.selected_output.setGeometry(QtCore.QRect(260, 490, 211, 25))
         self.selected_output.setText("")
         self.selected_output.setObjectName("selected_output")
-        self.show_ard = QtWidgets.QPushButton(self, clicked=lambda: self.toggle())
-        self.show_ard.setGeometry(QtCore.QRect(500, 490, 93, 28))
-        self.show_ard.setObjectName("show_ard")
-        self.show_ard.setText("Change")
+        self.show_ard_light = QtWidgets.QPushButton(self, clicked=lambda: self.toggle_light())
+        self.show_ard_light.setGeometry(QtCore.QRect(500, 490, 93, 28))
+        self.show_ard_light.setObjectName("show_ard")
+        self.show_ard_light.setText("Change Light")
+        self.show_ard_switch = QtWidgets.QPushButton(self, clicked=lambda: self.toggle_switch())
+        self.show_ard_switch.setGeometry(QtCore.QRect(600, 490, 93, 28))
+        self.show_ard_switch.setObjectName("show_ard")
+        self.show_ard_switch.setText("Change Switch")
+        """
         self.command_spin = QtWidgets.QSpinBox(self,
                                                valueChanged=lambda: self.track_controller_hw.set_commanded_speed(
                                                    self.command_spin.value()))
@@ -232,6 +245,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.command_drop = QtWidgets.QComboBox(self.centralwidget)
         self.command_drop.setGeometry(QtCore.QRect(100, 490, 61, 25))
         self.command_drop.setObjectName("command_drop")
+        """
         self.plc_output = QtWidgets.QListWidget(self.centralwidget)
         self.plc_output.setGeometry(QtCore.QRect(520, 190, 191, 261))
         self.plc_output.setObjectName("plc_output")
@@ -307,8 +321,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.testbench_button.setGeometry(QtCore.QRect(10, 480, 81, 31))
         self.testbench_button.setObjectName("testbench_button")
         self.title_label.raise_()
-        self.system_speed_label.raise_()
-        self.system_speed_spnbx.raise_()
+#        self.system_speed_label.raise_()
+#        self.system_speed_spnbx.raise_()
         self.manual_mode_check.raise_()
         self.ebrake_fail_on.raise_()
         self.manual_mode_label.raise_()
@@ -327,6 +341,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.occupancy_display.raise_()
         self.occupancy_label.raise_()
         self.testbench_button.raise_()
+        self.sys_time_label.raise_()
         self.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
@@ -337,66 +352,82 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.select_output.clear()
         self._handler()
-
-        for x in self.track_controller_hw.get_switch_list():
-            self.select_output.addItem(x)
-
-        item = QListWidgetItem("Select Output Above")
-
-        for x in self.track_controller_hw.get_light_list():
-            self.select_output.addItem(x)
-
-        for x in self.track_controller_hw.get_blue_track():
-            self.command_drop.addItem(x)
-
-        for i in self.track_controller_hw.get_blue_track():
+        """
+        for i in self.track_controller_hw.get_green_track():
             if self.track_controller_hw.get_occupancy(i) == 1:
                 item = str(i) + " " + str(self.track_controller_hw.get_speed_limit(i)) + " mi/hr"
                 self.occupancy_display.addItem(item)
+        """
+        for i in self.track_controller_hw.get_light_list():
+            self.select_output.addItem(i)
 
-        self.select_output.addItem("Commanded Speed")
         self.wayside_select.clear()
 
-        self.wayside_select.addItem("Blue")
-
-        self.select_output.addItem(item)
-        self.select_output.setCurrentItem(item)
+       # self.wayside_select.addItem("Blue")
+        self.wayside_select.addItem("green")
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
+        temp_time = self.track_controller_hw.get_time()
+        hr = str(temp_time.hour)
+        minute = str(temp_time.minute)
+        sec = str(temp_time.second)
+        if len(hr) == 1:
+            hr = "0" + hr
+        if len(minute) == 1:
+            minute = "0" + minute
+        if len(sec) == 1:
+            sec = "0" + sec
+        temp_timestr = hr + ":" + minute + ":" + sec
+        self.sys_time_label.setText(_translate("self", temp_timestr))
 
         self.plc_output.clear()
 
-        self.system_speed_label.setVisible(False)
-        self.system_speed_spnbx.setVisible(False)
+        """
+        if self.wayside_select.currentText() == "green" and not self.change:
+            self.select_output.clear()
+            for i in range(55, 121):
+                self.select_output.addItem(self.track_controller_hw.get_green_track())
+            self.change = True
+        """
 
         self.occupancy_display.clear()
         self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
 
         self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
 
-        self.command_drop.setVisible(False)
+        # self.command_drop.setVisible(False)
 
         if not self.track_controller_hw.get_automatic():
-            self.show_ard.setVisible(True)
-            self.command_label.setVisible(True)
-            self.command_spin.setVisible(True)
+            self.show_ard_light.setVisible(True)
+            self.show_ard_switch.setVisible(True)
+            # self.command_label.setVisible(True)
+            # self.command_spin.setVisible(True)
             # self.command_drop.setVisible(True)
         else:
-            self.show_ard.setVisible(False)
-            self.command_label.setVisible(False)
-            self.command_spin.setVisible(False)
+            self.show_ard_light.setVisible(False)
+            self.show_ard_switch.setVisible(False)
+            # self.command_label.setVisible(False)
+            # self.command_spin.setVisible(False)
+            # self.track_controller_hw.set_commanded_speed(self.command_spin.value())
 
         self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
         # label visibility
         self.manual_mode_off.setVisible(not bool(self.manual_mode_check.checkState()))
         self.manual_mode_on.setVisible(bool(self.manual_mode_check.checkState()))
 
-        if self.track_controller_hw.get_automatic():
-            print("PLC")
-        #    self.PLC()
+        try:
+            block_number = self.select_output.currentItem().text()
+            self.selected_output.setText(block_number)
+            if self.get_previous_show() != block_number:
+                self.set_previous_show(block_number)
+                self.track_controller_hw.select_block(block_number)
+                # self.track_controller_hw.send_update(block_number)
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
 
-
+    """
         try:
             if self.select_output.currentItem().text() == "Hello":
                 print("Value is None")
@@ -424,6 +455,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
                         # self.set_command_show(True)
         except:
             print("Non Value")
+    """
 
     # try:
     # self.track_controller_hw.set_commanded_speed(
@@ -431,20 +463,25 @@ class Ui_track_controller_mainwindow(QMainWindow):
     # except:
     #    print("None")
 
-    def toggle(self):
-        type_output = self.selected_output.text().split(" ")
-        if type_output[0] == "Light":
-            if self.track_controller_hw.get_lights(self.selected_output.text()) == 0:
-                self.change_light(1, self.selected_output.text())
-                self.send_lights()
-            elif self.track_controller_hw.get_lights(self.selected_output.text()) == 1:
-                self.change_light(0, self.selected_output.text())
-                self.send_lights()
-        elif type_output[0] == "Switch":
-            self.change_switch(self.selected_output.text())
-            self.send_switch()
-        elif type_output[0] == "Commanded":
-            self.send_command(False)
+    def toggle_light(self):
+        block = self.selected_output.text()
+        if block in self.track_controller_hw.get_light_list():
+            color = self.track_controller_hw.get_lights(block)
+            if color == 0:
+                self.change_light(1, block)
+            elif color == 1:
+                self.change_light(0, block)
+            self.track_controller_hw.send_update(block)
+        else:
+            print("No Light")
+
+    def toggle_switch(self):
+        block = self.selected_output.text()
+        if block in self.track_controller_hw.get_switch_list():
+            self.change_switch(block)
+            self.track_controller_hw.send_update(block)
+        else:
+            print("No Switch")
 
     def change_light(self, i: int, light: str):
         if i == 0:
@@ -460,6 +497,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         elif self.track_controller_hw.get_switch(switch) == 1:
             self.track_controller_hw.set_switch(0, switch)
 
+    """
     def send_lights(self):
         type_output = self.selected_output.text().split(" ")
         value = self.select_output.currentItem().text()
@@ -468,6 +506,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
             send = "1001" + str(self.track_controller_hw.get_lights(value)) + str(type_output[1])
             self.get_ard().write(send.encode('utf-8'))
 
+    
     def send_command(self, value: bool):
         type_output = self.selected_output.text().split(" ")
         if type_output[0] == "Commanded":
@@ -490,6 +529,22 @@ class Ui_track_controller_mainwindow(QMainWindow):
             elif self.track_controller_hw.get_switch(value) == 1:
                 send = "10100" + str(type_output[1]) + " => C"
                 self.get_ard().write(send.encode('utf-8'))
+                
+    def toggle(self):
+        type_output = self.selected_output.text().split(" ")
+        if type_output[0] == "Light":
+            if self.track_controller_hw.get_lights(self.selected_output.text()) == 0:
+                self.change_light(1, self.selected_output.text())
+                self.send_lights()
+            elif self.track_controller_hw.get_lights(self.selected_output.text()) == 1:
+                self.change_light(0, self.selected_output.text())
+                self.send_lights()
+        elif type_output[0] == "Switch":
+            self.change_switch(self.selected_output.text())
+            self.send_switch()
+        elif type_output[0] == "Commanded":
+            self.send_command(False)
+    """
 
     def _handler(self):
         self.timer = QTimer()
@@ -499,9 +554,9 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("track_controller_mainwindow", "MainWindow"))
+        self.setWindowTitle(_translate("track_controller_mainwindow", "Track Controller Hardware"))
         self.title_label.setText(_translate("track_controller_mainwindow", "Wayside Controller - Hardware"))
-        self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
+       # self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
         self.manual_mode_check.setText(_translate("track_controller_mainwindow", "Manual Mode"))
         self.ebrake_fail_on.setText(_translate("track_controller_mainwindow", "ON"))
         self.manual_mode_label.setText(_translate("track_controller_mainwindow", "Manual Mode"))
@@ -520,7 +575,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.wayside_select.setItemText(0, _translate("track_controller_mainwindow", "Blue 1"))
         self.wayside_select.setItemText(1, _translate("track_controller_mainwindow", "Blue 2"))
         self.manual_mode_on.setText(_translate("track_controller_mainwindow", "ON"))
-        self.load_plc_label.setText(_translate("track_controller_mainwindow", "PLC BLUE"))
+        self.load_plc_label.setText(_translate("track_controller_mainwindow", "PLC"))
         self.plc_output_label.setText(_translate("track_controller_mainwindow", "PLC Output"))
         self.load_plc_button.setText(_translate("track_controller_mainwindow", "Load PLC"))
         self.Select_wayside_label.setText(_translate("track_controller_mainwindow", "Wayside Controller/Line"))
@@ -528,94 +583,17 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.selected_output_label.setText(_translate("track_controller_mainwindow", "Selected Output"))
         self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
         self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
+        #self.sys_time_label.setText(_translate("self", "13:24:55"))
 
-    def PLC(self): #have not tested this yet
-        for i in range(len(self.blue_line_plc.get_block_number())):
-            block_number = self.blue_line_plc.get_block_number()[i]
-            block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
-            operation = self.blue_line_plc.get_operations()[i]
-            operation_number = self.blue_line_plc.get_operations_number()[i]
-            if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
-                    (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
-                if operation == 'switch':
-                    self.track_controller_hw.set_switch(1, operation_number)
-                elif operation == '!switch':
-                    self.track_controller_hw.set_switch(0, operation_number)
-                elif operation == "green":
-                    self.track_controller_hw.set_lights(1, operation_number)
-                elif operation == "red":
-                    self.track_controller_hw.set_lights(0, operation_number)
-
-
-        """""
-        self.track_controller_hw.set_commanded_speed(
-            min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
-
-        self.sect_A_occ = bool(self.track_controller_hw.get_occupancy('B-A1') or self.track_controller_hw.get_occupancy(
-            'B-A2') or self.track_controller_hw.get_occupancy('B-A3') or self.track_controller_hw.get_occupancy(
-            'B-A4') or self.track_controller_hw.get_occupancy('B-A5'))
-        self.sect_B_occ = bool(self.track_controller_hw.get_occupancy('B-B6') or self.track_controller_hw.get_occupancy(
-            'B-B7') or self.track_controller_hw.get_occupancy('B-B8') or self.track_controller_hw.get_occupancy(
-            'B-B9') or self.track_controller_hw.get_occupancy('B-B10'))
-        self.sect_C_occ = bool(
-            self.track_controller_hw.get_occupancy('B-C11') or self.track_controller_hw.get_occupancy(
-                'B-C12') or self.track_controller_hw.get_occupancy('B-C13') or self.track_controller_hw.get_occupancy(
-                'B-C14') or self.track_controller_hw.get_occupancy('B-C15'))
-        if self.sect_A_occ:
-            self.plc_output.addItem("Train detected in section A")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(1, 'Light B-B6')
-            self.track_controller_hw.set_lights(1, 'Light C-C11')
-            if self.sect_B_occ:
-                self.plc_output.addItem("Train detected in section B")
-                self.track_controller_hw.set_lights(0, 'Light B-A5', )
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light B-C11')
-                self.track_controller_hw.set_switch(1, 'Switch BC-A')
-                self.plc_output.addItem("Stopping traffic from track section B")
-                self.plc_output.addItem("Switching to track section C")
-            elif self.sect_C_occ:
-                self.plc_output.addItem("Train detected in section C")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light B-C11')
-                self.track_controller_hw.set_switch(0, 'Switch BC-A')
-                self.plc_output.addItem("Stopping traffic from track section C")
-                self.plc_output.addItem("Switching to track section B")
-            else:
-                self.plc_output.addItem("Stopping traffic from track sections B and C")
-                self.plc_output.addItem("Switching to track section B")
-        elif self.sect_B_occ:
-            self.plc_output.addItem("Train detected in section B")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(1, 'Light B-B6')
-            self.track_controller_hw.set_lights(0, 'Light B-C11')
-            self.track_controller_hw.set_switch(0, 'Light BC-A')
-            self.plc_output.addItem("Stopping traffic from track sections A and C")
-            self.plc_output.addItem("Switching to track section B")
-        elif self.sect_C_occ:
-            self.plc_output.addItem("Train detected in section C")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(0, 'Light B-B6')
-            self.track_controller_hw.set_lights(1, 'Light B-C11')
-            self.track_controller_hw.set_switch(1, 'Switch BC-A')
-            self.plc_output.addItem("Stopping traffic from track sections A and B")
-            self.plc_output.addItem("Switching to track section C")
-        else:
-            self.plc_output.addItem("No trains on the track")
-            self.track_controller_hw.set_lights(0, 'Light B-A5')
-            self.track_controller_hw.set_lights(0, 'Light B-B6')
-            self.track_controller_hw.set_lights(0, 'Light B-C11')
-"""
 
 if __name__ == "__main__":
     import sys
 
     app = QtWidgets.QApplication(sys.argv)
     e = Ui_track_controller_mainwindow(Track_Controller_HW(CTCTrackControllerAPI, TrackControllerTrackModelAPI))
-    #track_controller_mainwindow = QtWidgets.QMainWindow()
-    #track_controller_hw = Track_Controller_HW()
-    #ui = Ui_track_controller_mainwindow(track_controller_hw)
-    #ui.setupUi(track_controller_mainwindow)
-    #track_controller_mainwindow.show()
+    # track_controller_mainwindow = QtWidgets.QMainWindow()
+    # track_controller_hw = Track_Controller_HW()
+    # ui = Ui_track_controller_mainwindow(track_controller_hw)
+    # ui.setupUi(track_controller_mainwindow)
+    # track_controller_mainwindow.show()
     sys.exit(app.exec_())

@@ -674,7 +674,16 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 "background-color: rgb(170, 0, 0);")
                 self.service_brake_off.setAlignment(QtCore.Qt.AlignCenter)
                 self.service_brake_off.setObjectName("service_brake_off")
-                self.ebrake_label.raise_()
+                self.ebrake = QtWidgets.QPushButton(self.centralwidget)
+                self.ebrake.setGeometry(QtCore.QRect(458, 5, 198, 119//3+1))
+                font = QtGui.QFont()
+                font.setPointSize(14)
+                font.setBold(True)
+                font.setWeight(75)
+                self.ebrake.setFont(font)
+                self.ebrake.setStyleSheet("background-color: rgb(255, 0, 0);\n"
+                                              "color: rgb(255, 255, 255);")
+                self.ebrake.setObjectName("ebrake")
                 self.title_label.raise_()
                 # self.system_speed_label.raise_()
                 # self.system_speed_spnbx.raise_()
@@ -741,6 +750,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.service_brake_on.raise_()
                 self.service_brake_on.hide()
                 self.service_brake_off.raise_()
+                self.ebrake.raise_()
                 self.setCentralWidget(self.centralwidget)
 
                 self.retranslateUi()
@@ -875,6 +885,10 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.service_brake_on.setVisible(bool(self.train_model.get_service_brake()))
                 self.service_brake_off.setVisible(not bool(self.train_model.get_service_brake()))
 
+                # Emergency Brake
+                self.ebrake.clicked.connect(lambda: self.train_model.set_pass_emergency_brake(True))
+                self.train_model.set_pass_emergency_brake(False)
+
                 # Force Calculation
                 self.train_model.calc_force()
 
@@ -896,6 +910,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 _translate = QtCore.QCoreApplication.translate
                 self.setWindowTitle(_translate("TrainModel_MainUI", "Train Model"))
                 self.title_label.setText(_translate("TrainModel_MainUI", " Train #NUM Line COLOR"))
+                self.ebrake.setText(_translate("TrainModel_MainUI", "Emergency Brake"))
                 # self.system_speed_label.setText(_translate("TrainModel_MainUI", " System Speed"))
                 # self.sys_time_label.setText(_translate("TrainModel_MainUI", "13:24:55"))
                 self.train_info_label.setText(_translate("TrainModel_MainUI", "Train Information"))
@@ -907,10 +922,10 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: 10"))
                 self.force_label.setText(_translate("TrainModel_MainUI", "         Force (N)            CMD Power (kW)"))
                 # self.force_info_label_2.setText(_translate("TrainModel_MainUI", "F = P/Vcmd"))
-                self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (m/s)"))
+                self.velocity_label.setText(_translate("TrainModel_MainUI", "Actual & Commanded Velocity (mph)"))
                 self.vacc_info_label.setText(_translate("TrainModel_MainUI", "Vacc = laplace(Vacc)"))
                 self.accel_info_label.setText(_translate("TrainModel_MainUI", "a = F/M"))
-                self.acceleration_label.setText(_translate("TrainModel_MainUI", "Acceleration (m/s²)"))
+                self.acceleration_label.setText(_translate("TrainModel_MainUI", "Acceleration mi/(h * s)"))
                 self.vcmd_info_label.setText(_translate("TrainModel_MainUI", "Vcmd = 100 m/s"))
         #         self.next_station_infobox.setHtml(_translate("TrainModel_MainUI", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
         # "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"

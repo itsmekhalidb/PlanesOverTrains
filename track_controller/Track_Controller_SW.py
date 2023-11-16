@@ -36,6 +36,14 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.ui.setupUi(self.window)
         self.window.show()
 
+    def browse_files(self):
+        print("Test")
+        browse = QFileDialog.getOpenFileName(self.load_PLC_btn)
+        print(browse[0])
+        data = browse[0]
+        self.track_controller.set_plc_input(self.wayside_ctrl_comboBox.currentText(), data)
+        print("Test End")
+
     def setupUi(self):
         self.setObjectName("Track Controller")
         self.resize(987, 610)
@@ -59,6 +67,12 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.manual_mode_checkBox.setFont(font)
         self.manual_mode_checkBox.setTristate(False)
         self.manual_mode_checkBox.setObjectName("manual_mode_checkBox")
+        # self.authority_label = QtWidgets.QLabel(self)
+        # self.authority_label.setGeometry(QtCore.QRect(400, 20, 142, 31))
+        # font = QtGui.QFont()
+        # font.setPointSize(12)
+        # self.authority_label.setFont(font)
+        # self.authority_label.setObjectName("authority_label")
         self.commanded_speed_label = QtWidgets.QLabel(self)
         self.commanded_speed_label.setGeometry(QtCore.QRect(26, 317, 142, 31))
         font = QtGui.QFont()
@@ -253,7 +267,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.railway_crossing_checkBox.setFont(font)
         self.railway_crossing_checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.railway_crossing_checkBox.setObjectName("railway_crossing_checkBox")
-        self.load_PLC_btn = QtWidgets.QPushButton(self)
+        self.load_PLC_btn = QtWidgets.QPushButton(self, clicked=lambda: self.browse_files())
         self.load_PLC_btn.setGeometry(QtCore.QRect(754, 63, 102, 28))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -635,38 +649,43 @@ class Ui_TrackController_MainUI(QMainWindow):
         font.setPointSize(12)
         self.commanded_speed_label.setFont(font)
         self.commanded_speed.setObjectName("commanded_speed")
-        self.commanded_speed_spinBox = QtWidgets.QSpinBox(self, valueChanged=lambda: self.track_controller.set_commanded_speed(self.commanded_speed_spinBox.value()))
-        self.commanded_speed_spinBox.setGeometry(QtCore.QRect(199, 322, 42, 22))
-        self.commanded_speed_spinBox.setObjectName("commanded_speed_spinBox")
-        self.toggle_switch1 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch('BC-A', not self.track_controller.get_switch('BC-A')))
+        self.toggle_switch1 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_1.text(),
+                                                        not self.track_controller.get_switch(self.switch_label_1.text())))
         self.toggle_switch1.setGeometry(QtCore.QRect(291, 133, 51, 23))
         self.toggle_switch1.setObjectName("toggle_switch1")
         self.toggle_switch1.setCheckable(True)
-        self.toggle_switch2 = QtWidgets.QPushButton(self)
+        self.toggle_switch2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_2.text(),
+                                                        not self.track_controller.get_switch(self.switch_label_2.text())))
         self.toggle_switch2.setGeometry(QtCore.QRect(290, 171, 51, 23))
         self.toggle_switch2.setObjectName("toggle_switch2")
         self.toggle_switch2.setCheckable(True)
-        self.toggle_switch3 = QtWidgets.QPushButton(self)
+        self.toggle_switch3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_3.text(),
+                                                        not self.track_controller.get_switch(self.switch_label_3.text())))
         self.toggle_switch3.setGeometry(QtCore.QRect(290, 211, 51, 23))
         self.toggle_switch3.setObjectName("toggle_switch3")
         self.toggle_switch3.setCheckable(True)
-        self.toggle_light = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights('A5', not self.track_controller.get_lights('A5')))
+        self.toggle_light = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label.text(),
+                                                        not self.track_controller.get_light(self.traffic_light_label.text())))
         self.toggle_light.setGeometry(QtCore.QRect(604, 143, 51, 23))
         self.toggle_light.setObjectName("toggle_light")
         self.toggle_light.setCheckable(True)
-        self.toggle_light_2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights('B6', not self.track_controller.get_lights('B6')))
+        self.toggle_light_2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_2.text(),
+                                                        not self.track_controller.get_light(self.traffic_light_label_2.text())))
         self.toggle_light_2.setGeometry(QtCore.QRect(604, 184, 51, 23))
         self.toggle_light_2.setObjectName("toggle_light_2")
         self.toggle_light_2.setCheckable(True)
-        self.toggle_light_3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights('C11', not self.track_controller.get_lights('C11')))
+        self.toggle_light_3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_3.text(),
+                                                        not self.track_controller.get_light(self.traffic_light_label_3.text())))
         self.toggle_light_3.setGeometry(QtCore.QRect(605, 225, 51, 23))
         self.toggle_light_3.setObjectName("toggle_light_3")
         self.toggle_light_3.setCheckable(True)
-        self.toggle_light_4 = QtWidgets.QPushButton(self)
+        self.toggle_light_4 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_4.text(),
+                                                        not self.track_controller.get_light(self.traffic_light_label_4.text())))
         self.toggle_light_4.setGeometry(QtCore.QRect(604, 263, 51, 23))
         self.toggle_light_4.setObjectName("toggle_light_4")
         self.toggle_light_4.setCheckable(True)
-        self.toggle_light_5 = QtWidgets.QPushButton(self)
+        self.toggle_light_5 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_5.text(),
+                                                        not self.track_controller.get_light(self.traffic_light_label_5.text())))
         self.toggle_light_5.setGeometry(QtCore.QRect(604, 304, 51, 23))
         self.toggle_light_5.setObjectName("toggle_light_5")
         self.toggle_light_5.setCheckable(True)
@@ -703,6 +722,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.wayside_ctrl_comboBox.raise_()
         self.testbench.raise_()
         self.manual_mode_checkBox.raise_()
+        # self.authority_label.raise_()
         self.commanded_speed_label.raise_()
         self.occupied_blocks.raise_()
         self.occupied_blocks_label.raise_()
@@ -760,7 +780,6 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.traffic_light_green_11.raise_()
         self.traffic_light_red_11.raise_()
         self.commanded_speed.raise_()
-        self.commanded_speed_spinBox.raise_()
         self.toggle_switch1.raise_()
         self.toggle_switch2.raise_()
         self.toggle_switch3.raise_()
@@ -781,16 +800,18 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self._handler()
 
-        #initialize variables
         self.track_controller.set_automatic(True)
-        self.track_controller.set_commanded_speed(50)
-
-
+    def _handler(self):
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # refreshes every time period
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("self", "Track Controller"))
-        self.wayside_ctrl_comboBox.setItemText(0, _translate("self", "Blue 1"))
+        self.wayside_ctrl_comboBox.setItemText(0, _translate("self", "green 1"))
+        self.wayside_ctrl_comboBox.setItemText(1, _translate("self", "green 2"))
         self.testbench.setText(_translate("self", "Testbench"))
         self.manual_mode_checkBox.setText(_translate("self", "Manual Mode"))
         self.commanded_speed_label.setText(_translate("self", "Commanded Speed"))
@@ -800,51 +821,51 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.sys_time_label.setText(_translate("self", "13:24:55"))
         self.system_speed_label.setText(_translate("self", " System Speed"))
         self.light_color_label.setText(_translate("self", "Light Color"))
-        self.traffic_light_green.setText(_translate("self", "Green"))
+        self.traffic_light_green.setText(_translate("self", "green"))
         self.traffic_light_red.setText(_translate("self", "Red"))
-        self.traffic_light_label.setText(_translate("self", "B-A5 Out"))
-        self.traffic_light_label_2.setText(_translate("self", "B-B6"))
-        self.traffic_light_label_3.setText(_translate("self", "B-C11"))
-        self.traffic_light_label_4.setText(_translate("self", "G-D1 Out"))
-        self.traffic_light_label_5.setText(_translate("self", "G-F8 In"))
-        self.traffic_light_label_6.setText(_translate("self", "G-G1"))
-        self.traffic_light_label_7.setText(_translate("self", "G-Z1"))
-        self.traffic_light_label_8.setText(_translate("self", "G-I5"))
-        self.traffic_light_label_9.setText(_translate("self", "G-I7"))
-        self.traffic_light_label_10.setText(_translate("self", "G-J5"))
-        self.traffic_light_label_11.setText(_translate("self", "G-YARD"))
+        self.traffic_light_label.setText(_translate("self", "1"))
+        self.traffic_light_label_2.setText(_translate("self", "13"))
+        self.traffic_light_label_3.setText(_translate("self", "28"))
+        self.traffic_light_label_4.setText(_translate("self", "150"))
+        self.traffic_light_label_5.setText(_translate("self", "57"))
+        self.traffic_light_label_6.setText(_translate("self", "NULL"))
+        self.traffic_light_label_7.setText(_translate("self", "NULL"))
+        self.traffic_light_label_8.setText(_translate("self", "NULL"))
+        self.traffic_light_label_9.setText(_translate("self", "NULL"))
+        self.traffic_light_label_10.setText(_translate("self", "NULL"))
+        self.traffic_light_label_11.setText(_translate("self", "NULL"))
         self.railway_crossing_checkBox.setText(_translate("self", "Railway Crossing"))
         self.load_PLC_btn.setText(_translate("self", "Load PLC"))
         self.switch_position_label.setText(_translate("self", "Switch Position"))
-        self.switch_position_left.setText(_translate("self", "B"))
-        self.switch_position_right.setText(_translate("self", "C"))
-        self.switch_position_left_2.setText(_translate("self", "G"))
-        self.switch_position_right_2.setText(_translate("self", "Z"))
+        self.switch_position_left.setText(_translate("self", "12"))
+        self.switch_position_right.setText(_translate("self", "1"))
+        self.switch_position_left_2.setText(_translate("self", "30"))
+        self.switch_position_right_2.setText(_translate("self", "150"))
         self.switch_position_left_3.setText(_translate("self", "Yard"))
-        self.switch_position_right_3.setText(_translate("self", "I"))
-        self.switch_label_1.setText(_translate("self", "B-BC-A"))
-        self.switch_label_2.setText(_translate("self", "G-GZ-F"))
-        self.switch_label_3.setText(_translate("self", "G-YardJ-I"))
+        self.switch_position_right_3.setText(_translate("self", "58"))
+        self.switch_label_1.setText(_translate("self", "13"))
+        self.switch_label_2.setText(_translate("self", "28"))
+        self.switch_label_3.setText(_translate("self", "57"))
         self.PLC_output_label.setText(_translate("self", "PLC Output"))
         self.traffic_light_red_2.setText(_translate("self", "Red"))
-        self.traffic_light_green_2.setText(_translate("self", "Green"))
+        self.traffic_light_green_2.setText(_translate("self", "green"))
         self.traffic_light_red_3.setText(_translate("self", "Red"))
-        self.traffic_light_green_3.setText(_translate("self", "Green"))
-        self.traffic_light_green_4.setText(_translate("self", "Green"))
+        self.traffic_light_green_3.setText(_translate("self", "green"))
+        self.traffic_light_green_4.setText(_translate("self", "green"))
         self.traffic_light_red_4.setText(_translate("self", "Red"))
-        self.traffic_light_green_5.setText(_translate("self", "Green"))
+        self.traffic_light_green_5.setText(_translate("self", "green"))
         self.traffic_light_red_5.setText(_translate("self", "Red"))
-        self.traffic_light_green_6.setText(_translate("self", "Green"))
+        self.traffic_light_green_6.setText(_translate("self", "green"))
         self.traffic_light_red_6.setText(_translate("self", "Red"))
-        self.traffic_light_green_7.setText(_translate("self", "Green"))
+        self.traffic_light_green_7.setText(_translate("self", "green"))
         self.traffic_light_red_7.setText(_translate("self", "Red"))
-        self.traffic_light_green_8.setText(_translate("self", "Green"))
+        self.traffic_light_green_8.setText(_translate("self", "green"))
         self.traffic_light_red_8.setText(_translate("self", "Red"))
-        self.traffic_light_green_9.setText(_translate("self", "Green"))
+        self.traffic_light_green_9.setText(_translate("self", "green"))
         self.traffic_light_red_9.setText(_translate("self", "Red"))
-        self.traffic_light_green_10.setText(_translate("self", "Green"))
+        self.traffic_light_green_10.setText(_translate("self", "green"))
         self.traffic_light_red_10.setText(_translate("self", "Red"))
-        self.traffic_light_green_11.setText(_translate("self", "Green"))
+        self.traffic_light_green_11.setText(_translate("self", "green"))
         self.traffic_light_red_11.setText(_translate("self", "Red"))
         self.toggle_switch1.setText(_translate("self", "Toggle"))
         self.toggle_switch2.setText(_translate("self", "Toggle"))
@@ -863,19 +884,30 @@ class Ui_TrackController_MainUI(QMainWindow):
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
+        temp_time = self.track_controller.get_time()
+        hr = str(temp_time.hour)
+        minute = str(temp_time.minute)
+        sec = str(temp_time.second)
+        if len(hr) == 1:
+                hr = "0" + hr
+        if len(minute) == 1:
+                minute = "0" + minute
+        if len(sec) == 1:
+                sec = "0" + sec
+        temp_timestr = hr + ":" + minute + ":" + sec
+
         self.occupied_blocks.clear()
         self.PLC_output.clear()
         self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks())
-        self.track_controller.set_automatic(not self.manual_mode_checkBox.checkState())
+        self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
 
-        self.commanded_speed_spinBox.setValue(min(self.track_controller.get_commanded_speed(), self.track_controller.get_speed_limit('A5')))
-        self.commanded_speed.setText(str(min(self.track_controller.get_commanded_speed(), self.track_controller.get_speed_limit('A5'))) + " mph")
-        self.track_controller.set_commanded_speed(self.commanded_speed_spinBox.value())
+        if self.wayside_ctrl_comboBox.currentText() == 'green 1':
+                self.railway_crossing_checkBox.setCheckState(self.track_controller.get_railway_crossing('18'))
+
+        #self.commanded_speed.setText(str(self.track_controller.get_commanded_speed()) + " mph")
 
         #manual mode changes
         self.load_PLC_btn.setVisible(not bool(self.manual_mode_checkBox.checkState()))
-        self.commanded_speed.setVisible(not bool(self.manual_mode_checkBox.checkState()))
-        self.commanded_speed_spinBox.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_switch1.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_switch2.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_switch3.setVisible(bool(self.manual_mode_checkBox.checkState()))
@@ -892,55 +924,46 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_light_11.setVisible(bool(self.manual_mode_checkBox.checkState()))
 
         #toggle buttons
-        self.ChangeVisibility()
+        try:
+                self.ChangeVisibility()
+        except Exception as e:
+                print("it's changeVisibility")
 
         # iteration 2 - no system speed
         self.system_speed_label.setVisible(False)
         self.system_speed_spinBox.setVisible(False)
-        self.sys_time_label.setVisible(False)
+        # self.sys_time_label.setVisible(False)
 
-        #switches
-        self.switch_label_2.setVisible(False)
-        self.toggle_switch2.setVisible(False)
-        self.switch_position_left_2.setVisible(False)
-        self.switch_position_right_2.setVisible(False)
-        self.switch_label_3.setVisible(False)
-        self.toggle_switch3.setVisible(False)
-        self.switch_position_left_3.setVisible(False)
-        self.switch_position_right_3.setVisible(False)
-
-        #traffic lights
-        self.traffic_light_label_4.setVisible(False)
-        self.toggle_light_4.setVisible(False)
-        self.traffic_light_red_4.setVisible(False)
-        self.traffic_light_green_4.setVisible(False)
+        # iteration 3 - shhh dont tell anyone
+        self.sys_time_label.setText(_translate("self", temp_timestr))
+        self.testbench.setVisible(False)
         self.traffic_light_label_5.setVisible(False)
-        self.toggle_light_5.setVisible(False)
         self.traffic_light_red_5.setVisible(False)
+        self.toggle_light_5.setVisible(False)
         self.traffic_light_green_5.setVisible(False)
         self.traffic_light_label_6.setVisible(False)
-        self.toggle_light_6.setVisible(False)
         self.traffic_light_red_6.setVisible(False)
+        self.toggle_light_6.setVisible(False)
         self.traffic_light_green_6.setVisible(False)
         self.traffic_light_label_7.setVisible(False)
-        self.toggle_light_7.setVisible(False)
         self.traffic_light_red_7.setVisible(False)
+        self.toggle_light_7.setVisible(False)
         self.traffic_light_green_7.setVisible(False)
         self.traffic_light_label_8.setVisible(False)
-        self.toggle_light_8.setVisible(False)
         self.traffic_light_red_8.setVisible(False)
+        self.toggle_light_8.setVisible(False)
         self.traffic_light_green_8.setVisible(False)
         self.traffic_light_label_9.setVisible(False)
-        self.toggle_light_9.setVisible(False)
         self.traffic_light_red_9.setVisible(False)
+        self.toggle_light_9.setVisible(False)
         self.traffic_light_green_9.setVisible(False)
         self.traffic_light_label_10.setVisible(False)
-        self.toggle_light_10.setVisible(False)
         self.traffic_light_red_10.setVisible(False)
+        self.toggle_light_10.setVisible(False)
         self.traffic_light_green_10.setVisible(False)
         self.traffic_light_label_11.setVisible(False)
-        self.toggle_light_11.setVisible(False)
         self.traffic_light_red_11.setVisible(False)
+        self.toggle_light_11.setVisible(False)
         self.traffic_light_green_11.setVisible(False)
 
         if self.track_controller.get_automatic():
@@ -948,162 +971,106 @@ class Ui_TrackController_MainUI(QMainWindow):
 
 
 
-    def PLC(self):
-        self.track_controller.set_commanded_speed(min(self.track_controller.get_suggested_speed(), self.track_controller.get_speed_limit('A5')))
 
-        self.sect_A_occ = bool(self.track_controller.get_occupancy('A1') or self.track_controller.get_occupancy('A2') or self.track_controller.get_occupancy('A3') or self.track_controller.get_occupancy('A4') or self.track_controller.get_occupancy('A5'))
-        self.sect_B_occ = bool(self.track_controller.get_occupancy('B6') or self.track_controller.get_occupancy('B7') or self.track_controller.get_occupancy('B8') or self.track_controller.get_occupancy('B9') or self.track_controller.get_occupancy('B10'))
-        self.sect_C_occ = bool(self.track_controller.get_occupancy('C11') or self.track_controller.get_occupancy('C12') or self.track_controller.get_occupancy('C13') or self.track_controller.get_occupancy('C14') or self.track_controller.get_occupancy('C15'))
-        if self.sect_A_occ:
-                self.PLC_output.addItem("Train detected in section A")
-                self.track_controller.set_lights('A5', 0)
-                self.track_controller.set_lights('B6', 1)
-                self.track_controller.set_lights('C11', 1)
-                if self.sect_B_occ:
-                        self.PLC_output.addItem("Train detected in section B")
-                        self.track_controller.set_lights('A5', 0)
-                        self.track_controller.set_lights('B6', 1)
-                        self.track_controller.set_lights('C11', 1)
-                        self.track_controller.set_switch('BC-A', 1)
-                        self.PLC_output.addItem("Stopping traffic from track section B")
-                        self.PLC_output.addItem("Switching to track section C")
-                elif self.sect_C_occ:
-                        self.PLC_output.addItem("Train detected in section C")
-                        self.track_controller.set_lights('A5', 0)
-                        self.track_controller.set_lights('B6', 1)
-                        self.track_controller.set_lights('C11', 1)
-                        self.track_controller.set_switch('BC-A', 0)
-                        self.PLC_output.addItem("Stopping traffic from track section C")
-                        self.PLC_output.addItem("Switching to track section B")
-                else:
-                        self.PLC_output.addItem("Stopping traffic from track sections B and C")
-                        self.PLC_output.addItem("Switching to track section B")
-        elif self.sect_B_occ:
-                self.PLC_output.addItem("Train detected in section B")
-                self.track_controller.set_lights('A5', 0)
-                self.track_controller.set_lights('B6', 1)
-                self.track_controller.set_lights('C11', 0)
-                self.track_controller.set_switch('BC-A', 1)
-                self.PLC_output.addItem("Stopping traffic from track sections A and C")
-                self.PLC_output.addItem("Switching to track section B")
-        elif self.sect_C_occ:
-                self.PLC_output.addItem("Train detected in section C")
-                self.track_controller.set_lights('A5', 1)
-                self.track_controller.set_lights('B6', 1)
-                self.track_controller.set_lights('C11', 0)
-                self.track_controller.set_switch('BC-A', 0)
-                self.PLC_output.addItem("Stopping traffic from track sections A and B")
-                self.PLC_output.addItem("Switching to track section C")
-        else:
-                self.PLC_output.addItem("No trains on the track")
-                self.track_controller.set_lights('A5', 0)
-                self.track_controller.set_lights('B6', 0)
-                self.track_controller.set_lights('C11', 0)
+
+    def PLC(self):
+        self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))
+        self.sect_D_occ = bool(self.track_controller.get_occupancy('13') or self.track_controller.get_occupancy('14') or self.track_controller.get_occupancy('15')
+                               or self.track_controller.get_occupancy('16'))
+        self.sect_E_occ = bool(self.track_controller.get_occupancy('17') or self.track_controller.get_occupancy('18') or self.track_controller.get_occupancy('19')
+                               or self.track_controller.get_occupancy('20'))
+        self.sect_F_occ = bool(self.track_controller.get_occupancy('21') or self.track_controller.get_occupancy('22') or self.track_controller.get_occupancy('23')
+                               or self.track_controller.get_occupancy('24') or self.track_controller.get_occupancy('25') or self.track_controller.get_occupancy('26')
+                               or self.track_controller.get_occupancy('27') or self.track_controller.get_occupancy('28'))
+        self.sect_Z_occ = bool(self.track_controller.get_occupancy('147') or self.track_controller.get_occupancy('148') or self.track_controller.get_occupancy('149')
+                               or self.track_controller.get_occupancy('150'))
+
+        self.track_controller.set_lights(self.traffic_light_label.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+        self.track_controller.set_lights(self.traffic_light_label_2.text(),
+                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        self.track_controller.set_lights(self.traffic_light_label_3.text(),
+                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+        self.track_controller.set_lights(self.traffic_light_label_4.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+        # self.track_controller.set_lights(self.traffic_light_label_5.text(),
+        #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+
+        self.track_controller.set_switch(self.switch_label_1.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+        self.track_controller.set_switch(self.switch_label_2.text(),
+                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+        self.track_controller.set_switch(self.switch_label_3.text(),
+                                         1)
+
+        self.track_controller.set_railway_crossing('18', self.sect_E_occ)
 
     def ChangeVisibility(self):
-        if self.track_controller.get_switch('BC-A'):
-                self.switch_position_left.setVisible(True)
-                self.switch_position_right.setVisible(False)
-        elif not self.track_controller.get_switch('BC-A'):
-                self.switch_position_left.setVisible(False)
-                self.switch_position_right.setVisible(True)
+        self.switch_position_left.setVisible(bool(self.track_controller.get_switch(self.switch_label_1.text())))
+        self.switch_position_right.setVisible(not bool(self.track_controller.get_switch(self.switch_label_1.text())))
 
-        if self.toggle_switch2.isChecked():
-                self.switch_position_left_2.setVisible(True)
-                self.switch_position_right_2.setVisible(False)
-        elif not self.toggle_switch2.isChecked():
-                self.switch_position_left_2.setVisible(False)
-                self.switch_position_right_2.setVisible(True)
+        self.switch_position_left_2.setVisible(bool(self.track_controller.get_switch(self.switch_label_2.text())))
+        self.switch_position_right_2.setVisible(not bool(self.track_controller.get_switch(self.switch_label_2.text())))
 
-        if self.toggle_switch3.isChecked():
-                self.switch_position_left_3.setVisible(True)
-                self.switch_position_right_3.setVisible(False)
-        elif not self.toggle_switch3.isChecked():
-                self.switch_position_left_3.setVisible(False)
-                self.switch_position_right_3.setVisible(True)
+        self.switch_position_left_3.setVisible(bool(self.track_controller.get_switch(self.switch_label_3.text())))
+        self.switch_position_right_3.setVisible(not bool(self.track_controller.get_switch(self.switch_label_3.text())))
 
-        if self.track_controller.get_lights('A5'):
-                self.traffic_light_red.setVisible(True)
-                self.traffic_light_green.setVisible(False)
-        elif not self.track_controller.get_lights('A5'):
-                self.traffic_light_red.setVisible(False)
-                self.traffic_light_green.setVisible(True)
+        self.traffic_light_red.setVisible(bool(self.track_controller.get_light(self.traffic_light_label.text())))
+        self.traffic_light_green.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label.text())))
 
-        if self.track_controller.get_lights('B6'):
-                self.traffic_light_red_2.setVisible(True)
-                self.traffic_light_green_2.setVisible(False)
-        elif not self.track_controller.get_lights('B6'):
-                self.traffic_light_red_2.setVisible(False)
-                self.traffic_light_green_2.setVisible(True)
+        self.traffic_light_red_2.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
+        self.traffic_light_green_2.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
 
-        if self.track_controller.get_lights('C11'):
-                self.traffic_light_red_3.setVisible(True)
-                self.traffic_light_green_3.setVisible(False)
-        elif not self.track_controller.get_lights('C11'):
-                self.traffic_light_red_3.setVisible(False)
-                self.traffic_light_green_3.setVisible(True)
+        self.traffic_light_red_3.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
+        self.traffic_light_green_3.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
 
-        if self.toggle_light_4.isChecked():
-                self.traffic_light_red_4.setVisible(True)
-                self.traffic_light_green_4.setVisible(False)
-        elif not self.toggle_light_4.isChecked():
-                self.traffic_light_red_4.setVisible(False)
-                self.traffic_light_green_4.setVisible(True)
+        self.traffic_light_red_4.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
+        self.traffic_light_green_4.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
 
-        if self.toggle_light_5.isChecked():
-                self.traffic_light_red_5.setVisible(True)
-                self.traffic_light_green_5.setVisible(False)
-        elif not self.toggle_light_5.isChecked():
-                self.traffic_light_red_5.setVisible(False)
-                self.traffic_light_green_5.setVisible(True)
+        # self.traffic_light_red_5.setVisible(bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
+        # self.traffic_light_green_5.setVisible(not bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
 
-        if self.toggle_light_6.isChecked():
-                self.traffic_light_red_6.setVisible(True)
-                self.traffic_light_green_6.setVisible(False)
-        elif not self.toggle_light_6.isChecked():
-                self.traffic_light_red_6.setVisible(False)
-                self.traffic_light_green_6.setVisible(True)
-
-        if self.toggle_light_7.isChecked():
-                self.traffic_light_red_7.setVisible(True)
-                self.traffic_light_green_7.setVisible(False)
-        elif not self.toggle_light_7.isChecked():
-                self.traffic_light_red_7.setVisible(False)
-                self.traffic_light_green_7.setVisible(True)
-
-        if self.toggle_light_8.isChecked():
-                self.traffic_light_red_8.setVisible(True)
-                self.traffic_light_green_8.setVisible(False)
-        elif not self.toggle_light_8.isChecked():
-                self.traffic_light_red_8.setVisible(False)
-                self.traffic_light_green_8.setVisible(True)
-
-        if self.toggle_light_9.isChecked():
-                self.traffic_light_red_9.setVisible(True)
-                self.traffic_light_green_9.setVisible(False)
-        elif not self.toggle_light_9.isChecked():
-                self.traffic_light_red_9.setVisible(False)
-                self.traffic_light_green_9.setVisible(True)
-
-        if self.toggle_light_10.isChecked():
-                self.traffic_light_red_10.setVisible(True)
-                self.traffic_light_green_10.setVisible(False)
-        elif not self.toggle_light_10.isChecked():
-                self.traffic_light_red_10.setVisible(False)
-                self.traffic_light_green_10.setVisible(True)
-
-        if self.toggle_light_11.isChecked():
-                self.traffic_light_red_11.setVisible(True)
-                self.traffic_light_green_11.setVisible(False)
-        elif not self.toggle_light_10.isChecked():
-                self.traffic_light_red_11.setVisible(False)
-                self.traffic_light_green_11.setVisible(True)
-
-    def _handler(self):
-        self.timer = QTimer()
-        self.timer.setInterval(500)  # refreshes every time period
-        self.timer.timeout.connect(self.update)
-        self.timer.start()
+        # if self.toggle_light_6.isChecked():
+        #         self.traffic_light_red_6.setVisible(True)
+        #         self.traffic_light_green_6.setVisible(False)
+        # elif not self.toggle_light_6.isChecked():
+        #         self.traffic_light_red_6.setVisible(False)
+        #         self.traffic_light_green_6.setVisible(True)
+        #
+        # if self.toggle_light_7.isChecked():
+        #         self.traffic_light_red_7.setVisible(True)
+        #         self.traffic_light_green_7.setVisible(False)
+        # elif not self.toggle_light_7.isChecked():
+        #         self.traffic_light_red_7.setVisible(False)
+        #         self.traffic_light_green_7.setVisible(True)
+        #
+        # if self.toggle_light_8.isChecked():
+        #         self.traffic_light_red_8.setVisible(True)
+        #         self.traffic_light_green_8.setVisible(False)
+        # elif not self.toggle_light_8.isChecked():
+        #         self.traffic_light_red_8.setVisible(False)
+        #         self.traffic_light_green_8.setVisible(True)
+        #
+        # if self.toggle_light_9.isChecked():
+        #         self.traffic_light_red_9.setVisible(True)
+        #         self.traffic_light_green_9.setVisible(False)
+        # elif not self.toggle_light_9.isChecked():
+        #         self.traffic_light_red_9.setVisible(False)
+        #         self.traffic_light_green_9.setVisible(True)
+        #
+        # if self.toggle_light_10.isChecked():
+        #         self.traffic_light_red_10.setVisible(True)
+        #         self.traffic_light_green_10.setVisible(False)
+        # elif not self.toggle_light_10.isChecked():
+        #         self.traffic_light_red_10.setVisible(False)
+        #         self.traffic_light_green_10.setVisible(True)
+        #
+        # if self.toggle_light_11.isChecked():
+        #         self.traffic_light_red_11.setVisible(True)
+        #         self.traffic_light_green_11.setVisible(False)
+        # elif not self.toggle_light_10.isChecked():
+        #         self.traffic_light_red_11.setVisible(False)
+        #         self.traffic_light_green_11.setVisible(True)
 
 if __name__ == "__main__":
     import sys
