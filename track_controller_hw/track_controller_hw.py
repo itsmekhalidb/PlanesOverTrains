@@ -55,7 +55,7 @@ class Track_Controller_HW(object):
         self._previous_blocks = ['A1']
         self._occupied_blocks = []
         # serial port connection object
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -122,13 +122,13 @@ class Track_Controller_HW(object):
 
         # used to recieve info from the Ardunio
 
-        self.receive()
+       # self.receive()
 
-        if self.get_automatic() != self.get_previous():
-            if not self.get_automatic():
-                self.get_ard().write("3".encode('utf-8'))
-            else:
-                self.get_ard().write("4".encode('utf-8'))
+       # if self.get_automatic() != self.get_previous():
+       #     if not self.get_automatic():
+       #         self.get_ard().write("3".encode('utf-8'))
+       #     else:
+       #         self.get_ard().write("4".encode('utf-8'))
 
         self.set_previous(self.get_automatic())
 
@@ -155,7 +155,7 @@ class Track_Controller_HW(object):
         for i in self.get_occupied():
             occupied += " " + i[1:]
         print(occupied)
-        self.get_ard().write(occupied.encode('utf-8'))
+        #self.get_ard().write(occupied.encode('utf-8'))
 
     def get_train_id(self):
         return self._train_ids
@@ -216,7 +216,7 @@ class Track_Controller_HW(object):
             send_string += "00"
         send_string += "00"
         send_string += block_number
-        self.get_ard().write(send_string.encode('utf-8'))
+        #self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
         time.sleep(3)
         self.select_block(block_number)
@@ -224,7 +224,7 @@ class Track_Controller_HW(object):
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
-        self.get_ard().write(block_send.encode('utf-8'))
+        #self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
