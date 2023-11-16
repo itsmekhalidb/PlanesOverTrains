@@ -13,7 +13,7 @@ class TrackControllerTrackModelAPI:
         self._track_info = {}
         self._occupancy = {}
         self._lights = {}
-        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '77': 0, '85': 0}
+        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '77': 0, '85': 0} #0 is right, 1 is left
         self._railway_crossing = {}
         self._filepath = ""
         self.block_info = {}
