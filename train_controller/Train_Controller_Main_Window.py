@@ -976,7 +976,7 @@ class Ui_MainWindow(QMainWindow):
         #commanded power
         self.external_lights_label_12.setText(str("Commanded Power (kW): " + str(round(self.train_controller.get_commanded_power()/1000,3))))
         #authority
-        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(round(self.train_controller.get_authority()*3.28084,3))))
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line

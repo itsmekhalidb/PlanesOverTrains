@@ -832,7 +832,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.next_station_infobox.setItem(0, 2, QtWidgets.QTableWidgetItem("Authority:"))
                 self.next_station_infobox.setItem(0, 3, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_authority() * 3.28084, 3)) + " ft"))
                 self.next_station_infobox.setItem(1, 0, QtWidgets.QTableWidgetItem("Speed Limit:"))
-                self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_speed_limit() * 2.23694, 3)) + " mph"))
+                self.next_station_infobox.setItem(1, 1, QtWidgets.QTableWidgetItem(str(round(self.train_model.get_speed_limit() * 0.277778 * 2.23694, 3)) + " mph"))
                 self.next_station_infobox.setItem(1, 2, QtWidgets.QTableWidgetItem("Underground:"))
                 self.next_station_infobox.setItem(1, 3, QtWidgets.QTableWidgetItem(str(self.train_model.get_underground())))
                 self.next_station_infobox.setItem(2, 0, QtWidgets.QTableWidgetItem("Grade (°):"))

@@ -202,7 +202,7 @@ class TrainModel(object):
         self.set_authority(self._track_model_signals.authority)
 
         # Commanded Speed
-        self.set_cmd_speed(self._track_model_signals.cmd_speed)
+        self.set_cmd_speed(self._track_model_signals.cmd_speed * 0.277778)
 
         # Block
         self.set_block(self._track_model_signals.current_block)
