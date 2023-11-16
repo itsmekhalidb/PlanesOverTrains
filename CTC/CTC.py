@@ -176,6 +176,8 @@ class CTC(object):
             for train in self._trains:
                 if self._time >= train.get_departure_time():
                     num = train.get_train_number()
+                    # print(num)
+                    # print(self.TrackCTRLSignal._train_in)
                     output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num-1][1])
             return output
         except Exception as e:
@@ -302,4 +304,4 @@ class Schedule(object):
     def get_total_authority(self):
         return self._total_authority
     def get_curr_sugg_speed(self, curr_block):
-        return self._route_info[str(curr_block)]
+        return self._route_info[str(curr_block)][1]
