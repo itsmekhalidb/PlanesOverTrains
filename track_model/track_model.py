@@ -63,7 +63,7 @@ class TrackModel(object):
 
         #Data from Other Modules
         self._track_controller_signals = trackCtrlSignal #api from track controller
-        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+        self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
         self._ctc_signals = CTCSignal #api from ctc
 
         self.update()
@@ -168,7 +168,7 @@ class TrackModel(object):
 
 
         # update train model signals
-        self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
+        self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
 
         for i in self._train_model_signals.keys():
             index = int(i) - 1

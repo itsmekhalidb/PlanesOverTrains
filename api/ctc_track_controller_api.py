@@ -6,7 +6,7 @@ class CTCTrackControllerAPI:
         # Define variables passed between CTC and Track Controller
 
         #CTC to Track Controller
-        self._train_info = {} # train id : [authority, suggested speed]
+        self._train_out = {} # dispatched trains train id : [authority, commanded speed]
         self._track_section_status = {} # blocks: status 1 is closed, 0 is open
         self._suggested_speed = 0 # meters/sec
         self._commanded_speed = {'A1': 0} # train: commanded speed in m/s
@@ -14,10 +14,11 @@ class CTCTrackControllerAPI:
         self._time = 0 # current time
 
         #Track Controller to CTC
+        self._train_in = {}  # train id : [actual velocity, occupied block]
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {} # trains and their occupied blocks
-        self._light = {'1': 0, '13': 0, '29': 0, '150': 0} # light color, color (0 for green, 1 for red)
+        self._light = {'1': 0, '13': 0, '29': 0, '150': 0, '77': 0, '100': 0, '85': 0, '62': 0, '76': 0, '101': 0} # light color, color (0 for green, 1 for red)
         self._switch = {'13': 0, '28': 0, '57': 0, '62': 0, '77': 0, '85': 0} # switch position (first is block, second is position)
         self._green_cutoffs = {"Green 1" : ['A1::I52', 'W127::Z150'], "Green 2" : ['I53::W126']}
         self._filepath = ""
