@@ -231,7 +231,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
-        self.confirm_close.clicked.connect(lambda:self.change_block(self.section_list.currentText(), self.block_list.currentText(), self.ctc))
+        self.confirm_close.clicked.connect(lambda:self.change_block(self.section_list.currentText(), self.block_list.currentText()))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
         self.header.raise_()
@@ -606,9 +606,9 @@ class CTC_Main_UI(QMainWindow):
     
     
     # close block
-    def change_block(self, section, block, ctc):
+    def change_block(self, section, block):
         name = section + block
-        ctc.change_block(name)
+        self.ctc.change_block(name)
 
     # update notqtime
     def update_not_qtime(self):
