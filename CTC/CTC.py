@@ -62,10 +62,10 @@ class CTC(object):
     def change_block(self, block):
         if block in self._closed_blocks:
             self._closed_blocks.remove(block)
-            self.TrackCTRLSignal._track_section_status.update({block : 0})
-        else:
+            self.TrackCTRLSignal._track_section_status[block] = 0
+        elif block not in self._closed_blocks:
             self._closed_blocks.append(block)
-            self.TrackCTRLSignal._track_section_status.update({block : 1})
+            self.TrackCTRLSignal._track_section_status[block] = 1
     
     # automatic train schedule function
     def import_schedule(self, doc):
