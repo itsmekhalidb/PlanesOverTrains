@@ -193,14 +193,14 @@ class TrainController:
 
     def update_stop(self):
         try:
-            if (((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()) or self.get_beacon() == "Dormont"):# or self.get_authority()<=0:
+            if (((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()) or self.get_beacon() == "Dormont") and self.get_actual_velocity() >= 0.0:# or self.get_authority()<=0:
                 self._stop = True
                 self._stop_time = self.get_time()
                 self.set_service_brake_value(1.0)
                 self.set_station_side()
                 print("We are stopping")
-            print(self._stop, self.get_time(), self._stop_time + DWELL_TIME)
-            if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status():
+            # print(self._stop, self.get_time(), self._stop_time + DWELL_TIME)
+            if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 print("Dwell time over")
                 self._stop = False
                 self.set_service_brake_value(0.1)
