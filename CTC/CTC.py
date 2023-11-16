@@ -148,7 +148,7 @@ class CTC(object):
                 self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
                 self.TrackCTRLSignal._time = self._time
 
-            self.TrackCTRLSignal._train_info = self.create_departures()
+            self.TrackCTRLSignal._train_out = self.create_departures()
 
             # update functions
             self.update_section_status()
