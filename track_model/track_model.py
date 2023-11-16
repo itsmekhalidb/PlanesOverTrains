@@ -49,6 +49,7 @@ class TrackModel(object):
         self._train_models = TrainModels.train_apis # dictionary of train model apis
         self._train_ids = [] # list of train ids
         self._distance = 0.0
+        self._switching = int
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -164,6 +165,8 @@ class TrackModel(object):
         # self._train_models[1].line = self.get_line()
 
 
+
+
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
 
@@ -174,7 +177,7 @@ class TrackModel(object):
                 self._train_models[index] = TrackModelTrainModelAPI()
             self._train_models[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
             self._train_models[index].authority = 10.0
-            self._train_models[index].line = 'red'
+            self._train_models[index].line = 'green'
             self._train_models[index].track_info = self.get_track_layout()
             self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
             self._train_models[index].current_block = self.update_current_block(self._train_models[index])
@@ -202,6 +205,7 @@ class TrackModel(object):
         try:
             if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                 train.cum_distance = 0
+                # if self._switching ==
                 return train.current_block + 1
             return train.current_block
         except Exception as e:
@@ -216,6 +220,12 @@ class TrackModel(object):
 
     def get_current_block(self) -> list:
         return self._current_block
+
+    def set_switching(self, _switching: int):
+        self._switching = _switching
+
+    def get_switching(self) -> int:
+        return self._switching
 
     #Line
     def set_line(self, _line: str):

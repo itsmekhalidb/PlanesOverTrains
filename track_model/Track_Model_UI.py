@@ -84,19 +84,6 @@ class Ui_MainWindow(QMainWindow):
         self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
         self.load_file.setCursor(Qt.PointingHandCursor)
 
-        self.t_block_display = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_block_display.setGeometry(QtCore.QRect(380,10,100,41))
-        self.t_block_display.setText("Selected Block")
-        self.t_block_display.setStyleSheet("background-color: rgb(194, 194, 194);\n"
-"font: 87 10pt \"Arial Black\";\n"
-"border: 1px solid black;")
-
-        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
-        self.block_display.setGeometry(QtCore.QRect(500,10,60,41))
-        self.block_display.setText("")
-        self.block_display.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
-        self.block_display.setAlignment(QtCore.Qt.AlignCenter)
-
         self.title = QtWidgets.QLabel(self.trackmodel_main)
         self.title.setGeometry(QtCore.QRect(0, 0, 1141, 61))
         self.title.setStyleSheet("background-color: rgb(255, 255, 0);\n"
@@ -306,14 +293,14 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.t_station = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_station.setGeometry(QtCore.QRect(460, 870, 151, 41))
+        self.t_station.setGeometry(QtCore.QRect(460, 815, 151, 41))
         self.t_station.setStyleSheet("background-color: rgb(194, 194, 194);\n"
 "font: 87 10pt \"Arial Black\";\n"
 "border: 1px solid black;")
         self.t_station.setAlignment(QtCore.Qt.AlignCenter)
         self.t_station.setObjectName("t_station")
         self.station = QtWidgets.QLabel(self.trackmodel_main)
-        self.station.setGeometry(QtCore.QRect(610, 870, 81, 41))
+        self.station.setGeometry(QtCore.QRect(610, 815, 81, 41))
         self.station.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
 "background-color: rgb(255, 255, 255);\n"
 "border: 1px solid black;")
@@ -321,6 +308,19 @@ class Ui_MainWindow(QMainWindow):
         self.station.setAlignment(QtCore.Qt.AlignCenter)
         self.station.setObjectName("station")
 
+        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.block_display.setGeometry(QtCore.QRect(610, 860, 81, 41))
+        self.block_display.setText("")
+        self.block_display.setStyleSheet(
+            "background-color: rgb(255,255,255);\n""border: 1px solid black;\n""font: 87 10pt \"Arial Black\";")
+        self.block_display.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.t_block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.t_block_display.setGeometry(QtCore.QRect(460, 860, 151, 41))
+        self.t_block_display.setText("Selected Block")
+        self.t_block_display.setStyleSheet("background-color: rgb(194, 194, 194);\n"
+                                           "font: 87 10pt \"Arial Black\";\n"
+                                           "border: 1px solid black;")
 
         self.t_station_name = QtWidgets.QLabel(self.trackmodel_main)
         self.t_station_name.setGeometry(QtCore.QRect(460, 720, 241, 41))
@@ -330,7 +330,7 @@ class Ui_MainWindow(QMainWindow):
         self.t_station_name.setAlignment(QtCore.Qt.AlignCenter)
         self.t_station_name.setObjectName("t_station_name")
         self.station_name = QtWidgets.QLabel(self.trackmodel_main)
-        self.station_name.setGeometry(QtCore.QRect(460, 760, 241, 101))
+        self.station_name.setGeometry(QtCore.QRect(460, 760, 241, 51))
         self.station_name.setStyleSheet("font: 87 11pt \"Arial Black\";\n"
 "background-color: rgb(255, 255, 255);\n"
 "border: 2px solid black;")
@@ -490,7 +490,7 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.raise_()
         self.temp_control.raise_()
         self.load_file.raise_()
-        # self.block_display.raise_()
+        self.block_display.raise_()
         self.setCentralWidget(self.trackmodel_main)
         self.menubar = QtWidgets.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1143, 21))
@@ -502,7 +502,7 @@ class Ui_MainWindow(QMainWindow):
         self.red_button.raise_()
         self.green_button.raise_()
         #self.yard.raise_()
-        # self.t_block_display.raise_()
+        self.t_block_display.raise_()
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -516,15 +516,9 @@ class Ui_MainWindow(QMainWindow):
         self.track_model.set_filepath(self._filepath)
         self.occupied_blocks = self.track_model.get_current_block()
         self.update_map_occupancy(self.occupied_blocks)
-        # self.setTableBackgroundColor(self.green_map, QtGui.QColor(255,255,255))
-        # self.setTableBackgroundColor(self.red_map, QtGui.QColor(255,255,255))
 
-    def setTableBackgroundColor(self, map, color):
-        for i in range(self.map.rowCount()):
-            for j in range(self.map.columnCount()):
-                item = self.map.item(i, j)
-                if item is not None:
-                    item.setBackground(color)
+
+
 
     def red_clicked(self):
         self.line_picked = 'red'
@@ -543,10 +537,16 @@ class Ui_MainWindow(QMainWindow):
         sender = self.sender()
         bnum = int(sender.text())
 
+
         if self.line_picked == 'red' and self.red_data != {}:
             info = self.red_data[bnum]
         elif self.line_picked == 'green' and self.green_data != {}:
             info = self.green_data[bnum]
+            # row = int(sender.text()) // self.green_map.columnCount()
+            # column = (int(sender.text()) % self.green_map.columnCount())-2
+            # item = QTableWidgetItem()
+            # item.setBackground(QColor(0, 0, 255))
+            # self.green_map.setItem(row,column,item)
         else:
             info = None
 
@@ -565,6 +565,13 @@ class Ui_MainWindow(QMainWindow):
             else:
                 self.station_name.setText("")
                 self.station.setText("")
+
+            if int(sender.text()) in self.occupied_blocks:
+                self.occupancy.setText("Yes")
+            else:
+                self.occupancy.setText("No")
+
+
 
 
 
