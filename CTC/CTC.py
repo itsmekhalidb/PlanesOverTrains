@@ -75,7 +75,7 @@ class CTC(object):
             if function == 0: # new train
                 temp_trn = Train(True, str(self.get_highest_train_num()))
                 destination_block = self._stations['green'][station_name]
-                arrival_datetime = datetime.combine(datetime.now().date(), time_in)
+                arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
                 self._trains.append(temp_trn)
             elif function == 1: # edit existing schedule
@@ -162,7 +162,7 @@ class CTC(object):
         try:
             output = {}
             for train in self._trains:
-                if self._time >= train.get_departure_time():
+               # if self._time >= train.get_departure_time():
                     output[train.get_train_number()] = train.get_route_info()
             return output
         except Exception as e:

@@ -75,10 +75,11 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm.setFont(font)
         self.confirm.setObjectName("confirm")
-        not_qtime = self.qtime_to_datetime(self.arrival_time.time())
+        # self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
+        # self.arrival_time.timeChanged.connect(lambda:self.update_not_qtime())
         mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
         train_index = -1 # -1 if creating new train, otherwise use train index
-        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, mode, train_index))
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), self.qtime_to_datetime(self.arrival_time.time()), mode, train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -581,7 +582,7 @@ class CTC_Main_UI(QMainWindow):
 
     # confirm button pressed, run checks then call ctc.py function
     def confirm_route(self, station_name, time_in, function, train_index):
-        if self.ctc.get_time().time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
+        if self.ctc.get_time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
             self.ctc.create_schedule(station_name, time_in, function, train_index)
         elif not self.ctc.check_filepath():
             print("Track Model data not initialized")
@@ -613,6 +614,9 @@ class CTC_Main_UI(QMainWindow):
         name = section + block
         ctc.change_block(name)
 
+    # update notqtime
+    def update_not_qtime(self):
+        self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
 
     # unit conversion functions
     def meters_to_miles(self, meters):
