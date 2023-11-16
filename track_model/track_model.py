@@ -50,6 +50,7 @@ class TrackModel(object):
         self._train_ids = [] # list of train ids
         self._distance = 0.0
         self._switching = int
+        self.tof = False
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -207,10 +208,48 @@ class TrackModel(object):
 
     def update_current_block(self, train):
         try:
+            # if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+            #     train.cum_distance = 0
+            #     # if self._switching ==
+            #     return train.current_block + 1
+            # return train.current_block
             if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                 train.cum_distance = 0
-                # if self._switching ==
-                return train.current_block + 1
+
+                # for switch_blocks in self._switching.keys():
+                #     if self._current_block == int(switch_blocks):
+                #         if switch_blocks == 13:
+                #             if self._switching[switch_blocks] == 1:
+                #                 self._current_block = 12
+                if 63 <= train.current_block < 100 and self.tof == False:
+                    return train.current_block + 1
+                elif train.current_block == 100:
+                    train.current_block = 85
+                    self.tof = True
+                    return train.current_block
+                elif 85 <= train.current_block > 77 and self.tof == True:
+                    return train.current_block - 1
+                elif train.current_block == 77 and self.tof == True:
+                    train.current_block = 101
+                    self.tof = False
+                    return train.current_block
+                elif 101 <= train.current_block < 150 and self.tof == False:
+                    return train.current_block + 1
+                elif train.current_block == 150 and self.tof == False:
+                    train.current_block = 28
+                    self.tof = True
+                    return train.current_block
+                elif 28 >= train.current_block > 1 and self.tof == True:
+                    return train.current_block - 1
+                elif train.current_block == 1 and self.tof == True:
+                    train.current_block = 13
+                    self.tof = False
+                    return train.current_block
+                elif 63 > train.current_block >= 13 and self.tof == False:
+                    return train.current_block + 1
+                elif train.current_block == 63 and self.tof == False:
+                    train.current_block = 0
+
             return train.current_block
         except Exception as e:
             print("You must upload the Track Model before dispatching a train")
