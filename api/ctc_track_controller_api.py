@@ -6,7 +6,7 @@ class CTCTrackControllerAPI:
         # Define variables passed between CTC and Track Controller
 
         #CTC to Track Controller
-        self._train_info = {} # train id : [authority, suggested speed]
+        self._train_out = {} # dispatched trains train id : [authority, suggested speed]
         self._track_section_status = {} # blocks: status 1 is closed, 0 is open
         self._suggested_speed = 0 # meters/sec
         self._commanded_speed = {'A1': 0} # train: commanded speed in m/s
@@ -14,6 +14,7 @@ class CTCTrackControllerAPI:
         self._time = 0 # current time
 
         #Track Controller to CTC
+        self._train_in = {}  # train info coming from models
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {} # trains and their occupied blocks

@@ -73,8 +73,8 @@ class Track_Controller(object):
 
         # Dont touch it just pass it
         try:
-            self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
-            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+            self.track_ctrl_signals._train_out = self.ctc_ctrl_signals._train_out
+            self.ctc_ctrl_signals._train_in = self.track_ctrl_signals._train_in
             self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")

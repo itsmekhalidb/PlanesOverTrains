@@ -4,7 +4,8 @@ from track_model.block_info import block_info
 class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
-        self._train_info = {}
+        self._train_out = {} # trains dispatched from CTC
+        self._train_in = {} # info going back to CTC
         self._train_occupancy = list()
         # TODO: train specific should be sent to train info
         self._line = "green"  # line
