@@ -63,9 +63,9 @@ class block_info:
     # return blocks in a section
     def get_block_list(self, line, section):
         blocks = []
-        for block in self.block_dict[line]:
-            if block['section'] == section:
-                blocks.append(block['block_number'])
+        for block_number, block_info in self.block_dict[line].items():
+            if block_info['section'] == section:
+                blocks.append(str(block_number))
         return blocks
 
     def get_block_info(self, line, block_number):

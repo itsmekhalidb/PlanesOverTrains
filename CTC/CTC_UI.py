@@ -595,7 +595,7 @@ class CTC_Main_UI(QMainWindow):
 
     # display section names
     def initialize_section_list(self, line):
-        return self.ctc.get_sections(line)
+        return sorted(self.ctc.get_sections(line))
     
 
     # display block numbers
