@@ -521,8 +521,9 @@ class CTC_Main_UI(QMainWindow):
                     self.train_list_2_data.appendRow(row)
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                        #print(self.meters_to_miles(train.get_total_authority()))
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
-                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
             
             # update occupied blocks

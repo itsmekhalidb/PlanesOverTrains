@@ -140,7 +140,7 @@ class TrackModel(object):
         # get second element of each sublist in the list self._current_block
         self._track_controller_signals._occupancy = [i[1] for i in self._current_block]
 
-        # print("track model train in " + str(self._track_controller_signals._train_in))
+        #print("track model train in " + str(self._track_controller_signals._train_in))
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -187,7 +187,7 @@ class TrackModel(object):
                 self._TrainModels.train_apis[index].authority = self._train_model_signals[index+1][0]
                 self._TrainModels.train_apis[index].cmd_speed = self._train_model_signals[index+1][1]
                 #print("train model signals: " + str(self._train_model_signals[index+1]))
-                print("train " + str(index) + " authority = " + str(self._TrainModels.train_apis[index].authority))
+                #print("train " + str(index) + " authority = " + str(self._TrainModels.train_apis[index].authority))
             except Exception as e:
                 print("waiting for departure... ")
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)

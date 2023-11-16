@@ -244,7 +244,7 @@ class Train(object):
     def get_arrival_time(self):
         return self._schedule.get_arrival_time()
     def get_suggested_velocity(self):
-        return self._schedule.get_suggested_velocity()
+        return self._schedule.get_curr_sugg_speed(self._current_block)
     def get_dest_station(self):
         return self._schedule.get_destination_station()
     def get_total_auth_speed_info(self, curr_block):
@@ -308,8 +308,6 @@ class Schedule(object):
         return result
 
     # getter functions
-    def get_suggested_velocity(self):
-        return self._suggested_velocity
     def get_departure_time(self):
         return self._departure_time
     def get_arrival_time(self):
@@ -332,4 +330,4 @@ class Schedule(object):
             change = change - self._route_info[curr_block-1]
             self._route_info[curr_block-1] = 0
         self._route_info[curr_block] = self._route_info[curr_block] - change
-        self.update_authority()
+        self.update_total_authority()
