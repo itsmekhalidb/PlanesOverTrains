@@ -118,6 +118,10 @@ class CTC(object):
         self._track.update_tickets(station, tickets_sold)
     def update_section_status(self):
         self.TrackCTRLSignal._track_section_status = self._closed_blocks
+    def update_authorities(self):
+        for train in self._trains:
+            if train.get_actual_velocity() != 0:
+                train.update_authority(self.TrackCTRLSignal._train_in[train.get_train_number()][1])
     def check_filepath(self):
         return self.TrackCTRLSignal._filepath != ""
 
@@ -148,10 +152,12 @@ class CTC(object):
                 self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
                 self.TrackCTRLSignal._time = self._time
 
-            self.TrackCTRLSignal._train_info = self.create_departures()
-
             # update functions
             self.update_section_status()
+            self.update_authorities()
+
+            # update api
+            self.TrackCTRLSignal._train_info = self.create_departures()
 
         # Enable Threading
         if thread:
@@ -162,8 +168,9 @@ class CTC(object):
         try:
             output = {}
             for train in self._trains:
-               # if self._time >= train.get_departure_time():
-                    output[train.get_train_number()] = train.get_route_info()
+                if self._time >= train.get_departure_time():
+                    num = train.get_train_number()
+                    output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num][1])
             return output
         except Exception as e:
             print(e)
@@ -198,6 +205,10 @@ class Train(object):
     def create_schedule(self, destination_block, dest_station, arrival_time, api):
         sched = Schedule(destination_block, dest_station, arrival_time, api)
         self._schedule = sched
+
+    # update authority
+    def update_authority(self, curr_block):
+        self._schedule.update_authority(self._actual_velocity, curr_block)
         
     # getter functions
     def get_train_number(self):
@@ -205,12 +216,7 @@ class Train(object):
     def get_route_info(self):
         return self._schedule.get_route_info()
     def get_total_authority(self):
-        sum = 0
-        route_info = self.get_route_info()
-        for key in route_info:
-            block = route_info[key]
-            sum = sum + block[0]
-        return sum
+        return self._schedule._total_authority
     def get_actual_velocity(self):
         return self._actual_velocity
     def get_departure_time(self):
@@ -221,6 +227,8 @@ class Train(object):
         return self._schedule.get_suggested_velocity()
     def get_dest_station(self):
         return self._schedule.get_destination_station()
+    def get_total_auth_speed_info(self, curr_block):
+        return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(curr_block)]
 
 
 
@@ -233,8 +241,8 @@ class Schedule(object):
         self._total_time = timedelta()
         for block in self.get_blocks_from_yard("green", dest_block):
             info = self._api._track_info.get_block_info('green', block)
-            name = info['section'] + str(block)
-            self._route_info[name] = [info['length'], info['speed limit']]
+            #name = info['section'] + str(block)
+            self._route_info[str(block)] = [info['length'], info['speed limit']]
             self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
@@ -243,12 +251,6 @@ class Schedule(object):
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
         self._dest_station = dest_station # name of destination station
-
-
-        # self._route_info = {"K63" : [100, 70],
-        #                          "K64" : [100, 70],
-        #                          "K65" : [200, 70]
-        #                          } # dictionary of blocks, authority in each block, and speed limit for each
 
     # get blocks between yard and station
     def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
@@ -290,3 +292,7 @@ class Schedule(object):
         return self._dest_station
     def get_route_info(self):
         return self._route_info
+    def get_total_authority(self):
+        return self._total_authority
+    def get_curr_sugg_speed(self, curr_block):
+        return self._route_info[curr_block]
