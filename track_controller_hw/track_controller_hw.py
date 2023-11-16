@@ -34,11 +34,11 @@ class Track_Controller_HW(object):
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'M76': 0, 'R101': 0, 'Q100': 0, 'N85': 0}
+        self._lights = {'M77': 0, 'R101': 0, 'Q100': 0, 'N85': 0, 'K63': 0}
         # plc input
         self._plc_input = ""
-        # 0 = left, 1 = right
-        self._switches = {'M76': 0, 'N85': 0}
+        # 0 = right, 1 = left
+        self._switches = {'M77': 0, 'N85': 0, 'K63': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
@@ -143,7 +143,7 @@ class Track_Controller_HW(object):
         if thread:
             threading.Timer(.1, self.update).start()
 
-        # time.sleep(.1)
+        time.sleep(.1)
 
     #   def get_passengers(self):
     #       return self._passengers

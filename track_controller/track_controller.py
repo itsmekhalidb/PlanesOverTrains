@@ -14,7 +14,7 @@ class Track_Controller(object):
         # 1 = red, 0 = green
         self._lights = {'1': 0, '13': 0, '29': 0, '150': 0}
         # 1 = left, 0 = right
-        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '76': 0, '85': 0}
+        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '77': 0, '85': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {'18': 0}
         # if program is in automatic mode
@@ -27,6 +27,8 @@ class Track_Controller(object):
         self._time = 0
         # startup
         self._startup = 0
+        # filepath
+        self._filepath = ""
 
         # api signals
         self.ctc_ctrl_signals = ctcsignals
@@ -37,8 +39,11 @@ class Track_Controller(object):
             print("track_controller.py not updating")
 
     def update(self, thread=True):
+        self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
-            startup = 1
+            if self._filepath != "":
+                self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+                startup = 1
 
         try:
             self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
@@ -68,7 +73,7 @@ class Track_Controller(object):
         # Dont touch it just pass it
         try:
             self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
-            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+
             self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")
