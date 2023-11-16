@@ -160,6 +160,8 @@ class CTC(object):
 
             # update functions
             # self.update_section_status()
+            #print(self.TrackCTRLSignal._train_in)
+            self.read_train_in()
             self.update_authorities()
 
         # Enable Threading
@@ -185,6 +187,14 @@ class CTC(object):
             traceback.print_exc()
             print(e)
             return {}
+        
+
+    def read_train_in(self):
+        for train in self.TrackCTRLSignal._train_in:
+            return
+            #print("act_vel: " + str(train[0]))
+            #self._trains[train].set_actual_velocity(train[0])
+            #self._trains[train].set_current_block(train[1])
 
 
     # launch ui from launcher
@@ -239,6 +249,12 @@ class Train(object):
         return self._schedule.get_destination_station()
     def get_total_auth_speed_info(self, curr_block):
         return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(curr_block)]
+    
+    # setter functions
+    def set_actual_velocity(self, vel):
+        self._actual_velocity = vel
+    def set_current_block(self, blk):
+        self._current_block = blk
 
 
 
@@ -306,3 +322,14 @@ class Schedule(object):
         return self._total_authority
     def get_curr_sugg_speed(self, curr_block):
         return self._route_info[str(curr_block)][1]
+    
+    def update_total_authority(self):
+        self._total_authority = sum(self._route_info.values()[0])
+    def update_authority(self, actual_velocity, curr_block):
+        meters_hr = actual_velocity/1000
+        change = meters_hr/(1/3600)
+        if self._route_info[curr_block-1] != 0:
+            change = change - self._route_info[curr_block-1]
+            self._route_info[curr_block-1] = 0
+        self._route_info[curr_block] = self._route_info[curr_block] - change
+        self.update_authority()

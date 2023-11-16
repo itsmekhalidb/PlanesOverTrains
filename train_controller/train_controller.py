@@ -1,6 +1,7 @@
 import threading
 import math
 import time
+import traceback
 
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
@@ -63,6 +64,7 @@ class TrainController:
         self._station = ""
         self._side = ""
         self._stop = False
+        self._stop_time = 0.0
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._time = 0
@@ -190,20 +192,26 @@ class TrainController:
         self._previous_ek = self._ek
 
     def update_stop(self):
-        if ((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()):# or self.get_authority()<=0:
-            self._stop = True
-            self._stop_time = self.get_time()
-            self.set_service_brake_value(1.0)
-            self.set_station_side()
-            print("We are stopping")
-        if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status():
-            print("Dwell time over")
-            self._stop = False
-            self.set_service_brake_value(0.0)
-            self.set_right_door_status(False)
-            self.set_left_door_status(False)
+        try:
+            if ((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()):# or self.get_authority()<=0:
+                self._stop = True
+                self._stop_time = self.get_time()
+                self.set_service_brake_value(1.0)
+                self.set_station_side()
+                print("We are stopping")
+            print(self._stop, self.get_time(), self._stop_time + DWELL_TIME)
+            if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status():
+                print("Dwell time over")
+                self._stop = False
+                self.set_service_brake_value(0.0)
+                self.set_right_door_status(False)
+                self.set_left_door_status(False)
 
-        self._prev_station = self.get_beacon()
+            self._prev_station = self.get_beacon()
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            return
 
     def set_power(self):
         #TODO: check if we are at a stop
