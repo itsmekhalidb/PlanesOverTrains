@@ -145,7 +145,7 @@ class TrainController:
         if v <= self._maximum_velocity:
             self._commanded_velocity = v
     def set_current_velocity(self, c : float):
-        self._current_velocity = c
+            self._current_velocity = c
 
     def set_internal_lights(self):
         if not self.get_auto_status():
@@ -168,6 +168,8 @@ class TrainController:
     def set_service_brake_value(self, value: float):
         if value != 0 :
             self._service_brake_value = value
+        if self._service_brake_value < .19:
+            self._service_brake_value = .0
     def set_emergency_brake_status(self, status: bool):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):
@@ -205,7 +207,7 @@ class TrainController:
 
     def set_power(self):
         #TODO: check if we are at a stop
-        if not self.get_auto_status():
+        if not self.get_auto_status(): #put not back
            self.update_stop()
         # Define function local vars
         backup_power = 0.0
