@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from PyQt5.QtWidgets import *
@@ -515,7 +517,13 @@ class Ui_MainWindow(QMainWindow):
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
         self.occupied_blocks = self.track_model.get_current_block()
-        self.update_map_occupancy(self.occupied_blocks)
+        # Access every first element in each sublist of the list
+        self.occupied_blocks = [i[1] for i in self.occupied_blocks]
+        try:
+            self.update_map_occupancy(self.occupied_blocks)
+        except Exception as e:
+            print(e)
+
 
 
 
@@ -618,28 +626,34 @@ class Ui_MainWindow(QMainWindow):
 
 
     def update_map_occupancy(self, occupied_blocks):
-        if self.line_picked == 'green':
-            for button_id in occupied_blocks:
-                row = button_id // self.green_map.columnCount()
-                column = (button_id % self.green_map.columnCount())-1
-                item = QTableWidgetItem()
-                item.setBackground(QColor(0,255,0))
-                self.green_map.setItem(row, column, item)
-                if button_id != 1:
-                    row2 = (button_id-1) // self.green_map.columnCount()
-                    column2 = ((button_id-1) % self.green_map.columnCount())-1
-                    item2 = QTableWidgetItem()
-                    item2.setBackground(QColor(255,255,255))
-                    self.green_map.setItem(row2,column2,item2)
-        elif self.line_picked == 'red':
-            for button_id in occupied_blocks:
-                row = button_id // self.red_map.columnCount()
-                column = (button_id % self.red_map.columnCount())-1
-                item = QTableWidgetItem()
-                item.setBackground(QColor(0,255,0))
-                self.red_map.setItem(row, column, item)
-        else:
-            pass
+        try:
+            if self.line_picked == 'green':
+                for button_id in occupied_blocks:
+                    print(button_id)
+                    row = button_id // self.green_map.columnCount()
+                    column = (button_id % self.green_map.columnCount())-1
+                    item = QTableWidgetItem()
+                    item.setBackground(QColor(0,255,0))
+                    self.green_map.setItem(row, column, item)
+                    if button_id != 1:
+                        row2 = (button_id-1) // self.green_map.columnCount()
+                        column2 = ((button_id-1) % self.green_map.columnCount())-1
+                        item2 = QTableWidgetItem()
+                        item2.setBackground(QColor(255,255,255))
+                        self.green_map.setItem(row2,column2,item2)
+            elif self.line_picked == 'red':
+                for button_id in occupied_blocks:
+                    row = button_id // self.red_map.columnCount()
+                    column = (button_id % self.red_map.columnCount())-1
+                    item = QTableWidgetItem()
+                    item.setBackground(QColor(0,255,0))
+                    self.red_map.setItem(row, column, item)
+            else:
+                pass
+        except Exception as e:
+            print(e)
+
+
 
 
 

@@ -250,7 +250,6 @@ class Schedule(object):
             info = self._api._track_info.get_block_info('green', block)
             #name = info['section'] + str(block)
             self._route_info[str(block)] = [info['length'], info['speed limit']]
-            print(self._route_info[str(block)])
             self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
