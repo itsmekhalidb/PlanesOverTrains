@@ -137,6 +137,7 @@ class TrackModel(object):
 
         #current block occupancy list
         self._track_controller_signals._train_in = self._current_block
+        # print("track model train in " + str(self._track_controller_signals._train_in))
         # get second element of each sublist in the list self._current_block
         self._track_controller_signals._occupancy = [i[1] for i in self._current_block]
 

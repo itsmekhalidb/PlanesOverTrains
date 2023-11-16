@@ -160,7 +160,7 @@ class CTC(object):
 
             # update functions
             # self.update_section_status()
-            #print(self.TrackCTRLSignal._train_in)
+            # print(self.TrackCTRLSignal._train_in)
             self.read_train_in()
             self.update_authorities()
 
