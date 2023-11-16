@@ -163,6 +163,7 @@ class TrackModel(object):
         self.set_line(self._track_controller_signals._line)
         # self._train_models[1].line = self.get_line()
 
+
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_info #dictionary of apis to train model
 
@@ -213,7 +214,7 @@ class TrackModel(object):
     def set_current_block(self, _current_block: int):
         self._current_block.append(_current_block)
 
-    def get_current_block(self) -> int:
+    def get_current_block(self) -> list:
         return self._current_block
 
     #Line
