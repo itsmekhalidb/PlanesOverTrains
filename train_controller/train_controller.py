@@ -207,10 +207,11 @@ class TrainController:
 
     def set_power(self):
         #TODO: check if we are at a stop
-        if not self.get_auto_status():
+        if self.get_auto_status():
            self.update_stop()
         # Define function local vars
         backup_power = 0.0
+        speed = 0.0
         if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status():
             self._emergency_brake_status = True
         if not self.get_auto_status():
@@ -276,7 +277,7 @@ class TrainController:
     def get_current_velocity(self)->float:
         return self._current_velocity
     def get_auto_status(self)->bool:
-        return self._auto_stat
+        return self._auto_stat # False is Manual, True is Automatic
     def get_maximum_velocity(self)->float:
         return self._maximum_velocity
     def get_kp(self) -> float:
