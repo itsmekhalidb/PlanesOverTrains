@@ -47,8 +47,8 @@ class block_info:
                 if beacon.startswith("Station: "):
                     index_of_parenthesis = beacon.find('(')
                     station_name = beacon[9:index_of_parenthesis] if index_of_parenthesis != -1 else beacon[9:]
-                    line_stations[station_name] = block_info
-            output[line] = line_stations.keys()
+                    line_stations[station_name] = block_number  # Include block number along with station name
+            output[line] = line_stations
         return output
 
     # return sections in a line
@@ -83,11 +83,14 @@ class block_info:
 
 # How to Use:
 # tm = block_info('block_information.xlsx')
-# red_48 = tm.get_block_info('red', 1)['length']
+# red_48 = tm.get_block_info('red', 1)
+# print(red_48)
+# red_48 = tm.get_block_info('green', 1)
 # print(red_48)
 # tm = block_info('block_information.xlsx')
 # red_sections = tm.get_section_list('green')
 # print(red_sections)
 # tm = block_info('block_information.xlsx')
-# stations = list(tm.get_station_list()['green'])
-# print(stations)
+# stations = tm.get_station_list()['green']
+# for station_name, block_number in stations.items():
+#     print(f"{station_name}, {block_number}")

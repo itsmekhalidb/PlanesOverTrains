@@ -41,7 +41,7 @@ class CTC(object):
     def get_trains(self):
         return self._trains
     def get_stations_names(self, line):
-        return self._stations[line].keys()
+        return self._stations[line]
     def get_time(self):
         return self._time
     def get_time_scaling(self):
@@ -71,15 +71,20 @@ class CTC(object):
 
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index):
-        if function == 0: # new train
-            temp_trn = Train(True, str(self.get_highest_train_num()))
-            destination_block = self._stations[station_name]
-            arrival_datetime = datetime.combine(datetime.now().date(), time_in)
-            temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
-            self._trains.append(temp_trn)
-        elif function == 1: # edit existing schedule
-            return
-        elif function == 2: # add a stop
+        try:
+            if function == 0: # new train
+                temp_trn = Train(True, str(self.get_highest_train_num()))
+                destination_block = self._stations['green'][station_name]
+                arrival_datetime = datetime.combine(datetime.now().date(), time_in)
+                temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
+                self._trains.append(temp_trn)
+            elif function == 1: # edit existing schedule
+                return
+            elif function == 2: # add a stop
+                return
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
             return
     
     # track controller interface functions
@@ -154,11 +159,15 @@ class CTC(object):
 
 
     def create_departures(self):
-        output = {}
-        for train in self._trains:
-            #if self._time >= train.get_departure_time():
+        try:
+            output = {}
+            for train in self._trains:
+                #if self._time >= train.get_departure_time():
                 output[train.get_train_number()] = train.get_route_info()
-        return output
+            return output
+        except Exception as e:
+            print(e)
+            return {}
 
 
     # launch ui from launcher
@@ -216,23 +225,25 @@ class Train(object):
 
 
 class Schedule(object):
-    def __init__(self, dest_block, dest_station, arrival_time, api : CTCTrackControllerAPI):
+    def __init__(self, dest_block, dest_station, arrival_time, api: CTCTrackControllerAPI):
+        self._api = api
         # make route info to station
         self._route_info = {}
         self._total_authority = 0
         self._total_time = timedelta()
-        for block in self.get_blocks_from_yard("Green", dest_block):
-            name = block['section'] + block.block_number
-            self._route_info[name] = [block['length'], block['speed limit']]
-            self._total_authority = self._total_authority + block['length']
+        for block in self.get_blocks_from_yard("green", dest_block):
+            info = self._api._track_info.get_block_info('green', block)
+            name = info['section'] + str(block)
+            self._route_info[name] = [info['length'], info['speed limit']]
+            self._total_authority = self._total_authority + info['length']
             # calculate time
-            self._total_time = self._total_time + timedelta(hours=(block['length']/block['speed limit']))
+            self._total_time = self._total_time + timedelta(hours=(info['length']/info['speed limit']))
 
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
         self._dest_station = dest_station # name of destination station
-        self._api = api
+
 
         # self._route_info = {"K63" : [100, 70],
         #                          "K64" : [100, 70],
@@ -243,7 +254,7 @@ class Schedule(object):
     def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
         if curr_block == dest_block: # at station
             pass
-        elif self._api._track_info['switch position'] == True: # next block is a switch
+        elif self._api._track_info.get_block_info(line, curr_block+1)['switch position'] == True: # next block is a switch
             next_block = self._api._switch[str(curr_block+1)]
             result = self.get_blocks_from_yard(line, dest_block, next_block, result)
             result.append(curr_block)
@@ -258,8 +269,8 @@ class Schedule(object):
         dest_block = 57
         if curr_block == dest_block: # at yard
             pass
-        elif self._api._track_info['switch position'] == True: # next block is a switch
-            next_block = self._api._switch[str(curr_block+1)]
+        elif self._api._track_info.get_block_info(line, curr_block+1)['switch position'] == True: # next block is a switch
+            next_block = self._api._switch[curr_block+1]
             result = self.get_blocks_to_yard(line, next_block, result)
             result.append(curr_block)
         else: # next block is a block
