@@ -144,7 +144,7 @@ class CTC(object):
 
         # Enable Threading
         if thread:
-            threading.Timer(0.0001, self.update).start()
+            threading.Timer(0.001, self.update).start()
     
     def create_departures(self):
         output = {}
