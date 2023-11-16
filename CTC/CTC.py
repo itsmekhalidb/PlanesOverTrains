@@ -162,8 +162,8 @@ class CTC(object):
         try:
             output = {}
             for train in self._trains:
-                #if self._time >= train.get_departure_time():
-                output[train.get_train_number()] = train.get_route_info()
+                if self._time >= train.get_departure_time():
+                    output[train.get_train_number()] = train.get_route_info()
             return output
         except Exception as e:
             print(e)
@@ -237,7 +237,7 @@ class Schedule(object):
             self._route_info[name] = [info['length'], info['speed limit']]
             self._total_authority = self._total_authority + info['length']
             # calculate time
-            self._total_time = self._total_time + timedelta(hours=(info['length']/info['speed limit']))
+            self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
 
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time

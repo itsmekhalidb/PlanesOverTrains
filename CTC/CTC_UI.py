@@ -480,7 +480,7 @@ class CTC_Main_UI(QMainWindow):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">km/hr</p></body></html>"))
             
     
-    def update(self, thread=True):
+    def update(self, thread=False):
         global train_nums
         temp_time = self.ctc.get_time()
         hr = str(temp_time.hour)
@@ -509,18 +509,20 @@ class CTC_Main_UI(QMainWindow):
                     train_nums.append(train_num)
                     row = [
                         QStandardItem(str(train_num)),
-                        QStandardItem(str(train.get_departure_time().hour) + ":" + str(train.get_departure_time().minute)),
-                        QStandardItem(str(train.get_arrival_time().hour) + ":" + str(train.get_arrival_time().minute)),
+                        QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
+                        QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
                         QStandardItem(train.get_dest_station()),
                         QStandardItem(str(self.meters_to_miles(train.get_total_authority())) + " mi"),
                         QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
-                        QStandardItem(str(self.ctc.update_curr_speed(train_num)))
+                        QStandardItem(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
                     ]
+                    print(row)
                     self.train_list_2_data.appendRow(row)
                 else:
-                    self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
-                    self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
-                    self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)))
+                    if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                        self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
+                        self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
             
             # update occupied blocks
             cntr = 0
@@ -622,6 +624,12 @@ class CTC_Main_UI(QMainWindow):
     def qtime_to_datetime(self, qt):
         current_date = datetime.now().date()
         return datetime(current_date.year, current_date.month, current_date.day, qt.hour(), qt.minute(), qt.second())
+    # add leading zero
+    def leading_zero(self, num):
+        if len(str(num)) == 1:
+            return str(0) + str(num)
+        else:
+            return str(num)
 
 
 if __name__ == "__main__":
