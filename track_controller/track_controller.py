@@ -14,7 +14,7 @@ class Track_Controller(object):
         # 1 = red, 0 = green
         self._lights = {'1': 0, '13': 0, '29': 0, '150': 0}
         # 1 = left, 0 = right
-        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '77': 0, '85': 0}
+        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '76': 0, '85': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {'18': 0}
         # if program is in automatic mode
@@ -33,6 +33,7 @@ class Track_Controller(object):
         # api signals
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
+
         try:
             self.update()
         except Exception as e:
@@ -73,7 +74,7 @@ class Track_Controller(object):
         # Dont touch it just pass it
         try:
             self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
-
+            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
             self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")

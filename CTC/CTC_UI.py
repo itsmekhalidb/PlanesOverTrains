@@ -534,10 +534,6 @@ class CTC_Main_UI(QMainWindow):
             tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
             self.label.setText(tp)
 
-        # Enable Threading
-        if thread:
-            threading.Timer(0.1, self.update).start()
-
 
     def _handler(self):
             self.timer = QTimer()
