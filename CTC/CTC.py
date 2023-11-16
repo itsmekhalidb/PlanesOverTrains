@@ -265,7 +265,7 @@ class Schedule(object):
     # get blocks between yard and station
     def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
         if curr_block == dest_block: # at station
-            pass
+            result.append(curr_block)
         elif self._api._track_info.get_block_info(line, curr_block+1)['switch position'] == True: # next block is a switch
             next_block = self._api._switch[str(curr_block+1)]
             result = self.get_blocks_from_yard(line, dest_block, next_block, result)
