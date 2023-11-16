@@ -103,8 +103,8 @@ class Track_Controller_HW(object):
 
 
         # Track Model Outputs
-        self.track_ctrl_signals._authority = self.get_authority()
-        self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        # self.track_ctrl_signals._authority = self.get_authority()
+        # self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
         """
         for i in self.ctc_ctrl_signals._train_info:
             self._suggested_speed_blocks.clear()

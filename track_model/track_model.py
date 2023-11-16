@@ -66,6 +66,7 @@ class TrackModel(object):
         self._track_controller_signals = trackCtrlSignal #api from track controller
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
         self._ctc_signals = CTCSignal #api from ctc
+        self._TrainModels = TrainModels #dictionary api
 
         self.update()
 
@@ -95,7 +96,7 @@ class TrackModel(object):
         self.set_light_colors(self.get_light_colors())
 
         #authority
-        self.set_authority(self._track_controller_signals._authority)
+        # self.set_authority(self._track_controller_signals._authority)
         # self._train_models[1].authority = 10.0
 
         #gate control
@@ -136,7 +137,7 @@ class TrackModel(object):
 
         #current block occupancy list
         self._track_controller_signals._train_in = self._current_block
-        print("track model train in " + str(self._track_controller_signals._train_in))
+        # print("track model train in " + str(self._track_controller_signals._train_in))
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -175,29 +176,27 @@ class TrackModel(object):
             index = int(i) - 1
             if index not in self._train_ids:
                 self._train_ids.append(index)
-                self._train_models[index] = TrackModelTrainModelAPI()
-            self._train_models[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
+                self._TrainModels.train_apis[index] = TrackModelTrainModelAPI()
+                self._TrainModels.train_apis[index].line = 'green'
+                self._TrainModels.train_apis[index].track_info = self.get_track_layout()
+            self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
             try:
-                self._train_models[index].authority = self._train_model_signals[index+1][0]
-                self._train_models[index].commanded_speed = self._train_model_signals[index+1][1]
+                self._TrainModels.train_apis[index].authority = self._train_model_signals[index+1][0]
+                self._TrainModels.train_apis[index].cmd_speed = self._train_model_signals[index+1][1]
                 #print("train model signals: " + str(self._train_model_signals[index+1]))
-                print("train " + str(index) + " cmd speed = " + str(self._train_models[index].commanded_speed))
+                print("train " + str(index) + " authority = " + str(self._TrainModels.train_apis[index].authority))
             except Exception as e:
-                traceback.print_exc()
-                print(e)
-            self._train_models[index].line = 'green'
-            self._train_models[index].track_info = self.get_track_layout()
-            self._train_models[index].cum_distance += self.update_traveled_distance(self._train_models[index].actual_velocity)
-            self._train_models[index].current_block = self.update_current_block(self._train_models[index])
+                print("waiting for departure... ")
+            self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)
+            self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
-
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._train_models[index].actual_velocity, self._train_models[index].current_block])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block])
             else:
-                self._current_block[index] = [self._train_models[index].actual_velocity, self._train_models[index].current_block]
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block]
         # print(self._current_block)
 
-        self.TrainModels.train_apis = self._train_models
+
         #Enable threading
         if thread:
             threading.Timer(0.1, self.update).start()

@@ -90,7 +90,7 @@ class TrainController:
         self.set_service_brake_failure(self.train_model.brake_failure)
         self.set_engine_status(self.train_model.engine_failure)
         self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
-        self.train_model.cmd_speed = self.get_commanded_velocity()
+        # self.train_model.cmd_speed = self.get_commanded_velocity()
         self.set_maximum_veloctity(self.train_model.speed_limit)
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
