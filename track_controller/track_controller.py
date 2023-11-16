@@ -21,12 +21,12 @@ class Track_Controller(object):
         self._automatic = False
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
-        # list of trains and their info
-        self._train_info = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'green 1': "", 'green 2': "", 'Red 1': "", 'Red 2': ""}
+        self._plc_input = {'Green 1': "", 'Green 2': "", 'Red 1': "", 'Red 2': ""}
         # time to be displayed on the clock
         self._time = 0
+        # startup
+        self._startup = 0
 
         # api signals
         self.ctc_ctrl_signals = ctcsignals
@@ -37,11 +37,9 @@ class Track_Controller(object):
             print("track_controller.py not updating")
 
     def update(self, thread=True):
-        # Track Model Inputs
-        try:
-            self.set_track(self.track_ctrl_signals._track_info)
-        except Exception as e:
-            print("Cannot update track info")
+        if self._startup == 0:
+            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+            startup = 1
 
         try:
             self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
@@ -66,15 +64,11 @@ class Track_Controller(object):
             print("Cannot send block occupancy")
 
         # Track Model Outputs
-        # self.track_ctrl_signals._lights = self.get_lights()
-        # self.track_ctrl_signals._switches = self.get_switch_list()
-        # self.track_ctrl_signals._time = self.get_time()
+        self.track_ctrl_signals._time = self.get_time()
 
         # Dont touch it just pass it
         try:
-            self.ctc_ctrl_signals._train_info = self.track_ctrl_signals._train_info
-            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
-            self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
+            self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
         except Exception as e:
             print("Cannot pass train info")
 
@@ -93,7 +87,7 @@ class Track_Controller(object):
     def set_track(self, track):
         self._track = track
 
-    def get_occupancy(self, block) -> int:
+    def get_occupancy(self, block) -> bool:
         return self._occupied_blocks.count(block)
 
     def get_block_occupancy(self) -> dict:
@@ -102,11 +96,8 @@ class Track_Controller(object):
             temp.update({x: self.get_occupancy(x)})
         return temp
 
-    def set_occupied_blocks(self, trains: dict):
-        temp = []
-        for x in trains:
-            temp.append(trains[x])
-        self._occupied_blocks = temp
+    def set_occupied_blocks(self, blocks: dict):
+        self._occupied_blocks = blocks
 
     def get_occupied_blocks(self) -> list:
         return self._occupied_blocks
@@ -131,6 +122,8 @@ class Track_Controller(object):
     def set_switch(self, switch, value: int):
         try:
             self._switches[switch] = value
+            self.ctc_ctrl_signals._switch[switch] = value
+            self.track_ctrl_signals._switches[switch] = value
         except Exception as e:
             print("Invalid switch")
 
@@ -141,7 +134,12 @@ class Track_Controller(object):
         return  self._lights
 
     def set_lights(self, light: str, value: int):
-        self._lights[light] = value
+        try:
+            self._lights[light] = value
+            self.ctc_ctrl_signals._light[light] = value
+            self.track_ctrl_signals._lights[light] = value
+        except Exception as e:
+            print("Invalid light")
 
     def get_automatic(self) -> bool:
         return self._automatic
@@ -170,6 +168,7 @@ class Track_Controller(object):
 
     def set_railway_crossing(self, crossing, _crossing_lights_gates: int):
         self._crossing_lights_gates[crossing] = _crossing_lights_gates
+        self.track_ctrl_signals._railway_crossing[crossing] = _crossing_lights_gates
 
     def get_railway_crossing(self, crossing):
         return self._crossing_lights_gates[crossing]

@@ -17,9 +17,9 @@ class CTCTrackControllerAPI:
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold
         self._occupancy = {} # trains and their occupied blocks
-        self._light = {"1": 0} # light color, color (0 for green, 1 for red)
-        self._switch = {'13': 0} # switch position (first is block, second is position)
-        self._green_cutoffs = {"green 1" : ['A1::I52', 'W127::Z150'], "green 2" : ['I53::W126']}
+        self._light = {'1': 0, '13': 0, '29': 0, '150': 0} # light color, color (0 for green, 1 for red)
+        self._switch = {'13': 0, '29': 0, '57': 0, '63': 0, '76': 0, '85': 0} # switch position (first is block, second is position)
+        self._green_cutoffs = {"Green 1" : ['A1::I52', 'W127::Z150'], "Green 2" : ['I53::W126']}
         self._filepath = ""
         self._track_info = {}
 
