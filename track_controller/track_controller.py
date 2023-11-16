@@ -38,7 +38,6 @@ class Track_Controller(object):
 
     def update(self, thread=True):
         if self._startup == 0:
-            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
             startup = 1
 
         try:
@@ -69,6 +68,8 @@ class Track_Controller(object):
         # Dont touch it just pass it
         try:
             self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
+            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+            self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")
 

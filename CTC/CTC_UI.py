@@ -497,8 +497,10 @@ class CTC_Main_UI(QMainWindow):
         self.sys_time_label_4.setText(temp_timestr)
 
         if (self.ctc.check_filepath()):
+            print(self.ctc.TrackCTRLSignal._track_info)
             if (self.lock == 0 and self.ctc.TrackCTRLSignal._track_info != {}):
                 self.section_list.addItems(self.initialize_section_list("green"))
+                print(15)
                 self.station_list.addItems(list(self.ctc.get_stations()['green']))
                 print(12)
                 self.lock = 1
