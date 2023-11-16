@@ -197,7 +197,6 @@ class TrackModel(object):
                 self._current_block[index] = [self._train_models[index].actual_velocity, self._train_models[index].current_block]
         # print(self._current_block)
 
-        self.TrainModels.train_apis = self._train_models
         #Enable threading
         if thread:
             threading.Timer(0.1, self.update).start()
