@@ -76,7 +76,7 @@ class CTC(object):
         try:
             if function == 0: # new train
                 temp_trn = Train(True, self.get_highest_train_num())
-                destination_block = self._stations['green'][station_name]
+                destination_block = min(self._stations['green'][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
                 self._trains.append(temp_trn)
