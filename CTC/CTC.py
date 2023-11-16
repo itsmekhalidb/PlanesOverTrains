@@ -97,8 +97,13 @@ class CTC(object):
         return self.TrackCTRLSignal._track_info.get_section_list(line)
     def get_blocks(self, line, section):
         return self.TrackCTRLSignal._track_info.get_block_list(line, section)
-    def get_stations(self, line):
-        self._stations = self.TrackCTRLSignal._track_info.get_station_list(line)
+    def get_stations(self):
+        try:
+            self._stations = self.TrackCTRLSignal._track_info.get_station_list()
+            return self._stations
+        except Exception as e:
+            print(e)
+            return {}
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
@@ -136,26 +141,28 @@ class CTC(object):
 
     # update function every 100 ms
     def update(self, thread=True):
-        # clock
-        if self._time_scaling == 0:
-            pass
-        elif self._tick_counter < 10 / self._time_scaling:
-            self._tick_counter += 1
-        else:
-            self._tick_counter -= 10 / self._time_scaling
-            self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
-            self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
-            self.TrackCTRLSignal._time = self._time
+        with threading.Lock():
+            # clock
+            if self._time_scaling == 0:
+                pass
+            elif self._tick_counter < 10 / self._time_scaling:
+                self._tick_counter += 1
+            else:
+                self._tick_counter -= 10 / self._time_scaling
+                self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
+                self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
+                self.TrackCTRLSignal._time = self._time
 
-        self.TrackCTRLSignal._train_info = self.create_departures()
+            # self.TrackCTRLSignal._train_info = self.create_departures()
 
-        # update functions
-        self.update_section_status()
+            # update functions
+            self.update_section_status()
 
         # Enable Threading
         if thread:
-            threading.Timer(0.0001, self.update).start()
-    
+            threading.Timer(0.01, self.update).start()
+
+
     def create_departures(self):
         output = {}
         for train in self._trains:

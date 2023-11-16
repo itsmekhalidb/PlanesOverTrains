@@ -223,7 +223,7 @@ class CTC_Main_UI(QMainWindow):
         self.block_list.setFont(font)
         self.block_list.setObjectName("block_list")
         self.block_list.addItem("Block")
-        self.section_list.currentIndexChanged.connect(lambda:self.block_list.addItems(self.initialize_block_list("Green", self.section_list.currentText(), self.block_list)))
+        self.section_list.currentIndexChanged.connect(lambda:self.block_list.addItems(self.initialize_block_list("green", self.section_list.currentText(), self.block_list)))
         self.confirm_close = QtWidgets.QPushButton(self.train_view_page)
         self.confirm_close.setGeometry(QtCore.QRect(425, 450, 81, 23))
         font = QtGui.QFont()
@@ -432,7 +432,7 @@ class CTC_Main_UI(QMainWindow):
         self.confirm_close.setText(_translate("self", "Confirm"))
         self.system_speed_label_3.setText(_translate("self", " System Speed"))
         # self.testbench_button.setText(_translate("self", "Testbench"))
-        self.header.setText(_translate("self", "Green Line"))
+        self.header.setText(_translate("self", "green Line"))
         self.arrival_time_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -464,7 +464,7 @@ class CTC_Main_UI(QMainWindow):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">Left                   Right</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p></body></html>"))
         self.back_button.setText(_translate("self", "BACK"))
-        self.green.setText(_translate("self", "Green"))
+        self.green.setText(_translate("self", "green"))
         self.title_label_4.setText(_translate("self", "TESTBENCH"))
         self.switch_label.setItemText(0, _translate("self", "Switch X"))
         self.sys_time_label_4.setText(_translate("self", "13:24:55"))
@@ -497,12 +497,11 @@ class CTC_Main_UI(QMainWindow):
         self.sys_time_label_4.setText(temp_timestr)
 
         if (self.ctc.check_filepath()):
-            if (self.lock == 0):
-                self.section_list.addItems(self.initialize_section_list("Green"))
-                self.ctc.get_stations("Green")
-                self.section_list.addItems(self.ctc.get_stations_names("Green"))
-
-                lock = 1
+            if (self.lock == 0 and self.ctc.TrackCTRLSignal._track_info != {}):
+                self.section_list.addItems(self.initialize_section_list("green"))
+                self.station_list.addItems(list(self.ctc.get_stations()['green']))
+                print(12)
+                self.lock = 1
 
             # update train info
             for train in self.ctc.get_trains():

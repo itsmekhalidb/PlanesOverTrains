@@ -364,7 +364,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.wayside_select.clear()
 
        # self.wayside_select.addItem("Blue")
-        self.wayside_select.addItem("Green")
+        self.wayside_select.addItem("green")
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
@@ -384,7 +384,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.plc_output.clear()
 
         """
-        if self.wayside_select.currentText() == "Green" and not self.change:
+        if self.wayside_select.currentText() == "green" and not self.change:
             self.select_output.clear()
             for i in range(55, 121):
                 self.select_output.addItem(self.track_controller_hw.get_green_track())

@@ -16,7 +16,7 @@ class TrackControllerTrackModelAPI:
         self._switches = {}
         self._railway_crossing = {}
         self._filepath = ""
-        self.block_info = block_info(self._filepath)
+        self.block_info = {}
 
 
         # Block Data, 1 = Speed Limit, 2 = Occupancy, 3 = switch, 4 = light, 5 = gate/crossing, 6 = beacon, 7 = block length

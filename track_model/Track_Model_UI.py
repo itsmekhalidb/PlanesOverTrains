@@ -69,7 +69,7 @@ class Ui_MainWindow(QMainWindow):
 
         self.green_button = QtWidgets.QPushButton(self.trackmodel_main)
         self.green_button.setGeometry(QtCore.QRect(270,10,90,41))
-        self.green_button.setText("Green Line")
+        self.green_button.setText("green Line")
         self.green_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.green_button.clicked.connect(lambda: self.green_clicked())
 

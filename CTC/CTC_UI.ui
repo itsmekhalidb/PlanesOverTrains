@@ -904,7 +904,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="text">
-       <string>Green</string>
+       <string>green</string>
       </property>
      </widget>
      <widget class="QTimeEdit" name="curr_time_selector">

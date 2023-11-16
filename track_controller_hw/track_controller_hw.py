@@ -143,7 +143,7 @@ class Track_Controller_HW(object):
         if thread:
             threading.Timer(.1, self.update).start()
 
-        time.sleep(.1)
+        # time.sleep(.1)
 
     #   def get_passengers(self):
     #       return self._passengers

@@ -26,7 +26,7 @@ bool manual = true;
 
 int Detect_LED = 2;
 int Red_LED = 3;
-int Green_LED = 4;
+int green_LED = 4;
 int Crossing_LED = 5;
 
 struct Block{
@@ -94,17 +94,17 @@ void display_block(String block_number){
     if(lights[i].name == block_number){
       if(lights[i].value == 1){
         digitalWrite(Red_LED, HIGH);
-        digitalWrite(Green_LED, HIGH);
+        digitalWrite(green_LED, HIGH);
       }
       else if(lights[i].value == 0){
         digitalWrite(Red_LED, HIGH);
-        digitalWrite(Green_LED, LOW);         
+        digitalWrite(green_LED, LOW);
       }
         break;
     }
     else{
         digitalWrite(Red_LED, LOW);
-        digitalWrite(Green_LED, LOW); 
+        digitalWrite(green_LED, LOW);
     }
   }
   for(int i = 0; i < SWITCHNUMBER; i++){
@@ -137,7 +137,7 @@ void Receiver(){
   if (detect.equals("1")) {
     digitalWrite(Detect_LED, HIGH);
     digitalWrite(Red_LED, LOW);
-    digitalWrite(Green_LED, LOW);
+    digitalWrite(green_LED, LOW);
     digitalWrite(Crossing_LED, LOW);
     String commanded_speed = incomingData.substring(1,3);
     String light_is = incomingData.substring(3,4);
@@ -237,8 +237,8 @@ void Receiver(){
   if (incomingData.substring(0, 1).equals("1")) {
     digitalWrite(Detect_LED, HIGH);
     digitalWrite(Red_LED, LOW);
-    digitalWrite(Green_LED, LOW);
-    digitalWrite(Super_Green, LOW);
+    digitalWrite(green_LED, LOW);
+    digitalWrite(Super_green, LOW);
   } else if (incomingData.substring(0, 1).equals("0")) digitalWrite(Detect_LED, LOW);
 
   if (incomingData.substring(1, 2).equals("1")) {
@@ -266,11 +266,11 @@ void Receiver(){
       digitalWrite(Red_LED, HIGH);
     } else if (incomingData.substring(4, 5).equals("1")) {
       digitalWrite(Red_LED, HIGH);
-      digitalWrite(Green_LED, HIGH);
+      digitalWrite(green_LED, HIGH);
     } else if (incomingData.substring(4, 5).equals("2")) {
       digitalWrite(Red_LED, HIGH);
-      digitalWrite(Green_LED, HIGH);
-      digitalWrite(Super_Green, HIGH);
+      digitalWrite(green_LED, HIGH);
+      digitalWrite(Super_green, HIGH);
     }
   }
   */

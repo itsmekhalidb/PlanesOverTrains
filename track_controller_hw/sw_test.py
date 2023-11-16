@@ -287,7 +287,7 @@ class Ui_Frame(object):
         self.light_color_comboBox.setItemText(2, _translate("Frame", "G-D3 Out"))
         self.light_color_comboBox.setItemText(3, _translate("Frame", "..."))
         self.light_color_comboBox.setItemText(4, _translate("Frame", "R-Q1"))
-        self.light_green_button.setText(_translate("Frame", "Green"))
+        self.light_green_button.setText(_translate("Frame", "green"))
         self.ctc_officel_label.setText(_translate("Frame", "CTC Office"))
         self.track_status_label.setText(_translate("Frame", "Track Status"))
         self.track_status_button.setText(_translate("Frame", "Toggle Maintenance"))

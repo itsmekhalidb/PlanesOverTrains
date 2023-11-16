@@ -42,24 +42,24 @@ class block_info:
         output = {}
         for line in self.block_dict:
             line_stations = {}
-            for block in self.block_dict[line]:
-                beacon = block['beacon']
-                if beacon[:9] == "Station: ":
+            for block_number, block_info in self.block_dict[line].items():
+                beacon = str(block_info['beacon'])
+                if beacon.startswith("Station: "):
                     index_of_parenthesis = beacon.find('(')
-                    if index_of_parenthesis != -1:
-                        line_stations[beacon[9:index_of_parenthesis]] = block
-                    else:
-                        line_stations[beacon[9:]] = block
-            output[line] = line_stations
+                    station_name = beacon[9:index_of_parenthesis] if index_of_parenthesis != -1 else beacon[9:]
+                    line_stations[station_name] = block_info
+            output[line] = line_stations.keys()
         return output
 
     # return sections in a line
     def get_section_list(self, line):
-        line_sections = []
-        for section in self.block_dict[line]:
-            line_sections.append(section['section'])
-        return line_sections
-    
+        line_sections = set()  # Use a set to automatically handle uniqueness
+        if line in self.block_dict:
+            for block_number, block_info in self.block_dict[line].items():
+                if block_info['section'] not in line_sections:
+                    line_sections.add(block_info['section'])
+        return list(line_sections)
+
     # return blocks in a section
     def get_block_list(self, line, section):
         blocks = []
@@ -85,3 +85,9 @@ class block_info:
 # tm = block_info('block_information.xlsx')
 # red_48 = tm.get_block_info('red', 1)['length']
 # print(red_48)
+# tm = block_info('block_information.xlsx')
+# red_sections = tm.get_section_list('green')
+# print(red_sections)
+# tm = block_info('block_information.xlsx')
+# stations = list(tm.get_station_list()['green'])
+# print(stations)

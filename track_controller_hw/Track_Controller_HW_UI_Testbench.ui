@@ -649,7 +649,7 @@ border: 1px solid black;
      </rect>
     </property>
     <property name="text">
-     <string>Super Green</string>
+     <string>Super green</string>
     </property>
    </widget>
    <widget class="QLabel" name="selected_output_label">
@@ -706,7 +706,7 @@ border: 1px solid black;
      </rect>
     </property>
     <property name="text">
-     <string>Green</string>
+     <string>green</string>
     </property>
    </widget>
    <widget class="QLabel" name="circuit_failure_on">

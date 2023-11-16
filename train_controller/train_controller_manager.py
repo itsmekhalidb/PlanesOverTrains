@@ -31,7 +31,7 @@ class TrainControllerManager:
             train.update()
 
         if thread:
-            threading.Timer(0.01, self.update).start()
+            threading.Timer(0.1, self.update).start()
 
     def add(self, signals, train_id: int = None):
         if train_id is None:

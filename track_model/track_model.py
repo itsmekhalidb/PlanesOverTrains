@@ -122,6 +122,7 @@ class TrackModel(object):
 
         #track layout
         self.set_track_layout(self._filepath)
+        self._track_controller_signals._filepath = self._filepath
         # self._train_models[1].track_info = self.get_track_layout()
 
         #---- Outputs ----#

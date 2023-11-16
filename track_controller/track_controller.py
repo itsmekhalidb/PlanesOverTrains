@@ -24,7 +24,7 @@ class Track_Controller(object):
         # list of trains and their info
         self._train_info = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "", 'Green 2': "", 'Red 1': "", 'Red 2': ""}
+        self._plc_input = {'green 1': "", 'green 2': "", 'Red 1': "", 'Red 2': ""}
         # time to be displayed on the clock
         self._time = 0
 
@@ -72,8 +72,9 @@ class Track_Controller(object):
 
         # Dont touch it just pass it
         try:
-            self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
-            self.track_ctrl_signals._track_info = self.ctc_ctrl_signals._track_info
+            self.ctc_ctrl_signals._train_info = self.track_ctrl_signals._train_info
+            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+            self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")
 
