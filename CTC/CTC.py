@@ -72,20 +72,10 @@ class CTC(object):
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index):
         if function == 0: # new train
-            # temp_trn = Train()
-            # destination_block = self._stations[station_name]
-            # departure_time = 1
-            # temp_trn.create_schedule(destination_block, station_name, time_in, departure_time)
-            # self._trains.append(temp_trn)
-
-            # code to test stuff until i get station info from api; dispatching to glenbury
-
             temp_trn = Train(True, str(self.get_highest_train_num()))
-            destination_block = 65
-            travel_time = timedelta(hours=400/70000)
+            destination_block = self._stations[station_name]
             arrival_datetime = datetime.combine(datetime.now().date(), time_in)
-            departure_time = arrival_datetime - travel_time
-            temp_trn.create_schedule(destination_block, station_name, time_in, departure_time, self.TrackCTRLSignal)
+            temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
             self._trains.append(temp_trn)
         elif function == 1: # edit existing schedule
             return
@@ -189,8 +179,8 @@ class Train(object):
         self._number = num
         
     # create schedule
-    def create_schedule(self, destination_block, dest_station, arrival_time, departure_time, api):
-        sched = Schedule(destination_block, dest_station, arrival_time, departure_time, api)
+    def create_schedule(self, destination_block, dest_station, arrival_time, api):
+        sched = Schedule(destination_block, dest_station, arrival_time, api)
         self._schedule = sched
         
     # getter functions
@@ -219,19 +209,57 @@ class Train(object):
 
 
 class Schedule(object):
-    def __init__(self, dest_block, dest_station, arrival_time, departure_time, api):
+    def __init__(self, dest_block, dest_station, arrival_time, api : CTCTrackControllerAPI):
+        # make route info to station
+        self._route_info = {}
+        self._total_authority = 0
+        self._total_time = timedelta() 
+        for block in self.get_blocks_from_yard("Green", dest_block):
+            name = block['section'] + block.block_number
+            self._route_info[name] = [block['length'], block['speed limit']]
+            self._total_authority = self._total_authority + block['length']
+            # calculate time
+            self._total_time = self._total_time + timedelta(hours=(block['length']/block['speed limit']))
+
         self._arrival_time = arrival_time # train arrival time from dispatcher
+        self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
         self._dest_station = dest_station # name of destination station
-        self._departure_time = departure_time # calculated train departure time
+        self._api = api
 
-        self._route_info = {"K63" : [100, 70],
-                                 "K64" : [100, 70],
-                                 "K65" : [200, 70]
-                                 } # dictionary of blocks, authority in each block, and velocity for each
+        # self._route_info = {"K63" : [100, 70],
+        #                          "K64" : [100, 70],
+        #                          "K65" : [200, 70]
+        #                          } # dictionary of blocks, authority in each block, and speed limit for each
 
-    # recursive function to schedule each block TO BE IMPLEMENTED
+    # get blocks between yard and station
+    def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
+        if curr_block == dest_block: # at station
+            pass
+        elif self._api._track_info['switch position'] == True: # next block is a switch
+            next_block = self._api._switch[str(curr_block+1)]
+            result = self.get_blocks_from_yard(line, dest_block, next_block, result)
+            result.append(curr_block)
+        else: # next block is a block
+            next_block = curr_block+1
+            result = self.get_blocks_from_yard(line, dest_block, next_block, result)
+            result.append(curr_block)
+        return result
 
+    # return to yard
+    def get_blocks_to_yard(self, line, curr_block, result = []):
+        dest_block = 57
+        if curr_block == dest_block: # at yard
+            pass
+        elif self._api._track_info['switch position'] == True: # next block is a switch
+            next_block = self._api._switch[str(curr_block+1)]
+            result = self.get_blocks_to_yard(line, next_block, result)
+            result.append(curr_block)
+        else: # next block is a block
+            next_block = curr_block+1
+            result = self.get_blocks_to_yard(line, next_block, result)
+            result.append(curr_block)
+        return result
 
     # getter functions
     def get_suggested_velocity(self):
