@@ -952,7 +952,7 @@ class Ui_MainWindow(QMainWindow):
         self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
         self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
         #speed limit
-        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(self.train_controller.get_maximum_velocity())))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(round(self.train_controller.get_maximum_velocity()*2.23694,3))))
         #commanded speed
         if self.train_controller.get_auto_status():
                 self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
