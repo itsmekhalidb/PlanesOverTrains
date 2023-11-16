@@ -131,13 +131,8 @@ class TrackModel(object):
         #track layout
         self._track_controller_signals._track_info = self.get_track_layout()
 
-        #current block
-        # TODO: Calculate current block based on actual velocity
-        # TODO: Update starting block based on route
-        # self.set_current_block(self.get_current_block())
-        # self.set_current_block(48) # For testeing purposes
-        # 1 is the train id, would need to do this in a for loop for each train
-        # self._train_models[1].current_block = self.get_current_block()
+        #current block occupancy list
+        self._track_controller_signals._train_occupancy = self._current_block
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -187,7 +182,6 @@ class TrackModel(object):
                 self._current_block.append(self._train_models[index].current_block)
             else:
                 self._current_block[index] = self._train_models[index].current_block
-
 
         #Enable threading
         if thread:

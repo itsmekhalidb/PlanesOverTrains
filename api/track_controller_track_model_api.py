@@ -5,7 +5,7 @@ class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
         self._train_info = {}
-        self._train_occupancy = {}
+        self._train_occupancy = list()
         # TODO: train specific should be sent to train info
         self._line = "green"  # line
         self._commanded_speed = 0  # commanded speed
