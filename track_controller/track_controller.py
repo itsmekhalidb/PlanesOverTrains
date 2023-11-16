@@ -60,7 +60,7 @@ class Track_Controller(object):
         try:
             self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
         except Exception as e:
-            print("Cannot update track section status")
+            print(e)
 
         # CTC Office Outputs
         try:

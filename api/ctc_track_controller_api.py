@@ -7,7 +7,7 @@ class CTCTrackControllerAPI:
 
         #CTC to Track Controller
         self._train_out = {} # dispatched trains train id : [authority, commanded speed]
-        self._track_section_status = {'A1' : 0} # blocks: status 1 is closed, 0 is open
+        self._track_section_status = {} # blocks: status 1 is closed, 0 is open
         self._suggested_speed = 0 # meters/sec
         self._commanded_speed = {'A1': 0} # train: commanded speed in m/s
         # self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # current time
