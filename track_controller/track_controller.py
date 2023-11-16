@@ -14,7 +14,7 @@ class Track_Controller(object):
         # 1 = red, 0 = green
         self._lights = {'1': 0, '13': 0, '29': 0, '150': 0}
         # 1 = left, 0 = right
-        self._switches = {'13': 0, '29': 0, '57': 0}
+        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '76': 0, '85': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {'18': 0}
         # if program is in automatic mode
