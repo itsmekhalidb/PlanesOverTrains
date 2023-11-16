@@ -75,7 +75,7 @@ class CTC(object):
     def create_schedule(self, station_name, time_in, function, train_index):
         try:
             if function == 0: # new train
-                temp_trn = Train(True, str(self.get_highest_train_num()))
+                temp_trn = Train(True, self.get_highest_train_num())
                 destination_block = self._stations['green'][station_name]
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
@@ -155,6 +155,8 @@ class CTC(object):
                 self.TrackCTRLSignal._time = self._time
 
             self.TrackCTRLSignal._train_out = self.create_departures()
+            for train in self._trains:
+                self.TrackCTRLSignal._train_ids.add(train.get_train_number())
 
             # update functions
             # self.update_section_status()
@@ -174,9 +176,10 @@ class CTC(object):
             for train in self._trains:
                 if self._time >= train.get_departure_time():
                     num = train.get_train_number()
-                    output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num][1])
+                    output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num-1][1])
             return output
         except Exception as e:
+            traceback.print_exc()
             print(e)
             return {}
 
@@ -247,6 +250,7 @@ class Schedule(object):
             info = self._api._track_info.get_block_info('green', block)
             #name = info['section'] + str(block)
             self._route_info[str(block)] = [info['length'], info['speed limit']]
+            print(self._route_info[str(block)])
             self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
@@ -299,4 +303,4 @@ class Schedule(object):
     def get_total_authority(self):
         return self._total_authority
     def get_curr_sugg_speed(self, curr_block):
-        return self._route_info[curr_block]
+        return self._route_info[str(curr_block)]

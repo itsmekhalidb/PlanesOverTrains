@@ -14,6 +14,7 @@ class CTCTrackControllerAPI:
         self._time = 0 # current time
 
         #Track Controller to CTC
+        self._train_ids = set() # train ids
         self._train_in = {}  # train id : [actual velocity, occupied block]
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold

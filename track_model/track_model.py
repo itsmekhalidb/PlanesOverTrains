@@ -134,7 +134,7 @@ class TrackModel(object):
         self._track_controller_signals._track_info = self.get_track_layout()
 
         #current block occupancy list
-        self._track_controller_signals._train_occupancy = self._current_block
+        self._track_controller_signals._train_in = self._current_block
 
         #train line
         self.set_train_line(self.get_train_line())
@@ -170,7 +170,9 @@ class TrackModel(object):
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
 
-        for i in self._train_model_signals.keys():
+        print(self._track_controller_signals._train_in)
+
+        for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
             if index not in self._train_ids:
                 self._train_ids.append(index)
@@ -184,9 +186,11 @@ class TrackModel(object):
             # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
 
             if index + 1 > len(self._current_block):
-                self._current_block.append(self._train_models[index].current_block)
+                self._current_block.append([self._train_models[index].actual_velocity, self._train_models[index].current_block])
             else:
-                self._current_block[index] = self._train_models[index].current_block
+                self._current_block[index] = [self._train_models[index].actual_velocity, self._train_models[index].current_block]
+
+        # print(self._current_block)
 
         #Enable threading
         if thread:

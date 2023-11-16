@@ -61,7 +61,7 @@ class CTC_Main_UI(QMainWindow):
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
         self.arrival_time.setDisplayFormat("HH:mm:ss")
-        self.arrival_time.setTime(self.datetime_to_qtime(self.ctc.get_time()).addSecs(2 * 3600))
+        self.arrival_time.setTime(self.datetime_to_qtime(self.ctc.get_time()).addSecs(2 * 60))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(5, 370, 201, 31))
         font = QtGui.QFont()
@@ -517,7 +517,7 @@ class CTC_Main_UI(QMainWindow):
                         QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
                         QStandardItem(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
                     ]
-                    print(row)
+                    # print(row)
                     self.train_list_2_data.appendRow(row)
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
