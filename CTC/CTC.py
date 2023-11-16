@@ -248,7 +248,8 @@ class Train(object):
     def get_dest_station(self):
         return self._schedule.get_destination_station()
     def get_total_auth_speed_info(self, curr_block):
-        return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(curr_block)]
+        #return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(curr_block)]
+        return [self.get_total_authority(), 70]
     
     # setter functions
     def set_actual_velocity(self, vel):
