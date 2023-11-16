@@ -168,6 +168,8 @@ class TrainController:
     def set_service_brake_value(self, value: float):
         if value != 0 :
             self._service_brake_value = value
+        if self._service_brake_value < 0.19:
+            self._service_brake_value = 0
     def set_emergency_brake_status(self, status: bool):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):

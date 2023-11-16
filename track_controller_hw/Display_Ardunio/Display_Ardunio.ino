@@ -19,8 +19,8 @@ int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 String current_block = "M76";
 
 
-const int LIGHTNUMBER = 4;
-const int SWITCHNUMBER = 2;
+const int LIGHTNUMBER = 5;
+const int SWITCHNUMBER = 3;
 
 bool manual = true;
 
@@ -63,7 +63,7 @@ void PLC(){
     lights[1].value = 1;
     lights[2].value = 1;
     lights[3].value = 0;
-    Serial.print("100110");
+    Serial.print("10001101");
   }
   else if((!sectM && sectN && !sectQO) || (sectM && sectN && sectQO)){
     switches[0].value = 1;
@@ -72,7 +72,7 @@ void PLC(){
     lights[1].value = 1;
     lights[2].value = 0;
     lights[3].value = 1;
-    Serial.print("110101"); 
+    Serial.print("11001011"); 
   }
   else if((sectM && !sectN && !sectQO) || (sectM && sectN && !sectQO) || (!sectM && !sectN && !sectQO)){
     switches[0].value = 0;
@@ -81,7 +81,7 @@ void PLC(){
     lights[1].value = 0;
     lights[2].value = 0;
     lights[3].value = 1;
-    Serial.print("011001");
+    Serial.print("01010011");
   }
 }
 
@@ -287,18 +287,22 @@ void setup() {
   //  commanded[i] = "0"; // Initialize each string as empty
   //}
 
-  lights[0].name = "M76";
-  lights[0].value = 0;
+  lights[0].name = "M77";
+  lights[0].value = 1;
   lights[1].name = "R101";
   lights[1].value = 0;
   lights[2].name = "Q100";
   lights[2].value = 0;
   lights[3].name = "N85";
-  lights[3].value = 0;
-  switches[0].name = "M76";
+  lights[3].value = 1;
+  lights[4].name = "K63";
+  lights[4].value = 1;
+  switches[0].name = "M77";
   switches[0].value = 0;
   switches[1].name = "N85";
-  switches[1].value = 0;
+  switches[1].value = 1;
+  switches[2].name = "K63";
+  switches[2].value = 0;
 }
 
 
