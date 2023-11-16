@@ -62,8 +62,10 @@ class CTC(object):
     def change_block(self, block):
         if block in self._closed_blocks:
             self._closed_blocks.remove(block)
+            self.TrackCTRLSignal._track_section_status.update({block : 0})
         else:
             self._closed_blocks.append(block)
+            self.TrackCTRLSignal._track_section_status.update({block : 1})
     
     # automatic train schedule function
     def import_schedule(self, doc):
@@ -116,8 +118,8 @@ class CTC(object):
         self._track.update_occupancy(occupied_block)
     def update_passenger_info(self, station, tickets_sold):
         self._track.update_tickets(station, tickets_sold)
-    def update_section_status(self):
-        self.TrackCTRLSignal._track_section_status = self._closed_blocks
+    # def update_section_status(self):
+    #     self.TrackCTRLSignal._track_section_status = self._closed_blocks
     def update_authorities(self):
         for train in self._trains:
             if train.get_actual_velocity() != 0:
@@ -155,7 +157,7 @@ class CTC(object):
             self.TrackCTRLSignal._train_out = self.create_departures()
 
             # update functions
-            self.update_section_status()
+            # self.update_section_status()
             self.update_authorities()
 
             # update api
