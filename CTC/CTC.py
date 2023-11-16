@@ -162,9 +162,6 @@ class CTC(object):
             # self.update_section_status()
             self.update_authorities()
 
-            # update api
-            self.TrackCTRLSignal._train_info = self.create_departures()
-
         # Enable Threading
         if thread:
             threading.Timer(0.01, self.update).start()
@@ -179,6 +176,10 @@ class CTC(object):
                     # print(num)
                     # print(self.TrackCTRLSignal._train_in)
                     output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num-1][1])
+                    #print("ctc auth, speed: "+ str(output[num]))
+                else:
+                    num = train.get_train_number()
+                    output[num] = [0, 0]
             return output
         except Exception as e:
             traceback.print_exc()
@@ -203,7 +204,7 @@ class Train(object):
     def __init__(self, func : Callable, train_num = -1):
         self._number = train_num # train id number
         self._actual_velocity = 0 # actual velocity of train from train controller
-        self._current_block = 0 # current position of train, 0 indicates yard
+        self._current_block = 63 # current position of train, 0 indicates yard
         self._schedule = None # object containing train's schedule
     
     # hardcoded blue line function

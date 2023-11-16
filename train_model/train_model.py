@@ -87,6 +87,7 @@ class TrainModel(object):
         self.update()
 
     def update(self, thread=False):
+        print("train mod cmd speed: " + str(self._track_model_signals.cmd_speed))
         #####################################
         # Internal Train Model Calculations #
         #####################################
