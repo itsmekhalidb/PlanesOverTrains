@@ -27,18 +27,24 @@ class Track_Controller(object):
         self._time = 0
         # startup
         self._startup = 0
+        # filepath
+        self._filepath = ""
 
         # api signals
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
+
         try:
             self.update()
         except Exception as e:
             print("track_controller.py not updating")
 
     def update(self, thread=True):
+        self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
-            startup = 1
+            if self._filepath != "":
+                self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+                startup = 1
 
         try:
             self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
@@ -54,7 +60,7 @@ class Track_Controller(object):
         try:
             self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
         except Exception as e:
-            print("Cannot update track section status")
+            print(e)
 
         # CTC Office Outputs
         try:
@@ -67,8 +73,9 @@ class Track_Controller(object):
 
         # Dont touch it just pass it
         try:
-            self.track_ctrl_signals._train_info = self.ctc_ctrl_signals._train_info
-            self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
+            self.track_ctrl_signals._train_ids = self.ctc_ctrl_signals._train_ids
+            self.track_ctrl_signals._train_out = self.ctc_ctrl_signals._train_out
+            self.ctc_ctrl_signals._train_in = self.track_ctrl_signals._train_in
             self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")

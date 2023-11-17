@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 from PyQt5.QtWidgets import *
@@ -34,6 +36,7 @@ class Ui_MainWindow(QMainWindow):
         self.block_data = {}
         self.red_data = {}
         self.green_data = {}
+        self.occupied_blocks = list()
 
         self.setupUi()
         self.show()
@@ -63,28 +66,25 @@ class Ui_MainWindow(QMainWindow):
         self.red_button.setText("Red Line")
         self.red_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.red_button.clicked.connect(lambda: self.red_clicked())
+        self.red_button.setCursor(Qt.PointingHandCursor)
 
         #red_button.clicked.connect(lambda: scene.add_red_path_items(path_data))
 
 
         self.green_button = QtWidgets.QPushButton(self.trackmodel_main)
         self.green_button.setGeometry(QtCore.QRect(270,10,90,41))
-        self.green_button.setText("green Line")
+        self.green_button.setText("Green Line")
         self.green_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.green_button.clicked.connect(lambda: self.green_clicked())
+        self.green_button.setCursor(Qt.PointingHandCursor)
 
 
 
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
-        self.load_file.setGeometry(QtCore.QRect(600,10,60,41))
+        self.load_file.setGeometry(QtCore.QRect(590,10,80,41))
         self.load_file.setText("Load File")
-        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 8pt \"Arial\";")
-
-        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
-        self.block_display.setGeometry(QtCore.QRect(380,10,60,41))
-        self.block_display.setText("")
-        self.block_display.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
-        self.block_display.setAlignment(QtCore.Qt.AlignCenter)
+        self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
+        self.load_file.setCursor(Qt.PointingHandCursor)
 
         self.title = QtWidgets.QLabel(self.trackmodel_main)
         self.title.setGeometry(QtCore.QRect(0, 0, 1141, 61))
@@ -292,30 +292,47 @@ class Ui_MainWindow(QMainWindow):
         self.line_2.setMidLineWidth(4)
         self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_2.setObjectName("line_2")
+
+
         self.t_station = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_station.setGeometry(QtCore.QRect(460, 720, 151, 41))
+        self.t_station.setGeometry(QtCore.QRect(460, 815, 151, 41))
         self.t_station.setStyleSheet("background-color: rgb(194, 194, 194);\n"
 "font: 87 10pt \"Arial Black\";\n"
 "border: 1px solid black;")
         self.t_station.setAlignment(QtCore.Qt.AlignCenter)
         self.t_station.setObjectName("t_station")
         self.station = QtWidgets.QLabel(self.trackmodel_main)
-        self.station.setGeometry(QtCore.QRect(610, 720, 81, 41))
+        self.station.setGeometry(QtCore.QRect(610, 815, 81, 41))
         self.station.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
 "background-color: rgb(255, 255, 255);\n"
 "border: 1px solid black;")
         self.station.setText("")
         self.station.setAlignment(QtCore.Qt.AlignCenter)
         self.station.setObjectName("station")
+
+        self.block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.block_display.setGeometry(QtCore.QRect(610, 860, 81, 41))
+        self.block_display.setText("")
+        self.block_display.setStyleSheet(
+            "background-color: rgb(255,255,255);\n""border: 1px solid black;\n""font: 87 10pt \"Arial Black\";")
+        self.block_display.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.t_block_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.t_block_display.setGeometry(QtCore.QRect(460, 860, 151, 41))
+        self.t_block_display.setText("Selected Block")
+        self.t_block_display.setStyleSheet("background-color: rgb(194, 194, 194);\n"
+                                           "font: 87 10pt \"Arial Black\";\n"
+                                           "border: 1px solid black;")
+
         self.t_station_name = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_station_name.setGeometry(QtCore.QRect(460, 770, 241, 41))
+        self.t_station_name.setGeometry(QtCore.QRect(460, 720, 241, 41))
         self.t_station_name.setStyleSheet("background-color: rgb(194, 194, 194);\n"
 "font: 87 10pt \"Arial Black\";\n"
 "border: 1px solid black;")
         self.t_station_name.setAlignment(QtCore.Qt.AlignCenter)
         self.t_station_name.setObjectName("t_station_name")
         self.station_name = QtWidgets.QLabel(self.trackmodel_main)
-        self.station_name.setGeometry(QtCore.QRect(460, 810, 241, 101))
+        self.station_name.setGeometry(QtCore.QRect(460, 760, 241, 51))
         self.station_name.setStyleSheet("font: 87 11pt \"Arial Black\";\n"
 "background-color: rgb(255, 255, 255);\n"
 "border: 2px solid black;")
@@ -323,6 +340,8 @@ class Ui_MainWindow(QMainWindow):
         self.station_name.setText("")
         self.station_name.setAlignment(QtCore.Qt.AlignCenter)
         self.station_name.setObjectName("station_name")
+
+
         self.t_pwr_fail = QtWidgets.QLabel(self.trackmodel_main)
         self.t_pwr_fail.setGeometry(QtCore.QRect(700, 720, 161, 41))
         self.t_pwr_fail.setStyleSheet("background-color: rgb(194, 194, 194);\n"
@@ -484,7 +503,8 @@ class Ui_MainWindow(QMainWindow):
         self.setStatusBar(self.statusbar)
         self.red_button.raise_()
         self.green_button.raise_()
-        self.yard.raise_()
+        #self.yard.raise_()
+        self.t_block_display.raise_()
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -496,25 +516,45 @@ class Ui_MainWindow(QMainWindow):
 
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
+        self.occupied_blocks = self.track_model.get_current_block()
+        # Access every first element in each sublist of the list
+        self.occupied_blocks = [i[1] for i in self.occupied_blocks]
+        try:
+            self.update_map_occupancy(self.occupied_blocks)
+        except Exception as e:
+            print(e)
+
+
+
+
 
     def red_clicked(self):
         self.line_picked = 'red'
         self.green_map.setVisible(False)
         self.red_map.setVisible(True)
+        self.title.setText("Red Line")
+
 
     def green_clicked(self):
         self.line_picked = 'green'
         self.red_map.setVisible(False)
         self.green_map.setVisible(True)
+        self.title.setText("Green Line")
 
     def on_button_click(self):
         sender = self.sender()
         bnum = int(sender.text())
 
+
         if self.line_picked == 'red' and self.red_data != {}:
             info = self.red_data[bnum]
         elif self.line_picked == 'green' and self.green_data != {}:
             info = self.green_data[bnum]
+            # row = int(sender.text()) // self.green_map.columnCount()
+            # column = (int(sender.text()) % self.green_map.columnCount())-2
+            # item = QTableWidgetItem()
+            # item.setBackground(QColor(0, 0, 255))
+            # self.green_map.setItem(row,column,item)
         else:
             info = None
 
@@ -529,9 +569,17 @@ class Ui_MainWindow(QMainWindow):
             self.switch_position.setText(str(info['switch position']))
             if str(info['beacon']) != "nan":
                 self.station_name.setText(str(info['beacon']))
-                self.station.setText("Yes")
+                self.station.setText(str(info['station side']))
             else:
-                pass
+                self.station_name.setText("")
+                self.station.setText("")
+
+            if int(sender.text()) in self.occupied_blocks:
+                self.occupancy.setText("Yes")
+            else:
+                self.occupancy.setText("No")
+
+
 
 
 
@@ -557,7 +605,7 @@ class Ui_MainWindow(QMainWindow):
         self.t_undr.setText(_translate("MainWindow", "Underground"))
         self.static_title_2.setText(_translate("MainWindow", "Beacon Information"))
         self.static_title_3.setText(_translate("MainWindow", "Failure Modes"))
-        self.t_station.setText(_translate("MainWindow", "Station?"))
+        self.t_station.setText(_translate("MainWindow", "Station Side"))
         self.t_station_name.setText(_translate("MainWindow", "Station Name"))
         self.t_pwr_fail.setText(_translate("MainWindow", "Power Failure"))
         self.t_circ_fail.setText(_translate("MainWindow", "Circuit Failure"))
@@ -575,6 +623,42 @@ class Ui_MainWindow(QMainWindow):
         self.block_data = block_info(self._filepath)
         self.red_data = self.block_data.get_all_blocks_for_line('red')
         self.green_data = self.block_data.get_all_blocks_for_line('green')
+
+
+    def update_map_occupancy(self, occupied_blocks):
+        try:
+            if self.line_picked == 'green':
+                for button_id in occupied_blocks:
+                    print(button_id)
+                    row = button_id // self.green_map.columnCount()
+                    column = (button_id % self.green_map.columnCount())-1
+                    item = QTableWidgetItem()
+                    item.setBackground(QColor(0,255,0))
+                    self.green_map.setItem(row, column, item)
+                    if button_id != 1:
+                        row2 = (button_id-1) // self.green_map.columnCount()
+                        column2 = ((button_id-1) % self.green_map.columnCount())-1
+                        item2 = QTableWidgetItem()
+                        item2.setBackground(QColor(255,255,255))
+                        self.green_map.setItem(row2,column2,item2)
+            elif self.line_picked == 'red':
+                for button_id in occupied_blocks:
+                    row = button_id // self.red_map.columnCount()
+                    column = (button_id % self.red_map.columnCount())-1
+                    item = QTableWidgetItem()
+                    item.setBackground(QColor(0,255,0))
+                    self.red_map.setItem(row, column, item)
+            else:
+                pass
+        except Exception as e:
+            print(e)
+
+
+
+
+
+
+
 
 
 

@@ -34,11 +34,11 @@ class Track_Controller_HW(object):
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'M76': 0, 'R101': 0, 'Q100': 0, 'N85': 0}
+        self._lights = {'M77': 0, 'R101': 0, 'Q100': 0, 'N85': 0, 'K63': 0}
         # plc input
         self._plc_input = ""
-        # 0 = left, 1 = right
-        self._switches = {'M76': 0, 'N85': 0}
+        # 0 = right, 1 = left
+        self._switches = {'M77': 0, 'N85': 0, 'K63': 0}
         # crossing lights/gate
         self._crossing_lights_gates = {}
         # if program is in automatic mode
@@ -52,7 +52,7 @@ class Track_Controller_HW(object):
         # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         # list of occupied blocks to show on UI
-        self._previous_blocks = []
+        self._previous_blocks = ['A1']
         self._occupied_blocks = []
         # serial port connection object
         #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
@@ -101,9 +101,10 @@ class Track_Controller_HW(object):
         # self.set_blue_track(self.track_ctrl_signals._green)
         self.set_green_track(self.track_ctrl_signals._green)
 
+
         # Track Model Outputs
-        self.track_ctrl_signals._authority = self.get_authority()
-        self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
+        # self.track_ctrl_signals._authority = self.get_authority()
+        # self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
         """
         for i in self.ctc_ctrl_signals._train_info:
             self._suggested_speed_blocks.clear()
@@ -121,13 +122,13 @@ class Track_Controller_HW(object):
 
         # used to recieve info from the Ardunio
 
-        #self.receive()
+       # self.receive()
 
        # if self.get_automatic() != self.get_previous():
-            #if not self.get_automatic():
-               # self.get_ard().write("3".encode('utf-8'))
-           # else:
-                #self.get_ard().write("4".encode('utf-8'))
+       #     if not self.get_automatic():
+       #         self.get_ard().write("3".encode('utf-8'))
+       #     else:
+       #         self.get_ard().write("4".encode('utf-8'))
 
         self.set_previous(self.get_automatic())
 
@@ -137,13 +138,14 @@ class Track_Controller_HW(object):
             self.get_plc()
 
         if self.get_occupied_blocks() != self._previous_blocks:
+            self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
             self.send_occupied()
             self._previous_blocks = self.get_occupied_blocks()
 
         if thread:
             threading.Timer(.1, self.update).start()
 
-        # time.sleep(.1)
+        time.sleep(.1)
 
     #   def get_passengers(self):
     #       return self._passengers
@@ -222,7 +224,7 @@ class Track_Controller_HW(object):
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
-       # self.get_ard().write(block_send.encode('utf-8'))
+        #self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
@@ -288,6 +290,9 @@ class Track_Controller_HW(object):
 
     def get_occupied(self) -> list:
         return self._occupied_blocks
+
+    def set_occupied_blocks(self, blocks: dict):
+        self._occupied_blocks = blocks
 
     def get_occupied_blocks(self) -> list:
         temp = []
@@ -410,9 +415,9 @@ class Track_Controller_HW(object):
 
     def set_switch(self, value: int, switch: str):
         self._switches[switch] = value
-        self._green[switch][3] = value
-        self.ctc_ctrl_signals._green[switch][3] = value
-        self.track_ctrl_signals._green[switch][3] = value
+        swit = switch[1:]
+        self.ctc_ctrl_signals._switch[swit] = value
+        self.track_ctrl_signals._switches[swit] = value
 
     def get_light_list(self) -> dict:
         return self._lights
@@ -422,9 +427,9 @@ class Track_Controller_HW(object):
 
     def set_lights(self, value: int, light: str):
         self._lights[light] = value
-        self._green[light][4] = value
-        self.ctc_ctrl_signals._green[light][4] = value
-        self.track_ctrl_signals._green[light][4] = value
+        swit = light[1:]
+        self.ctc_ctrl_signals._light[swit] = value
+        self.track_ctrl_signals._lights[swit] = value
 
     def get_automatic(self) -> bool:
         return self._automatic

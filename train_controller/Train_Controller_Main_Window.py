@@ -900,8 +900,16 @@ class Ui_MainWindow(QMainWindow):
 
             else:
                     self.slider.setEnabled(True)  # service brake
-                    self.checkBox_7.setEnabled(True)  # right door
-                    self.checkBox_6.setEnabled(True)  # left door
+                    #self.checkBox_7.setEnabled(True)  # right door
+                    #self.checkBox_6.setEnabled(True)  # left door
+
+                    if self.train_controller.get_actual_velocity() == 0:
+                        self.checkBox_7.setEnabled(True)  # right door
+                        self.checkBox_6.setEnabled(True) # left door
+                    else:
+                        self.checkBox_7.setEnabled(False) #cannot open the door while moving
+                        self.checkBox_6.setEnabled(False) #cannot open the door while moving
+
                     self.checkBox_3.setEnabled(True)  # external lights
                     self.checkBox_4.setEnabled(True)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake
@@ -976,7 +984,7 @@ class Ui_MainWindow(QMainWindow):
         #commanded power
         self.external_lights_label_12.setText(str("Commanded Power (kW): " + str(round(self.train_controller.get_commanded_power()/1000,3))))
         #authority
-        self.external_lights_label_13.setText(str("Authority (ft): " + str(self.train_controller.get_authority())))
+        self.external_lights_label_13.setText(str("Authority (ft): " + str(round(self.train_controller.get_authority()*3.28084,3))))
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line

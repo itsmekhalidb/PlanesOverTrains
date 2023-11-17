@@ -61,7 +61,7 @@ class CTC_Main_UI(QMainWindow):
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
         self.arrival_time.setDisplayFormat("HH:mm:ss")
-        self.arrival_time.setTime(self.datetime_to_qtime(self.ctc.get_time()).addSecs(2 * 3600))
+        self.arrival_time.setTime(self.datetime_to_qtime(self.ctc.get_time()).addSecs(2 * 60))
         self.station_list = QtWidgets.QComboBox(self.train_view_page)
         self.station_list.setGeometry(QtCore.QRect(5, 370, 201, 31))
         font = QtGui.QFont()
@@ -75,10 +75,11 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm.setFont(font)
         self.confirm.setObjectName("confirm")
-        not_qtime = self.qtime_to_datetime(self.arrival_time.time())
+        # self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
+        # self.arrival_time.timeChanged.connect(lambda:self.update_not_qtime())
         mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
         train_index = -1 # -1 if creating new train, otherwise use train index
-        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), not_qtime, mode, train_index))
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), self.qtime_to_datetime(self.arrival_time.time()), mode, train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -230,7 +231,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
-        self.confirm_close.clicked.connect(lambda:self.change_block(self.section_list.currentText(), self.block_list.currentText(), self.ctc))
+        self.confirm_close.clicked.connect(lambda:self.change_block(self.section_list.currentText(), self.block_list.currentText()))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
         self.header.raise_()
@@ -480,7 +481,7 @@ class CTC_Main_UI(QMainWindow):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">km/hr</p></body></html>"))
             
     
-    def update(self, thread=True):
+    def update(self, thread=False):
         global train_nums
         temp_time = self.ctc.get_time()
         hr = str(temp_time.hour)
@@ -509,18 +510,22 @@ class CTC_Main_UI(QMainWindow):
                     train_nums.append(train_num)
                     row = [
                         QStandardItem(str(train_num)),
-                        QStandardItem(str(train.get_departure_time().hour) + ":" + str(train.get_departure_time().minute)),
-                        QStandardItem(str(train.get_arrival_time().hour) + ":" + str(train.get_arrival_time().minute)),
+                        QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
+                        QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
                         QStandardItem(train.get_dest_station()),
                         QStandardItem(str(self.meters_to_miles(train.get_total_authority())) + " mi"),
                         QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
-                        QStandardItem(str(self.ctc.update_curr_speed(train_num)))
+                        QStandardItem(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
                     ]
+                    # print(row)
                     self.train_list_2_data.appendRow(row)
                 else:
-                    self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
-                    self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
-                    self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)))
+                    if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                        #print(self.meters_to_miles(train.get_total_authority()))
+                        self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
+                        #self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(70)) + " mi/hr")
+                        self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.ctc.update_curr_speed(train_num)) + " mi/hr")
             
             # update occupied blocks
             cntr = 0
@@ -530,10 +535,6 @@ class CTC_Main_UI(QMainWindow):
             # update throughput
             tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
             self.label.setText(tp)
-
-        # Enable Threading
-        if thread:
-            threading.Timer(0.1, self.update).start()
 
 
     def _handler(self):
@@ -579,7 +580,7 @@ class CTC_Main_UI(QMainWindow):
 
     # confirm button pressed, run checks then call ctc.py function
     def confirm_route(self, station_name, time_in, function, train_index):
-        if self.ctc.get_time().time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
+        if self.ctc.get_time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
             self.ctc.create_schedule(station_name, time_in, function, train_index)
         elif not self.ctc.check_filepath():
             print("Track Model data not initialized")
@@ -596,7 +597,7 @@ class CTC_Main_UI(QMainWindow):
 
     # display section names
     def initialize_section_list(self, line):
-        return self.ctc.get_sections(line)
+        return sorted(self.ctc.get_sections(line))
     
 
     # display block numbers
@@ -607,10 +608,13 @@ class CTC_Main_UI(QMainWindow):
     
     
     # close block
-    def change_block(self, section, block, ctc):
+    def change_block(self, section, block):
         name = section + block
-        ctc.change_block(name)
+        self.ctc.change_block(name)
 
+    # update notqtime
+    def update_not_qtime(self):
+        self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
 
     # unit conversion functions
     def meters_to_miles(self, meters):
@@ -622,6 +626,12 @@ class CTC_Main_UI(QMainWindow):
     def qtime_to_datetime(self, qt):
         current_date = datetime.now().date()
         return datetime(current_date.year, current_date.month, current_date.day, qt.hour(), qt.minute(), qt.second())
+    # add leading zero
+    def leading_zero(self, num):
+        if len(str(num)) == 1:
+            return str(0) + str(num)
+        else:
+            return str(num)
 
 
 if __name__ == "__main__":

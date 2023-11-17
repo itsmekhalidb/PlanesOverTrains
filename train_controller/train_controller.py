@@ -1,6 +1,7 @@
 import threading
 import math
 import time
+import traceback
 
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
@@ -10,7 +11,8 @@ from .Backup_Controller import Backup_Controller
 
 KP = 8000
 KI = 10
-DWELL_TIME = 60
+# DWELL_TIME = 60
+DWELL_TIME = 25
 BRAKING_DIFFERENCE = 0.5
 BACKUP_THRESHOLD = 2000
 STOPPING_SPEED = 15
@@ -48,7 +50,7 @@ class TrainController:
         self._left_door_open = False
         self._internal_lights_on = False
         self._external_lights_on = False
-        self._auto_stat = False
+        self._auto_stat = True # False is Manual, True is Automatic, default is Automatic is on (True)
         self._kp = 0.0
         self._ki = 0.0
         self._ek = 0.0
@@ -62,7 +64,7 @@ class TrainController:
         self._station = ""
         self._side = ""
         self._stop = False
-        self._time = [0]
+        self._stop_time = 0.0
         self._temp_sp = 0.0 # internal temperature set point
         self._temperature = 0.0 # internal temperature of the train
         self._time = 0
@@ -90,11 +92,11 @@ class TrainController:
         self.set_service_brake_failure(self.train_model.brake_failure)
         self.set_engine_status(self.train_model.engine_failure)
         self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
-        self.train_model.cmd_speed = self.get_commanded_velocity()
-        self.set_maximum_veloctity(self.train_model.speed_limit)
+        # self.train_model.cmd_speed = self.get_commanded_velocity()
+        self.set_maximum_veloctity(self.train_model.speed_limit*0.277778)
         self.set_current_velocity(self.train_model.actual_velocity)
         self.set_commanded_velocity(self.train_model.cmd_speed)
-        self.set_authority(round(self.train_model.authority*3.28084,3))
+        self.set_authority(self.train_model.authority)
         #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
@@ -168,8 +170,8 @@ class TrainController:
     def set_service_brake_value(self, value: float):
         if value != 0 :
             self._service_brake_value = value
-        if self._service_brake_value < .19:
-            self._service_brake_value = .0
+        if self._service_brake_value < 0.19:
+            self._service_brake_value = 0
     def set_emergency_brake_status(self, status: bool):
         self._emergency_brake_status = status
     def set_emergency_brake_failure(self, status: bool):
@@ -190,27 +192,34 @@ class TrainController:
         self._previous_ek = self._ek
 
     def update_stop(self):
-        if (self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon() and self.get_authority()<=0:
-            self._stop = True
-            self._stop_time = self.get_time()
-            self.set_service_brake_value(1.0)
+        try:
+            if (((self.get_beacon()) != "" and not self._stop and self._prev_station!=self.get_beacon()) or self.get_beacon() == "Dormont") and self.get_actual_velocity() >= 0.0:# or self.get_authority()<=0:
+                self._stop = True
+                self._stop_time = self.get_time()
+                self.set_service_brake_value(1.0)
+                self.set_station_side()
+                print("We are stopping")
+            # print(self._stop, self.get_time(), self._stop_time + DWELL_TIME)
+            if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+                print("Dwell time over")
+                self._stop = False
+                self.set_service_brake_value(0.1)
+                self.set_right_door_status(False)
+                self.set_left_door_status(False)
 
-            self.set_station_side()
-
-        if self._stop and self.get_time() >= self._stop_time + DWELL_TIME or self.get_auto_status():
-            self._stop = False
-            self.set_service_brake_value(0.0)
-            self.set_right_door_status(False)
-            self.set_left_door_status(False)
-
-        self._prev_station = self.get_beacon()
+            self._prev_station = self.get_beacon()
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+            return
 
     def set_power(self):
         #TODO: check if we are at a stop
-        if not self.get_auto_status(): #put not back
+        if self.get_auto_status():
            self.update_stop()
         # Define function local vars
         backup_power = 0.0
+        speed = 0.0
         if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status():
             self._emergency_brake_status = True
         if not self.get_auto_status():
@@ -276,7 +285,7 @@ class TrainController:
     def get_current_velocity(self)->float:
         return self._current_velocity
     def get_auto_status(self)->bool:
-        return self._auto_stat
+        return self._auto_stat # False is Manual, True is Automatic
     def get_maximum_velocity(self)->float:
         return self._maximum_velocity
     def get_kp(self) -> float:

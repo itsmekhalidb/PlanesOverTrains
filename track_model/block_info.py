@@ -43,11 +43,16 @@ class block_info:
         for line in self.block_dict:
             line_stations = {}
             for block_number, block_info in self.block_dict[line].items():
+                block_list = []
                 beacon = str(block_info['beacon'])
                 if beacon.startswith("Station: "):
                     index_of_parenthesis = beacon.find('(')
                     station_name = beacon[9:index_of_parenthesis] if index_of_parenthesis != -1 else beacon[9:]
-                    line_stations[station_name] = block_number  # Include block number along with station name
+                    if station_name in line_stations:
+                        line_stations[station_name].append(block_number)
+                    else:
+                        block_list.append(block_number)
+                        line_stations[station_name] = block_list  # Include block number along with station name
             output[line] = line_stations
         return output
 
@@ -63,9 +68,9 @@ class block_info:
     # return blocks in a section
     def get_block_list(self, line, section):
         blocks = []
-        for block in self.block_dict[line]:
-            if block['section'] == section:
-                blocks.append(block['block_number'])
+        for block_number, block_info in self.block_dict[line].items():
+            if block_info['section'] == section:
+                blocks.append(str(block_number))
         return blocks
 
     def get_block_info(self, line, block_number):

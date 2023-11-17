@@ -4,7 +4,9 @@ from track_model.block_info import block_info
 class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
-        self._train_info = {}
+        self._train_out = {} # dispatched trains train id : [authority, commanded speed]
+        self._train_in = {} # train id : [actual velocity, occupancy]
+        self._train_ids = set() # train ids
         self._train_occupancy = list()
         # TODO: train specific should be sent to train info
         self._line = "green"  # line
@@ -12,8 +14,8 @@ class TrackControllerTrackModelAPI:
         self._time = 0
         self._track_info = {}
         self._occupancy = {}
-        self._lights = {}
-        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '76': 0, '85': 0}
+        self._lights = {'1': 0, '13': 0, '29': 0, '150': 0, '77': 0, '100': 0, '85': 0, '62': 0, '76': 0, '101': 0}
+        self._switches = {'13': 0, '29': 0, '57': 0, '63': 0, '77': 0, '85': 0}
         self._railway_crossing = {}
         self._filepath = ""
         self.block_info = {}
@@ -75,5 +77,5 @@ class TrackControllerTrackModelAPI:
                        'W140': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'W141': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'W142': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
                        'W143': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'X144': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'X145': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
                        'X146': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'Y147': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'Y148': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0},
-                       'Y149': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'Z150': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+                       'Y149': {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}, 'Z150': {1: 0, 2: 1, 3: 0, 4: 0, 5: 0}
                        }
