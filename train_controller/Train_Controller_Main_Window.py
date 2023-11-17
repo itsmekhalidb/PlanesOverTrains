@@ -967,7 +967,7 @@ class Ui_MainWindow(QMainWindow):
         else:
                 self.external_lights_label_10.setText(str("Com. Speed (mph): "))
         comspeed = self.commanded_speed_spnbx.value()
-        self.train_controller.set_setpoint_speed(float(comspeed))
+        self.train_controller.set_setpoint_speed(float(comspeed)/2.23694)
 
         self.external_lights_label_14.setText("Station: " + str(self.train_controller.get_beacon()))
 

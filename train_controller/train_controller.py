@@ -147,7 +147,7 @@ class TrainController:
         if v <= self._maximum_velocity:
             self._commanded_velocity = v
     def set_current_velocity(self, c : float):
-        self._current_velocity = c
+            self._current_velocity = c
 
     def set_internal_lights(self):
         if not self.get_auto_status():
