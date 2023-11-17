@@ -309,12 +309,13 @@ class TrainModel(object):
         # sbrake min limit
         if self._ebrake_decel_limit < self.get_acceleration() < (self._decel_limit * self.get_service_brake_value()):
             self.set_acceleration(self._decel_limit * self.get_service_brake_value())
-        # faults
-        if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
-            self.set_acceleration(0)
-        # emergency brake
-        if self.get_emergency_brake() and self.get_actual_velocity() != 0:
-            self.set_acceleration(self._ebrake_decel_limit)
+        # # faults
+        # if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
+        #     self.set_acceleration(0)
+        # # emergency brake
+        # if self.get_emergency_brake() and self.get_actual_velocity() != 0:
+        #     self.set_acceleration(self._ebrake_decel_limit)
+        return round(self.get_acceleration(), 3)
 
     # station side
     def set_station_side(self, _station_side: str):
@@ -420,7 +421,6 @@ class TrainModel(object):
     def calc_actual_velocity(self):
         # v = integrate acceleration over time
         # calculating dt
-        #TODO: Granularity of velocity has degraded since incorporating time from CTC
         self._current_time = self.get_time()
         dt = self._current_time - self._prev_time
         self._prev_time = self._current_time
@@ -431,6 +431,7 @@ class TrainModel(object):
         self.set_actual_velocity(self.get_actual_velocity() + self.get_acceleration() * dt)
         if self.get_acceleration() < 0.0 and self.get_actual_velocity() < 0.0:
             self.set_actual_velocity(0)
+        return self.get_actual_velocity()
 
     # force
     def set_force(self, _force: float):
@@ -478,15 +479,15 @@ class TrainModel(object):
         if self.get_service_brake():
             self.set_force(self.get_force() + self.get_total_mass() * self._decel_limit * self.get_service_brake_value())
         # Emergency Brakes or Failures
-        elif self.get_emergency_brake() or self.get_engine_failure() or self.get_ebrake_failure() or self.get_sbrake_failure() or self.get_signal_failure():
+        elif self.get_engine_failure() or self.get_emergency_brake() or self.get_signal_failure() or self.get_sbrake_failure():
             self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
-
+        elif self.get_ebrake_failure():
+            self.set_force(0)
+        return round(self.get_force(),1)
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
-        if _curr_passenger_count < 6:
-            _curr_passenger_count = 6
-        else:
-            self._curr_passenger_count = _curr_passenger_count
+        self._curr_passenger_count = _curr_passenger_count
+        self.set_passenger_mass(_curr_passenger_count)  # update mass each time passenger count changes
 
     def get_curr_passenger_count(self) -> int:
         return self._curr_passenger_count
