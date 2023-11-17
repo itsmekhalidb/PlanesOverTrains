@@ -900,8 +900,16 @@ class Ui_MainWindow(QMainWindow):
 
             else:
                     self.slider.setEnabled(True)  # service brake
-                    self.checkBox_7.setEnabled(True)  # right door
-                    self.checkBox_6.setEnabled(True)  # left door
+                    #self.checkBox_7.setEnabled(True)  # right door
+                    #self.checkBox_6.setEnabled(True)  # left door
+
+                    if self.train_controller.get_actual_velocity() == 0:
+                        self.checkBox_7.setEnabled(True)  # right door
+                        self.checkBox_6.setEnabled(True) # left door
+                    else:
+                        self.checkBox_7.setEnabled(False) #cannot open the door while moving
+                        self.checkBox_6.setEnabled(False) #cannot open the door while moving
+
                     self.checkBox_3.setEnabled(True)  # external lights
                     self.checkBox_4.setEnabled(True)  # internal lights
                     self.pushButton.setEnabled(True)  # emergency brake

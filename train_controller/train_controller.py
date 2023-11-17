@@ -50,7 +50,7 @@ class TrainController:
         self._left_door_open = False
         self._internal_lights_on = False
         self._external_lights_on = False
-        self._auto_stat = False
+        self._auto_stat = True # False is Manual, True is Automatic, default is Automatic is on (True)
         self._kp = 0.0
         self._ki = 0.0
         self._ek = 0.0
