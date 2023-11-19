@@ -92,12 +92,10 @@ class TrainController:
         self.set_service_brake_failure(self.train_model.brake_failure)
         self.set_engine_status(self.train_model.engine_failure)
         self.set_signal_pickup_failure_status(self.train_model.signal_pickup_failure)
-        # self.train_model.cmd_speed = self.get_commanded_velocity()
-        self.set_maximum_veloctity(self.train_model.speed_limit*0.277778)
+        self.set_maximum_veloctity(self.train_model.speed_limit*0.621371)
         self.set_current_velocity(self.train_model.actual_velocity)
-        self.set_commanded_velocity(self.train_model.cmd_speed)
+        self.set_commanded_velocity(self.train_model.cmd_speed*0.621371)
         self.set_authority(self.train_model.authority)
-        #self.set_current_velocity(float(self.train_model.actual_velocity))
         self.set_ki(float(self.get_ki()))
         self.set_kp(float(self.get_ki()))
         self.set_eK(float(self.get_commanded_velocity()), float(self.get_actual_velocity()))
@@ -113,6 +111,10 @@ class TrainController:
         self.set_setpoint_speed(self._setpoint_speed)
         self.set_beacon(self.train_model.beacon)
         self.set_time(self.train_model.time)
+        self.set_side(self.train_model.station_side)
+
+        print("Train controller cmd speed: " + str(self.train_model.cmd_speed) + "  " + str(self.get_commanded_velocity()))
+        # print(self.get_side())
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -146,6 +148,7 @@ class TrainController:
     def set_commanded_velocity(self, v: float):
         if v <= self._maximum_velocity:
             self._commanded_velocity = v
+
     def set_current_velocity(self, c : float):
             self._current_velocity = c
 
@@ -197,9 +200,9 @@ class TrainController:
                 self._stop = True
                 self._stop_time = self.get_time()
                 self.set_service_brake_value(1.0)
-                self.set_station_side()
                 print("We are stopping")
-            # print(self._stop, self.get_time(), self._stop_time + DWELL_TIME)
+            if self._stop and self.get_time() <= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+                self.set_station_side()
             if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 print("Dwell time over")
                 self._stop = False
@@ -348,12 +351,11 @@ class TrainController:
         return hour >= NIGHT + 12 or hour <= DAY
 
     def set_station_side(self):
-
-        if self._side == "Left":
+        if self._side == "Left": # and self.get_actual_velocity() <= 0.00001:
             self.set_left_door_status(True)
-        elif self._side == "Right":
+        elif self._side == "Right": #and self.get_actual_velocity() <= 0.00001):
             self.set_right_door_status(True)
-        elif self._side == "Left/Right":
+        elif self._side == "Left/Right": #and self.get_actual_velocity() <= 0.00001:
             self.set_left_door_status(True)
             self.set_right_door_status(True)
         else:

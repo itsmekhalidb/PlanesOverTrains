@@ -271,8 +271,7 @@ class TrainModel(object):
             # Underground
             self.set_underground(bool(info["underground"]))
             # Station Side
-            # TODO: Uncomment when station side is added to excel
-            # self.set_station_side(info["station side"])
+            self.set_station_side(info["station side"])
 
     def set_service_brake_value(self, _service_brake_value: float):
         self._service_brake_value = _service_brake_value

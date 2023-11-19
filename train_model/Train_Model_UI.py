@@ -824,7 +824,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 2.23694, 3)) + " mph"))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 0.621371, 3)) + " mph"))
 
                 # Station Info
                 self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Current Station:"))
