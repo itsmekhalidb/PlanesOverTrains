@@ -158,6 +158,7 @@ class CTC(object):
             for train in self._trains:
                 self.TrackCTRLSignal._train_ids.add(train.get_train_number())
 
+            print(self.TrackModelSignal._ticket_sales)
             # update functions
             # self.update_section_status()
             # print(self.TrackCTRLSignal._train_out)
