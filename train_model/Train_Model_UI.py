@@ -769,7 +769,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 # self.force_info_label_2.setText(str(self.train_model.get_force()) + " N")
 
                 # Title
-                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+                self.title_label.setText(str(self.train_model.get_line().upper() + " Line"))
 
                 # Mass
                 self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
@@ -812,7 +812,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.force_info_label_2.setItem(0, 1, cmd_pwr)
 
                 # Title
-                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+                self.title_label.setText(str(self.train_model.get_line().upper() + " Line"))
 
                 # Mass
                 self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(self.train_model.get_total_mass()) + " kg"))

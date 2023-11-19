@@ -8,7 +8,6 @@ class TrackControllerTrackModelAPI:
         self._train_in = {} # train id : [actual velocity, occupancy]
         self._train_ids = set() # train ids
         self._train_occupancy = list()
-        # TODO: train specific should be sent to train info
         self._line = "green"  # line
         self._commanded_speed = 0  # commanded speed
         self._time = 0

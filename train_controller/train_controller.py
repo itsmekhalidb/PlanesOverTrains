@@ -113,9 +113,6 @@ class TrainController:
         self.set_time(self.train_model.time)
         self.set_side(self.train_model.station_side)
 
-        print("Train controller cmd speed: " + str(self.train_model.cmd_speed) + "  " + str(self.get_commanded_velocity()))
-        # print(self.get_side())
-
         if thread:
             threading.Timer(0.1, self.update).start()
 

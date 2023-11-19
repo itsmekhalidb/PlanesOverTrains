@@ -224,19 +224,19 @@ class TrainModel(object):
         # Send Passengers Departing when at a stop
         if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
             self.set_doors(not self.get_doors()) # Open the doors
-            if self.get_prev_passenger_count() > 0:
-                # Depart all passengers at last stop before yard
-                if (self.get_line().lower() == "green" and self.get_block() == 56) or (self.get_line().lower() == "red" and self.get_block() == 16):
-                    self._track_model_signals.passenger_onboard = 0
-                    self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
-                # Pick a random number of passengers to depart and onboard
-                else:
-                    self._track_model_signals.passenger_onboard = random.randint(0, self.get_curr_passenger_count())
-                    self._track_model_signals.passenger_departing = random.randint(0, self.get_curr_passenger_count())
+            # if self.get_prev_passenger_count() > 0:
+            #     # Depart all passengers at last stop before yard
+            if (self.get_line().lower() == "green" and self.get_block() == 56) or (self.get_line().lower() == "red" and self.get_block() == 16):
+                self._track_model_signals.passenger_onboard = 0
+                self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
+            # Pick a random number of passengers to depart and onboard
             else:
-                # No passengers to depart
-                self._track_model_signals.passenger_onboard = self.get_curr_passenger_count()
-                self._track_model_signals.passenger_departing = 0
+                self._track_model_signals.passenger_onboard = random.randint(0, self._max_passenger_count)
+                self._track_model_signals.passenger_departing = random.randint(0, self.get_curr_passenger_count())
+            # else:
+            #     # No passengers to depart
+            #     self._track_model_signals.passenger_onboard = self.get_curr_passenger_count()
+            #     self._track_model_signals.passenger_departing = 0
         elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
             self.set_doors(not self.get_doors()) # Close the doors
 
@@ -308,12 +308,12 @@ class TrainModel(object):
         # sbrake min limit
         if self._ebrake_decel_limit < self.get_acceleration() < (self._decel_limit * self.get_service_brake_value()):
             self.set_acceleration(self._decel_limit * self.get_service_brake_value())
-        # # faults
-        # if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
-        #     self.set_acceleration(0)
-        # # emergency brake
-        # if self.get_emergency_brake() and self.get_actual_velocity() != 0:
-        #     self.set_acceleration(self._ebrake_decel_limit)
+        # faults
+        if (self.get_engine_failure() or self.get_signal_failure() or self.get_ebrake_failure() or self.get_sbrake_failure()) and self.get_actual_velocity() == 0:
+            self.set_acceleration(0)
+        # emergency brake
+        if self.get_emergency_brake() and self.get_actual_velocity() != 0:
+            self.set_acceleration(self._ebrake_decel_limit)
         return round(self.get_acceleration(), 3)
 
     # station side

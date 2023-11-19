@@ -988,7 +988,7 @@ class Ui_MainWindow(QMainWindow):
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line
-        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line())))
+        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line().upper())))
         #underground
         #self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
         #ebrake clicked
