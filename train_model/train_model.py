@@ -216,29 +216,7 @@ class TrainModel(object):
         # Output to Track Model #
         #########################
         # Passenger Update
-        if self.get_beacon() != "": # We are at a station
-            self.set_prev_passenger_count(self.get_curr_passenger_count())
-        else:
-            self.set_prev_passenger_count(0)
-
-        # Send Passengers Departing when at a stop
-        if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
-            self.set_doors(not self.get_doors()) # Open the doors
-            # if self.get_prev_passenger_count() > 0:
-            #     # Depart all passengers at last stop before yard
-            if (self.get_line().lower() == "green" and self.get_block() == 56) or (self.get_line().lower() == "red" and self.get_block() == 16):
-                self._track_model_signals.passenger_onboard = 0
-                self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
-            # Pick a random number of passengers to depart and onboard
-            else:
-                self._track_model_signals.passenger_onboard = random.randint(0, self._max_passenger_count)
-                self._track_model_signals.passenger_departing = random.randint(0, self.get_curr_passenger_count())
-            # else:
-            #     # No passengers to depart
-            #     self._track_model_signals.passenger_onboard = self.get_curr_passenger_count()
-            #     self._track_model_signals.passenger_departing = 0
-        elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
-            self.set_doors(not self.get_doors()) # Close the doors
+        self.update_passenger_count()
 
         # Actual Velocity
         self._track_model_signals.actual_velocity = self.get_actual_velocity()
@@ -251,12 +229,38 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
+    def update_passenger_count(self):
+        # We are at a station
+        if self.get_beacon() != "":
+            self.set_prev_passenger_count(self.get_curr_passenger_count())
+        else:
+            self.set_prev_passenger_count(0)
+        # Make sure we leave with the crew on board
+        if (self.get_line().lower() == "green" and self.get_block() == 63) or (
+                self.get_line().lower() == "red" and self.get_block() == 9):
+            self._track_model_signals.passenger_onboard = 6
+            self._track_model_signals.passenger_departing = 0
+        # Send Passengers Departing when at a stop
+        if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors())  # Open the doors
+            # Depart all passengers at last stop before yard
+            if (self.get_line().lower() == "green" and self.get_block() == 56) or (
+                    self.get_line().lower() == "red" and self.get_block() == 16):
+                self._track_model_signals.passenger_onboard = 0
+                self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
+            # Pick a random number of passengers to depart and onboard
+            else:
+                self._track_model_signals.passenger_onboard = random.randint(0, self._max_passenger_count)
+                self._track_model_signals.passenger_departing += random.randint(0, self.get_curr_passenger_count())
+        # Close the doors
+        elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
+            self.set_doors(not self.get_doors())
+
     def set_track_info(self, _track_info):
         # Check if the info exists
         if _track_info is not None and _track_info.get_block_info(self.get_line(),self.get_block()) is not None:
             # Get the info for the block
             info = _track_info.get_block_info(self.get_line(),self.get_block())
-
             # Beacon
             if info["beacon"] != "nan":
                 self.set_beacon(str(info["beacon"])[9:])
@@ -314,6 +318,9 @@ class TrainModel(object):
         # emergency brake
         if self.get_emergency_brake() and self.get_actual_velocity() != 0:
             self.set_acceleration(self._ebrake_decel_limit)
+        # reached a stop
+        if self.get_actual_velocity() == 0.0 and self.get_cmd_power() == 0.0:
+            self.set_acceleration(0)
         return round(self.get_acceleration(), 3)
 
     # station side
@@ -482,6 +489,9 @@ class TrainModel(object):
             self.set_force(self.get_force() + self.get_total_mass() * self._ebrake_decel_limit)
         elif self.get_ebrake_failure():
             self.set_force(0)
+        # reached a stop
+        if self.get_actual_velocity() == 0.0 and self.get_cmd_power() == 0.0:
+            self.set_force(0)
         return round(self.get_force(),1)
     # passenger count
     def set_curr_passenger_count(self, _curr_passenger_count: int):
@@ -601,7 +611,7 @@ class TrainModel(object):
         else:
             # If called from train controller, check if it's safe to release the emergency brake
             if not self._tc_wait or set_tc_wait:
-                # Train controller is not waiting or we want to set tc_wait; it's safe to update the emergency brake
+                # Train controller is not waiting, or we want to set tc_wait; it's safe to update the emergency brake
                 self._emergency_brake = emergency_brake_signal
                 self._tc_wait = set_tc_wait
             else:
