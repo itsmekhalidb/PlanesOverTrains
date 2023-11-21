@@ -220,7 +220,7 @@ class TrainController:
         # Define function local vars
         backup_power = 0.0
         speed = 0.0
-        if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status():
+        if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status(): #will set the power to 0 @ end of function
             self._emergency_brake_status = True
         if not self.get_auto_status():
             speed = self._setpoint_speed #TODO: make spinbox in UI point to this var
@@ -255,6 +255,8 @@ class TrainController:
             self._emergency_decreasing_speed = False
         self.get_service_brake_value()
         self._commanded_power = power if power < 120000 else 120000
+        if self._emergency_brake_status or self.get_service_brake_failure_status() or self.get_engine_status() or self.get_signal_pickup_failure():
+            self._commanded_power = 0
         return power
 
 
