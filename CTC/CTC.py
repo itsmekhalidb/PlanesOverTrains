@@ -186,9 +186,9 @@ class CTC(object):
                     # print(num)
                     # print(self.TrackCTRLSignal._train_in)
                     output[num] = train.get_total_auth_speed_info()
-                    print("block", train._current_block)
-                    print("ctc auth, curr speed: " + str([train.get_total_authority(), train.get_actual_velocity()]))
-                    print("ctc auth, sugg speed: " + str(output[num]))
+                    # print("block", train._current_block)
+                    # print("ctc auth, curr speed: " + str([train.get_total_authority(), train.get_actual_velocity()]))
+                    # print("ctc auth, sugg speed: " + str(output[num]))
                 else:
                     num = train.get_train_number()
                     output[num] = [0, 0]
