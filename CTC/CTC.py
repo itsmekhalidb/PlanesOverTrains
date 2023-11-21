@@ -55,6 +55,13 @@ class CTC(object):
                 if int(train.get_train_number()) > max:
                     max = int(train.get_train_number())
         return max + 1
+    def index_from_num(self, num):
+        i = 0
+        for train in self._trains:
+            if train.get_train_number() == num:
+                return i
+            i = i+1
+        return -1
     
     # setter functions
     def set_time_scaling(self, num):
@@ -123,7 +130,7 @@ class CTC(object):
     def update_authorities(self):
         for train in self._trains:
             if train.get_actual_velocity() != 0:
-                train.update_authority(self.TrackCTRLSignal._train_in[train.get_train_number()][1])
+                train.update_authority(self._time_scaling)
     def check_filepath(self):
         return self.TrackCTRLSignal._filepath != ""
 
@@ -158,7 +165,7 @@ class CTC(object):
             for train in self._trains:
                 self.TrackCTRLSignal._train_ids.add(train.get_train_number())
 
-            print(self.TrackModelSignal._ticket_sales)
+            # print(self.TrackModelSignal._ticket_sales)
             # update functions
             # self.update_section_status()
             # print(self.TrackCTRLSignal._train_out)
@@ -178,8 +185,10 @@ class CTC(object):
                     num = train.get_train_number()
                     # print(num)
                     # print(self.TrackCTRLSignal._train_in)
-                    output[num] = train.get_total_auth_speed_info(self.TrackCTRLSignal._train_in[num-1][1])
-                    #print("ctc auth, speed: "+ str(output[num]))
+                    output[num] = train.get_total_auth_speed_info()
+                    print("block", train._current_block)
+                    print("ctc auth, curr speed: " + str([train.get_total_authority(), train.get_actual_velocity()]))
+                    print("ctc auth, sugg speed: " + str(output[num]))
                 else:
                     num = train.get_train_number()
                     output[num] = [0, 0]
@@ -191,11 +200,12 @@ class CTC(object):
         
 
     def read_train_in(self):
+        i = 0
         for train in self.TrackCTRLSignal._train_in:
-            return
-            #print("act_vel: " + str(train[0]))
-            #self._trains[train].set_actual_velocity(train[0])
-            #self._trains[train].set_current_block(train[1])
+            # print("act_vel: " + str(train[0]))
+            self._trains[i].set_actual_velocity(train[0])
+            self._trains[i].set_current_block(train[1])
+            i = i+1
 
 
     # launch ui from launcher
@@ -228,8 +238,8 @@ class Train(object):
         self._schedule = sched
 
     # update authority
-    def update_authority(self, curr_block):
-        self._schedule.update_authority(self._actual_velocity, curr_block)
+    def update_authority(self, time_scaling):
+        self._schedule.update_authority(self._actual_velocity, self._current_block, time_scaling)
         
     # getter functions
     def get_train_number(self):
@@ -248,9 +258,9 @@ class Train(object):
         return self._schedule.get_curr_sugg_speed(self._current_block)
     def get_dest_station(self):
         return self._schedule.get_destination_station()
-    def get_total_auth_speed_info(self, curr_block):
-        # return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(curr_block)]
-        return [self.get_total_authority(), 70.0]
+    def get_total_auth_speed_info(self):
+        return [self.get_total_authority(), self._schedule.get_curr_sugg_speed(self._current_block)]
+        # return [self.get_total_authority(), 70.0]
     
     # setter functions
     def set_actual_velocity(self, vel):
@@ -279,6 +289,7 @@ class Schedule(object):
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
         self._dest_station = dest_station # name of destination station
+        self._yard_block = 63 # block where trains leave yard, hard coded for now
 
     # get blocks between yard and station
     def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
@@ -321,15 +332,22 @@ class Schedule(object):
     def get_total_authority(self):
         return self._total_authority
     def get_curr_sugg_speed(self, curr_block):
-        return self._route_info[str(curr_block)][1]
+        if str(curr_block) in self._route_info:
+            return self._route_info[str(curr_block)][1]
+        else:
+            return 0
     
+    def update_authority(self, actual_velocity, curr_block, time_scaling):
+        if str(curr_block) in self._route_info:
+            meters_s = actual_velocity * (1000/3600)
+            change = meters_s * .01 * time_scaling
+            if curr_block != self._yard_block and self._route_info[str(curr_block-1)][0] != 0:
+                change = change - self._route_info[str(curr_block-1)][0]
+                self._route_info[str(curr_block-1)][0] = 0
+            self._route_info[str(curr_block)][0] = self._route_info[str(curr_block)][0] - change
+            self.update_total_authority()
     def update_total_authority(self):
-        self._total_authority = sum(self._route_info.values()[0])
-    def update_authority(self, actual_velocity, curr_block):
-        meters_hr = actual_velocity/1000
-        change = meters_hr/(1/3600)
-        if self._route_info[curr_block-1] != 0:
-            change = change - self._route_info[curr_block-1]
-            self._route_info[curr_block-1] = 0
-        self._route_info[curr_block] = self._route_info[curr_block] - change
-        self.update_total_authority()
+        res = 0
+        for block in self._route_info:
+            res = res + self._route_info[block][0]
+        self._total_authority = res
