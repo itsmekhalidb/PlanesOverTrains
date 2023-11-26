@@ -5,6 +5,17 @@ class block_info:
         if filepath == "":
             self.block_dict = {}
             self.station_list = {}
+            self.switch_list = {"blue" : {"5" : ["6", "11"]},
+                "green" : {"13" : ["1", "12"] , "28" : ["29", "150"],
+                    "57" : ["0", "58"], "63" : ["62","0"], "77" : ["101","76"],
+                    "85" : ["86","100"]},
+                "red" : {"9" : ["0", "10"], "16" : ["1", "15"],
+                    "27" : ["28", "76"], "33" : ["72", "32"], "38" : ["39", "71"],
+                    "44" : ["67", "43"], "52" : ["0", "10"]}}
+            self.light_list = {"blue" : ["5", "6", "11"],
+                "green" : ["1", "13", "28", "62", "76", "77", "85", "100", "150"],
+                "red" : ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
+                    "39", "43", "44", "52", "53", "66", "67", "71", "72", "76"]}
         else:
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
@@ -75,19 +86,10 @@ class block_info:
     
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
-        return {"blue" : {"5" : ["6", "11"]},
-                "green" : {"13" : ["1", "12"] , "28" : ["29", "150"],
-                    "57" : ["0", "58"], "63" : ["62","0"], "77" : ["101","76"],
-                    "85" : ["86","100"]},
-                "red" : {"9" : ["0", "10"], "16" : ["1", "15"],
-                    "27" : ["28", "76"], "33" : ["72", "32"], "38" : ["39", "71"],
-                    "44" : ["67", "43"], "52" : ["0", "10"]}}
+        return self.switch_list[line]
 
-    def get_light_list(self):
-        return {"blue" : ["5", "6", "11"],
-                "green" : ["1", "13", "28", "62", "76", "77", "85", "100", "150"],
-                "red" : ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
-                    "39", "43", "44", "52", "53", "66", "67", "71", "72", "76"]}
+    def get_light_list(self, line):
+        return self.light_list[line]
 
     def get_block_info(self, line, block_number):
         if line in self.block_dict and block_number in self.block_dict[line]:

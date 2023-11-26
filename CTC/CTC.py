@@ -112,11 +112,11 @@ class CTC(object):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
         return list(self.TrackCTRLSignal._occupancy.values())
-    def update_curr_speed(self, train_num):
-        # speed = self.TrackCTRLSignal._curr_speed[train_num]
-        # if speed < 1 or speed == None:
-        #     speed = 0
-        return 0
+    def get_curr_speed(self, train_num):
+        speed = self._trains[train_num-1].get_actual_velocity()
+        if speed < 1 or speed == None:
+            speed = 0
+        return speed
     def update_light_color(self, light_num, status):
         self._track.update_track(light_num, status)
     def update_switch_position(self, switch_index):
@@ -131,6 +131,7 @@ class CTC(object):
         for train in self._trains:
             if train.get_actual_velocity() != 0:
                 train.update_authority(self._time_scaling)
+                # print(train.get_train_number(), train.get_total_auth_speed_info())
     def check_filepath(self):
         return self.TrackCTRLSignal._filepath != ""
 
@@ -171,6 +172,7 @@ class CTC(object):
             # print(self.TrackCTRLSignal._train_out)
             self.read_train_in()
             self.update_authorities()
+            
 
         # Enable Threading
         if thread:
