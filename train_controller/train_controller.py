@@ -371,7 +371,7 @@ class TrainController:
     def get_setpoint_speed(self)->float:
         return self._setpoint_speed
 
-    def check_and_adjust_velocity(self):
+    def check_and_adjust_velocity(self): #checks av and cv
         av = self.get_actual_velocity()
         cv = self.get_commanded_velocity()
 
