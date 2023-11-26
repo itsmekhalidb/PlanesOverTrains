@@ -148,6 +148,7 @@ class CTC_Main_UI(QMainWindow):
         header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
         self.train_list_2.verticalHeader().setVisible(False)
+        self.train_list_2.clicked.connect(self.handle_table_click)
 
         # data = [ # code to add data
         #     ["1", "08:00", "10:30", "East Liberty", "890 m", "89 mi/hr", "50 mi/hr"]
@@ -179,19 +180,27 @@ class CTC_Main_UI(QMainWindow):
         self.blocks_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.occupied_blocks.setWidget(self.blocks_table_widget)
         self.edit_schedule = QtWidgets.QPushButton(self.train_view_page)
-        self.edit_schedule.setGeometry(QtCore.QRect(5, 400, 121, 23))
+        self.edit_schedule.setGeometry(QtCore.QRect(5, 410, 121, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.edit_schedule.setFont(font)
         self.edit_schedule.setObjectName("edit_schedule")
         self.edit_schedule.hide()
         self.add_stop = QtWidgets.QPushButton(self.train_view_page)
-        self.add_stop.setGeometry(QtCore.QRect(5, 360, 101, 23))
+        self.add_stop.setGeometry(QtCore.QRect(5, 370, 101, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.add_stop.setFont(font)
         self.add_stop.setObjectName("add_stop")
         self.add_stop.hide()
+        self.back_sched = QtWidgets.QPushButton(self.train_view_page)
+        self.back_sched.setGeometry(QtCore.QRect(5, 450, 101, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.back_sched.setFont(font)
+        self.back_sched.setObjectName("back_sched")
+        self.back_sched.hide()
+        self.back_sched.clicked.connect(lambda:self.handle_back_sched_click())
         self.label = QtWidgets.QLabel(self.train_view_page)
         self.label.setGeometry(QtCore.QRect(182, 611, 351, 31))
         font = QtGui.QFont()
@@ -199,7 +208,7 @@ class CTC_Main_UI(QMainWindow):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.train_view_page)
-        self.label_2.setGeometry(QtCore.QRect(5, 330, 181, 21))
+        self.label_2.setGeometry(QtCore.QRect(5, 330, 201, 31))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.label_2.setFont(font)
@@ -247,6 +256,7 @@ class CTC_Main_UI(QMainWindow):
         self.occupied_blocks.raise_()
         self.edit_schedule.raise_()
         self.add_stop.raise_()
+        self.back_sched.raise_()
         self.label.raise_()
         self.label_2.raise_()
         self.block_close_label.raise_()
@@ -443,6 +453,7 @@ class CTC_Main_UI(QMainWindow):
         self.sys_time_label_3.setText(_translate("self", "13:24:55"))
         self.edit_schedule.setText(_translate("self", "Edit Schedule"))
         self.add_stop.setText(_translate("self", "Add Stop"))
+        self.back_sched.setText(_translate("self", "Back"))
         self.label.setText(_translate("self", "System Throughput: "))
         self.label_2.setText(_translate("self", "Schedule Train"))
         self.block_close_label.setText(_translate("self", "Maintenance Mode"))
@@ -524,7 +535,6 @@ class CTC_Main_UI(QMainWindow):
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
                         self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mi/hr")
-                        print(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num)))
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
                         index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
@@ -616,6 +626,38 @@ class CTC_Main_UI(QMainWindow):
     def change_block(self, section, block):
         name = section + block
         self.ctc.change_block(name)
+
+    # handle table clicks
+    def handle_table_click(self, index):
+        # index contains information about the clicked cell
+        row = index.row()
+        column = index.column()
+
+        # check if the click is within valid row and column ranges
+        if 0 <= row < self.train_list_2.model().rowCount() and 0 <= column < self.train_list_2.model().columnCount():
+            self.label_2.setText("Modify Schedule")
+            self.edit_schedule.show()
+            self.add_stop.show()
+            self.back_sched.show()
+
+            self.station_list.hide()
+            self.arrival_time_label.hide()
+            self.arrival_time.hide()
+            self.confirm.hide()
+
+    # handle back schedule clicks
+    def handle_back_sched_click(self):
+        self.label_2.setText("Schedule Train")
+        self.edit_schedule.hide()
+        self.add_stop.hide()
+        self.back_sched.hide()
+
+        self.train_list_2.clearSelection()
+        
+        self.station_list.show()
+        self.arrival_time_label.show()
+        self.arrival_time.show()
+        self.confirm.show()
 
     # update notqtime
     def update_not_qtime(self):
