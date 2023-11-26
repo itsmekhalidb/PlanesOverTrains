@@ -162,11 +162,11 @@ class Track_Controller(object):
         self._command_speed[block] = speed
 
     # Testbench
-    # def set_authority(self, _authority: int):
-    #     self._authority = _authority
-    #
-    # def get_authority(self, train: int) -> int:
-    #     return self._train_info[train][1]
+    def set_authority(self, train: int, authority: int):
+        self._train_info[train][0] = authority
+
+    def get_authority(self, train: int) -> int:
+        return self._train_info[train][0]
 
     def set_suggested_speed(self, _suggested_speed: int, train: int):
         self._train_info[train][2] = _suggested_speed
@@ -198,6 +198,12 @@ class Track_Controller(object):
 
     def get_time(self):
         return self._time
+
+    def set_train_out(self, trains: dict):
+        self._train_info = trains
+
+    def get_train_out(self):
+        return self._train_info
 
     def launch_ui(self):
         print("Launching Track Controller UI")
