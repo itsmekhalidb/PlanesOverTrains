@@ -5,6 +5,13 @@ class block_info:
         if filepath == "":
             self.block_dict = {}
             self.station_list = {}
+            self.switch_list = {"blue" : {"5" : ["6", "11"]},
+                "green" : {"1" : "13", "13" : "12", "150" : "28",
+                    "28" : "29", "76" : "77", "77" : "101",
+                    "85" : "86", "100" : "85"},
+                "red" : {"16" : ["1", "15"], "27" : "76",
+                    "32" : "72", "38" : "71", "43" : "67",
+                    "52" : "66"}}
         else:
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
@@ -75,13 +82,7 @@ class block_info:
     
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
-        return {"blue" : {"5" : ["6", "11"]},
-                "green" : {"1" : "13", "13" : "12", "150" : "28",
-                    "28" : "29", "76" : "77", "77" : "101",
-                    "85" : "86", "100" : "85"},
-                "red" : {"16" : ["1", "15"], "27" : "76",
-                    "32" : "72", "38" : "71", "43" : "67",
-                    "52" : "66"}}
+        return self.switch_list[line]
 
     def get_block_info(self, line, block_number):
         if line in self.block_dict and block_number in self.block_dict[line]:
