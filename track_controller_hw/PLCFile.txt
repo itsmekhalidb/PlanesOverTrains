@@ -1,5 +1,45 @@
-IF !block 63 THEN !switch 63
-IF block 0 THEN green 45
-IF !block 0 THEN red 45
-IF block 12 THEN !switch 45
-IF switch 23 THEN green 0
+#Switch D13
+IF ! FED and ! ABC and ! ZYX THEN D13
+IF ! FED and ! ABC and ZYX THEN D13
+IF ! FED and ABC and !ZYX THEN !D13
+IF ! FED and ABC and ZYX THEN D13
+IF FED and !ABC and !ZYX THEN D13
+IF FED and !ABC and ZYX THEN D13
+IF FED and ABC and !ZYX THEN D13
+IF FED and ABC and ZYX THEN D13
+
+
+
+#Switch F28
+IF !FED and !ABC and !ZYX THEN F28
+IF !FED and !ABC and ZYX THEN !F28
+IF !FED and ABC and !ZYX THEN F28
+IF !FED and ABC and ZYX THEN !F28
+IF FED and !ABC and !ZYX THEN F28
+IF FED and !ABC and ZYX THEN F28
+IF FED and ABC and !ZYX THEN F28
+IF FED and ABC and ZYX THEN F28
+
+
+# Light A1
+IF D13 THEN !A1
+IF !D13 THEN A1
+
+# Light C12
+IF D13 THEN C12
+IF !D13 THEN !C12
+
+# Light G29
+IF F28 THEN G29
+IF !F28 THEN !G29
+
+# Light Z150
+IF F28 THEN !Z150
+IF !F28 THEN Z150
+
+
+# IF !block 63 THEN !switch 63
+# IF block 0 THEN green 45
+# IF !block 0 THEN red 45
+# IF block 12 THEN !switch 45
+# IF switch 23 THEN green 0

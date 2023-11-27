@@ -361,6 +361,9 @@ class Ui_track_controller_mainwindow(QMainWindow):
         for i in self.track_controller_hw.get_light_list():
             self.select_output.addItem(i)
 
+        for i in self.track_controller_hw.get_switch_list():
+            self.select_output.addItem(i)
+
         self.wayside_select.clear()
 
        # self.wayside_select.addItem("Blue")
@@ -390,9 +393,15 @@ class Ui_track_controller_mainwindow(QMainWindow):
                 self.select_output.addItem(self.track_controller_hw.get_green_track())
             self.change = True
         """
-
+        #print("Hello")
         self.occupancy_display.clear()
-        self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
+        try:
+            for i in self.track_controller_hw.get_occupied():
+                self.occupancy_display.addItem(str(i))
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
+       # print("Goodbye")
 
         self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
 
