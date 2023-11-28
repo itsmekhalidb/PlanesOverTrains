@@ -649,67 +649,101 @@ class Ui_TrackController_MainUI(QMainWindow):
         font.setPointSize(12)
         self.commanded_speed_label.setFont(font)
         self.commanded_speed.setObjectName("commanded_speed")
-        self.toggle_switch1 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_1.text(),
-                                                        not self.track_controller.get_switch(self.switch_label_1.text())))
+        self.toggle_switch1 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0] , self.switch_label_1.text(),
+                        not self.track_controller.get_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.switch_label_1.text())))
         self.toggle_switch1.setGeometry(QtCore.QRect(291, 133, 51, 23))
         self.toggle_switch1.setObjectName("toggle_switch1")
         self.toggle_switch1.setCheckable(True)
-        self.toggle_switch2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_2.text(),
-                                                        not self.track_controller.get_switch(self.switch_label_2.text())))
+        self.toggle_switch2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0] , self.switch_label_2.text(),
+                        not self.track_controller.get_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.switch_label_2.text())))
         self.toggle_switch2.setGeometry(QtCore.QRect(290, 171, 51, 23))
         self.toggle_switch2.setObjectName("toggle_switch2")
         self.toggle_switch2.setCheckable(True)
-        self.toggle_switch3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(self.switch_label_3.text(),
-                                                        not self.track_controller.get_switch(self.switch_label_3.text())))
+        self.toggle_switch3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_switch(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_3.text(),
+                        not self.track_controller.get_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.switch_label_3.text())))
         self.toggle_switch3.setGeometry(QtCore.QRect(290, 211, 51, 23))
         self.toggle_switch3.setObjectName("toggle_switch3")
         self.toggle_switch3.setCheckable(True)
-        self.toggle_light = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label.text(),
-                                                        not self.track_controller.get_light(self.traffic_light_label.text())))
+        self.toggle_light = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label.text())))
         self.toggle_light.setGeometry(QtCore.QRect(604, 143, 51, 23))
         self.toggle_light.setObjectName("toggle_light")
         self.toggle_light.setCheckable(True)
-        self.toggle_light_2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_2.text(),
-                                                        not self.track_controller.get_light(self.traffic_light_label_2.text())))
+        self.toggle_light_2 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_2.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_2.text())))
         self.toggle_light_2.setGeometry(QtCore.QRect(604, 184, 51, 23))
         self.toggle_light_2.setObjectName("toggle_light_2")
         self.toggle_light_2.setCheckable(True)
-        self.toggle_light_3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_3.text(),
-                                                        not self.track_controller.get_light(self.traffic_light_label_3.text())))
+        self.toggle_light_3 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_3.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_3.text())))
         self.toggle_light_3.setGeometry(QtCore.QRect(605, 225, 51, 23))
         self.toggle_light_3.setObjectName("toggle_light_3")
         self.toggle_light_3.setCheckable(True)
-        self.toggle_light_4 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_4.text(),
-                                                        not self.track_controller.get_light(self.traffic_light_label_4.text())))
+        self.toggle_light_4 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_4.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_4.text())))
         self.toggle_light_4.setGeometry(QtCore.QRect(604, 263, 51, 23))
         self.toggle_light_4.setObjectName("toggle_light_4")
         self.toggle_light_4.setCheckable(True)
-        self.toggle_light_5 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(self.traffic_light_label_5.text(),
-                                                        not self.track_controller.get_light(self.traffic_light_label_5.text())))
+        self.toggle_light_5 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_5.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_5.text())))
         self.toggle_light_5.setGeometry(QtCore.QRect(604, 304, 51, 23))
         self.toggle_light_5.setObjectName("toggle_light_5")
         self.toggle_light_5.setCheckable(True)
-        self.toggle_light_6 = QtWidgets.QPushButton(self)
+        self.toggle_light_6 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_6.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_6.text())))
         self.toggle_light_6.setGeometry(QtCore.QRect(604, 344, 51, 23))
         self.toggle_light_6.setObjectName("toggle_light_6")
         self.toggle_light_6.setCheckable(True)
-        self.toggle_light_7 = QtWidgets.QPushButton(self)
+        self.toggle_light_7 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_7.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_7.text())))
         self.toggle_light_7.setGeometry(QtCore.QRect(604, 386, 51, 23))
         self.toggle_light_7.setObjectName("toggle_light_7")
         self.toggle_light_7.setCheckable(True)
-        self.toggle_light_8 = QtWidgets.QPushButton(self)
+        self.toggle_light_8 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_8.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_8.text())))
         self.toggle_light_8.setGeometry(QtCore.QRect(604, 424, 51, 23))
         self.toggle_light_8.setObjectName("toggle_light_8")
         self.toggle_light_8.setCheckable(True)
-        self.toggle_light_9 = QtWidgets.QPushButton(self)
+        self.toggle_light_9 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_9.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_9.text())))
         self.toggle_light_9.setGeometry(QtCore.QRect(604, 462, 51, 23))
         self.toggle_light_9.setObjectName("toggle_light_9")
         self.toggle_light_9.setCheckable(True)
-        self.toggle_light_10 = QtWidgets.QPushButton(self)
+        self.toggle_light_10 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_10.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_10.text())))
         self.toggle_light_10.setGeometry(QtCore.QRect(604, 502, 51, 23))
         self.toggle_light_10.setObjectName("toggle_light_10")
         self.toggle_light_10.setCheckable(True)
-        self.toggle_light_11 = QtWidgets.QPushButton(self)
+        self.toggle_light_11 = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_lights(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0],self.traffic_light_label_11.text(),
+                        not self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                            self.traffic_light_label_11.text())))
         self.toggle_light_11.setGeometry(QtCore.QRect(604, 544, 51, 23))
         self.toggle_light_11.setObjectName("toggle_light_11")
         self.toggle_light_11.setCheckable(True)
@@ -825,48 +859,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.light_color_label.setText(_translate("self", "Light Color"))
         self.traffic_light_green.setText(_translate("self", "Green"))
         self.traffic_light_red.setText(_translate("self", "Red"))
-        if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
-                self.traffic_light_label.setText(_translate("self", list(self.track_controller._lights.keys())[0]))
-                self.traffic_light_label_2.setText(_translate("self", list(self.track_controller._lights.keys())[1]))
-                self.traffic_light_label_3.setText(_translate("self", list(self.track_controller._lights.keys())[2]))
-                self.traffic_light_label_4.setText(_translate("self", list(self.track_controller._lights.keys())[3]))
-                self.traffic_light_label_5.setText(_translate("self", "NULL"))
-                self.traffic_light_label_6.setText(_translate("self", "NULL"))
-                self.traffic_light_label_7.setText(_translate("self", "NULL"))
-                self.traffic_light_label_8.setText(_translate("self", "NULL"))
-                self.traffic_light_label_9.setText(_translate("self", "NULL"))
-                self.traffic_light_label_10.setText(_translate("self", "NULL"))
-                self.traffic_light_label_11.setText(_translate("self", "NULL"))
-                self.switch_position_left.setText(_translate("self", "12"))
-                self.switch_position_right.setText(_translate("self", "1"))
-                self.switch_position_left_2.setText(_translate("self", "29"))
-                self.switch_position_right_2.setText(_translate("self", "150"))
-                self.switch_position_left_3.setText(_translate("self", "Yard"))
-                self.switch_position_right_3.setText(_translate("self", "58"))
-                self.switch_label_1.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[0]))
-                self.switch_label_2.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[1]))
-                self.switch_label_3.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[2]))
-        elif self.wayside_ctrl_comboBox.currentText() == 'Green 2':
-                self.traffic_light_label.setText(_translate("self", list(self.track_controller._lights.keys())[4]))
-                self.traffic_light_label_2.setText(_translate("self", list(self.track_controller._lights.keys())[5]))
-                self.traffic_light_label_3.setText(_translate("self", list(self.track_controller._lights.keys())[6]))
-                self.traffic_light_label_4.setText(_translate("self", list(self.track_controller._lights.keys())[7]))
-                self.traffic_light_label_5.setText(_translate("self", "NULL"))
-                self.traffic_light_label_6.setText(_translate("self", "NULL"))
-                self.traffic_light_label_7.setText(_translate("self", "NULL"))
-                self.traffic_light_label_8.setText(_translate("self", "NULL"))
-                self.traffic_light_label_9.setText(_translate("self", "NULL"))
-                self.traffic_light_label_10.setText(_translate("self", "NULL"))
-                self.traffic_light_label_11.setText(_translate("self", "NULL"))
-                self.switch_position_left.setText(_translate("self", "62"))
-                self.switch_position_right.setText(_translate("self", "Yard"))
-                self.switch_position_left_2.setText(_translate("self", "101"))
-                self.switch_position_right_2.setText(_translate("self", "76"))
-                self.switch_position_left_3.setText(_translate("self", "86"))
-                self.switch_position_right_3.setText(_translate("self", "100"))
-                self.switch_label_1.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[3]))
-                self.switch_label_2.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[4]))
-                self.switch_label_3.setText(_translate("self", list(self.track_controller.get_switch_list().keys())[5]))
+        self.changeWayside()
         self.railway_crossing_checkBox.setText(_translate("self", "Railway Crossing"))
         self.load_PLC_btn.setText(_translate("self", "Load PLC"))
         self.switch_position_label.setText(_translate("self", "Switch Position"))
@@ -958,21 +951,22 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self.changeWayside()
 
-        if self.track_controller.get_automatic():
-            self.PLC()
+        # if self.track_controller.get_automatic():
+        #     self.PLC()
 
 
 
     def changeWayside(self):
             _translate = QtCore.QCoreApplication.translate
             if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
-                    self.traffic_light_label.setText(_translate("self", list(self.track_controller._lights.keys())[0]))
+                    self.traffic_light_label.setText(
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[0]))
                     self.traffic_light_label_2.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[1]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[1]))
                     self.traffic_light_label_3.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[2]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[2]))
                     self.traffic_light_label_4.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[3]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[3]))
                     self.traffic_light_label_5.setText(_translate("self", "NULL"))
                     self.traffic_light_label_6.setText(_translate("self", "NULL"))
                     self.traffic_light_label_7.setText(_translate("self", "NULL"))
@@ -987,19 +981,20 @@ class Ui_TrackController_MainUI(QMainWindow):
                     self.switch_position_left_3.setText(_translate("self", "Yard"))
                     self.switch_position_right_3.setText(_translate("self", "58"))
                     self.switch_label_1.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[0]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[0]))
                     self.switch_label_2.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[1]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[1]))
                     self.switch_label_3.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[2]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[2]))
             elif self.wayside_ctrl_comboBox.currentText() == 'Green 2':
-                    self.traffic_light_label.setText(_translate("self", list(self.track_controller._lights.keys())[4]))
+                    self.traffic_light_label.setText(
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[4]))
                     self.traffic_light_label_2.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[5]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[5]))
                     self.traffic_light_label_3.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[6]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[6]))
                     self.traffic_light_label_4.setText(
-                            _translate("self", list(self.track_controller._lights.keys())[7]))
+                            _translate("self", list(self.track_controller.get_lights("Green").keys())[7]))
                     self.traffic_light_label_5.setText(_translate("self", "NULL"))
                     self.traffic_light_label_6.setText(_translate("self", "NULL"))
                     self.traffic_light_label_7.setText(_translate("self", "NULL"))
@@ -1014,11 +1009,80 @@ class Ui_TrackController_MainUI(QMainWindow):
                     self.switch_position_left_3.setText(_translate("self", "86"))
                     self.switch_position_right_3.setText(_translate("self", "100"))
                     self.switch_label_1.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[3]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[3]))
                     self.switch_label_2.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[4]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[4]))
                     self.switch_label_3.setText(
-                            _translate("self", list(self.track_controller.get_switch_list().keys())[5]))
+                            _translate("self", list(self.track_controller.get_switch_list("Green").keys())[5]))
+            elif self.wayside_ctrl_comboBox.currentText() == 'Red 1':
+                    self.traffic_light_label.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[0]))
+                    self.traffic_light_label_2.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[1]))
+                    self.traffic_light_label_3.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[2]))
+                    self.traffic_light_label_4.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[3]))
+                    self.traffic_light_label_5.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[4]))
+                    self.traffic_light_label_6.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[5]))
+                    self.traffic_light_label_7.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[6]))
+                    self.traffic_light_label_8.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[7]))
+                    self.traffic_light_label_9.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[8]))
+                    self.traffic_light_label_10.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[9]))
+                    self.traffic_light_label_11.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[10]))
+                    self.switch_position_left.setText(_translate("self", "1"))
+                    self.switch_position_right.setText(_translate("self", "15"))
+                    self.switch_position_left_2.setText(_translate("self", "Yard"))
+                    self.switch_position_right_2.setText(_translate("self", "10"))
+                    self.switch_position_left_3.setText(_translate("self", "28"))
+                    self.switch_position_right_3.setText(_translate("self", "76"))
+                    self.switch_label_1.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[0]))
+                    self.switch_label_2.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[1]))
+                    self.switch_label_3.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[2]))
+            elif self.wayside_ctrl_comboBox.currentText() == 'Red 2':
+                    self.traffic_light_label.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[11]))
+                    self.traffic_light_label_2.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[12]))
+                    self.traffic_light_label_3.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[13]))
+                    self.traffic_light_label_4.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[14]))
+                    self.traffic_light_label_5.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[15]))
+                    self.traffic_light_label_6.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[16]))
+                    self.traffic_light_label_7.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[17]))
+                    self.traffic_light_label_8.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[18]))
+                    self.traffic_light_label_9.setText(
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[19]))
+                    self.traffic_light_label_10.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_11.setText(_translate("self", "NULL"))
+
+                    self.switch_position_left.setText(_translate("self", "39"))
+                    self.switch_position_right.setText(_translate("self", "71"))
+                    self.switch_position_left_2.setText(_translate("self", "67"))
+                    self.switch_position_right_2.setText(_translate("self", "43"))
+                    self.switch_position_left_3.setText(_translate("self", "53"))
+                    self.switch_position_right_3.setText(_translate("self", "66"))
+                    self.switch_label_1.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[4]))
+                    self.switch_label_2.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[5]))
+                    self.switch_label_3.setText(
+                            _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
 
     def PLC(self):
         self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))
@@ -1032,22 +1096,22 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.sect_Z_occ = bool(self.track_controller.get_occupancy('147') or self.track_controller.get_occupancy('148') or self.track_controller.get_occupancy('149')
                                or self.track_controller.get_occupancy('150'))
 
-        self.track_controller.set_lights(self.traffic_light_label.text(),
+        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
-        self.track_controller.set_lights(self.traffic_light_label_2.text(),
+        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_2.text(),
                                          not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
-        self.track_controller.set_lights(self.traffic_light_label_3.text(),
+        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_3.text(),
                                          not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
-        self.track_controller.set_lights(self.traffic_light_label_4.text(),
+        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_4.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
         # self.track_controller.set_lights(self.traffic_light_label_5.text(),
         #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
-        self.track_controller.set_switch(self.switch_label_1.text(),
+        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_1.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
-        self.track_controller.set_switch(self.switch_label_2.text(),
+        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_2.text(),
                                          not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
-        self.track_controller.set_switch(self.switch_label_3.text(),
+        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_3.text(),
                                          1)
 
         self.track_controller.set_railway_crossing('18', self.sect_E_occ)
@@ -1059,9 +1123,11 @@ class Ui_TrackController_MainUI(QMainWindow):
                 self.switch_position_right.setVisible(False)
         else:
                 self.switch_label_1.setVisible(True)
-                self.switch_position_left.setVisible(bool(self.track_controller.get_switch(self.switch_label_1.text())))
+                self.switch_position_left.setVisible(bool(self.track_controller.get_switch(
+                        self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_1.text())))
                 self.switch_position_right.setVisible(
-                        not bool(self.track_controller.get_switch(self.switch_label_1.text())))
+                        not bool(self.track_controller.get_switch(
+                                self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_1.text())))
 
         if self.switch_label_2.text() == "NULL":
                 self.switch_label_2.setVisible(False)
@@ -1069,9 +1135,11 @@ class Ui_TrackController_MainUI(QMainWindow):
                 self.switch_position_right_2.setVisible(False)
         else:
                 self.switch_label_2.setVisible(True)
-                self.switch_position_left_2.setVisible(bool(self.track_controller.get_switch(self.switch_label_2.text())))
+                self.switch_position_left_2.setVisible(bool(self.track_controller.get_switch(
+                                self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_2.text())))
                 self.switch_position_right_2.setVisible(
-                        not bool(self.track_controller.get_switch(self.switch_label_2.text())))
+                        not bool(self.track_controller.get_switch(
+                                self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_2.text())))
 
         if self.switch_label_3.text() == "NULL":
                 self.switch_label_3.setVisible(False)
@@ -1080,9 +1148,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.switch_label_3.setVisible(True)
                 self.switch_position_left_3.setVisible(
-                        bool(self.track_controller.get_switch(self.switch_label_3.text())))
+                        bool(self.track_controller.get_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                              self.switch_label_3.text())))
                 self.switch_position_right_3.setVisible(
-                        not bool(self.track_controller.get_switch(self.switch_label_3.text())))
+                        not bool(self.track_controller.get_switch(
+                                self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_3.text())))
 
         if self.traffic_light_label.text() == "NULL":
                 self.traffic_light_label.setVisible(False)
@@ -1091,9 +1161,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label.setVisible(True)
                 self.traffic_light_red.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label.text())))
                 self.traffic_light_green.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label.text())))
 
         if self.traffic_light_label_2.text() == "NULL":
                 self.toggle_light_2.setVisible(False)
@@ -1103,9 +1175,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_2.setVisible(True)
                 self.traffic_light_red_2.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_2.text())))
                 self.traffic_light_green_2.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_2.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_2.text())))
 
         if self.traffic_light_label_3.text() == "NULL":
                 self.toggle_light_3.setVisible(False)
@@ -1115,9 +1189,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_3.setVisible(True)
                 self.traffic_light_red_3.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_3.text())))
                 self.traffic_light_green_3.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_3.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_3.text())))
 
         if self.traffic_light_label_4.text() == "NULL":
                 self.toggle_light_4.setVisible(False)
@@ -1127,9 +1203,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_4.setVisible(True)
                 self.traffic_light_red_4.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_4.text())))
                 self.traffic_light_green_4.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_4.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_4.text())))
 
         if self.traffic_light_label_5.text() == "NULL":
                 self.toggle_light_5.setVisible(False)
@@ -1139,9 +1217,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_5.setVisible(True)
                 self.traffic_light_red_5.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_5.text())))
                 self.traffic_light_green_5.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_5.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_5.text())))
 
         if self.traffic_light_label_6.text() == "NULL":
                 self.toggle_light_6.setVisible(False)
@@ -1151,9 +1231,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_6.setVisible(True)
                 self.traffic_light_red_6.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_6.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_6.text())))
                 self.traffic_light_green_6.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_6.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_6.text())))
 
         if self.traffic_light_label_7.text() == "NULL":
                 self.toggle_light_7.setVisible(False)
@@ -1163,9 +1245,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_7.setVisible(True)
                 self.traffic_light_red_7.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_7.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_7.text())))
                 self.traffic_light_green_7.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_7.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_7.text())))
 
         if self.traffic_light_label_8.text() == "NULL":
                 self.toggle_light_8.setVisible(False)
@@ -1175,9 +1259,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_8.setVisible(True)
                 self.traffic_light_red_8.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_8.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_8.text())))
                 self.traffic_light_green_8.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_8.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_8.text())))
 
         if self.traffic_light_label_9.text() == "NULL":
                 self.toggle_light_9.setVisible(False)
@@ -1187,9 +1273,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_9.setVisible(True)
                 self.traffic_light_red_9.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_9.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_9.text())))
                 self.traffic_light_green_9.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_9.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_9.text())))
 
         if self.traffic_light_label_10.text() == "NULL":
                 self.toggle_light_10.setVisible(False)
@@ -1199,9 +1287,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_10.setVisible(True)
                 self.traffic_light_red_10.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_10.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_10.text())))
                 self.traffic_light_green_10.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_10.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_10.text())))
 
         if self.traffic_light_label_11.text() == "NULL":
                 self.toggle_light_11.setVisible(False)
@@ -1211,9 +1301,11 @@ class Ui_TrackController_MainUI(QMainWindow):
         else:
                 self.traffic_light_label_11.setVisible(True)
                 self.traffic_light_red_11.setVisible(
-                        bool(self.track_controller.get_light(self.traffic_light_label_11.text())))
+                        bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.traffic_light_label_11.text())))
                 self.traffic_light_green_11.setVisible(
-                        not bool(self.track_controller.get_light(self.traffic_light_label_11.text())))
+                        not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                                 self.traffic_light_label_11.text())))
 
 if __name__ == "__main__":
     import sys

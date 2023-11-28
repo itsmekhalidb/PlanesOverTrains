@@ -12,9 +12,15 @@ class Track_Controller(object):
         # blocks that are currently occupied
         self._occupied_blocks = []
         # 1 = red, 0 = green
-        self._lights = {'1': 0, '13': 0, '28': 0, '150': 0, "62" : 0, "76" : 0, "77" : 0, "85" : 0, "100" : 0}
+        self._lights = {"Green": {'1': 0, '13': 0, '28': 0, '150': 0, "62": 0, "76": 0, "77": 0, "85": 0,
+                                  "100": 0},
+                        "Red": {'1': 0, '15': 0, '16': 0, '9': 0, '10': 0, '27': 0, '28': 0, '76': 0, '32': 0, '33': 0,
+                                '72': 0, '38': 0, '39': 0, '71': 0, '43': 0, '44': 0, '67': 0, '52': 0, '53': 0,
+                                '66': 0}}
         # 1 = left, 0 = right
-        self._switches = {'13': 0, '28': 0, '57': 0, '63': 0, '76': 0, '85': 0}
+        self._switches = {"Green": {'13': 0, '28': 0, '57': 0, '63': 0, '76': 0, '85': 0},
+                          "Red": {'16': 0, '9': 0, '27': 0, '33': 0, '38': 0, '44': 0, '52': 0}}
+        self._red_switches = {}
         # crossing lights/gate
         self._crossing_lights_gates = {'18': 0}
         # if program is in automatic mode
@@ -95,7 +101,7 @@ class Track_Controller(object):
     def set_track(self, track):
         self._track = track
 
-    def get_occupancy(self, block) -> bool:
+    def get_occupancy(self, block):
         return self._occupied_blocks.count(block)
 
     def get_block_occupancy(self) -> dict:
@@ -121,29 +127,29 @@ class Track_Controller(object):
         return self._track.get_block_info('green', block)['speed limit']
 
 
-    def get_switch_list(self) -> dict:
-        return self._switches
+    def get_switch_list(self, line) -> dict:
+        return self._switches[line]
 
-    def get_switch(self, switch):
-        return self._switches[switch]
+    def get_switch(self, line, switch):
+        return self._switches[line][switch]
 
-    def set_switch(self, switch, value: int):
+    def set_switch(self, line, switch, value: int):
         try:
-            self._switches[switch] = value
+            self._switches[line][switch] = value
             self.ctc_ctrl_signals._switch[switch] = value
             self.track_ctrl_signals._switches[switch] = value
         except Exception as e:
             print("Invalid switch")
 
-    def get_light(self, light: str) -> int:
-        return self._lights[light]
+    def get_light(self, line, light):
+        return self._lights[line][light]
 
-    def get_lights(self) -> list:
-        return  self._lights
+    def get_lights(self, line):
+        return  self._lights[line]
 
-    def set_lights(self, light: str, value: int):
+    def set_lights(self, line, light: str, value: int):
         try:
-            self._lights[light] = value
+            self._lights[line][light] = value
             self.ctc_ctrl_signals._light[light] = value
             self.track_ctrl_signals._lights[light] = value
         except Exception as e:
