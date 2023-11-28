@@ -111,7 +111,7 @@ class CTC(object):
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
-        return list(self.TrackCTRLSignal._occupancy.values())
+        return list(self.TrackCTRLSignal._occupancy.values()) + list(self._closed_blocks)
     def get_curr_speed(self, train_num):
         speed = self._trains[train_num-1].get_actual_velocity()
         if speed < 1 or speed == None:

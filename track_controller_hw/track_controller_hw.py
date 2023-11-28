@@ -34,13 +34,13 @@ class Track_Controller_HW(object):
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'M77': 0, 'R101': 0, 'Q100': 0, 'N85': 0, 'K63': 0}
+        self._lights = {'A1': 0, 'C12': 0, 'G29': 0, 'Z150': 0}
         # plc input
         self._plc_input = ""
         # 0 = right, 1 = left
-        self._switches = {'M77': 0, 'N85': 0, 'K63': 0}
+        self._switches = {'D13': 0, 'F28': 0, 'I57': 0}
         # crossing lights/gate
-        self._crossing_lights_gates = {}
+        self._crossing_lights_gates = {'E19': 0}
         # if program is in automatic mode
         self._automatic = True
 
@@ -52,7 +52,8 @@ class Track_Controller_HW(object):
         # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
         # list of occupied blocks to show on UI
-        self._previous_blocks = ['A1']
+        self._previous_blocks = []
+
         self._occupied_blocks = []
         # serial port connection object
         #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
@@ -83,12 +84,12 @@ class Track_Controller_HW(object):
 
         # CTC Office Inputs
         # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
-        self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
+        # self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
         #        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
 
         # CTC Office Outputs
         #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
-        self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+        # self.ctc_ctrl_signals._occupancy = self.get_occupied
         self.set_time(self.ctc_ctrl_signals._time)
 
         # Track Model Inputs
@@ -96,11 +97,10 @@ class Track_Controller_HW(object):
         #        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
         #        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
         #        self.set_power_failure(self.track_ctrl_signals._power_failure)
-        self.set_blue_track(self.track_ctrl_signals._blue)
+        # self.set_blue_track(self.track_ctrl_signals._blue)
         # wait until we have things connected to mess around with this
         # self.set_blue_track(self.track_ctrl_signals._green)
-        self.set_green_track(self.track_ctrl_signals._green)
-
+        # self.set_green_track(self.track_ctrl_signals._green)
 
         # Track Model Outputs
         # self.track_ctrl_signals._authority = self.get_authority()
@@ -122,13 +122,14 @@ class Track_Controller_HW(object):
 
         # used to recieve info from the Ardunio
 
-       # self.receive()
-
-       # if self.get_automatic() != self.get_previous():
-       #     if not self.get_automatic():
-       #         self.get_ard().write("3".encode('utf-8'))
-       #     else:
-       #         self.get_ard().write("4".encode('utf-8'))
+        #self.receive()
+        """
+        if self.get_automatic() != self.get_previous():
+            if not self.get_automatic():
+                self.get_ard().write("3".encode('utf-8'))
+            else:
+                self.get_ard().write("4".encode('utf-8'))
+        """
 
         self.set_previous(self.get_automatic())
 
@@ -137,15 +138,17 @@ class Track_Controller_HW(object):
             print("get plc = true and automatic = true")
             self.get_plc()
 
-        if self.get_occupied_blocks() != self._previous_blocks:
-            self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
-            self.send_occupied()
-            self._previous_blocks = self.get_occupied_blocks()
+        #self.set_previous_blocks(self.track_ctrl_signals._occupancy)
+        # print("Prev:" + str(self.get_previous_blocks()))
+        # print("Occ:" + str(self.get_occupied()))
+        #if self.get_occupied() != self.get_previous_blocks():
+            # print("Changes Occupancy")
+            #vself.set_occupied(self.get_previous_blocks())
+            # print("Occ In Statement:" + str(self.get_occupied()))
+            #self.send_occupied()
 
         if thread:
             threading.Timer(.1, self.update).start()
-
-        time.sleep(.1)
 
     #   def get_passengers(self):
     #       return self._passengers
@@ -153,9 +156,9 @@ class Track_Controller_HW(object):
     def send_occupied(self):
         occupied = "2"
         for i in self.get_occupied():
-            occupied += " " + i[1:]
+            occupied += " " + str(i)
         print(occupied)
-        #self.get_ard().write(occupied.encode('utf-8'))
+        self.get_ard().write(occupied.encode('utf-8'))
 
     def get_train_id(self):
         return self._train_ids
@@ -166,33 +169,39 @@ class Track_Controller_HW(object):
             if self.get_ard().inWaiting() > 0:
                 data_bytes = self.get_ard().readline()
                 data_str = data_bytes.decode('utf-8').strip()
-                print(data_str)
-                count = 0
-                for key in self.get_switch_list():
-                    if data_str[count].isdigit():
-                        self.set_switch(int(data_str[count]), key)
-                        count += 1
-                for key in self.get_light_list():
-                    if data_str[count].isdigit():
-                        self.set_lights(int(data_str[count]), key)
-                        count += 1
+                print(f"From Serial: {data_str}")
+                commands = data_str.split()
 
+                for command in commands:
+                    # Split each command into switch/light and value
+                    identifier, value_str = command.split('/')
+                    value = int(value_str)
+
+                    # Check if it's a switch or light and call the appropriate set function
+                    if identifier in self._switches:
+                        self.set_switch(value, identifier)
+                    elif identifier in self._lights:
+                        self.set_lights(value, identifier)
+                    else:
+                        print(f"Unknown identifier: {identifier}")
 
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
 
     # when in manual mode, used to send switch/light info to ardunio to update functions
+
     def send_update(self, block_number: str):
-        send_string = "1"
         """
+        send_string = "1"
+        
         if len(block_number) == 2:
             send_string += "00" + block_number
         elif len(block_number) == 3:
             send_string += "0" + block_number
         elif len(block_number) == 4:
             send_string += block_number
-        """
+        
         commanded = str(self.get_commanded_speed())
         if len(commanded) == 1:
             send_string += "0" + commanded
@@ -216,15 +225,16 @@ class Track_Controller_HW(object):
             send_string += "00"
         send_string += "00"
         send_string += block_number
-        #self.get_ard().write(send_string.encode('utf-8'))
+        self.get_ard().write(send_string.encode('utf-8'))
         print(send_string)
         time.sleep(3)
         self.select_block(block_number)
+        """
 
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
-        #self.get_ard().write(block_send.encode('utf-8'))
+        self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
 
     def get_plc_set(self):
@@ -288,11 +298,20 @@ class Track_Controller_HW(object):
             temp.update({x: self.get_occupancy(x)})
         return temp
 
-    def get_occupied(self) -> list:
+    def get_occupied(self):
         return self._occupied_blocks
 
-    def set_occupied_blocks(self, blocks: dict):
+    def get_occupancy(self, block) -> bool:
+        return self._occupied_blocks.count(block)
+
+    def set_occupied(self, blocks: list):
         self._occupied_blocks = blocks
+
+    def set_previous_blocks(self, blocks: list):
+        self._previous_blocks = blocks
+
+    def get_previous_blocks(self):
+        return self._previous_blocks
 
     def get_occupied_blocks(self) -> list:
         temp = []
@@ -301,16 +320,15 @@ class Track_Controller_HW(object):
         return temp
 
     def set_occupancy(self, block, value: int):
-        self._green[block][2] = value
-        self.ctc_ctrl_signals._green[block][2] = value
         if value == 1:
             self._occupied_blocks.append(block)
         else:
             self._occupied_blocks.remove(block)
         self._occupied_blocks.sort()
 
-    def get_occupancy(self, block) -> int:
-        return self._green[block][2]
+    def set_track_section_status(self, blocks: dict):
+        for block in blocks:
+            self.set_occupancy(block, blocks[block])
 
     def get_time(self):
         return self._time
@@ -320,86 +338,7 @@ class Track_Controller_HW(object):
 
     def get_plc(self):  # have not tested this yet
         print("In plc function")
-        if self.blue_line_plc.parse():
-            print("parse = true")
-        """
-            for i in range(len(self.blue_line_plc.get_block_number())):
-                block_number = self.blue_line_plc.get_block_number()[i]
-                block_occupancy = self.blue_line_plc.get_block_occupancy()[i]
-                operation = self.blue_line_plc.get_operations()[i]
-                operation_number = self.blue_line_plc.get_operations_number()[i]
-                if ((block_occupancy == 'block' and 1 == self.track_controller_hw.get_occupancy(block_number)) or
-                        (block_occupancy == '!block' and 0 == self.track_controller_hw.get_occupancy(block_number))):
-                    if operation == 'switch':
-                        self.track_controller_hw.set_switch(1, operation_number)
-                    elif operation == '!switch':
-                        self.track_controller_hw.set_switch(0, operation_number)
-                    elif operation == "green":
-                        self.track_controller_hw.set_lights(1, operation_number)
-                    elif operation == "red":
-                        self.track_controller_hw.set_lights(0, operation_number)
-            """
 
-        """""
-            self.track_controller_hw.set_commanded_speed(
-                min(self.track_controller_hw.get_suggested_speed(), self.track_controller_hw.get_speed_limit('B-A1')))
-
-            self.sect_A_occ = bool(self.track_controller_hw.get_occupancy('B-A1') or self.track_controller_hw.get_occupancy(
-                'B-A2') or self.track_controller_hw.get_occupancy('B-A3') or self.track_controller_hw.get_occupancy(
-                'B-A4') or self.track_controller_hw.get_occupancy('B-A5'))
-            self.sect_B_occ = bool(self.track_controller_hw.get_occupancy('B-B6') or self.track_controller_hw.get_occupancy(
-                'B-B7') or self.track_controller_hw.get_occupancy('B-B8') or self.track_controller_hw.get_occupancy(
-                'B-B9') or self.track_controller_hw.get_occupancy('B-B10'))
-            self.sect_C_occ = bool(
-                self.track_controller_hw.get_occupancy('B-C11') or self.track_controller_hw.get_occupancy(
-                    'B-C12') or self.track_controller_hw.get_occupancy('B-C13') or self.track_controller_hw.get_occupancy(
-                    'B-C14') or self.track_controller_hw.get_occupancy('B-C15'))
-            if self.sect_A_occ:
-                self.plc_output.addItem("Train detected in section A")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light C-C11')
-                if self.sect_B_occ:
-                    self.plc_output.addItem("Train detected in section B")
-                    self.track_controller_hw.set_lights(0, 'Light B-A5', )
-                    self.track_controller_hw.set_lights(1, 'Light B-B6')
-                    self.track_controller_hw.set_lights(1, 'Light B-C11')
-                    self.track_controller_hw.set_switch(1, 'Switch BC-A')
-                    self.plc_output.addItem("Stopping traffic from track section B")
-                    self.plc_output.addItem("Switching to track section C")
-                elif self.sect_C_occ:
-                    self.plc_output.addItem("Train detected in section C")
-                    self.track_controller_hw.set_lights(0, 'Light B-A5')
-                    self.track_controller_hw.set_lights(1, 'Light B-B6')
-                    self.track_controller_hw.set_lights(1, 'Light B-C11')
-                    self.track_controller_hw.set_switch(0, 'Switch BC-A')
-                    self.plc_output.addItem("Stopping traffic from track section C")
-                    self.plc_output.addItem("Switching to track section B")
-                else:
-                    self.plc_output.addItem("Stopping traffic from track sections B and C")
-                    self.plc_output.addItem("Switching to track section B")
-            elif self.sect_B_occ:
-                self.plc_output.addItem("Train detected in section B")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(1, 'Light B-B6')
-                self.track_controller_hw.set_lights(0, 'Light B-C11')
-                self.track_controller_hw.set_switch(0, 'Light BC-A')
-                self.plc_output.addItem("Stopping traffic from track sections A and C")
-                self.plc_output.addItem("Switching to track section B")
-            elif self.sect_C_occ:
-                self.plc_output.addItem("Train detected in section C")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(0, 'Light B-B6')
-                self.track_controller_hw.set_lights(1, 'Light B-C11')
-                self.track_controller_hw.set_switch(1, 'Switch BC-A')
-                self.plc_output.addItem("Stopping traffic from track sections A and B")
-                self.plc_output.addItem("Switching to track section C")
-            else:
-                self.plc_output.addItem("No trains on the track")
-                self.track_controller_hw.set_lights(0, 'Light B-A5')
-                self.track_controller_hw.set_lights(0, 'Light B-B6')
-                self.track_controller_hw.set_lights(0, 'Light B-C11')
-    """
 
     def get_speed_limit(self, block) -> float:
         return self._green[block][1]

@@ -112,6 +112,7 @@ class TrainController:
         self.set_beacon(self.train_model.beacon)
         self.set_time(self.train_model.time)
         self.set_side(self.train_model.station_side)
+        self.check_and_adjust_velocity()
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -253,10 +254,12 @@ class TrainController:
         else:
             self._decreasing_speed = False
             self._emergency_decreasing_speed = False
-        self.get_service_brake_value()
+        #self.get_service_brake_value()
         self._commanded_power = power if power < 120000 else 120000
         if self._emergency_brake_status or self.get_service_brake_failure_status() or self.get_engine_status() or self.get_signal_pickup_failure():
             self._commanded_power = 0
+        if self._decreasing_speed:
+            self._service_brake_value(0.5)
         return power
 
 
@@ -367,6 +370,17 @@ class TrainController:
         self._side = side
     def get_setpoint_speed(self)->float:
         return self._setpoint_speed
+
+    def check_and_adjust_velocity(self): #checks av and cv
+        av = self.get_actual_velocity()
+        cv = self.get_commanded_velocity()
+
+        if av > cv:
+            excess_velocity = av - cv
+            braking_const = 0.5
+            braking_force = braking_const * excess_velocity
+            self.set_service_brake_value(braking_force)
+
     def launch_tc_ui(self):
         from train_controller.Train_Controller_Main_Window import Ui_MainWindow
         print("Launching Train Controller UI")

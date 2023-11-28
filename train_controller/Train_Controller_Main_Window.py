@@ -897,6 +897,7 @@ class Ui_MainWindow(QMainWindow):
                     self.commanded_speed_spnbx.setVisible(False)  # commanded speed
                     self.doubleSpinBox_3.setEnabled(False)  # ki
                     self.doubleSpinBox_2.setEnabled(False)  # kp
+                    self.checkBox_12.setChecked(True)
 
             else:
                     self.slider.setEnabled(True)  # service brake

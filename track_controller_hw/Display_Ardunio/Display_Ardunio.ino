@@ -1,6 +1,8 @@
 // Include library code
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <map>
+#include <vector>
 
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
@@ -14,15 +16,29 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 
 //String commanded[150];
 
+
 int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-String current_block = "M76";
+String current_block = "F28";
 
 
-const int LIGHTNUMBER = 5;
+const int LIGHTNUMBER = 4;
 const int SWITCHNUMBER = 3;
 
+
 bool manual = true;
+bool switch_change = true;
+bool light_change = true;
+
+bool FED = false;
+bool ABC = false;
+bool ZYX = false;
+
+int switch_d13_logic[32];
+int switch_f28_logic[32];
+int light_a1_logic[2];
+int light_c12_logic[2];
+int light
 
 int Detect_LED = 2;
 int Red_LED = 3;
@@ -52,40 +68,60 @@ void transmit(){
   Serial.print("Hello");
 }
 
-void PLC(){
-  bool sectM = bool(green[75]) || bool(green[62]);
-  bool sectN = bool(green[76]) || bool(green[84]);
-  bool sectQO = bool(green[85]) || bool(green[99]);
-  if((!sectM && !sectN && sectQO) || (sectM && !sectN && sectQO) || (!sectM && sectN && sectQO)){
-    switches[0].value = 1;
-    switches[1].value = 0;
-    lights[0].value = 0;
-    lights[1].value = 1;
-    lights[2].value = 1;
-    lights[3].value = 0;
-    Serial.print("10001101");
+void update_blocks(){
+  for(int i = 144; i < 150; i++){
+    ZYX = ZYX || bool(green[i]);
   }
-  else if((!sectM && sectN && !sectQO) || (sectM && sectN && sectQO)){
-    switches[0].value = 1;
-    switches[1].value = 1;
-    lights[0].value = 0;
-    lights[1].value = 1;
-    lights[2].value = 0;
-    lights[3].value = 1;
-    Serial.print("11001011"); 
+  for(int i = 0; i < 12; i++){
+    ABC = ABC || bool(green[i]);
   }
-  else if((sectM && !sectN && !sectQO) || (sectM && sectN && !sectQO) || (!sectM && !sectN && !sectQO)){
-    switches[0].value = 0;
-    switches[1].value = 1;
-    lights[0].value = 1;
-    lights[1].value = 0;
-    lights[2].value = 0;
-    lights[3].value = 1;
-    Serial.print("01010011");
+  for(int i = 12; i < 28; i++){
+    FED = FED || bool(green[i]);
   }
+
+}
+/*
+String Structure by Index
+
+First two tokens 
+***************************
+First = FED, Second = ABC, Third = ZYX, Fourth = Switch D13 or Switch F28
+
+Remaining Tokens 
+***************************
+First = Switch D13 or Switch F28, Second = Light A1 or C12 or Light G29 or Z150
+*/
+
+void PLC(String incomingData){
+
+  String values[6];
+  int tokenCount = 0;
+    // Split the string by space
+  while (incomingData.length() > 0 && tokenCount < 6) {
+    // Find the position of the first space
+    int spaceIndex = incomingData.indexOf(' ');
+    
+    // Extract the substring before the space
+    String token = incomingData.substring(0, spaceIndex);
+    
+    // Add the token to the array
+    values[tokenCount++] = token;
+    
+    // Remove the processed part (including the space)
+    incomingData = incomingData.substring(spaceIndex + 1);
+  }
+  for(int i = 0; i < values[0].length(); i++){
+    String value = values[0].substring(i,i+1);
+
+  }
+  
+
 }
 
 void display_block(String block_number){
+  lcd1.clear();
+  digitalWrite(Red_LED, LOW);
+  digitalWrite(green_LED, LOW);
   lcd1.setCursor(0,0);
   lcd1.print("Block #: " + block_number);
   lcd1.setCursor(0,1);
@@ -128,66 +164,13 @@ void Receiver(){
   }
   
   String detect = incomingData.substring(0,1);
-  /*
-  lcd1.setCursor(0,3);
-  lcd1.print(incomingData);
-  */
-  
-// toggle a light or switch - manual mode
-  if (detect.equals("1")) {
-    digitalWrite(Detect_LED, HIGH);
-    digitalWrite(Red_LED, LOW);
-    digitalWrite(green_LED, LOW);
-    digitalWrite(Crossing_LED, LOW);
-    String commanded_speed = incomingData.substring(1,3);
-    String light_is = incomingData.substring(3,4);
-    String light_state = incomingData.substring(4,5);
-    String switch_is = incomingData.substring(5,6);
-    String switch_state = incomingData.substring(6,7);
-    String crossing_is = incomingData.substring(7,8);
-    String crossing_state = incomingData.substring(8,9);
-    String block_number = incomingData.substring(9,incomingData.length());
-    
-  
-    //lcd1.clear();
-    //lcd1.setCursor(0, 0);
-    //lcd1.print("Block #: " + block_number);
-    //lcd1.setCursor(0, 1);
-    //lcd1.print("Commanded Speed: " + commanded_speed);
 
-    //commanded[atoi(number_of_block)] = atoi(commanded_speed);
-
-    if(light_is == "1"){
-      for(int i = 0; i < LIGHTNUMBER; i++){
-        if(lights[i].name == block_number){
-          if(light_state == "0"){
-            lights[i].value = 0;
-          }
-          else{
-            lights[i].value = 1;
-          }
-          break;
-        }
-      }
-    }
-    if(switch_is == "1"){
-      for(int i = 0; i < SWITCHNUMBER; i++){
-        if(switches[i].name == block_number){
-          if(switch_state == "0"){
-            switches[i].value = 0;
-          }
-          else{
-            switches[i].value = 1;
-          }
-          break;
-        }
-      }
-    }
-  }
 //display each block
-  else if (detect.equals("0")){
+  if(detect.equals("0")){
     current_block = incomingData.substring(1,incomingData.length());
     display_block(current_block);
+    lcd1.setCursor(0,1);
+    lcd1.print("Block");
   }
 
   //read the block occupancy -- PLC
@@ -195,124 +178,163 @@ void Receiver(){
     for(int i = 0; i < 150; i++){
       green[i] = 0;
     }
+    lcd1.setCursor(0,1);
+    lcd1.print(String(incomingData));
     String occupancy = incomingData.substring(2, incomingData.length());
-    lcd1.print(occupancy.length());
+   // lcd1.print(occupancy.length());
     while(occupancy.length() > 0){  
       int space = occupancy.indexOf(" ");
       if(space == -1){
         int num = occupancy.substring(0, occupancy.length()).toInt();
-        if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, occupancy.length()))){
-          display_block(current_block);
-        }
-        lcd1.setCursor(0,1);
-        lcd1.print(String(num));
+        //if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, occupancy.length()))){
+        //  display_block(current_block);
+        //}
+        //lcd1.setCursor(0,1);
+        //lcd1.print(String(num));
         green[num-1] = 1;
         break;
       }
       int num = occupancy.substring(0, space).toInt();
       green[num-1] = 1;
-      if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, space))){
-        display_block(current_block);
-      }
+      //if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, space))){
+      //  display_block(current_block);
+      //}
       occupancy = occupancy.substring(space + 1);     
     }
-    lcd1.setCursor(0,2);
-    lcd1.print(String(green[76]));
+   // display_block(current_block);
+   // lcd1.setCursor(0,2);
+   // lcd1.print(String(green[76]));
   }
+  incomingData = "";
 
-  else if(detect.equals("3")){
-    manual = false;
-    display_block(current_block);
-  }
-
-  else if(detect.equals("4")){
-    manual = true;
-    display_block(current_block);
+void autoManual(){
+  int reading = digitalRead(6);
+  if (reading == 0) {
+    manual = !manual;
   }
 }
 
-  
-
-  /*
-  if (incomingData.substring(0, 1).equals("1")) {
-    digitalWrite(Detect_LED, HIGH);
-    digitalWrite(Red_LED, LOW);
-    digitalWrite(green_LED, LOW);
-    digitalWrite(Super_green, LOW);
-  } else if (incomingData.substring(0, 1).equals("0")) digitalWrite(Detect_LED, LOW);
-
-  if (incomingData.substring(1, 2).equals("1")) {
-    lcd1.clear();
-    lcd1.setCursor(0, 0);
-    lcd1.print("Commanded Speed:");
-    lcd1.setCursor(0, 1);
-    lcd1.print(incomingData.substring(5, incomingData.length()));
-  }
-
-  if (incomingData.substring(2, 3).equals("1")) {
-    lcd1.clear();
-    lcd1.setCursor(0, 0);
-    lcd1.print("Switch: " + incomingData.substring(5, incomingData.length()));
-
-  }
-
-  if (incomingData.substring(3, 4).equals("1")) {
-    lcd1.clear();
-    lcd1.setCursor(0, 0);
-    lcd1.print("Light:");
-    lcd1.setCursor(0, 1);
-    lcd1.print(incomingData.substring(5, incomingData.length()));
-    if (incomingData.substring(4, 5).equals("0")) {
-      digitalWrite(Red_LED, HIGH);
-    } else if (incomingData.substring(4, 5).equals("1")) {
-      digitalWrite(Red_LED, HIGH);
-      digitalWrite(green_LED, HIGH);
-    } else if (incomingData.substring(4, 5).equals("2")) {
-      digitalWrite(Red_LED, HIGH);
-      digitalWrite(green_LED, HIGH);
-      digitalWrite(Super_green, HIGH);
+void changeSwitch(){
+  int reading = digitalRead(7);
+  if (reading == 0){
+    for(int i = 0; i < SWITCHNUMBER; i++){
+      if(switches[i].name == current_block){
+        if(switches[i].value == 0){
+          switches[i].value = 1;
+              lcd1.setCursor(0,2);
+              lcd1.print("               ");
+              lcd1.setCursor(0,2);
+              lcd1.print("Switch: Left");
+        }
+        else{
+          switches[i].value = 0;
+              lcd1.setCursor(0,2);
+              lcd1.print("                ");
+              lcd1.setCursor(0,2);
+              lcd1.print("Switch: Right");
+        }
+        Serial.print(current_block + "/"+ String(switches[i].value));
+        break;
+      }
     }
   }
-  */
+}
 
+void changeLight(){
+  int reading = digitalRead(8);
+  if (reading == 0) {
+    for(int i = 0; i < LIGHTNUMBER; i++){
+      if(lights[i].name == current_block){
+        if(lights[i].value == 0){
+          lights[i].value = 1;
+          digitalWrite(Red_LED, HIGH);
+          digitalWrite(green_LED, HIGH);
+        }
+        else{
+          lights[i].value = 0;   
+          digitalWrite(Red_LED, HIGH);
+          digitalWrite(green_LED, LOW);  
+        }
+        Serial.print(current_block + "/"+ String(lights[i].value));
+        break;
+      }
+    }
+  }
+}
+
+void crossingLights(){
+  if(green[18] == 1){
+    digitalWrite(Crossing_LED, HIGH);
+  }
+  else{
+    digitalWrite(Crossing_LED, LOW);
+  }
+}
+
+
+    
 
 void setup() {
   Serial.begin(9600);
+  lcd1.init();
+  lcd1.backlight();
   pinMode(2, OUTPUT);
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
+  pinMode(6, INPUT_PULLUP);
+  pinMode(7, INPUT_PULLUP);
+  pinMode(8, INPUT_PULLUP);
 
  // for (int i = 0; i < 13; i++) {
   //  commanded[i] = "0"; // Initialize each string as empty
   //}
 
-  lights[0].name = "M77";
+  lights[0].name = "A1";
   lights[0].value = 1;
-  lights[1].name = "R101";
+  lights[1].name = "C12";
   lights[1].value = 0;
-  lights[2].name = "Q100";
+  lights[2].name = "G29";
   lights[2].value = 0;
-  lights[3].name = "N85";
+  lights[3].name = "Z150";
   lights[3].value = 1;
-  lights[4].name = "K63";
-  lights[4].value = 1;
-  switches[0].name = "M77";
+  switches[0].name = "D13";
   switches[0].value = 0;
-  switches[1].name = "N85";
+  switches[1].name = "F28";
   switches[1].value = 1;
-  switches[2].name = "K63";
+  switches[2].name = "I57";
   switches[2].value = 0;
+
+  display_block(current_block);
 }
 
-
 void loop() {
-  lcd1.init();
-  lcd1.backlight();
+  /*
   Receiver();
   if(manual){
     PLC();
   }
-  //transmit();
-  
+  */
+  Receiver();
+  update_blocks();
+  crossingLights();
+  autoManual();
+  if(!manual){
+    changeSwitch();
+    changeLight();
+    lcd1.setCursor(0,3);
+    lcd1.print("      ");
+    lcd1.setCursor(0,3);
+    lcd1.print("Manual");
+  }
+  else{
+    lcd1.setCursor(0,3);
+    lcd1.print("      ");
+    lcd1.setCursor(0,3);
+    lcd1.print("Auto");
+   // PLC();
+  }
+  delay(100);
+
+  //transmit(); 
 }
