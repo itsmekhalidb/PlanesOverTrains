@@ -543,9 +543,26 @@ class CTC_Main_UI(QMainWindow):
                         self.train_list_2.model().setData(index6, str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mi/hr")
             
             # update occupied blocks
-            cntr = 0
-            for block in self.ctc.get_occupancy():
-                self.blocks_table.setItem(cntr, 0, QTableWidgetItem(block))
+            # Assuming self.ctc.get_occupancy() returns a list of blocks
+            occupancy_list = self.ctc.get_occupancy()
+
+            # Make sure the number of rows in the QTableWidget is enough to accommodate the items
+            self.blocks_table.setRowCount(len(occupancy_list))
+
+            # Loop through the list and update the items in the QTableWidget
+            for cntr, block in enumerate(occupancy_list):
+                # Check if the block entry is not empty before adding a row
+                if block:
+                    # Cast the block to a string before adding it to the table
+                    item = QTableWidgetItem(str(block))
+                    self.blocks_table.setItem(cntr, 0, item)
+
+            # Hide the vertical header (row labels)
+            self.blocks_table.verticalHeader().setVisible(False)
+
+
+
+
             
             # update throughput
             tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
@@ -625,7 +642,7 @@ class CTC_Main_UI(QMainWindow):
     # close block
     def change_block(self, section, block):
         name = section + block
-        self.ctc.change_block(name)
+        self.ctc.change_block(block)
 
     # handle table clicks
     def handle_table_click(self, index):
