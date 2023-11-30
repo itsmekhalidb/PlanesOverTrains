@@ -195,11 +195,10 @@ class TrackModel(object):
                 print("waiting for departure... ")
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
-            # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity * 0.277778, self._train_models[index].current_block])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity * 0.277778, self._train_models[index].current_block]
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block]
         # print(self._current_block)
 
 

@@ -161,6 +161,7 @@ class CTC(object):
                 self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
                 self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
                 self.TrackCTRLSignal._time = self._time
+                self.update_authorities()
 
             self.TrackCTRLSignal._train_out = self.create_departures()
             for train in self._trains:
@@ -171,8 +172,7 @@ class CTC(object):
             # self.update_section_status()
             # print(self.TrackCTRLSignal._train_out)
             self.read_train_in()
-            self.update_authorities()
-            
+
 
         # Enable Threading
         if thread:
@@ -226,7 +226,7 @@ class CTC(object):
 class Train(object):
     def __init__(self, func : Callable, train_num = -1):
         self._number = train_num # train id number
-        self._actual_velocity = 0 # actual velocity of train from train controller
+        self._actual_velocity = 0 # actual velocity of train from train controller (m/s)
         self._current_block = 63 # current position of train, 0 indicates yard
         self._schedule = None # object containing train's schedule
     
@@ -344,11 +344,13 @@ class Schedule(object):
     
     def update_authority(self, actual_velocity, curr_block, time_scaling):
         if str(curr_block) in self._route_info:
-            meters_s = actual_velocity * (1000/3600)
-            change = meters_s * .01 * time_scaling
+            meters_s = actual_velocity
+            # meters_s = actual_velocity * (1000/3600)
+            change = meters_s * time_scaling * 0.1
             if curr_block != self._yard_block and self._route_info[str(curr_block-1)][0] != 0:
                 change = change - self._route_info[str(curr_block-1)][0]
                 self._route_info[str(curr_block-1)][0] = 0
+            # print("CTC: change: " + str(change) + " route_info:" + str(self._route_info[str(curr_block)][0]) + " meters_s: " + str(meters_s))
             self._route_info[str(curr_block)][0] = self._route_info[str(curr_block)][0] - change
             self.update_total_authority()
     def update_total_authority(self):
