@@ -815,7 +815,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.title_label.setText(str(self.train_model.get_line().upper() + " Line"))
 
                 # Mass
-                self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(self.train_model.get_total_mass()) + " kg"))
+                self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(round(self.train_model.get_total_mass(),2)) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))

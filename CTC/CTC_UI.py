@@ -533,14 +533,14 @@ class CTC_Main_UI(QMainWindow):
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
-                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
-                        self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mi/hr")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mph")
+                        self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
                         index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
                         self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_total_authority())) + " mi")
                         self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
-                        self.train_list_2.model().setData(index6, str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mi/hr")
+                        self.train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
             
             # update occupied blocks
             # Assuming self.ctc.get_occupancy() returns a list of blocks
@@ -684,7 +684,9 @@ class CTC_Main_UI(QMainWindow):
     def meters_to_miles(self, meters):
         return "{:.2f}".format(meters / 1609.344)
     def kmhr_to_mihr(self, kmhr):
-        return "{:.2f}".format(kmhr / 0.621371)
+        return "{:.2f}".format(kmhr * 0.621371)
+    def mps_to_mph(self, mps):
+        return "{:.2f}".format(mps * 2.23694)
     def datetime_to_qtime(self, dt):
         return QTime(dt.hour, dt.minute, dt.second)
     def qtime_to_datetime(self, qt):
