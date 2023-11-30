@@ -259,7 +259,7 @@ class TrainController:
         if self._emergency_brake_status or self.get_service_brake_failure_status() or self.get_engine_status() or self.get_signal_pickup_failure():
             self._commanded_power = 0
         if self._decreasing_speed:
-            self._service_brake_value(0.5)
+            self.set_service_brake_value(0.5)
         return power
 
 

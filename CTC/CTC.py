@@ -282,14 +282,14 @@ class Schedule(object):
         for block in self.get_blocks_from_yard("green", dest_block):
             info = self._api._track_info.get_block_info('green', block)
             #name = info['section'] + str(block)
-            self._route_info[str(block)] = [info['length'], info['speed limit']]
             if block == dest_block: # halfway through station block
+                self._route_info[str(block)] = [info['length']/2, info['speed limit']]
                 self._total_authority = self._total_authority + info['length']/2
             else:
+                self._route_info[str(block)] = [info['length'], info['speed limit']]
                 self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
-
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
