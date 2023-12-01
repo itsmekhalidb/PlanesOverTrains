@@ -27,7 +27,6 @@ EB_FORCE = TRAIN_MASS * 2.73
 
 class TrainController:
 
-    # def __init__(self, train_model_api: TrainModelTrainControllerAPI):
     def __init__(self, train_model_api, test=False):
 
         #priv variables
@@ -73,6 +72,7 @@ class TrainController:
         self.set_gains(KP,KI)
         self._decreasing_speed = False
         self._emergency_decreasing_speed = False
+        self._time_scaling = 1
 
         # Update Function
         self.train_model = train_model_api
@@ -89,7 +89,6 @@ class TrainController:
         self.train_model.service_brake_value = self.get_service_brake_value()
         self.set_emergency_brake_status(self.train_model.passenger_emergency_brake or self.get_ebrake_status())
         self.train_model.emergency_brake = self.get_ebrake_status()
-        #self.set_service_brake_status(bool(self.get_service_brake_status()))
         self.set_emergency_brake_failure(self.train_model.ebrake_failure)
         self.set_service_brake_failure(self.train_model.brake_failure)
         self.set_engine_status(self.train_model.engine_failure)
@@ -115,6 +114,7 @@ class TrainController:
         self.set_time(self.train_model.time)
         self.set_side(self.train_model.station_side)
         self.check_and_adjust_velocity()
+        self.set_time_scaling(self.train_model.time_scaling)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -166,8 +166,6 @@ class TrainController:
             else:
                 self._external_lights_on = False
 
-    # def set_engine_failure_status(self, status: bool):
-    #     self._engine_failure = status
     def set_signal_pickup_failure_status(self, status: bool):
         self._signal_pickup_failure = status
     def set_service_brake_value(self, value: float):
@@ -180,13 +178,9 @@ class TrainController:
     def set_emergency_brake_failure(self, status: bool):
         self._emergency_brake_failure = status
     def set_kp(self, kp: float):
-        # self._kp = 1/ki # check out formulas and clarify
         self._kp = kp
-        # print("Kp = " + str(self._kp))
     def set_ki(self, ki:float):
-        # self._ki = 1/self._ti
         self._ki = ki
-        # print("Ki = " + str(self._ki))
     def set_uk(self, current_ek: float):
         self._uk = self._previous_uk + .5 * (current_ek + self._previous_ek)
         self._previous_uk = self._uk
@@ -201,9 +195,9 @@ class TrainController:
                 self._stop_time = self.get_time()
                 self.set_service_brake_value(1.0)
                 print("We are stopping")
-            if self._stop and self.get_time() <= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+            if self._stop and self.get_time() <= self._stop_time + (DWELL_TIME/self._time_scaling) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 self.set_station_side()
-            if self._stop and self.get_time() >= self._stop_time + DWELL_TIME and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+            if self._stop and self.get_time() >= self._stop_time + (DWELL_TIME/self._time_scaling) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 print("Dwell time over")
                 self._stop = False
                 self.set_service_brake_value(0.1)
@@ -246,23 +240,16 @@ class TrainController:
             power = 0.0
         # TODO: Implement coming to a stop
         braking_distance_val = self.braking_distance(self.get_actual_velocity())
-        # print("Braking Distance: " + str(braking_distance_val), "Authority: " + str(self.get_authority()))
         ebrake_distance_val = self.ebrake_distance(self.get_actual_velocity())
-        # if self.get_actual_velocity() > speed+BRAKING_DIFFERENCE:
-        #     self._decreasing_speed = True
         if self.get_authority() <= 0 and braking_distance_val > SLOWDOWN:
             self._emergency_decreasing_speed = True
         elif self.get_authority() < braking_distance_val and not self._stop:
-            # print('Slowing down')
             self._decreasing_speed = True
             self.set_service_brake_value(braking_distance_val/(5*self.get_authority()))
         if self.get_authority() > braking_distance_val and not self._stop:
             # print('Speeding up')
             self._decreasing_speed = False
             self.set_service_brake_value(0.000001)
-        # else:
-        #     self._decreasing_speed = False
-        #     self._emergency_decreasing_speed = False
         self._commanded_power = power if power < 120000 else 120000
         if self._emergency_brake_status or self.get_service_brake_failure_status() or self.get_engine_status() or self.get_signal_pickup_failure():
             self._commanded_power = 0
@@ -344,7 +331,6 @@ class TrainController:
         return self._next_station
 
     def braking_distance(self, velocity: float)->float:
-        # return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/SB_FORCE
         return 0.1 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
 
     def get_station_status(self)->str:
@@ -381,6 +367,12 @@ class TrainController:
         self._side = side
     def get_setpoint_speed(self)->float:
         return self._setpoint_speed
+
+    def set_time_scaling(self, ts: int):
+        self._time_scaling = ts
+
+    def get_time_scaling(self)->int:
+        return self._time_scaling
 
     def check_and_adjust_velocity(self): #checks av and cv
         av = self.get_actual_velocity()
