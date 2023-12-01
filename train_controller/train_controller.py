@@ -220,7 +220,7 @@ class TrainController:
             speed = self._setpoint_speed * 0.44704 # mph to m/s
         else:
             speed = self._commanded_velocity * 0.44704 # mph to m/s
-        if self._authority <= 0 or self.get_emergency_brake_failure_status() or self.get_service_brake_value()>0:
+        if self._authority <= 0 or self.get_emergency_brake_failure_status() or self.get_service_brake_value() > 0 or speed < self._current_velocity:
             self._controller.update(self._current_velocity, 0.0)
             self._backup_controller.update(self._current_velocity, 0.0)
             power = 0.0
@@ -255,6 +255,12 @@ class TrainController:
             self.set_emergency_brake_status(True)
         else:
             self.set_emergency_brake_status(False)
+        self.check_and_adjust_velocity()
+        if power == 0 and speed < self._current_velocity and not self._stop:
+            excess_velocity = self._current_velocity - speed
+            braking_const = 10
+            braking_force = braking_const * excess_velocity/self._current_velocity
+            self.set_service_brake_value(braking_force)
         return power
 
 
