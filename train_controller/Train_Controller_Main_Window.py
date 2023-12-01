@@ -953,6 +953,7 @@ class Ui_MainWindow(QMainWindow):
         #service brake failure
         self.brake_fail_on.setVisible(bool(self.train_controller.get_service_brake_failure_status()))
         self.brake_fail_off.setVisible(not bool(self.train_controller.get_service_brake_failure_status()))
+        self.slider.setValue(self.train_controller.get_service_brake_value()*100)
         #train engine failure status
         self.engine_fail_on.setVisible(bool(self.train_controller.get_engine_status()))
         self.engine_fail_off.setVisible(not bool(self.train_controller.get_engine_status()))
