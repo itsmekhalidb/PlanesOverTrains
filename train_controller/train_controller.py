@@ -217,7 +217,6 @@ class TrainController:
             return
 
     def set_power(self):
-        #TODO: check if we are at a stop
         if self.get_auto_status():
            self.update_stop()
         # Define function local vars
@@ -226,14 +225,15 @@ class TrainController:
         if self.get_signal_pickup_failure() or self.get_engine_status() or self.get_service_brake_failure_status(): #will set the power to 0 @ end of function
             self._emergency_brake_status = True
         if not self.get_auto_status():
-            speed = self._setpoint_speed #TODO: make spinbox in UI point to this var
+            speed = self._setpoint_speed * 0.44704 # mph to m/s
         else:
-            speed = self._commanded_velocity
+            speed = self._commanded_velocity * 0.44704 # mph to m/s
         if self._authority <= 0 or self.get_emergency_brake_failure_status() or self.get_service_brake_value()>0:
             self._controller.update(self._current_velocity, 0.0)
             self._backup_controller.update(self._current_velocity, 0.0)
             power = 0.0
         else:
+            print("Speed: " + str(speed) + " Current Velocity: " + str(self._current_velocity))
             power = self._controller.update(self._current_velocity, speed)
             backup_power = self._backup_controller.update(self._current_velocity, speed)
         if abs(power - backup_power)>2000:

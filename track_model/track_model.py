@@ -193,7 +193,7 @@ class TrackModel(object):
                 #print("train " + str(index) + " authority = " + str(self._TrainModels.train_apis[index].authority))
             except Exception as e:
                 print("waiting for departure... ")
-            self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)
+            self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].time)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             if index + 1 > len(self._current_block):
                 self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block])
@@ -208,9 +208,10 @@ class TrackModel(object):
 
 
     #---- Getters & Setters ----#
-    def update_traveled_distance(self, velocity):
-        self._current_time = time.time()
+    def update_traveled_distance(self, velocity, time):
+        self._current_time = time
         dt = self._current_time - self._prev_time
+        print(dt)
         dist_traveled = velocity * dt
         self._prev_time = self._current_time
         return abs(dist_traveled)
