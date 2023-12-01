@@ -160,7 +160,7 @@ class CTC(object):
                 self._tick_counter -= 10 / self._time_scaling
                 self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
                 self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
-                self.TrackCTRLSignal._time = self._time
+                self.TrackCTRLSignal._time = [self._time, self._time_scaling]
                 self.update_authorities()
 
             self.TrackCTRLSignal._train_out = self.create_departures()

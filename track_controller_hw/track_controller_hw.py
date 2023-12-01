@@ -90,7 +90,7 @@ class Track_Controller_HW(object):
         # CTC Office Outputs
         #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
         # self.ctc_ctrl_signals._occupancy = self.get_occupied
-        self.set_time(self.ctc_ctrl_signals._time)
+        self.set_time(self.ctc_ctrl_signals._time[0])
 
         # Track Model Inputs
         #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
