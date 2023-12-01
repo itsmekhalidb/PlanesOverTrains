@@ -11,7 +11,6 @@ from .Backup_Controller import Backup_Controller
 
 KP = 8000
 KI = 10
-# DWELL_TIME = 60
 DWELL_TIME = 25
 BRAKING_DIFFERENCE = 0.5
 BACKUP_THRESHOLD = 2000
