@@ -59,7 +59,7 @@ class Track_Controller(object):
 
         # CTC Office Inputs
         try:
-            self.set_time(self.ctc_ctrl_signals._time[0])
+            self.set_time(self.ctc_ctrl_signals._time)
         except Exception as e:
             print("Cannot set time")
 
@@ -75,7 +75,7 @@ class Track_Controller(object):
             print("Cannot send block occupancy")
 
         # Track Model Outputs
-        self.track_ctrl_signals._time = self.ctc_ctrl_signals._time
+        self.track_ctrl_signals._time = self.get_time()
 
         # Dont touch it just pass it
         try:

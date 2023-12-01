@@ -184,7 +184,7 @@ class TrackModel(object):
                 self._TrainModels.train_apis[index].line = 'green'
                 self._TrainModels.train_apis[index].track_info = self.get_track_layout()
                 self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
-            self._TrainModels.train_apis[index].time = [self._track_controller_signals._time[0].timestamp(), self._track_controller_signals._time[1]] #TODO: Change this to an internal function get_time()
+            self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
             self._ctc_signals._ticket_sales[index][1] = self._TrainModels.train_apis[index].passenger_departing
             try:
                 self._TrainModels.train_apis[index].authority = self._train_model_signals[index+1][0]
