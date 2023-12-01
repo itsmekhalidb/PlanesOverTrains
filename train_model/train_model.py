@@ -28,6 +28,7 @@ class TrainModel(object):
         self._temperature = 0.0 # internal temperature of the train
         self._local_time = 0
         self._time = 0 # time object set to midnight
+        self._time_scaling = 1 # time scaling factor
         self._current_time = self._time
         self._prev_time = self._time
         self._block = 0 # current block the train is on
@@ -179,6 +180,9 @@ class TrainModel(object):
         # Time
         self._train_ctrl_signals.time = self.get_time()
 
+        # Time Scaling
+        self._train_ctrl_signals.time_scaling = self.get_time_scaling()
+
         # Actual Velocity
         self._train_ctrl_signals.actual_velocity = self.get_actual_velocity()
 
@@ -209,6 +213,9 @@ class TrainModel(object):
         # Time
         self.set_time(self._track_model_signals.time[0])
 
+        # Time Scaling
+        self.set_time_scaling(self._track_model_signals.time[1])
+
         # Track Info
         self.set_track_info(self._track_model_signals.track_info)
 
@@ -229,6 +236,13 @@ class TrainModel(object):
             threading.Timer(0.1, self.update).start()
 
     # -- Getters and Setters -- #
+    # time scaling
+    def set_time_scaling(self, _time_scaling: int):
+        self._time_scaling = _time_scaling
+
+    def get_time_scaling(self) -> int:
+        return self._time_scaling
+
     def update_passenger_count(self):
         # We are at a station
         if self.get_beacon() != "":
