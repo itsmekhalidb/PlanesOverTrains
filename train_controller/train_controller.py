@@ -114,7 +114,6 @@ class TrainController:
         self.set_time(self.train_model.time)
         self.set_side(self.train_model.station_side)
         self.check_and_adjust_velocity()
-        self.set_time_scaling(self.train_model.time_scaling)
 
         if thread:
             threading.Timer(0.1, self.update).start()
@@ -195,9 +194,9 @@ class TrainController:
                 self._stop_time = self.get_time()
                 self.set_service_brake_value(1.0)
                 print("We are stopping")
-            if self._stop and self.get_time() <= self._stop_time + (DWELL_TIME/self._time_scaling) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+            if self._stop and self.get_time() <= self._stop_time + (DWELL_TIME) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 self.set_station_side()
-            if self._stop and self.get_time() >= self._stop_time + (DWELL_TIME/self._time_scaling) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
+            if self._stop and self.get_time() >= self._stop_time + (DWELL_TIME) and self.get_auto_status() and self.get_actual_velocity() <= 0.0:
                 print("Dwell time over")
                 self._stop = False
                 self.set_service_brake_value(0.1)
@@ -227,7 +226,7 @@ class TrainController:
             self._backup_controller.update(self._current_velocity, 0.0)
             power = 0.0
         else:
-            print("Speed: " + str(speed) + " Current Velocity: " + str(self._current_velocity))
+            # print("Speed: " + str(speed) + " Current Velocity: " + str(self._current_velocity))
             power = self._controller.update(self._current_velocity, speed)
             backup_power = self._backup_controller.update(self._current_velocity, speed)
         if abs(power - backup_power)>2000:

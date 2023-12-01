@@ -629,7 +629,7 @@ class Ui_MainWindow(QMainWindow):
         try:
             if self.line_picked == 'green':
                 for button_id in occupied_blocks:
-                    print(button_id)
+                    # print(button_id)
                     row = button_id // self.green_map.columnCount()
                     column = (button_id % self.green_map.columnCount())-1
                     item = QTableWidgetItem()

@@ -211,7 +211,6 @@ class TrackModel(object):
     def update_traveled_distance(self, velocity, time):
         self._current_time = time
         dt = self._current_time - self._prev_time
-        print(dt)
         dist_traveled = velocity * dt
         self._prev_time = self._current_time
         return abs(dist_traveled)
