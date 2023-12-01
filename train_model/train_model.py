@@ -207,7 +207,7 @@ class TrainModel(object):
         self.set_block(self._track_model_signals.current_block)
 
         # Time
-        self.set_time(self._track_model_signals.time[0])
+        self.set_time(self._track_model_signals.time)
 
         # Track Info
         self.set_track_info(self._track_model_signals.track_info)
