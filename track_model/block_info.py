@@ -127,7 +127,7 @@ class block_info:
     
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
-        return self.switch_list[line]
+        return self.switch_list.get(line, {})
 
     def get_light_list(self, line):
         return self.light_list[line]

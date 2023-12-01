@@ -19,7 +19,7 @@ class TrackModel(object):
     def __init__(self, TrainModels: Trainz, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
-        self._switch_position = False #if train is switching tracks
+        self._switch_position = {} #if train is switching tracks
         self._light_colors = "" #color of signal lights
         self._authority = 0.0 #how far train is permitted to travel
         self._gate_control = False #controls railway crossing gate
@@ -49,8 +49,9 @@ class TrackModel(object):
         self._train_models = TrainModels.train_apis # dictionary of train model apis
         self._train_ids = [] # list of train ids
         self._distance = 0.0
-        self._switching = int
         self.tof = False
+        self._switch_to = {}
+
 
         #Failures
         self._broken_rail = False #broken rail failure
@@ -67,6 +68,7 @@ class TrackModel(object):
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
         self._ctc_signals = CTCSignal #api from ctc
         self._TrainModels = TrainModels #dictionary api
+        self.block_data = block_info(self._filepath) #block info
 
         self.update()
 
@@ -90,7 +92,8 @@ class TrackModel(object):
         #---- Inputs from Track Controller ----#
 
         #switch position
-        self.set_switch_position(self.get_switch_position())
+        self.set_switch_position(self._track_controller_signals._switches)
+
 
         #light colors
         self.set_light_colors(self.get_light_colors())
@@ -176,6 +179,9 @@ class TrackModel(object):
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
 
+
+
+
         for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
             if index not in self._train_ids:
@@ -216,48 +222,23 @@ class TrackModel(object):
         return abs(dist_traveled)
 
     def update_current_block(self, train):
-        try:
-            # if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-            #     train.cum_distance = 0
-            #     # if self._switching ==
-            #     return train.current_block + 1
-            # return train.current_block
-            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                train.cum_distance = 0
+        self._switch_to = self.block_data.get_switch_list(train.line)
 
-                # for switch_blocks in self._switching.keys():
-                #     if self._current_block == int(switch_blocks):
-                #         if switch_blocks == 13:
-                #             if self._switching[switch_blocks] == 1:
-                #                 self._current_block = 12
-                if 63 <= train.current_block < 100 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 100:
-                    train.current_block = 85
-                    self.tof = True
-                    return train.current_block
-                elif 85 <= train.current_block > 77 and self.tof == True:
-                    return train.current_block - 1
-                elif train.current_block == 77 and self.tof == True:
-                    train.current_block = 101
-                    self.tof = False
-                    return train.current_block
-                elif 101 <= train.current_block < 150 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 150 and self.tof == False:
-                    train.current_block = 28
-                    self.tof = True
-                    return train.current_block
-                elif 28 >= train.current_block > 1 and self.tof == True:
-                    return train.current_block - 1
-                elif train.current_block == 1 and self.tof == True:
-                    train.current_block = 13
-                    self.tof = False
-                    return train.current_block
-                elif 63 > train.current_block >= 13 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 63 and self.tof == False:
-                    train.current_block = 0
+        try:
+            if str(train.current_block) in self._switch_position.keys():
+                if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                    print(self._switch_position[str(train.current_block)])
+                    train.cum_distance = 0
+                    train.current_block += 1
+
+
+
+            elif train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                train.cum_distance = 0
+                train.current_block += 1
+
+
+
 
             return train.current_block
         except Exception as e:
@@ -273,17 +254,19 @@ class TrackModel(object):
     def get_current_block(self) -> list:
         return self._current_block
 
-    def set_switching(self, _switching: int):
-        self._switching = _switching
 
-    def get_switching(self) -> int:
-        return self._switching
 
     #Line
     def set_line(self, _line: str):
         self._line = _line
     def get_line(self) -> str:
         return self._line
+
+    def set_switch_to(self, _switch_to: {}):
+        self._switch_to = _switch_to
+
+    def get_switch_to(self) -> {}:
+        return self._switch_to
 
 
     def set_block_length(self, _block_length: float):
@@ -312,10 +295,10 @@ class TrackModel(object):
         return self._speed_limit
 
     #Switch Position
-    def set_switch_position(self, _switch_position: bool):
+    def set_switch_position(self, _switch_position: {}):
         self._switch_position = _switch_position
 
-    def get_switch_position(self) -> bool:
+    def get_switch_position(self) -> {}:
         return self._switch_position
 
     #Light Colors

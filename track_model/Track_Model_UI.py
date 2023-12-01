@@ -93,14 +93,14 @@ class Ui_MainWindow(QMainWindow):
 "border: 3px solid black;\n"
 "font: 87 16pt \"Arial Black\";")
         self.title.setObjectName("title")
-        self.clock = QtWidgets.QLabel(self.trackmodel_main)
-        self.clock.setGeometry(QtCore.QRect(1020, 10, 111, 41))
-        self.clock.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.clock.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
-"border: 2px solid black;\n"
-"background-color: rgb(255, 255, 255);")
-        self.clock.setAlignment(QtCore.Qt.AlignCenter)
-        self.clock.setObjectName("clock")
+#         self.clock = QtWidgets.QLabel(self.trackmodel_main)
+#         self.clock.setGeometry(QtCore.QRect(1020, 10, 111, 41))
+#         self.clock.setLayoutDirection(QtCore.Qt.RightToLeft)
+#         self.clock.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
+# "border: 2px solid black;\n"
+# "background-color: rgb(255, 255, 255);")
+#         self.clock.setAlignment(QtCore.Qt.AlignCenter)
+#         self.clock.setObjectName("clock")
         self.static_title = QtWidgets.QLabel(self.trackmodel_main)
         self.static_title.setGeometry(QtCore.QRect(0, 680, 461, 41))
         self.static_title.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
@@ -455,7 +455,7 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.title.raise_()
-        self.clock.raise_()
+        # self.clock.raise_()
         self.static_title.raise_()
         self.t_spd_limit.raise_()
         self.t_block_length.raise_()
@@ -559,12 +559,18 @@ class Ui_MainWindow(QMainWindow):
             info = None
 
         if info is not None:
-            self.speed_limit.setText(str(info['speed limit']))
-            self.block_length.setText(str(info['length']))
+            km_hr = float(info['speed limit'])
+            mi_hr = km_hr / 1.60934709
+            self.speed_limit.setText(str(round(mi_hr,2)))
+            m = float(info['length'])
+            ft = m * 3.28084
+            self.block_length.setText(str(round(ft,2)))
             self.section.setText(str(info['section']))
             self.block_display.setText(sender.text())
             self.grade.setText(str(info['grade']))
-            self.elevation.setText(str(info['elevation']))
+            e_m = float(info['elevation'])
+            e_ft = e_m * 3.28084
+            self.elevation.setText(str(round(e_ft,2)))
             self.underground.setText(str(info['underground']))
             self.switch_position.setText(str(info['switch position']))
             if str(info['beacon']) != "nan":
@@ -592,7 +598,7 @@ class Ui_MainWindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "Track Model"))
         self.title.setText(_translate("MainWindow", "Track Map"))
-        self.clock.setText(_translate("MainWindow", "13:24:55"))
+        # self.clock.setText(_translate("MainWindow", "13:24:55"))
 
         self.static_title.setText(_translate("MainWindow", "Static Variables"))
         self.t_spd_limit.setText(_translate("MainWindow", "Speed Limit (mph)"))
