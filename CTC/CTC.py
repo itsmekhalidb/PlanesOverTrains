@@ -279,6 +279,8 @@ class Schedule(object):
         self._route_info = {}
         self._total_authority = 0
         self._total_time = timedelta()
+        self._switches = self._api._track_info.get_switch_list("green")
+        self._switch_states = []
         for block in self.get_blocks_from_yard("green", dest_block):
             info = self._api._track_info.get_block_info('green', block)
             #name = info['section'] + str(block)
@@ -290,6 +292,7 @@ class Schedule(object):
                 self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
+        print(self._route_info)
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
@@ -297,15 +300,31 @@ class Schedule(object):
         self._yard_block = 63 # block where trains leave yard, hard coded for now
 
     # get blocks between yard and station
-    def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = []):
+    def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = [], dir = 1):
         if curr_block == dest_block: # at station
             result.append(curr_block)
-        elif self._api._track_info.get_block_info(line, curr_block+1)['switch position'] == True: # next block is a switch
-            next_block = self._api._switch[str(curr_block+1)]
+
+        elif str(curr_block) in self._switches: # this block is a switch
+            options = self._switches[str(curr_block)]
+            if len(options) == 2: # one option of where to go
+                for entry in options:
+                    if entry != "name": # the place it can go
+                        next_block = int(entry)
+                        dir = options[entry]
+                        # print(entry, next_block)
+                        break
+                # self._switch_states.append([options["name"], ) # for forks at red line
+            else: # more than one option
+                print("meow")
             result = self.get_blocks_from_yard(line, dest_block, next_block, result)
             result.append(curr_block)
+
         else: # next block is a block
-            next_block = curr_block+1
+            # determine next_block
+            if dir == 1:
+                next_block = curr_block+1
+            else:
+                next_block = curr_block-1
             result = self.get_blocks_from_yard(line, dest_block, next_block, result)
             result.append(curr_block)
         return result
