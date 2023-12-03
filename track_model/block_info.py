@@ -3,13 +3,16 @@ import pandas as pd
 class block_info:
     def __init__(self, filepath: str):
         if filepath == "":
+            self.filepath = ""
             self.block_dict = {}
             self.station_list = {}
             self.switch_list = {}
             self.light_list = {}
         else:
+            self.filepath = filepath
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
+            print(self.get_switch_list('green'))
 
     def load_block_info(self, filepath: str):
         # 1 indicates blocks after count up, 0 indicates count down
@@ -143,6 +146,9 @@ class block_info:
 
     def get_all_blocks_for_line(self, line):
         return self.block_dict.get(line.lower(), {})
+
+    def get_filepath(self):
+        return self.filepath
 
     def __str__(self):
         return str(self.block_dict)
