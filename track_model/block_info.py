@@ -5,6 +5,8 @@ class block_info:
         if filepath == "":
             self.block_dict = {}
             self.station_list = {}
+            self.switch_list = {}
+            self.light_list = {}
         else:
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
