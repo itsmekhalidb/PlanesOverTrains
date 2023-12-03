@@ -1,0 +1,18 @@
+switch
+    38
+        (71 and 38) or (!44 and 38) or !(38 or 71)
+    44
+        !(71 and 38) and !(!44 and 38) and (38 or 71)
+    52
+        !66 or 52
+light
+    71
+        38 and 71
+    67
+        44 and 71
+    52
+        !52
+    53
+        52 and !53
+    66
+        52 and !66

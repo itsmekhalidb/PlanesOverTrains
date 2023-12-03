@@ -27,7 +27,8 @@ class Track_Controller(object):
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "", 'Green 2': "", 'Red 1': "", 'Red 2': ""}
+        self._plc_input = {'Green 1': "PLCgreen1.txt", 'Green 2': "PLCgreen2.txt", 'Red 1': "PLCred1.txt",
+                           'Red 2': "PLCred2.txt"}
         # time to be displayed on the clock
         self._time = 0
         # startup
