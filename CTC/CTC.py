@@ -85,7 +85,8 @@ class CTC(object):
                 temp_trn = Train(True, self.get_highest_train_num())
                 destination_block = min(self._stations['green'][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
-                temp_trn.create_schedule(destination_block, station_name, arrival_datetime, self.TrackCTRLSignal)
+                time_to_arrival = arrival_datetime - self.get_time()
+                temp_trn.create_schedule(destination_block, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
                 self._trains.append(temp_trn)
             elif function == 1: # edit existing schedule
                 return
@@ -235,9 +236,10 @@ class Train(object):
         self._number = num
         
     # create schedule
-    def create_schedule(self, destination_block, dest_station, arrival_time, api):
+    def create_schedule(self, destination_block, dest_station, arrival_time, time_to_arrival, api):
         sched = Schedule(destination_block, dest_station, arrival_time, api)
-        self._schedule = sched
+        if sched._total_time < time_to_arrival:
+            self._schedule = sched
 
     # update authority
     def update_authority(self, time_scaling):
