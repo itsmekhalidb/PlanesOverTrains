@@ -227,7 +227,6 @@ class TrackModel(object):
             self._switch_to = self.block_data.get_switch_list(train.line)
 
         try:
-            print('I do this at least once')
             if str(train.current_block) in self._switch_position.keys():
                 if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                     print(self._switch_position[str(train.current_block)])
