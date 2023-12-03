@@ -294,7 +294,7 @@ class Schedule(object):
                 self._total_authority = self._total_authority + info['length']
             # calculate time
             self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
-        print(self._route_info)
+        # print(self._route_info)
         self._arrival_time = arrival_time # train arrival time from dispatcher
         self._departure_time = self._arrival_time - self._total_time # calculate train departure time
         self._destination_block = dest_block # train destination from dispatcher
@@ -303,6 +303,7 @@ class Schedule(object):
 
     # get blocks between yard and station
     def get_blocks_from_yard(self, line, dest_block, curr_block = 63, result = [], dir = 1):
+        # print(curr_block)
         if curr_block == dest_block: # at station
             result.append(curr_block)
 
@@ -311,10 +312,12 @@ class Schedule(object):
             if len(options) == 2: # one option of where to go
                 for entry in options:
                     if entry != "name": # the place it can go
-                        next_block = int(entry)
-                        dir = options[entry]
-                        # print(entry, next_block)
-                        break
+                        if (dir == options[entry][1]):
+                            next_block = int(entry)
+                            dir = options[entry][0]
+                            break
+                        else:
+                            next_block = curr_block + 1
                 # self._switch_states.append([options["name"], ) # for forks at red line
             else: # more than one option
                 print("meow")
