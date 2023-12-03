@@ -1,14 +1,33 @@
-#Switch D13-A1/C12
-IF not (D13 or A1) or D13 THEN D13
-
-#Light D13
-IF (A1 and not (D13)) or (C12 and D13) THEN D13
-
-#Light A1
-(D13) => A1
-
-IF !block 63 THEN !switch 63
-IF block 0 THEN green 45
-IF !block 0 THEN red 45
-IF block 12 THEN !switch 45
-If switch 23 THEN green 0
+green
+    switch
+        13
+            not(1) or 13
+        28
+            not(150) or 13
+        57
+            57
+        63
+            not(0)
+        77
+            not(76) and 77
+        85
+            not(100) or 76
+    light
+        1
+            not(1) or 13
+        13
+            1 and not(13)
+        28
+            150 and not(13)
+        150
+            not(150) or 13
+        62
+            0
+        76
+            not(76) and 77
+        77
+            76 or not(77)
+        85
+            100 and not(76)
+        100
+            not(100) or 76
