@@ -1027,16 +1027,11 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_lights("Red").keys())[4]))
                     self.traffic_light_label_6.setText(
                             _translate("self", list(self.track_controller.get_lights("Red").keys())[5]))
-                    self.traffic_light_label_7.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[6]))
-                    self.traffic_light_label_8.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[7]))
-                    self.traffic_light_label_9.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[8]))
-                    self.traffic_light_label_10.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[9]))
-                    self.traffic_light_label_11.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[10]))
+                    self.traffic_light_label_7.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_8.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_9.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_10.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_11.setText(_translate("self", "NULL"))
                     self.switch_position_left.setText(_translate("self", "1"))
                     self.switch_position_right.setText(_translate("self", "15"))
                     self.switch_position_left_2.setText(_translate("self", "Yard"))
@@ -1051,23 +1046,19 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[2]))
             elif self.wayside_ctrl_comboBox.currentText() == 'Red 2':
                     self.traffic_light_label.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[11]))
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[6]))
                     self.traffic_light_label_2.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[12]))
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[7]))
                     self.traffic_light_label_3.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[13]))
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[8]))
                     self.traffic_light_label_4.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[14]))
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[9]))
                     self.traffic_light_label_5.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[15]))
-                    self.traffic_light_label_6.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[16]))
-                    self.traffic_light_label_7.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[17]))
-                    self.traffic_light_label_8.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[18]))
-                    self.traffic_light_label_9.setText(
-                            _translate("self", list(self.track_controller.get_lights("Red").keys())[19]))
+                            _translate("self", list(self.track_controller.get_lights("Red").keys())[10]))
+                    self.traffic_light_label_6.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_7.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_8.setText(_translate("self", "NULL"))
+                    self.traffic_light_label_9.setText(_translate("self", "NULL"))
                     self.traffic_light_label_10.setText(_translate("self", "NULL"))
                     self.traffic_light_label_11.setText(_translate("self", "NULL"))
 

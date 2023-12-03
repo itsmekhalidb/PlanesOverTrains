@@ -20,19 +20,19 @@ class TrackModelUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_switch('13', 1)
-        self.assertEqual(tc.get_switch('13'), 1)
-        tc.set_switch('29', 0)
-        self.assertEqual(tc.get_switch('29'), 0)
+        tc.set_switch("Green",'13', 1)
+        self.assertEqual(tc.get_switch("Green",'13'), 1)
+        tc.set_switch("Green",'29', 0)
+        self.assertEqual(tc.get_switch("Green",'29'), 0)
 
     def test_lights(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_lights('150', 1)
-        self.assertEqual(tc.get_light('150'), 1)
-        tc.set_lights('150', 0)
-        self.assertEqual(tc.get_light('150'), 0)
+        tc.set_lights("Green",'150', 1)
+        self.assertEqual(tc.get_light("Green",'150'), 1)
+        tc.set_lights("Green",'150', 0)
+        self.assertEqual(tc.get_light("Green",'150'), 0)
 
     def test_track_status(self):
         ctc_cigs = CTCSignals()

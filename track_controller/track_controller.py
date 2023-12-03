@@ -14,15 +14,14 @@ class Track_Controller(object):
         # 1 = red, 0 = green
         self._lights = {"Green": {'1': 0, '13': 0, '28': 0, '150': 0, "62": 0, "76": 0, "77": 0, "85": 0,
                                   "100": 0},
-                        "Red": {'1': 0, '15': 0, '16': 0, '9': 0, '10': 0, '27': 0, '28': 0, '76': 0, '32': 0, '33': 0,
-                                '72': 0, '38': 0, '39': 0, '71': 0, '43': 0, '44': 0, '67': 0, '52': 0, '53': 0,
-                                '66': 0}}
+                        "Red": {'1': 0, '15': 0, '16': 0, '10': 0, '76': 0, '72': 0, '71': 0,
+                                '67': 0, '52': 0, '53': 0, '66': 0}}
         # 1 = left, 0 = right
         self._switches = {"Green": {'13': 0, '28': 0, '57': 0, '63': 0, '76': 0, '85': 0},
                           "Red": {'16': 0, '9': 0, '27': 0, '33': 0, '38': 0, '44': 0, '52': 0}}
-        self._red_switches = {}
         # crossing lights/gate
-        self._crossing_lights_gates = {'18': 0}
+        self._crossing_lights_gates = {"Green": {'18': 0},
+                                       "Red": {'47': 0}}
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -35,6 +34,8 @@ class Track_Controller(object):
         self._startup = 0
         # filepath
         self._filepath = ""
+
+        self._pos = 0
 
         # api signals
         self.ctc_ctrl_signals = ctcsignals
@@ -210,6 +211,59 @@ class Track_Controller(object):
 
     def get_train_out(self):
         return self._train_info
+
+    def get_next_token(self, line):
+        if self._pos < len(line):
+            token = line[self._pos]
+            self._pos += 1
+            return token
+        return '\0'  # Return null character to indicate end of input
+
+    def parse_expression(self, line: str):
+        result = self.parse_term(line)
+
+        while True:
+            op = self.get_next_token(line)
+            if op == "and" or op == "or":
+                term = self.parse_term(line)
+                if op == "and":
+                    result = result and term
+                else:
+                    result = result or term
+            else:
+                self._pos -= 1  # Put back the character if it's not an operator
+                break
+
+        return result
+
+    def parse_term(self, line):
+        result = self.parse_factor(line)
+
+        while True:
+            op = self.get_next_token(line)
+            if op == '!':
+                result = not result
+            else:
+                self._pos -= 1  # Put back the character if it's not an operator
+                break
+
+        return result
+
+    def parse_factor(self, line):
+        token = self.get_next_token(line)
+        if token.isalpha():
+            return self.get_occupancy(token)
+        elif token == '(':
+            result = self.parse_expression(line)
+            if self.get_next_token(line) != ')':
+                # Handle mismatched parentheses
+                print("Error: Mismatched parentheses")
+                exit(1)
+            return result
+        else:
+            # Handle unexpected characters
+            print(f"Error: Unexpected character '{token}'")
+            exit(1)
 
     def launch_ui(self):
         print("Launching Track Controller UI")

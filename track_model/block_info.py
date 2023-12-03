@@ -29,7 +29,7 @@ class block_info:
         #         "44" : [["67", "43"], [1, 1, 0]],
         #         "52" : [["53", "66"], [0, 1, 0]]}}
         self.switch_list = {
-            "blue" : 
+            "blue" :
                 {"5" : {"6" : 1, "11" : 1}},
             "green" :
                 {"0" : {"63" : 1, "name" : "63"},
@@ -43,7 +43,7 @@ class block_info:
                 "85" : {"86" : 1, "name" : "85"},
                 "100" : {"85" : 0, "name" : "85"},
                 "150" : {"28" : 0, "name" : "28"}},
-            "red" : 
+            "red" :
                 {"0" : {"9" : 0},
                 "1" : {"16" : 1},
                 "9" : {"10" : 1},
@@ -129,7 +129,7 @@ class block_info:
     
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
-        return self.switch_list.get(line, {})
+        return self.switch_list[line]
 
     def get_light_list(self, line):
         return self.light_list[line]

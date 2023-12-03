@@ -1,41 +1,67 @@
 class File_Parser():
-    def __init__(self, path: str):
-        self._occupancy = {"A1": 0}
-        self._path = path
+    def __init__(self):
+        self._occupancy = {}
+        self._pos = 0
+        self._line = ""
 
-    def parse(self, commands: str) -> bool:
-        temp = commands.split(" ")
-        if len(temp) <= 3:
-            if temp[0] != "not":
-                if temp[1] == "and":
-                    return self._occupancy[temp[0]] and self._occupancy[temp[2]]
-                elif temp[1] == "or":
-                    return self._occupancy[temp[0]] or  self._occupancy[temp[2]]
-                else :
-                    return self._occupancy[temp[0]]
+    def get_next_token(self):
+        if self._pos < len(self._line):
+            token = self._line[self._pos]
+            self._pos += 1
+            return token
+        return '\0'  # Return null character to indicate end of input
 
-        parenth = 0
-        thislist = []
+    def parse_expression(self):
+        result = self.parse_term()
 
-        for j in range(len(temp)):
-            for i in temp[j]:
-                if i == "(":
-                    parenth += 1
-                    if parenth == 1:
-                        temp[j] = temp[j][i:]
-                if i == ")":
-                    parenth -= 1
-                    if parenth == 0:
-                        temp[j] = temp[j][:i]
-                        thislist.append(temp[j])
-            if parenth > 0:
-                thislist.append(temp[j])
+        while True:
+            op = self.get_next_token()
+            if op == "and" or op == "or":
+                term = self.parse_term()
+                if op == "and":
+                    result = result and term
+                else:
+                    result = result or term
+            else:
+                self._pos -= 1  # Put back the character if it's not an operator
+                break
 
-        if len(thislist) > 0:
-            instr = " ".join(thislist)
-            logic = self.parse(self, instr)
-        else
-            return logic
+        return result
+
+    def parse_term(self):
+        result = self.parse_factor()
+
+        while True:
+            op = self.get_next_token()
+            if op == '!':
+                result = not result
+            else:
+                self._pos -= 1  # Put back the character if it's not an operator
+                break
+
+        return result
+
+    def parse_factor(self):
+        token = self.get_next_token()
+        if token.isalpha():
+            return token.upper() == 'T'
+        elif token == '(':
+            result = self.parse_expression()
+            if self.get_next_token() != ')':
+                # Handle mismatched parentheses
+                print("Error: Mismatched parentheses")
+                exit(1)
+            return result
+        else:
+            # Handle unexpected characters
+            print(f"Error: Unexpected character '{token}'")
+            exit(1)
+
+    def parse(self, line: str, occupancy: dict):
+        self._occupancy = occupancy
+        self._line = line
+        self.parse_expression()
+
 
 
 
