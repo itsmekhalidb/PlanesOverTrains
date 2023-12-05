@@ -288,7 +288,7 @@ class Schedule(object):
         self._switch_states = []
         for block in self.get_blocks_from_yard("green", dest_block):
             info = self._api._track_info.get_block_info('green', block)
-            if block not in self._route_info: # first appearance of block in this route
+            if str(block) not in self._route_info: # first appearance of block in this route
                 if block == dest_block: # halfway through station block
                     self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
                     self._total_authority = self._total_authority + info['length']/2
@@ -300,11 +300,11 @@ class Schedule(object):
                 # calculate time
             else: # not the first appearance
                 if block == dest_block: # halfway through station block
-                    self._route_info[str(block)][0].append([info['length']/2])
+                    self._route_info[str(block)][0].append(info['length']/2)
                     self._total_authority = self._total_authority + info['length']/2
                     self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
                 else:
-                    self._route_info[str(block)][0].append([info['length']])
+                    self._route_info[str(block)][0].append(info['length'])
                     self._total_authority = self._total_authority + info['length']
                     self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
 
@@ -395,6 +395,7 @@ class Schedule(object):
                 self._route_info[str(curr_block)][0][nonzero_index] = 0
             # print("CTC: change: " + str(change) + " route_info:" + str(self._route_info[str(curr_block)][0]) + " meters_s: " + str(meters_s))
             self._route_info[str(curr_block)][0][nonzero_index] = self._route_info[str(curr_block)][0][nonzero_index] - change
+            print(self._route_info)
             self.update_total_authority()
 
     def update_total_authority(self):
