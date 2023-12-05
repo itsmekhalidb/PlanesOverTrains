@@ -12,7 +12,7 @@ class block_info:
             self.filepath = filepath
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
-            print(self.get_switch_list('green'))
+
 
     def load_block_info(self, filepath: str):
         # 1 indicates blocks after count up, 0 indicates count down
@@ -32,7 +32,7 @@ class block_info:
         #         "44" : [["67", "43"], [1, 1, 0]],
         #         "52" : [["53", "66"], [0, 1, 0]]}}
         self.switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming]}, "name" : "name of switch"}}
-            "blue" : 
+            "blue" :
                 {"5" : {"6" : 1, "11" : 1}},
             "green" :
                 {"0" : {"63" : [1, 1], "name" : "63"},
@@ -46,7 +46,7 @@ class block_info:
                 "85" : {"86" : [1, 1], "name" : "85"},
                 "100" : {"85" : [0, 1], "name" : "85"},
                 "150" : {"28" : [0, 1], "name" : "28"}},
-            "red" : 
+            "red" :
                 {"0" : {"9" : 0},
                 "1" : {"16" : 1},
                 "9" : {"10" : 1},
@@ -64,7 +64,7 @@ class block_info:
                 "76" : {"27" : 0}}
         }
         self.light_list = {"blue" : ["5", "6", "11"],
-            "green" : ["1", "13", "28", "62", "76", "77", "85", "100", "150"],
+            "green" : ["1", "12", "29", "63", "76", "77", "85", "100", "101", "150"],
             "red" : ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
                 "39", "43", "44", "52", "53", "66", "67", "71", "72", "76"]}
         df = pd.read_excel(filepath)

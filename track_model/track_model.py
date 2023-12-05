@@ -20,7 +20,7 @@ class TrackModel(object):
         #--Track Model Variables--
 
         self._switch_position = {} #if train is switching tracks
-        self._light_colors = "" #color of signal lights
+        self._light_colors = {} #color of signal lights
         self._authority = 0.0 #how far train is permitted to travel
         self._gate_control = False #controls railway crossing gate
         self._commanded_speed = 0.0 #speed commanded by CTC
@@ -96,7 +96,8 @@ class TrackModel(object):
 
 
         #light colors
-        self.set_light_colors(self.get_light_colors())
+        self.set_light_colors(self._track_controller_signals._lights)
+
 
         #authority
         # self.set_authority(self._track_controller_signals._authority)
@@ -226,6 +227,7 @@ class TrackModel(object):
         if self.block_data.get_filepath() != "":
             self._switch_to = self.block_data.get_switch_list(train.line)
 
+
         try:
             if str(train.current_block) in self._switch_position.keys():
                 if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
@@ -304,10 +306,10 @@ class TrackModel(object):
         return self._switch_position
 
     #Light Colors
-    def set_light_colors(self, _light_colors: str):
+    def set_light_colors(self, _light_colors: {}):
         self._light_colors = _light_colors
 
-    def get_light_colors(self) -> str:
+    def get_light_colors(self) -> {}:
         return self._light_colors
 
     #Gate Control
