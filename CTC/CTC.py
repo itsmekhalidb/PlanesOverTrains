@@ -336,7 +336,15 @@ class Schedule(object):
                                 next_block = curr_block-1
                 # self._switch_states.append([options["name"], ) # for forks at red line
             else: # more than one option
-                print("meow")
+                if line == "green": # only multiple options for the one going to yard, don't go to yard
+                    for entry in options:
+                        if entry != "name" and entry != "0":
+                            next_block = int(entry)
+                            dir = options[entry][0]
+                            break
+                elif line == "red":
+                    print("meow")
+
             result = self.get_blocks_from_yard(line, dest_block, next_block, result, dir)
             result.append(curr_block)
 
@@ -395,7 +403,6 @@ class Schedule(object):
                 self._route_info[str(curr_block)][0][nonzero_index] = 0
             # print("CTC: change: " + str(change) + " route_info:" + str(self._route_info[str(curr_block)][0]) + " meters_s: " + str(meters_s))
             self._route_info[str(curr_block)][0][nonzero_index] = self._route_info[str(curr_block)][0][nonzero_index] - change
-            print(self._route_info)
             self.update_total_authority()
 
     def update_total_authority(self):
