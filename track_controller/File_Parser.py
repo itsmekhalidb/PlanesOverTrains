@@ -22,6 +22,8 @@ class File_Parser():
                     result = result and term
                 else:
                     result = result or term
+            elif op == "switch" or op == "light":
+                self.operator = op
             else:
                 self._pos -= 1  # Put back the character if it's not an operator
                 break
