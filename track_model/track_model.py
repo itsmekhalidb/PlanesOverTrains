@@ -203,9 +203,9 @@ class TrackModel(object):
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].time)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block, self._TrainModels.train_apis[index].cum_distance])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block]
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block,  self._TrainModels.train_apis[index].cum_distance]
         # print(self._current_block)
 
 
