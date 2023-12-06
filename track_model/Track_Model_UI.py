@@ -39,7 +39,7 @@ class Ui_MainWindow(QMainWindow):
         self.light_list = {}
         self.light_status = 0
 
-        self.environment_temp = random.randrange(65,75)
+        self.environment_temp = float(random.randrange(65,75))
         self.setupUi()
         self.show()
 
@@ -64,7 +64,7 @@ class Ui_MainWindow(QMainWindow):
         #                                 "color: rgb(255, 255, 255)")
         # self.track_heater.setObjectName("track_heater")
         self.red_button = QtWidgets.QPushButton(self.trackmodel_main)
-        self.red_button.setGeometry(QtCore.QRect(170,10,90,41))
+        self.red_button.setGeometry(QtCore.QRect(140,10,90,41))
         self.red_button.setText("Red Line")
         self.red_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.red_button.clicked.connect(lambda: self.red_clicked())
@@ -74,7 +74,7 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.green_button = QtWidgets.QPushButton(self.trackmodel_main)
-        self.green_button.setGeometry(QtCore.QRect(270,10,90,41))
+        self.green_button.setGeometry(QtCore.QRect(240,10,90,41))
         self.green_button.setText("Green Line")
         self.green_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.green_button.clicked.connect(lambda: self.green_clicked())
@@ -91,7 +91,7 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
-        self.load_file.setGeometry(QtCore.QRect(390,10,80,41))
+        self.load_file.setGeometry(QtCore.QRect(340,10,80,41))
         self.load_file.setText("Load File")
         self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
         self.load_file.setCursor(Qt.PointingHandCursor)
@@ -417,7 +417,7 @@ class Ui_MainWindow(QMainWindow):
         self.track_heater.clicked.connect(self.heater_failure_clicked)
 
         self.t_temp_control = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_temp_control.setGeometry(QtCore.QRect(530, 10, 321, 41))
+        self.t_temp_control.setGeometry(QtCore.QRect(490, 10, 165, 41))
         self.t_temp_control.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.t_temp_control.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
@@ -425,10 +425,18 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.t_temp_control.setObjectName("t_temp_control")
         self.temp_control = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.temp_control.setGeometry(QtCore.QRect(780, 10, 71, 41))
+        self.temp_control.setGeometry(QtCore.QRect(665, 10, 71, 41))
         self.temp_control.setStyleSheet("border: 2px solid black;")
         self.temp_control.setObjectName("temp_control")
         self.temp_control.setValue(70)
+
+        self.heater_temp = QtWidgets.QLabel(self.trackmodel_main)
+        self.heater_temp.setGeometry(QtCore.QRect(755,10,71,41))
+        self.heater_temp.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+"border: 2px solid black;\n"
+"background-color: rgb(255, 255, 255);")
+        self.heater_temp.setAlignment(QtCore.Qt.AlignCenter)
+
 
         self.env_temp = QtWidgets.QLabel(self.trackmodel_main)
         self.env_temp.setGeometry(QtCore.QRect(860,10,150,41))
@@ -542,6 +550,7 @@ class Ui_MainWindow(QMainWindow):
         self.e_temp.raise_()
         self.red_light.raise_()
         self.green_light.raise_()
+        self.heater_temp.raise_()
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -551,7 +560,7 @@ class Ui_MainWindow(QMainWindow):
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         self.light_list = self.track_model.get_light_colors()
-        print(self.light_status)
+        self.up_temp()
 
 
         #self.clock.setText(self.track_model.get_time())
@@ -679,7 +688,7 @@ class Ui_MainWindow(QMainWindow):
         self.circuit_failure.setText(_translate("MainWindow", "Off"))
         self.t_heater_fail.setText(_translate("MainWindow", "Track Heater Failure"))
         self.track_heater.setText(_translate("MainWindow", "Off"))
-        self.t_temp_control.setText(_translate("MainWindow", "Track Heater Control"))
+        self.t_temp_control.setText(_translate("MainWindow", "Track Heaters"))
 
     def browse_files(self):
         browse = QFileDialog.getOpenFileName(self.load_file)
@@ -787,7 +796,10 @@ class Ui_MainWindow(QMainWindow):
         except Exception as e:
             print(e)
 
-
+    def up_temp(self):
+        sign = random.choice([-1,1])
+        self.environment_temp += sign * .001
+        self.e_temp.setText(str(format(self.environment_temp,".1f")))
 
 
 
