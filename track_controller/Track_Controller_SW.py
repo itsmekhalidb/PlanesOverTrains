@@ -1076,36 +1076,44 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
 
     def PLC(self):
-        self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))
-        self.sect_D_occ = bool(self.track_controller.get_occupancy('13') or self.track_controller.get_occupancy('14') or self.track_controller.get_occupancy('15')
-                               or self.track_controller.get_occupancy('16'))
-        self.sect_E_occ = bool(self.track_controller.get_occupancy('17') or self.track_controller.get_occupancy('18') or self.track_controller.get_occupancy('19')
-                               or self.track_controller.get_occupancy('20'))
-        self.sect_F_occ = bool(self.track_controller.get_occupancy('21') or self.track_controller.get_occupancy('22') or self.track_controller.get_occupancy('23')
-                               or self.track_controller.get_occupancy('24') or self.track_controller.get_occupancy('25') or self.track_controller.get_occupancy('26')
-                               or self.track_controller.get_occupancy('27') or self.track_controller.get_occupancy('28'))
-        self.sect_Z_occ = bool(self.track_controller.get_occupancy('147') or self.track_controller.get_occupancy('148') or self.track_controller.get_occupancy('149')
-                               or self.track_controller.get_occupancy('150'))
+            if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
+                f = open(self.track_controller._plc_input["Green 1"], "r")
 
-        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label.text(),
-                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
-        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_2.text(),
-                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
-        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_3.text(),
-                                         not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
-        self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_4.text(),
-                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
-        # self.track_controller.set_lights(self.traffic_light_label_5.text(),
-        #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
 
-        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_1.text(),
-                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
-        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_2.text(),
-                                         not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
-        self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_3.text(),
-                                         1)
+                self.track_controller.parse_expression()
 
-        self.track_controller.set_railway_crossing('18', self.sect_E_occ)
+
+    # def PLC(self):
+    #     self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))
+    #     self.sect_D_occ = bool(self.track_controller.get_occupancy('13') or self.track_controller.get_occupancy('14') or self.track_controller.get_occupancy('15')
+    #                            or self.track_controller.get_occupancy('16'))
+    #     self.sect_E_occ = bool(self.track_controller.get_occupancy('17') or self.track_controller.get_occupancy('18') or self.track_controller.get_occupancy('19')
+    #                            or self.track_controller.get_occupancy('20'))
+    #     self.sect_F_occ = bool(self.track_controller.get_occupancy('21') or self.track_controller.get_occupancy('22') or self.track_controller.get_occupancy('23')
+    #                            or self.track_controller.get_occupancy('24') or self.track_controller.get_occupancy('25') or self.track_controller.get_occupancy('26')
+    #                            or self.track_controller.get_occupancy('27') or self.track_controller.get_occupancy('28'))
+    #     self.sect_Z_occ = bool(self.track_controller.get_occupancy('147') or self.track_controller.get_occupancy('148') or self.track_controller.get_occupancy('149')
+    #                            or self.track_controller.get_occupancy('150'))
+    #
+    #     self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label.text(),
+    #                                      not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+    #     self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_2.text(),
+    #                                      not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+    #     self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_3.text(),
+    #                                      not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+    #     self.track_controller.set_lights(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.traffic_light_label_4.text(),
+    #                                      not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+    #     # self.track_controller.set_lights(self.traffic_light_label_5.text(),
+    #     #                                  not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ))
+    #
+    #     self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_1.text(),
+    #                                      not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_A_occ)))
+    #     self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_2.text(),
+    #                                      not(not (self.sect_F_occ or self.sect_E_occ or self.sect_D_occ) and (self.sect_Z_occ)))
+    #     self.track_controller.set_switch(self.wayside_ctrl_comboBox.currentText().split(' ')[0], self.switch_label_3.text(),
+    #                                      1)
+    #
+    #     self.track_controller.set_railway_crossing('18', self.sect_E_occ)
 
     def ChangeVisibility(self):
         if self.switch_label_1.text() == "NULL":

@@ -35,6 +35,8 @@ class Track_Controller(object):
         self._startup = 0
         # filepath
         self._filepath = ""
+        # which plc actions are being taken
+        self.operator = "switch"
 
         self._pos = 0
 
@@ -231,6 +233,8 @@ class Track_Controller(object):
                     result = result and term
                 else:
                     result = result or term
+            elif op == "switch" or op == "light":
+                self.operator = op
             else:
                 self._pos -= 1  # Put back the character if it's not an operator
                 break
@@ -252,7 +256,7 @@ class Track_Controller(object):
 
     def parse_factor(self, line):
         token = self.get_next_token(line)
-        if token.isalpha():
+        if token.isdigit():
             return self.get_occupancy(token)
         elif token == '(':
             result = self.parse_expression(line)
