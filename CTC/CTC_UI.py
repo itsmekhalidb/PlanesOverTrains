@@ -747,16 +747,12 @@ class CTC_Main_UI(QMainWindow):
 
     # change time speed when spinbox changed
     def change_time_speed(self, speed):
+        # only 1, 2, or 10
         if speed > 2 and speed < 10 and speed > self.prev_speed:
-            # our code is so dumb and for some reason using a constant of 5 makes it 10x speed
             speed = 10
-            self.ctc.set_time_scaling(5)
         elif speed > 2 and speed < 10 and speed < self.prev_speed:
             speed = 2
-            self.ctc.set_time_scaling(speed)
-        else:
-            self.ctc.set_time_scaling(speed)
-            
+        self.ctc.set_time_scaling(speed)            
         self.red_system_speed_spnbx_3.setValue(speed)
         self.system_speed_spnbx_3.setValue(speed)
         self.prev_speed = speed
