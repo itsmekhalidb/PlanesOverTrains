@@ -32,6 +32,8 @@ class block_info:
         #         "44" : [["67", "43"], [1, 1, 0]],
         #         "52" : [["53", "66"], [0, 1, 0]]}}
         self.switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming]}, "name" : "name of switch"}}
+            #1 is forward 0 is backward
+            #to go from here to there, you will be moving in this direction, you must enter from this direction, name of switch
             "blue" :
                 {"5" : {"6" : 1, "11" : 1}},
             "green" :
