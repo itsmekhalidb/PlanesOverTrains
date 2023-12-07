@@ -101,8 +101,9 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_3.setMaximum(10)
         self.system_speed_spnbx_3.setMinimum(0)
         self.system_speed_spnbx_3.setValue(1)
-        self.system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
-        self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value(), 0))
+        self.prev_speed = 1
+        # self.system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
+        self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value()))
         self.header = QtWidgets.QLabel(self.green_train_view_page)
         self.header.setGeometry(QtCore.QRect(0, 0, 676, 51))
         font = QtGui.QFont()
@@ -355,9 +356,9 @@ class CTC_Main_UI(QMainWindow):
         self.red_system_speed_spnbx_3.setMaximum(10)
         self.red_system_speed_spnbx_3.setMinimum(0)
         self.red_system_speed_spnbx_3.setValue(1)
-        self.red_system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
+        # self.red_system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
         self.red_system_speed_spnbx_3.valueChanged.connect(
-            lambda: self.change_time_speed(self.red_system_speed_spnbx_3.value(), 0))
+            lambda: self.change_time_speed(self.red_system_speed_spnbx_3.value()))
         self.red_header = QtWidgets.QLabel(self.red_train_view_page)
         self.red_header.setGeometry(QtCore.QRect(0, 0, 676, 51))
         font = QtGui.QFont()
@@ -745,12 +746,20 @@ class CTC_Main_UI(QMainWindow):
     
 
     # change time speed when spinbox changed
-    def change_time_speed(self, speed, screen):
-        self.ctc.set_time_scaling(speed)
-        if screen == 0:
-            self.red_system_speed_spnbx_3.setValue(speed)
+    def change_time_speed(self, speed):
+        if speed > 2 and speed < 10 and speed > self.prev_speed:
+            # our code is so dumb and for some reason using a constant of 5 makes it 10x speed
+            speed = 10
+            self.ctc.set_time_scaling(5)
+        elif speed > 2 and speed < 10 and speed < self.prev_speed:
+            speed = 2
+            self.ctc.set_time_scaling(speed)
         else:
-            self.system_speed_spnbx_3.setValue(speed)
+            self.ctc.set_time_scaling(speed)
+            
+        self.red_system_speed_spnbx_3.setValue(speed)
+        self.system_speed_spnbx_3.setValue(speed)
+        self.prev_speed = speed
     
 
     # display section names
