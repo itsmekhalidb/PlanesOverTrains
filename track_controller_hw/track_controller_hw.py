@@ -56,7 +56,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
         # serial port connection object
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -89,7 +89,7 @@ class Track_Controller_HW(object):
             send = "1"
             send += self.get_plc_logic().parse()
             print("Serial: " + send)
-            self.get_ard().write(send.encode('utf-8'))
+            #self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -134,7 +134,7 @@ class Track_Controller_HW(object):
 
         # used to recieve info from the Ardunio
 
-        self.receive()
+        #self.receive()
         """
         if self.get_automatic() != self.get_previous():
             if not self.get_automatic():
@@ -150,7 +150,7 @@ class Track_Controller_HW(object):
             send_string = "1"
             send_string += self.get_plc_logic().parse()
             print("Serial: " + send_string)
-            self.get_ard().write(send_string.encode('utf-8'))
+            #self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
         self.set_previous_blocks(self.track_ctrl_signals._occupancy)
@@ -160,7 +160,7 @@ class Track_Controller_HW(object):
             # print("Changes Occupancy")
             self.set_occupied(self.get_previous_blocks())
             # print("Occ In Statement:" + str(self.get_occupied()))
-            self.send_occupied()
+            #self.send_occupied()
 
         if thread:
             threading.Timer(.1, self.update).start()
