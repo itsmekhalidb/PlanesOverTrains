@@ -131,9 +131,8 @@ class CTC(object):
     #     self.TrackCTRLSignal._track_section_status = self._closed_blocks
     def update_authorities(self):
         for train in self._trains:
-            if train.get_actual_velocity() != 0:
-                train.update_authority(self._time_scaling)
-                # print(train.get_train_number(), train.get_total_auth_speed_info())
+            train.update_authority(self._time_scaling)
+            # print(train.get_train_number(), train.get_total_auth_speed_info())
     def check_filepath(self):
         return self.TrackCTRLSignal._filepath != ""
 
@@ -163,7 +162,7 @@ class CTC(object):
                 self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
                 self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
                 self.TrackCTRLSignal._time = self._time
-                self.update_authorities()
+                # self.update_authorities()
 
             self.TrackCTRLSignal._train_out = self.create_departures()
             for train in self._trains:
@@ -209,6 +208,7 @@ class CTC(object):
             # print("act_vel: " + str(train[0]))
             self._trains[i].set_actual_velocity(train[0])
             self._trains[i].set_current_block(train[1])
+            self._trains[i].set_cum_distance(train[2])
             i = i+1
 
 
@@ -280,6 +280,8 @@ class Train(object):
         self._actual_velocity = vel
     def set_current_block(self, blk):
         self._current_block = blk
+    def set_cum_distance(self, cd):
+        self._schedule[0].update_cum_distance(cd, self._current_block)
 
 
 
@@ -292,12 +294,22 @@ class Schedule(object):
         self._route_info = {}
         self._total_authority = 0
         self._total_time = timedelta()
+        self._prev_cum_distance = 0
+
+        self._blocks_arrs = []
+        self._temp_block_arr = []
+        self._temp_block_arr.append(0)
+        self._station_info = self._api._track_info.get_station_list()["green"]
+        self._arr_num = 0
+
         self._switches = self._api._track_info.get_switch_list("green")
         self._switch_states = []
+
         if outbound == 1: # going to station
             output = self.get_blocks_to_dest("green", i_block)
             for block in output[0]:
                 info = self._api._track_info.get_block_info('green', block)
+                # route info stuff
                 if str(block) not in self._route_info: # first appearance of block in this route
                     if block == i_block: # halfway through station block
                         self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
@@ -361,10 +373,18 @@ class Schedule(object):
             self._yard_block = 0 # yard, where trains start
             self._last_dir = -1 # who cares
 
-        print(self._route_info)
+        # print("cool arrays: ", self._blocks_arrs)
+        # print(self._route_info)
 
     # get blocks between yard and station
     def get_blocks_to_dest(self, line, dest_block, curr_block = 63, result = [], dir = 1):
+        # block arr stuff
+        self._temp_block_arr.append(curr_block)
+        if any(curr_block in array for array in self._station_info.values()):
+            self._blocks_arrs.append(self._temp_block_arr)
+            self._temp_block_arr = []
+            self._temp_block_arr.append(curr_block)
+
         if curr_block == dest_block: # at station
             result.append([])
             result.append(dir)
@@ -406,10 +426,17 @@ class Schedule(object):
                 next_block = curr_block-1
             result = self.get_blocks_to_dest(line, dest_block, next_block, result, dir)
             result[0].append(curr_block)
+        
         return result
 
     # return to yard
     def get_blocks_to_yard(self, line, curr_block, starting_block, dir, result = []):
+        # block arr stuff
+        self._temp_block_arr.append(curr_block)
+        if any(curr_block in array for array in self._station_info.values()):
+            self._blocks_arrs.append(self._temp_block_arr)
+            self._temp_block_arr = []
+            self._temp_block_arr.append(curr_block)
         dest_block = 0
         if curr_block == dest_block: # at yard
             result.append(curr_block)
@@ -471,23 +498,65 @@ class Schedule(object):
         else:
             return 0
 
-    def update_authority(self, actual_velocity, curr_block, time_scaling):
+    # def update_authority(self, actual_velocity, curr_block, time_scaling):
+    #     if str(curr_block) in self._route_info:
+    #         meters_s = actual_velocity
+    #         # meters_s = actual_velocity * (1000/3600)
+    #         change = meters_s * time_scaling * 0.1
+    #         # find the index of the first nonzero value in the array
+    #         nonzero_index = next((i for i, value in enumerate(self._route_info[str(curr_block)][0]) if value != 0), None)
+
+    #         if curr_block != self._yard_block and nonzero_index is not None:
+    #             change = change - self._route_info[str(curr_block)][0][nonzero_index]
+    #             self._route_info[str(curr_block)][0][nonzero_index] = 0
+    #         # print("CTC: change: " + str(change) + " route_info:" + str(self._route_info[str(curr_block)][0]) + " meters_s: " + str(meters_s))
+    #         self._route_info[str(curr_block)][0][nonzero_index] = self._route_info[str(curr_block)][0][nonzero_index] - change
+    #         self.update_total_authority()
+
+    def update_cum_distance(self, cd, curr_block):
         if str(curr_block) in self._route_info:
-            meters_s = actual_velocity
-            # meters_s = actual_velocity * (1000/3600)
-            change = meters_s * time_scaling * 0.1
             # find the index of the first nonzero value in the array
             nonzero_index = next((i for i, value in enumerate(self._route_info[str(curr_block)][0]) if value != 0), None)
 
-            if curr_block != self._yard_block and nonzero_index is not None:
-                change = change - self._route_info[str(curr_block)][0][nonzero_index]
-                self._route_info[str(curr_block)][0][nonzero_index] = 0
-            # print("CTC: change: " + str(change) + " route_info:" + str(self._route_info[str(curr_block)][0]) + " meters_s: " + str(meters_s))
-            self._route_info[str(curr_block)][0][nonzero_index] = self._route_info[str(curr_block)][0][nonzero_index] - change
-            self.update_total_authority()
+            cum_change = cd - self._prev_cum_distance
+            self._prev_cum_distance = cd
 
-    def update_total_authority(self):
+            if cum_change < 0: # moved on to next block
+                # find the index of the first nonzero value in the previous block
+                nonzero_index_prev = next((i for i, value in enumerate(self._route_info[str(curr_block-1)][0]) if value != 0), None)
+                cum_change = 0
+                self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(curr_block-1)][0][nonzero_index_prev]
+                self._route_info[str(curr_block-1)][0][nonzero_index_prev] = 0
+                if any(curr_block in array for array in self._station_info.values()): # if it's a station block and we're past halfway
+                    self._arr_num += 1
+
+            self._route_info[str(curr_block)][0][nonzero_index] -= cum_change
+            
+            # print(self._route_info)
+
+            self.update_total_authority(curr_block, nonzero_index)
+
+    def update_total_authority(self, curr_block, nonzero_index):
         res = 0
-        for block in self._route_info:
-            res = res + sum(self._route_info[block][0])
+        # old formula to sum all 
+        # for block in self._route_info:
+        #     res = res + sum(self._route_info[block][0])
+
+        # add authorities in this array
+        if self._arr_num < len(self._blocks_arrs):
+            curr_arr = self._blocks_arrs[self._arr_num]
+            for block in curr_arr:
+                block_pos = curr_arr.index(block)
+                curr_block_pos = curr_arr.index(curr_block)
+                if block_pos == curr_block_pos:
+                    res += self._route_info[str(curr_block)][0][nonzero_index]
+                    if any(block in array for array in self._station_info.values()):
+                        info = self._api._track_info.get_block_info('green', block)
+                        res -= info['length']/2
+                elif block_pos > curr_block_pos:
+                    new_nonzero = nonzero_index = next((i for i, value in enumerate(self._route_info[str(block)][0]) if value != 0), None)
+                    if any(block in array for array in self._station_info.values()):
+                        res += self._route_info[str(block)][0][new_nonzero]/2
+                    else:
+                        res += self._route_info[str(block)][0][new_nonzero]
         self._total_authority = res
