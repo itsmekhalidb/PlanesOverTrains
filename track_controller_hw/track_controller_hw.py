@@ -1,3 +1,4 @@
+import os
 import threading
 import traceback
 import datetime
@@ -75,8 +76,8 @@ class Track_Controller_HW(object):
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
         self._start_up = 0
-        self._plc_logic = File_Parser("C:/Users/jmkla/Documents/College/Senior/Trains/PlanesOverTrains_V2"
-                                      "/track_controller_hw/PLC1.txt")
+        self._plc_logic = File_Parser(
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "track_controller_hw", "PLC1.txt")))
 
         self.update()
 
