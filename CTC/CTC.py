@@ -246,6 +246,8 @@ class Train(object):
         if sched._total_time < time_to_arrival:
             self._schedule.append(sched)
             self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), api)
+        else:
+            print("fuck you fucking idiot thats too fucking early")
 
     # create schedule going back to yard
     def yard_schedule(self, starting_block, last_dir, arr_time, api):
@@ -384,6 +386,7 @@ class Schedule(object):
 
         # print("cool arrays: ", self._blocks_arrs)
         # print(self._route_info)
+        # print(self._total_time)
 
     # get blocks between yard and station
     def get_blocks_to_dest(self, line, dest_block, curr_block = 63, result = [], dir = 1):
