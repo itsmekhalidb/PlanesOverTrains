@@ -1,18 +1,16 @@
 // Include library code
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include <map>
-#include <vector>
 
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
 
-int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+int green[150] = {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0};
 
 //String commanded[150];
 
@@ -25,6 +23,13 @@ String current_block = "F28";
 const int LIGHTNUMBER = 4;
 const int SWITCHNUMBER = 3;
 
+char flogic[50];
+char dlogic[50];
+char ilogic[50];
+int Fsize = 0;
+int Dsize = 0;
+int Isize = 0;
+
 
 bool manual = true;
 bool switch_change = true;
@@ -34,11 +39,8 @@ bool FED = false;
 bool ABC = false;
 bool ZYX = false;
 
-int switch_d13_logic[32];
-int switch_f28_logic[32];
-int light_a1_logic[2];
-int light_c12_logic[2];
-int light
+String boolean_logic = "DFAZ0 EFAZ1";
+
 
 int Detect_LED = 2;
 int Red_LED = 3;
@@ -78,44 +80,219 @@ void update_blocks(){
   for(int i = 12; i < 28; i++){
     FED = FED || bool(green[i]);
   }
-
 }
-/*
-String Structure by Index
 
-First two tokens 
-***************************
-First = FED, Second = ABC, Third = ZYX, Fourth = Switch D13 or Switch F28
-
-Remaining Tokens 
-***************************
-First = Switch D13 or Switch F28, Second = Light A1 or C12 or Light G29 or Z150
-*/
-
-void PLC(String incomingData){
-
-  String values[6];
-  int tokenCount = 0;
-    // Split the string by space
-  while (incomingData.length() > 0 && tokenCount < 6) {
-    // Find the position of the first space
-    int spaceIndex = incomingData.indexOf(' ');
-    
-    // Extract the substring before the space
-    String token = incomingData.substring(0, spaceIndex);
-    
-    // Add the token to the array
-    values[tokenCount++] = token;
-    
-    // Remove the processed part (including the space)
-    incomingData = incomingData.substring(spaceIndex + 1);
+bool parsePLC(char logic){
+  if(logic == 'F'){
+    return FED;
   }
-  for(int i = 0; i < values[0].length(); i++){
-    String value = values[0].substring(i,i+1);
+  else if(logic == 'A'){
+    return ABC;
+  }
+  else if(logic == 'Z'){
+    return ZYX;
+  }
+  else if(logic == 'f'){
+    return !FED;
+  }
+  else if(logic == 'a'){
+    return !ABC;
+  }
+  else if(logic == 'z'){
+    return !ZYX;
+  }
+  else{
+    return false;
+  }
+}
 
+void PLC(){
+  int prev_value = 0;
+  int index = 0;
+  bool light_switch = false;
+  for(int i = 0; i < SWITCHNUMBER; i++){
+    if(current_block == switches[i].name){
+      prev_value = switches[i].value;
+      index = i;
+      light_switch = false;
+    }
+  }
+  for(int i = 0; i < LIGHTNUMBER; i++){
+    if(current_block == lights[i].name){
+      prev_value = lights[i].value;
+      index = i;
+      light_switch = true;
+    }  
+  }
+
+  int indexF = Fsize;
+  int For_and = 0;
+  bool resultF;
+  if(flogic[indexF-1] == '0'){
+    For_and = 0;
+  }
+  else if(flogic[indexF-1] == '1'){
+    For_and = 1;
+  }
+  indexF--;
+  resultF = parsePLC(flogic[indexF-1]);
+  indexF--;
+  while(indexF > 0){
+    char logic = flogic[indexF-1];
+    if(For_and == 0){
+      resultF = resultF || parsePLC(logic);
+    }
+    else if(For_and == 1){
+      resultF = resultF && parsePLC(logic);
+    }
+    indexF--;
+  }
+  switches[1].value = resultF;
+  if(resultF == 0){
+    lights[2].value = 0;
+    lights[3].value = 1;
+  }
+  else{
+    lights[2].value = 1;
+    lights[3].value = 0;
+  }
+  Serial.print("F28/"+ String(switches[1].value) + " G29/" + String(lights[2].value) + " Z150/" + String(lights[3].value) + "\n");
+
+  int indexD = Dsize;
+  int Dor_and = 0;
+  bool resultD;
+  if(dlogic[indexD-1] == '0'){
+    Dor_and = 0;
+  }
+  else if(dlogic[indexD-1] == '1'){
+    Dor_and = 1;
+  }
+  indexD--;
+  resultD = parsePLC(dlogic[indexD-1]);
+  indexD--;
+  while(indexD > 0){
+    char logic = dlogic[indexD-1];
+    if(Dor_and == 0){
+      resultD = resultD || parsePLC(logic);
+    }
+    else if(Dor_and == 1){
+      resultD = resultD && parsePLC(logic);
+    }
+    indexD--;
+  }
+  switches[0].value = resultD;
+  if(resultD == 0){
+    lights[0].value = 1;
+    lights[1].value = 0;
+  }
+  else{
+    lights[0].value = 0;
+    lights[1].value = 1;
+  }
+  Serial.print("D13/"+ String(switches[0].value) + " A1/" + String(lights[0].value) + " C12/" + String(lights[1].value) + "\n");
+
+  int indexI = Isize;
+  int Ior_and = 0;
+  bool resultI;
+  if(ilogic[indexI-1] == '0'){
+    Ior_and = 0;
+  }
+  else if(ilogic[indexI-1] == '1'){
+    Ior_and = 1;
+  }
+  indexI--;
+  resultI = parsePLC(ilogic[indexI-1]);
+  indexI--;
+  while(indexI > 0){
+    char logic = ilogic[indexI-1];
+    if(Ior_and == 0){
+      resultI = resultI || parsePLC(logic);
+    }
+    else if(Ior_and == 1){
+      resultI = resultI && parsePLC(logic);
+    }
+    indexI--;
+  }
+  switches[2].value = resultI;
+  Serial.print("I57/"+ String(switches[2].value)+ "\n");
+
+  if(light_switch){
+    if(lights[index].name == current_block){
+      if(lights[index].value != prev_value){
+        display_block(current_block);
+      }
+    }
+  }
+  else if(!light_switch){
+    if(switches[index].name == current_block){
+      if(switches[index].value != prev_value){
+        display_block(current_block);
+      }
+    }
+  }
+}
+
+void populateLogic(String expression) {
+  // Default result if expression is not recognized
+  // Iterate through the characters in the expression
+  
+  int index = 0;
+  int switch_type = -1;
+  while(expression.length() > index){
+    char currentChar = expression.charAt(index);
+    if(index == 0){
+      if(currentChar == 'D'){
+        switch_type = 0;
+        Dsize = 0;
+      }
+      else if(currentChar == 'E'){
+        switch_type = 1;
+        Fsize = 0;
+      }
+      else if(currentChar == 'J'){
+        switch_type = 2;
+        Isize = 0;
+      }
+    }
+    else{
+      if(switch_type == 0){
+        dlogic[Dsize] = currentChar;
+        Dsize++;
+      }
+      else if(switch_type == 1){
+        flogic[Fsize] = currentChar;
+        Fsize++;
+      }
+      else if(switch_type == 2){
+        ilogic[Isize] = currentChar;
+        Isize++;
+      }
+    }
+    index++;
+  }  
+}
+
+
+void PLCSplit(String incoming) {
+  // Split the string by space
+  int spaceIndex = incoming.indexOf(' ');
+
+  while (spaceIndex != -1) {
+    // Find the position of the first space
+    spaceIndex = incoming.indexOf(' ');
+
+    // Extract the substring before the space
+    String token = incoming.substring(0, spaceIndex);
+
+    populateLogic(token);
+    // Remove the processed part (including the space)
+    incoming = incoming.substring(spaceIndex + 1);
+
+    // Find the position of the next space
+    spaceIndex = incoming.indexOf(' ');
   }
   
-
+  populateLogic(incoming);
 }
 
 void display_block(String block_number){
@@ -169,8 +346,10 @@ void Receiver(){
   if(detect.equals("0")){
     current_block = incomingData.substring(1,incomingData.length());
     display_block(current_block);
-    lcd1.setCursor(0,1);
-    lcd1.print("Block");
+  }
+  else if(detect.equals("1")){
+    boolean_logic = incomingData.substring(1,incomingData.length());
+    PLCSplit(boolean_logic);
   }
 
   //read the block occupancy -- PLC
@@ -178,8 +357,6 @@ void Receiver(){
     for(int i = 0; i < 150; i++){
       green[i] = 0;
     }
-    lcd1.setCursor(0,1);
-    lcd1.print(String(incomingData));
     String occupancy = incomingData.substring(2, incomingData.length());
    // lcd1.print(occupancy.length());
     while(occupancy.length() > 0){  
@@ -205,7 +382,10 @@ void Receiver(){
    // lcd1.setCursor(0,2);
    // lcd1.print(String(green[76]));
   }
+  lcd1.setCursor(0,1);
+  lcd1.print(String(incomingData));
   incomingData = "";
+}
 
 void autoManual(){
   int reading = digitalRead(6);
@@ -221,17 +401,17 @@ void changeSwitch(){
       if(switches[i].name == current_block){
         if(switches[i].value == 0){
           switches[i].value = 1;
-              lcd1.setCursor(0,2);
-              lcd1.print("               ");
-              lcd1.setCursor(0,2);
-              lcd1.print("Switch: Left");
+          lcd1.setCursor(0,2);
+          lcd1.print("               ");
+          lcd1.setCursor(0,2);
+          lcd1.print("Switch: Left");
         }
         else{
           switches[i].value = 0;
-              lcd1.setCursor(0,2);
-              lcd1.print("                ");
-              lcd1.setCursor(0,2);
-              lcd1.print("Switch: Right");
+          lcd1.setCursor(0,2);
+          lcd1.print("                ");
+          lcd1.setCursor(0,2);
+          lcd1.print("Switch: Right");
         }
         Serial.print(current_block + "/"+ String(switches[i].value));
         break;
@@ -309,16 +489,11 @@ void setup() {
 }
 
 void loop() {
-  /*
-  Receiver();
-  if(manual){
-    PLC();
-  }
-  */
+  
   Receiver();
   update_blocks();
   crossingLights();
-  autoManual();
+  autoManual(); 
   if(!manual){
     changeSwitch();
     changeLight();
@@ -332,9 +507,10 @@ void loop() {
     lcd1.print("      ");
     lcd1.setCursor(0,3);
     lcd1.print("Auto");
-   // PLC();
+    lcd1.setCursor(0,0);
+    PLC();
   }
-  delay(100);
+  delay(500);
 
   //transmit(); 
 }

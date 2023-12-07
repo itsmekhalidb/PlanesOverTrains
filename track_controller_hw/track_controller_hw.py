@@ -56,7 +56,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
         # serial port connection object
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -74,12 +74,24 @@ class Track_Controller_HW(object):
         # signals from the APIs to get/set
         self.ctc_ctrl_signals = ctcsignals
         self.track_ctrl_signals = tracksignals
+        self._start_up = 0
+        self._plc_logic = File_Parser("C:/Users/jmkla/Documents/College/Senior/Trains/PlanesOverTrains_V2"
+                                      "/track_controller_hw/PLC1.txt")
 
         self.update()
 
     # Variables
     def update(self, thread=True):
         # Interal inputs
+
+        if self.get_start_up() == 100:
+            self.get_plc_logic().parse()
+            send = "1"
+            send += self.get_plc_logic().parse()
+            print("Serial: " + send)
+            self.get_ard().write(send.encode('utf-8'))
+            self.set_start_up(self.get_start_up() + 1)
+        self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
 
         # CTC Office Inputs
@@ -122,7 +134,7 @@ class Track_Controller_HW(object):
 
         # used to recieve info from the Ardunio
 
-        #self.receive()
+        self.receive()
         """
         if self.get_automatic() != self.get_previous():
             if not self.get_automatic():
@@ -135,17 +147,20 @@ class Track_Controller_HW(object):
 
         # checks to see if in automatic or in manual mode -if in automatic -> run PLC
         if self.get_automatic() and self.get_plc_set():
-            print("get plc = true and automatic = true")
-            self.get_plc()
+            send_string = "1"
+            send_string += self.get_plc_logic().parse()
+            print("Serial: " + send_string)
+            self.get_ard().write(send_string.encode('utf-8'))
+            self.set_plc_set(False)
 
-        #self.set_previous_blocks(self.track_ctrl_signals._occupancy)
+        self.set_previous_blocks(self.track_ctrl_signals._occupancy)
         # print("Prev:" + str(self.get_previous_blocks()))
         # print("Occ:" + str(self.get_occupied()))
-        #if self.get_occupied() != self.get_previous_blocks():
+        if self.get_occupied() != self.get_previous_blocks():
             # print("Changes Occupancy")
-            #vself.set_occupied(self.get_previous_blocks())
+            self.set_occupied(self.get_previous_blocks())
             # print("Occ In Statement:" + str(self.get_occupied()))
-            #self.send_occupied()
+            self.send_occupied()
 
         if thread:
             threading.Timer(.1, self.update).start()
@@ -189,53 +204,17 @@ class Track_Controller_HW(object):
             print("An error occurred:")
             traceback.print_exc()
 
-    # when in manual mode, used to send switch/light info to ardunio to update functions
-
-    def send_update(self, block_number: str):
-        """
-        send_string = "1"
-        
-        if len(block_number) == 2:
-            send_string += "00" + block_number
-        elif len(block_number) == 3:
-            send_string += "0" + block_number
-        elif len(block_number) == 4:
-            send_string += block_number
-        
-        commanded = str(self.get_commanded_speed())
-        if len(commanded) == 1:
-            send_string += "0" + commanded
-        elif len(commanded) == 2:
-            send_string += commanded
-        if block_number in self.get_light_list():
-            send_string += "1"
-            if self.get_lights(block_number) == 1:
-                send_string += "1"
-            elif self.get_lights(block_number) == 0:
-                send_string += "0"
-        else:
-            send_string += "00"
-        if block_number in self.get_switch_list():
-            send_string += "1"
-            if self.get_switch(block_number) == 1:
-                send_string += "1"
-            elif self.get_switch(block_number) == 0:
-                send_string += "0"
-        else:
-            send_string += "00"
-        send_string += "00"
-        send_string += block_number
-        self.get_ard().write(send_string.encode('utf-8'))
-        print(send_string)
-        time.sleep(3)
-        self.select_block(block_number)
-        """
-
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
         block_send = "0" + block_number
         self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
+
+    def get_start_up(self) -> int:
+        return self._start_up
+
+    def set_start_up(self, set: int):
+        self._start_up = set
 
     def get_plc_set(self):
         return self._plc_set
@@ -243,11 +222,11 @@ class Track_Controller_HW(object):
     def set_plc_set(self, set_bool: bool):
         self._plc_set = set_bool
 
-    def set_blue_plc(self, plc):
-        self.blue_line_plc = plc
+    def get_plc_logic(self):
+        return self._plc_logic
 
-    def get_blue_plc(self):
-        return self.blue_line_plc
+    def set_plc_logic(self, parse):
+        self._plc_logic = parse
 
     def get_authority_blocks(self):
         return self._authority_blocks
@@ -338,7 +317,6 @@ class Track_Controller_HW(object):
 
     def get_plc(self):  # have not tested this yet
         print("In plc function")
-
 
     def get_speed_limit(self, block) -> float:
         return self._green[block][1]
