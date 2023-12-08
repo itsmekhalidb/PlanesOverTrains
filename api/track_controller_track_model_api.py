@@ -13,9 +13,17 @@ class TrackControllerTrackModelAPI:
         self._time = 0
         self._track_info = {}
         self._occupancy = {}
-        self._lights = {'1': 0, '12': 0, '29': 0, '150': 0, '77': 0, '100': 0, '85': 0, '63': 0, '76': 0, '101': 0}
-        self._switches = {'13': 0, '28': 0, '57': 0, '63': 0, '77': 0, '85': 0}
-        self._railway_crossing = {'18': 0}
+        # 1 = red, 0 = green
+        self._lights = {"Green": {'1': 0, '13': 0, '28': 0, '150': 0, "62": 0, "76": 0, "77": 0, "85": 0,
+                                  "100": 0},
+                        "Red": {'1': 0, '15': 0, '16': 0, '10': 0, '76': 0, '72': 0, '71': 0,
+                                '67': 0, '52': 0, '53': 0, '66': 0}}
+        # 1 = left, 0 = right
+        self._switches = {"Green": {'13': 0, '28': 0, '57': 0, '63': 0, '77': 0, '85': 0},
+                          "Red": {'16': 0, '9': 0, '27': 0, '33': 0, '38': 0, '44': 0, '52': 0}}
+        # crossing lights/gate
+        self._crossing_lights_gates = {"Green": {'18': 0},
+                                       "Red": {'47': 0}}
         self._filepath = ""
         self.block_info = {}
 

@@ -258,13 +258,37 @@ class Ui_TrackController_MainUI(QMainWindow):
         font.setWeight(75)
         self.traffic_light_label_10.setFont(font)
         self.traffic_light_label_10.setObjectName("traffic_light_label_10")
-        self.railway_crossing_checkBox = QtWidgets.QCheckBox(self)
-        self.railway_crossing_checkBox.setGeometry(QtCore.QRect(25, 277, 140, 22))
+        # self.railway_crossing_checkBox = QtWidgets.QCheckBox(self)
+        # self.railway_crossing_checkBox.setGeometry(QtCore.QRect(25, 277, 140, 22))
+        # font = QtGui.QFont()
+        # font.setPointSize(12)
+        # self.railway_crossing_checkBox.setFont(font)
+        # self.railway_crossing_checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
+        # self.railway_crossing_checkBox.setObjectName("railway_crossing_checkBox")
+        self.railway_crossing_label = QtWidgets.QLabel(self)
+        self.railway_crossing_label.setGeometry(QtCore.QRect(25, 277, 150, 22))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.railway_crossing_checkBox.setFont(font)
-        self.railway_crossing_checkBox.setLayoutDirection(QtCore.Qt.RightToLeft)
-        self.railway_crossing_checkBox.setObjectName("railway_crossing_checkBox")
+        self.railway_crossing_label.setFont(font)
+        self.railway_crossing_label.setObjectName("railway_crossing_label")
+        self.railway_crossing = QtWidgets.QLabel(self)
+        self.railway_crossing.setEnabled(True)
+        self.railway_crossing.setGeometry(QtCore.QRect(200, 277, 35, 26))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
+        self.railway_crossing.setFont(font)
+        self.railway_crossing.setStyleSheet("color: rgb(255, 255, 255);\n"
+                                             "background-color: rgb(255, 255, 0);")
+        self.railway_crossing.setObjectName("traffic_light_red")
+        self.toggle_railway = QtWidgets.QPushButton(self, clicked=lambda: self.track_controller.set_railway_crossing(
+                self.wayside_ctrl_comboBox.currentText().split(' ')[0], '18',
+                not self.track_controller.get_railway_crossing(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                     '18')))
+        self.toggle_railway.setGeometry(QtCore.QRect(200, 133, 51, 23))
+        self.toggle_railway.setObjectName("toggle_switch1")
+        self.toggle_railway.setCheckable(True)
         self.load_PLC_btn = QtWidgets.QPushButton(self, clicked=lambda: self.browse_files())
         self.load_PLC_btn.setGeometry(QtCore.QRect(754, 63, 102, 28))
         font = QtGui.QFont()
@@ -752,10 +776,10 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self.title_label.raise_()
         self.wayside_ctrl_comboBox.raise_()
-        self.testbench.raise_()
+        # self.testbench.raise_()
         self.manual_mode_checkBox.raise_()
         # self.authority_label.raise_()
-        self.commanded_speed_label.raise_()
+        # self.commanded_speed_label.raise_()
         self.occupied_blocks.raise_()
         self.occupied_blocks_label.raise_()
         self.sys_time_label.raise_()
@@ -776,7 +800,10 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.traffic_light_label_11.raise_()
         self.traffic_light_label_9.raise_()
         self.traffic_light_label_10.raise_()
-        self.railway_crossing_checkBox.raise_()
+        # self.railway_crossing_checkBox.raise_()
+        self.railway_crossing_label.raise_()
+        self.railway_crossing.raise_()
+        self.toggle_railway.raise_()
         self.load_PLC_btn.raise_()
         self.switch_position.raise_()
         self.switch_position_label.raise_()
@@ -811,7 +838,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.traffic_light_red_10.raise_()
         self.traffic_light_green_11.raise_()
         self.traffic_light_red_11.raise_()
-        self.commanded_speed.raise_()
+        # self.commanded_speed.raise_()
         self.toggle_switch1.raise_()
         self.toggle_switch2.raise_()
         self.toggle_switch3.raise_()
@@ -848,8 +875,8 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.wayside_ctrl_comboBox.addItem("Red 2")
         self.testbench.setText(_translate("self", "Testbench"))
         self.manual_mode_checkBox.setText(_translate("self", "Manual Mode"))
-        self.commanded_speed_label.setText(_translate("self", "Commanded Speed"))
-        self.commanded_speed.setText(_translate("self", "70 mph"))
+        # self.commanded_speed_label.setText(_translate("self", "Commanded Speed"))
+        # self.commanded_speed.setText(_translate("self", "70 mph"))
         self.occupied_blocks_label.setText(_translate("self", "Occupied Blocks - Speed Limit"))
         self.title_label.setText(_translate("self", "Track Controller"))
         self.sys_time_label.setText(_translate("self", "13:24:55"))
@@ -858,7 +885,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.traffic_light_green.setText(_translate("self", "Green"))
         self.traffic_light_red.setText(_translate("self", "Red"))
         self.changeWayside()
-        self.railway_crossing_checkBox.setText(_translate("self", "Railway Crossing"))
+        self.railway_crossing_label.setText(_translate("self", "Railway Crossing"))
         self.load_PLC_btn.setText(_translate("self", "Load PLC"))
         self.switch_position_label.setText(_translate("self", "Switch Position"))
         self.PLC_output_label.setText(_translate("self", "PLC Output"))
@@ -932,6 +959,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_light_9.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_light_10.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_light_11.setVisible(bool(self.manual_mode_checkBox.checkState()))
+        self.toggle_railway.setVisible(bool(self.manual_mode_checkBox.checkState()))
 
         #toggle buttons
         try:
@@ -987,6 +1015,7 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Green").keys())[1]))
                     self.switch_label_3.setText(
                             _translate("self", list(self.track_controller.get_switch_list("Green").keys())[2]))
+                    self.railway_crossing.setText(_translate("self", list(self.track_controller.get_railway_crossings("Green").keys())[0]))
             elif self.wayside_ctrl_comboBox.currentText() == 'Green 2':
                     self.traffic_light_label.setText(
                             _translate("self", list(self.track_controller.get_lights("Green").keys())[4]))
@@ -1015,6 +1044,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Green").keys())[4]))
                     self.switch_label_3.setText(
                             _translate("self", list(self.track_controller.get_switch_list("Green").keys())[5]))
+                    self.railway_crossing_label.setVisible(False)
+                    self.railway_crossing.setVisible(False)
             elif self.wayside_ctrl_comboBox.currentText() == 'Red 1':
                     self.traffic_light_label.setText(
                             _translate("self", list(self.track_controller.get_lights("Red").keys())[0]))
@@ -1045,6 +1076,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[1]))
                     self.switch_label_3.setText(
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[2]))
+                    self.railway_crossing_label.setVisible(False)
+                    self.railway_crossing.setVisible(False)
             elif self.wayside_ctrl_comboBox.currentText() == 'Red 2':
                     self.traffic_light_label.setText(
                             _translate("self", list(self.track_controller.get_lights("Red").keys())[6]))
@@ -1075,6 +1108,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[5]))
                     self.switch_label_3.setText(
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
+                    self.railway_crossing.setText(
+                            _translate("self", list(self.track_controller.get_railway_crossings("Red").keys())[0]))
 
     def PLC(self):
         f = open(self.track_controller._plc_input["Green 1"], "r")
@@ -1087,6 +1122,9 @@ class Ui_TrackController_MainUI(QMainWindow):
                                       self.track_controller.parse(lines[i + 1].strip()))
                 elif self.track_controller.get_operator() == "light":
                     self.track_controller.set_lights("Green", str(lines[i].strip()),
+                                      self.track_controller.parse(lines[i + 1].strip()))
+                elif self.track_controller.get_operator() == "railway":
+                    self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
                                       self.track_controller.parse(lines[i + 1].strip()))
                 i = i + 1
             else:
@@ -1105,6 +1143,10 @@ class Ui_TrackController_MainUI(QMainWindow):
                         elif self.track_controller.get_operator() == "light":
                                 self.track_controller.set_lights("Green", str(lines[i].strip()),
                                                                  self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "railway":
+                                self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
+                                                                           self.track_controller.parse(
+                                                                                   lines[i + 1].strip()))
                         i = i + 1
                 else:
                         self.track_controller.set_operator(lines[i].strip())
@@ -1122,6 +1164,10 @@ class Ui_TrackController_MainUI(QMainWindow):
                         elif self.track_controller.get_operator() == "light":
                                 self.track_controller.set_lights("Red", str(lines[i].strip()),
                                                                  self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "railway":
+                                self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
+                                                                           self.track_controller.parse(
+                                                                                   lines[i + 1].strip()))
                         i = i + 1
                 else:
                         self.track_controller.set_operator(lines[i].strip())
@@ -1141,6 +1187,10 @@ class Ui_TrackController_MainUI(QMainWindow):
                         elif self.track_controller.get_operator() == "light":
                                 self.track_controller.set_lights("Red", str(lines[i].strip()),
                                                                  self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "railway":
+                                self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
+                                                                           self.track_controller.parse(
+                                                                                   lines[i + 1].strip()))
                         i = i + 1
                 else:
                         self.track_controller.set_operator(lines[i].strip())
@@ -1370,6 +1420,10 @@ class Ui_TrackController_MainUI(QMainWindow):
                 self.traffic_light_green_11.setVisible(
                         not bool(self.track_controller.get_light(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
                                                                  self.traffic_light_label_11.text())))
+
+        self.railway_crossing.setVisible(
+                bool(self.track_controller.get_railway_crossing(self.wayside_ctrl_comboBox.currentText().split(' ')[0],
+                                                             self.railway_crossing.text())))
 
 if __name__ == "__main__":
     import sys
