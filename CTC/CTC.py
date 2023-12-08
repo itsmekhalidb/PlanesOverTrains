@@ -321,7 +321,7 @@ class Schedule(object):
         self._station_info = self._api._track_info.get_station_list()["green"]
         self._arr_num = 0
 
-        self._switches = self._api._track_info.get_switch_list("green")
+        self._switches = self._api._track_info.get_khalids_special_switch_list("green")
         self._switch_states = []
 
         if outbound == 1: # going to station
