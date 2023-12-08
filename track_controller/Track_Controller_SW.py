@@ -37,12 +37,10 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.window.show()
 
     def browse_files(self):
-        print("Test")
         browse = QFileDialog.getOpenFileName(self.load_PLC_btn)
-        print(browse[0])
+        print("Loading PLC: " + browse[0])
         data = browse[0]
         self.track_controller.set_plc_input(self.wayside_ctrl_comboBox.currentText(), data)
-        print("Test End")
 
     def setupUi(self):
         self.setObjectName("Track Controller")
@@ -1008,7 +1006,7 @@ class Ui_TrackController_MainUI(QMainWindow):
                     self.switch_position_left.setText(_translate("self", "62"))
                     self.switch_position_right.setText(_translate("self", "Yard"))
                     self.switch_position_left_2.setText(_translate("self", "101"))
-                    self.switch_position_right_2.setText(_translate("self", "77"))
+                    self.switch_position_right_2.setText(_translate("self", "76"))
                     self.switch_position_left_3.setText(_translate("self", "86"))
                     self.switch_position_right_3.setText(_translate("self", "100"))
                     self.switch_label_1.setText(

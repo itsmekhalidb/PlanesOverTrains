@@ -5,7 +5,7 @@ switch
         ! 76 and 77
     85
         ! 100 or 76
-lights
+light
     62
         0
     76
