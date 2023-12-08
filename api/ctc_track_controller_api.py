@@ -7,7 +7,7 @@ class CTCTrackControllerAPI:
 
         #CTC to Track Controller
         self._train_out = {} # dispatched trains train id : [authority, commanded speed]
-        self._track_section_status = {} # blocks: status 1 is closed, 0 is open
+        self._track_section_status = {"Green": {}, "Red": {}} # blocks: status 1 is closed, 0 is open
         self._maintenance_switch = [{}, {}] # green, red lines with {switch name: position}
         self._suggested_speed = 0 # meters/sec
         self._commanded_speed = {'A1': 0} # train: commanded speed in m/s
@@ -19,7 +19,8 @@ class CTCTrackControllerAPI:
         self._train_in = {}  # train id : [actual velocity (m/s), occupied block, cum_distance]
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold
-        self._occupancy = {} # trains and their occupied blocks
+        self._occupancy = {"Green": [],
+                            "Red": []} # trains and their occupied blocks
         # 1 = red, 0 = green
         self._light = {"Green": {'1': 0, '13': 0, '28': 0, '150': 0, "62": 0, "76": 0, "77": 0, "85": 0,
                                   "100": 0},
