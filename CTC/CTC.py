@@ -326,7 +326,6 @@ class Schedule(object):
 
         if outbound == 1: # going to station
             output = self.get_blocks_to_dest("green", o_block, i_block, [])
-            print(output)
             for block in output[0]:
                 if block != 0:
                     info = self._api._track_info.get_block_info('green', block)
