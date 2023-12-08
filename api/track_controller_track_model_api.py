@@ -22,7 +22,7 @@ class TrackControllerTrackModelAPI:
         self._switches = {"Green": {'13': 0, '28': 0, '57': 0, '63': 0, '77': 0, '85': 0},
                           "Red": {'16': 0, '9': 0, '27': 0, '33': 0, '38': 0, '44': 0, '52': 0}}
         # crossing lights/gate
-        self._crossing_lights_gates = {"Green": {'18': 0},
+        self._railway_crossing = {"Green": {'18': 0},
                                        "Red": {'47': 0}}
         self._filepath = ""
         self.block_info = {}

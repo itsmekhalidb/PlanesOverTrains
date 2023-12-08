@@ -140,8 +140,8 @@ class Track_Controller(object):
     def set_switch(self, line, switch, value: int):
         try:
             self._switches[line][switch] = value
-            self.ctc_ctrl_signals._switch[switch] = value
-            self.track_ctrl_signals._switches[switch] = value
+            self.ctc_ctrl_signals._switch[line][switch] = value
+            self.track_ctrl_signals._switches[line][switch] = value
         except Exception as e:
             print("Invalid switch")
 
@@ -154,8 +154,8 @@ class Track_Controller(object):
     def set_lights(self, line, light: str, value: int):
         try:
             self._lights[line][light] = value
-            self.ctc_ctrl_signals._light[light] = value
-            self.track_ctrl_signals._lights[light] = value
+            self.ctc_ctrl_signals._light[line][light] = value
+            self.track_ctrl_signals._lights[line][light] = value
         except Exception as e:
             print("Invalid light")
 
@@ -184,7 +184,7 @@ class Track_Controller(object):
     def get_suggested_speed(self, train: int) -> float:
         return self._suggested_speed[train][2]
 
-    def set_railway_crossing(self, line, crossing, _crossing_lights_gates: int):
+    def set_railway_crossing(self, line, crossing, _crossing_lights_gates):
         self._crossing_lights_gates[line][crossing] = _crossing_lights_gates
         self.track_ctrl_signals._railway_crossing[crossing] = _crossing_lights_gates
 
