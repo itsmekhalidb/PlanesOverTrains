@@ -32,8 +32,7 @@ class block_info:
                                     "44": [["43", "67"]],
                                     "52": [["66", "53"]]}
                             }
-        """
-        self.switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming]}, "name" : "name of switch"}}
+        self.khalids_special_switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming]}, "name" : "name of switch"}}
             #1 is forward 0 is backward
             #to go from here to there, you will be moving in this direction, you must enter from this direction, name of switch
             "blue" :
@@ -67,7 +66,6 @@ class block_info:
                 "66" : {"52" : 0, "name" : "52"},
                 "76" : {"27" : 0, "name" : "27"}}
         }
-        """
         self.light_list = {"blue": ["5", "6", "11"],
                            "green": ["1", "12", "29", "63", "76", "77", "85", "100", "101", "150"],
                            "red": ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
@@ -137,6 +135,9 @@ class block_info:
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
         return self.switch_list[line]
+
+    def get_khalids_special_switch_list(self, line):
+        return self.khalids_special_switch_list[line]
 
     def get_light_list(self, line):
         return self.light_list[line]
