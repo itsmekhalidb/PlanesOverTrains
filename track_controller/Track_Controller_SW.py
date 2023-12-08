@@ -1078,9 +1078,14 @@ class Ui_TrackController_MainUI(QMainWindow):
     def PLC(self):
             if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
                 f = open(self.track_controller._plc_input["Green 1"], "r")
-
-
-                self.track_controller.parse_expression()
+                lines = f.readlines()
+                for i in range(0, len(lines)-1, 1):
+                        if lines[i] != "switch" or lines[i] != "light":
+                                if self.track_controller.get_operator() == "switch":
+                                    self.track_controller.set_switch("green", lines[i], self.track_controller.parse_expression(lines[i+1]))
+                                    i = i + 1
+                        else:
+                                self.track_controller.set_operator(lines[i])
 
 
     # def PLC(self):
