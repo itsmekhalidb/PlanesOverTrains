@@ -943,7 +943,7 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self.occupied_blocks.clear()
         self.PLC_output.clear()
-        self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks())
+        self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Green"))
         self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
 
         # manual mode changes
@@ -1118,16 +1118,16 @@ class Ui_TrackController_MainUI(QMainWindow):
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if self.track_controller.get_operator() == "switch":
                     self.track_controller.set_switch("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "light":
                     self.track_controller.set_lights("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "railway":
                     self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
-                                                               self.track_controller.parse(lines[i + 1].strip()))
+                                                               self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 i = i + 1
             else:
                 self.track_controller.set_operator(lines[i].strip())
@@ -1138,17 +1138,17 @@ class Ui_TrackController_MainUI(QMainWindow):
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if self.track_controller.get_operator() == "switch":
                     self.track_controller.set_switch("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "light":
                     self.track_controller.set_lights("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "railway":
                     self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
                                                                self.track_controller.parse(
-                                                                   lines[i + 1].strip()))
+                                                                   lines[i + 1].strip(), "Green"))
                 i = i + 1
             else:
                 self.track_controller.set_operator(lines[i].strip())
@@ -1159,17 +1159,17 @@ class Ui_TrackController_MainUI(QMainWindow):
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if self.track_controller.get_operator() == "switch":
                     self.track_controller.set_switch("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "light":
                     self.track_controller.set_lights("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "railway":
                     self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
                                                                self.track_controller.parse(
-                                                                   lines[i + 1].strip()))
+                                                                   lines[i + 1].strip(), "Green"))
                 i = i + 1
             else:
                 self.track_controller.set_operator(lines[i].strip())
@@ -1185,14 +1185,14 @@ class Ui_TrackController_MainUI(QMainWindow):
             if lines[i].strip() != "switch" and lines[i].strip() != "light":
                 if self.track_controller.get_operator() == "switch":
                     self.track_controller.set_switch("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "light":
                     self.track_controller.set_lights("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip()))
+                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
                 elif self.track_controller.get_operator() == "railway":
                     self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
                                                                self.track_controller.parse(
-                                                                   lines[i + 1].strip()))
+                                                                   lines[i + 1].strip(), "Green"))
                 i = i + 1
             else:
                 self.track_controller.set_operator(lines[i].strip())

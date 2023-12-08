@@ -10,8 +10,9 @@ class Track_Controller(object):
         # track that is currently being observed
         self._track = {}
         # blocks that are currently occupied
-        self._occupied_blocks = []
-        # 1 = red, 0 = green
+        self._occupied_blocks = {"Green": [],
+                                 "Red": []}
+        # 0 = red, 1 = green
         self._lights = {"Green": {'1': 0, '13': 0, '28': 0, '150': 0, "62": 0, "76": 0, "77": 0, "85": 0,
                                   "100": 0},
                         "Red": {'1': 0, '15': 0, '16': 0, '10': 0, '76': 0, '72': 0, '71': 0,
@@ -22,6 +23,21 @@ class Track_Controller(object):
         # crossing lights/gate
         self._crossing_lights_gates = {"Green": {'18': 0},
                                        "Red": {'47': 0}}
+
+        self._switch_direction = {"Green": {"13": ["1", "12"],
+                                      "28": ["150", "29"],
+                                      "57": ["58", "0"],
+                                      "63": ["0", "62"],
+                                      "77": ["76", "101"],
+                                      "85": ["100", "86"]},
+                            "Red": {"9": ["10", "0"],
+                                    "16": ["15", "1"],
+                                    "27": ["76", "28"],
+                                    "33": ["32", "72"],
+                                    "38": ["71", "39"],
+                                    "44": ["43", "67"],
+                                    "52": ["66", "53"]}
+                            }
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -57,7 +73,7 @@ class Track_Controller(object):
                 startup = 1
 
         try:
-            self.set_occupied_blocks(self.track_ctrl_signals._train_occupancy)
+            self._occupied_blocks = self.track_ctrl_signals._occupancy
         except Exception as e:
             print("Cannot update occupied blocks")
 
@@ -70,11 +86,11 @@ class Track_Controller(object):
         try:
             self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
         except Exception as e:
-            print(e)
+            print("Cannot update track section status")
 
         # CTC Office Outputs
         try:
-            self.ctc_ctrl_signals._occupancy = self.get_block_occupancy()
+            self.ctc_ctrl_signals._occupancy = self._occupied_blocks
         except Exception as e:
             print("Cannot send block occupancy")
 
@@ -95,9 +111,12 @@ class Track_Controller(object):
         if thread:
             threading.Timer(0.1, self.update).start()
 
-    def set_track_section_status(self, blocks: dict):
-        for block in blocks:
-            self.set_occupancy(block, blocks[block])
+    def set_track_section_status(self, blocks):
+        for block in blocks["Green"].keys():
+            self.set_occupancy("Green", block, blocks["Green"][block])
+        for block in blocks["Red"].keys():
+            self.set_occupancy("Red", block, blocks["Red"][block])
+
 
     def get_track(self) -> dict:
         return self._track
@@ -105,27 +124,28 @@ class Track_Controller(object):
     def set_track(self, track):
         self._track = track
 
-    def get_occupancy(self, block):
-        return self._occupied_blocks.count(block)
+    def get_occupancy(self, line, block):
+        return self._occupied_blocks[line].count(block)
 
-    def get_block_occupancy(self) -> dict:
+    def get_block_occupancy(self, line) -> dict:
         temp = {}
-        for x in self._occupied_blocks:
-            temp.update({x: self.get_occupancy(x)})
+        for x in self._occupied_blocks[line]:
+            temp.update({x: self.get_occupancy(line, x)})
         return temp
 
-    def set_occupied_blocks(self, blocks: dict):
-        self._occupied_blocks = blocks
+    # def set_occupied_blocks(self, blocks):
+    #     for i in self._occupied_blocks.keys():
+    #         self._occupied_blocks[i] = blocks[i]
 
-    def get_occupied_blocks(self) -> list:
-        return self._occupied_blocks
+    def get_occupied_blocks(self, line) -> list:
+        return self._occupied_blocks[line]
 
-    def set_occupancy(self, block, value: int):
+    def set_occupancy(self, line, block, value: int):
         if value == 1:
-            self._occupied_blocks.append(block)
+            self._occupied_blocks[line].append(block)
         else:
-            self._occupied_blocks.remove(block)
-        self._occupied_blocks.sort()
+            self._occupied_blocks[line].remove(block)
+        self._occupied_blocks[line].sort()
 
     def get_speed_limit(self, block) -> float:
         return self._track.get_block_info('green', block)['speed limit']
@@ -218,7 +238,7 @@ class Track_Controller(object):
     def get_train_out(self):
         return self._train_info
 
-    def parse_expression(self, line):
+    def parse_expression(self, line, track):
         tokens = line.split(" ")
         result = None
         i = 0
@@ -227,16 +247,16 @@ class Track_Controller(object):
             if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
                 # print(tokens[i+1])
                 if tokens[i] == "and":
-                    result = result and bool(self.get_occupancy(tokens[i+1]))
+                    result = result and bool(self.get_occupancy(track, tokens[i+1]))
                     i += 1
                 elif tokens[i] == "or":
-                    result = result or bool(self.get_occupancy(tokens[i+1]))
+                    result = result or bool(self.get_occupancy(track, tokens[i+1]))
                     i += 1
                 else:
-                    result = not bool(self.get_occupancy(tokens[i+1]))
+                    result = not bool(self.get_occupancy(track, tokens[i+1]))
                     i += 1
             elif tokens[i].isdigit():
-                result = bool(self.get_occupancy(tokens[i]))
+                result = bool(self.get_occupancy(track, tokens[i]))
             elif tokens[i] == "(":
                 j = i + 1
                 temp = ""
@@ -244,20 +264,23 @@ class Track_Controller(object):
                     temp += tokens[j]
                     temp += " "
                     j += 1
-                result = self.parse_expression(temp.strip())
+                result = self.parse_expression(temp.strip(), track)
             i += 1
 
         return result
 
-    def parse(self, line: str):
+    def parse(self, line: str, track):
         self._line = line
-        return self.parse_expression(line)
+        return self.parse_expression(line, track)
 
     def get_operator(self):
         return self._operator
 
     def set_operator(self, operator: str):
         self._operator = operator
+        
+    def get_connection(self, line, switch):
+        return self._switch_direction[line][switch][self._switches[switch]]
 
     def launch_ui(self):
         print("Launching Track Controller UI")

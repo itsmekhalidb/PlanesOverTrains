@@ -73,10 +73,10 @@ class CTC(object):
     def change_block(self, block):
         if block in self._closed_blocks:
             self._closed_blocks.remove(block)
-            self.TrackCTRLSignal._track_section_status[block] = 0
+            self.TrackCTRLSignal._track_section_status["Green"][block] = 0
         elif block not in self._closed_blocks:
             self._closed_blocks.append(block)
-            self.TrackCTRLSignal._track_section_status[block] = 1
+            self.TrackCTRLSignal._track_section_status["Green"][block] = 1
     
     # automatic train schedule function
     def import_schedule(self, doc):
@@ -121,7 +121,7 @@ class CTC(object):
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
     def get_occupancy(self):
-        return list(self.TrackCTRLSignal._occupancy.values()) + list(self._closed_blocks)
+        return list(self.TrackCTRLSignal._occupancy["Green"].values()) + list(self._closed_blocks)
     def get_curr_speed(self, train_num):
         speed = self._trains[train_num-1].get_actual_velocity()
         if speed < 1 or speed == None:
