@@ -51,7 +51,7 @@ class Track_Controller(object):
         except Exception as e:
             print("track_controller.py not updating")
 
-    def update(self, thread=False):
+    def update(self, thread=True):
         self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
             if self._filepath != "":
