@@ -77,9 +77,8 @@ class CTC_Main_UI(QMainWindow):
         self.confirm.setObjectName("confirm")
         # self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
         # self.arrival_time.timeChanged.connect(lambda:self.update_not_qtime())
-        mode = 0 # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
-        train_index = -1 # -1 if creating new train, otherwise use train index
-        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), self.qtime_to_datetime(self.arrival_time.time()), mode, train_index))
+        self.train_index = -1 # -1 if creating new train, otherwise use train index
+        self.confirm.clicked.connect(lambda:self.confirm_route(self.station_list.currentText(), self.qtime_to_datetime(self.arrival_time.time()), self.train_index))
         self.system_speed_label_3 = QtWidgets.QLabel(self.green_train_view_page)
         self.system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -251,7 +250,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
-        self.confirm_close.clicked.connect(lambda:self.change_block("green", self.section_list.currentText(), self.block_list.currentText()))
+        self.confirm_close.clicked.connect(lambda:self.change_block("Green", self.section_list.currentText(), self.block_list.currentText()))
         self.switch_list = QtWidgets.QComboBox(self.green_train_view_page)
         self.switch_list.setGeometry(QtCore.QRect(415, 490, 90, 31))
         font = QtGui.QFont()
@@ -518,7 +517,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_confirm_close.setFont(font)
         self.red_confirm_close.setObjectName("red_confirm_close")
         self.red_confirm_close.clicked.connect(
-            lambda: self.change_block("red", self.section_list.currentText(), self.block_list.currentText()))
+            lambda: self.change_block("Red", self.section_list.currentText(), self.block_list.currentText()))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(),
                          self.arrival_time.time().second())
         self.red_arrival_time_label.raise_()
@@ -757,13 +756,19 @@ class CTC_Main_UI(QMainWindow):
 
 
     # confirm button pressed, run checks then call ctc.py function
-    def confirm_route(self, station_name, time_in, function, train_index):
+    def confirm_route(self, station_name, time_in, train_index):
+        # determine function
+        if train_index == -1:
+            func = 0
+        else:
+            func = 2
+        # determine line
         if self.view_switcher.currentIndex() == 0: 
             line = "green"
         else: 
             line = "red"
         if self.ctc.get_time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
-            self.ctc.create_schedule(station_name, time_in, function, train_index, line)
+            self.ctc.create_schedule(station_name, time_in, func, train_index, line)
         elif not self.ctc.check_filepath():
             print("Track Model data not initialized")
     
@@ -849,8 +854,8 @@ class CTC_Main_UI(QMainWindow):
     
     # handle add stop click
     def handle_add_stop_click(self):
-        self.temp_train = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
-        print(self.temp_train)
+        self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
+        print(self.train_index)
         self.label_2.setText("Add Stop")
         self.edit_schedule.hide()
         self.add_stop.hide()
@@ -864,6 +869,7 @@ class CTC_Main_UI(QMainWindow):
     
     # handle back add clicks
     def handle_back_add_click(self):
+        self.train_index = -1
         self.label_2.setText("Modify Schedule")
         self.edit_schedule.show()
         self.add_stop.show()
