@@ -139,6 +139,7 @@ class CTC_Main_UI(QMainWindow):
         self.train_list_2_data.setHorizontalHeaderItem(4, QStandardItem("Current Authority"))
         self.train_list_2_data.setHorizontalHeaderItem(5, QStandardItem("Suggested Speed"))
         self.train_list_2_data.setHorizontalHeaderItem(6, QStandardItem("Current Speed"))
+        self.train_list_2.setSelectionBehavior(QTableView.SelectRows)
         self.train_list_2.setModel(self.train_list_2_data)
         header = self.train_list_2.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Automatically adjust column size
@@ -194,6 +195,7 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.setFont(font)
         self.add_stop.setObjectName("add_stop")
         self.add_stop.hide()
+        self.add_stop.clicked.connect(lambda:self.handle_add_stop_click())
         self.back_sched = QtWidgets.QPushButton(self.green_train_view_page)
         self.back_sched.setGeometry(QtCore.QRect(5, 450, 101, 23))
         font = QtGui.QFont()
@@ -202,6 +204,14 @@ class CTC_Main_UI(QMainWindow):
         self.back_sched.setObjectName("back_sched")
         self.back_sched.hide()
         self.back_sched.clicked.connect(lambda:self.handle_back_sched_click())
+        self.back_add = QtWidgets.QPushButton(self.green_train_view_page)
+        self.back_add.setGeometry(QtCore.QRect(5, 490, 101, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.back_add.setFont(font)
+        self.back_add.setObjectName("back_add")
+        self.back_add.hide()
+        self.back_add.clicked.connect(lambda:self.handle_back_add_click())
         self.label = QtWidgets.QLabel(self.green_train_view_page)
         self.label.setGeometry(QtCore.QRect(182, 611, 351, 31))
         font = QtGui.QFont()
@@ -291,6 +301,7 @@ class CTC_Main_UI(QMainWindow):
         self.edit_schedule.raise_()
         self.add_stop.raise_()
         self.back_sched.raise_()
+        self.back_add.raise_()
         self.label.raise_()
         self.label_2.raise_()
         self.block_close_label.raise_()
@@ -555,9 +566,10 @@ class CTC_Main_UI(QMainWindow):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Select Arrival Time</span></p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>"))
         self.sys_time_label_3.setText(_translate("self", "13:24:55"))
-        self.edit_schedule.setText(_translate("self", "Edit Schedule"))
+        self.edit_schedule.setText(_translate("self", "Delete Schedule"))
         self.add_stop.setText(_translate("self", "Add Stop"))
         self.back_sched.setText(_translate("self", "Back"))
+        self.back_add.setText(_translate("self", "Back"))
         self.label.setText(_translate("self", "System Throughput: "))
         self.label_2.setText(_translate("self", "Schedule Train"))
         self.block_close_label.setText(_translate("self", "Maintenance Mode"))
@@ -686,10 +698,6 @@ class CTC_Main_UI(QMainWindow):
 
             # Hide the vertical header (row labels)
             self.blocks_table.verticalHeader().setVisible(False)
-
-
-
-
             
             # update throughput
             tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
@@ -697,10 +705,10 @@ class CTC_Main_UI(QMainWindow):
 
 
     def _handler(self):
-            self.timer = QTimer()
-            self.timer.setInterval(100)  # refreshes every time period
-            self.timer.timeout.connect(self.update)
-            self.timer.start()
+        self.timer = QTimer()
+        self.timer.setInterval(100)  # refreshes every time period
+        self.timer.timeout.connect(self.update)
+        self.timer.start()
 
 
     # switch to testbench
@@ -806,6 +814,34 @@ class CTC_Main_UI(QMainWindow):
         self.arrival_time_label.show()
         self.arrival_time.show()
         self.confirm.show()
+    
+    # handle add stop click
+    def handle_add_stop_click(self):
+        self.temp_train = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
+        print(self.temp_train)
+        self.label_2.setText("Add Stop")
+        self.edit_schedule.hide()
+        self.add_stop.hide()
+        self.back_sched.hide()
+        
+        self.back_add.show()
+        self.station_list.show()
+        self.arrival_time_label.show()
+        self.arrival_time.show()
+        self.confirm.show()
+    
+    # handle back add clicks
+    def handle_back_add_click(self):
+        self.label_2.setText("Modify Schedule")
+        self.edit_schedule.show()
+        self.add_stop.show()
+        self.back_sched.show()
+
+        self.back_add.hide()
+        self.station_list.hide()
+        self.arrival_time_label.hide()
+        self.arrival_time.hide()
+        self.confirm.hide()
 
     # update notqtime
     def update_not_qtime(self):

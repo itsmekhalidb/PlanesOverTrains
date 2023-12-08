@@ -90,13 +90,17 @@ class CTC(object):
                 destination_block = min(self._stations['green'][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 time_to_arrival = arrival_datetime - self.get_time()
-                temp_trn.create_schedule(destination_block, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
+                temp_trn.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
                 if temp_trn.sched_exists() == 1:
                     self._trains.append(temp_trn)
-            elif function == 1: # edit existing schedule
+            elif function == 1: # delete existing schedule
                 return
             elif function == 2: # add a stop
-                return
+                train = self._trains[train_index]
+                destination_block = min(self._stations['green'][station_name])
+                arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
+                time_to_arrival = arrival_datetime - self.get_time()
+                train.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
         except Exception as e:
             traceback.print_exc()
             print(e)
@@ -241,17 +245,20 @@ class Train(object):
         self._number = num
         
     # create schedule
-    def create_schedule(self, destination_block, dest_station, arrival_time, time_to_arrival, api):
-        sched = Schedule(destination_block, dest_station, arrival_time, 1, -1, api)
+    def create_schedule(self, destination_block, starting_block, dest_station, arrival_time, time_to_arrival, api):
+        sched = Schedule(starting_block, destination_block, dest_station, arrival_time, 1, -1, api)
+        print(sched)
         if sched._total_time < time_to_arrival:
             self._schedule.append(sched)
+            if self._schedule[-1]._last_block == 0:
+                self._schedule.pop()
             self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), api)
         else:
             print("fuck you fucking idiot thats too fucking early it takes", sched._total_time, "to get there")
 
     # create schedule going back to yard
     def yard_schedule(self, starting_block, last_dir, arr_time, api):
-        sched = Schedule(starting_block, "Yard", arr_time, 0, last_dir, api)
+        sched = Schedule(starting_block, 0, "Yard", arr_time, 0, last_dir, api)
         self._schedule.append(sched)
 
     # update authority
@@ -296,9 +303,10 @@ class Train(object):
 
 
 class Schedule(object):
-    # i_block is destination for outbound, starting point for inbound
+    # i_block is starting point
+    # o_block is destination
     # tim is arrival time for outbound, departure time for inbound
-    def __init__(self, i_block, dest_station, tim, outbound, last_dir, api: CTCTrackControllerAPI):
+    def __init__(self, i_block, o_block, dest_station, tim, outbound, last_dir, api: CTCTrackControllerAPI):
         self._api = api
         # make route info to station
         self._route_info = {}
@@ -317,39 +325,41 @@ class Schedule(object):
         self._switch_states = []
 
         if outbound == 1: # going to station
-            output = self.get_blocks_to_dest("green", i_block)
+            output = self.get_blocks_to_dest("green", o_block, i_block, [])
+            print(output)
             for block in output[0]:
-                info = self._api._track_info.get_block_info('green', block)
-                # route info stuff
-                if str(block) not in self._route_info: # first appearance of block in this route
-                    if block == i_block: # halfway through station block
-                        self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
-                        self._total_authority = self._total_authority + info['length']/2
-                        self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
-                    else:
-                        self._route_info[str(block)] = [[info['length']], info['speed limit']]
-                        self._total_authority = self._total_authority + info['length']
-                        self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
-                    # calculate time
-                else: # not the first appearance
-                    if block == i_block: # halfway through station block
-                        self._route_info[str(block)][0].append(info['length']/2)
-                        self._total_authority = self._total_authority + info['length']/2
-                        self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
-                    else:
-                        self._route_info[str(block)][0].append(info['length'])
-                        self._total_authority = self._total_authority + info['length']
-                        self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
+                if block != 0:
+                    info = self._api._track_info.get_block_info('green', block)
+                    # route info stuff
+                    if str(block) not in self._route_info: # first appearance of block in this route
+                        if block == o_block: # halfway through station block
+                            self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
+                            self._total_authority = self._total_authority + info['length']/2
+                            self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
+                        else:
+                            self._route_info[str(block)] = [[info['length']], info['speed limit']]
+                            self._total_authority = self._total_authority + info['length']
+                            self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
+                        # calculate time
+                    else: # not the first appearance
+                        if block == o_block: # halfway through station block
+                            self._route_info[str(block)][0].append(info['length']/2)
+                            self._total_authority = self._total_authority + info['length']/2
+                            self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
+                        else:
+                            self._route_info[str(block)][0].append(info['length'])
+                            self._total_authority = self._total_authority + info['length']
+                            self._total_time = self._total_time + timedelta(hours=((info['length']/1000)/info['speed limit']))
             self._arrival_time = tim # train arrival time from dispatcher
             self._departure_time = self._arrival_time - self._total_time # calculate train departure time
-            self._destination_block = i_block # train destination from dispatcher
+            self._destination_block = o_block # train destination from dispatcher
             self._dest_station = dest_station # name of destination station
             self._starting_block = 0 # start at yard
             self._yard_block = 0 # yard, where trains start
-            self._last_dir = output[1] # last direction the train is facing, for going back to yard
+            self._last_dir = output[1] # last direction the train is facing, for going back to yard/next station
 
         else: # going to yard
-            output = self.get_blocks_to_yard("green", i_block, i_block, last_dir)
+            output = self.get_blocks_to_yard("green", i_block, i_block, last_dir, [])
             for block in output:
                 if block != 0:
                     info = self._api._track_info.get_block_info('green', block)
@@ -380,16 +390,17 @@ class Schedule(object):
             self._arrival_time = self._departure_time + self._total_time # calculate train arrival time
             self._destination_block = 0 # train destination from dispatcher
             self._dest_station = dest_station # name of destination station
-            self._starting_block = i_block # start at yard
+            self._starting_block = i_block # start at station
             self._yard_block = 0 # yard, where trains start
             self._last_dir = -1 # who cares
 
+        self._last_block = next(iter(self._route_info))
         # print("cool arrays: ", self._blocks_arrs)
         # print(self._route_info)
         # print(self._total_time)
 
     # get blocks between yard and station
-    def get_blocks_to_dest(self, line, dest_block, curr_block = 63, result = [], dir = 1):
+    def get_blocks_to_dest(self, line, dest_block, curr_block = 0, result = [], dir = 1):
         # block arr stuff
         self._temp_block_arr.append(curr_block)
         if any(curr_block in array for array in self._station_info.values()):
@@ -560,4 +571,9 @@ class Schedule(object):
                         res2 += self._route_info[str(block)][0][new_nonzero]/2
                     else:
                         res2 += self._route_info[str(block)][0][new_nonzero]
+        
+        # stop for red light
+        if str(curr_block+1) in self._api._light and self._api._light[str(curr_block+1)] == 1:
+            res2 = 0
+
         self._curr_authority = res2
