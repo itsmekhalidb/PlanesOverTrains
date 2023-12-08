@@ -247,7 +247,7 @@ class Train(object):
             self._schedule.append(sched)
             self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), api)
         else:
-            print("fuck you fucking idiot thats too fucking early")
+            print("fuck you fucking idiot thats too fucking early it takes", sched._total_time, "to get there")
 
     # create schedule going back to yard
     def yard_schedule(self, starting_block, last_dir, arr_time, api):

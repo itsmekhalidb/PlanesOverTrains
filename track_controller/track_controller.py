@@ -27,8 +27,8 @@ class Track_Controller(object):
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "PLCgreen1.txt", 'Green 2': "PLCgreen2.txt", 'Red 1': "PLCred1.txt",
-                           'Red 2': "PLCred2.txt"}
+        self._plc_input = {'Green 1': "track_controller/PLCgreen1.txt", 'Green 2': "track_controller/PLCgreen2.txt", 'Red 1': "track_controller/PLCred1.txt",
+                           'Red 2': "track_controller/PLCred2.txt"}
         # time to be displayed on the clock
         self._time = 0
         # startup
@@ -36,7 +36,9 @@ class Track_Controller(object):
         # filepath
         self._filepath = ""
         # which plc actions are being taken
-        self.operator = "switch"
+        self._operator = "switch"
+        #line for parsing
+        self._line = ""
 
         self._pos = 0
 
@@ -215,60 +217,37 @@ class Track_Controller(object):
     def get_train_out(self):
         return self._train_info
 
-    def get_next_token(self, line):
-        if self._pos < len(line):
-            token = line[self._pos]
-            self._pos += 1
-            return token
-        return '\0'  # Return null character to indicate end of input
+    def parse_expression(self):
+        tokens = self._line.split(" ")
+        result = None
+        i = 0
 
-    def parse_expression(self, line: str):
-        result = self.parse_term(line)
-
-        while True:
-            op = self.get_next_token(line)
-            if op == "and" or op == "or":
-                term = self.parse_term(line)
-                if op == "and":
-                    result = result and term
+        while i < len(tokens)-1:
+            if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
+                if tokens[i] == "and":
+                    result = result and bool(self.get_occupancy(tokens[i+1]))
+                    i += 1
+                elif tokens[i] == "or":
+                    result = result or bool(self.get_occupancy(tokens[i+1]))
+                    i += 1
                 else:
-                    result = result or term
-            elif op == "switch" or op == "light":
-                self.operator = op
-            else:
-                self._pos -= 1  # Put back the character if it's not an operator
-                break
+                    result = not bool(self.get_occupancy(tokens[i+1]))
+                    i += 1
+            elif tokens[i].isdigit():
+                result = bool(self.get_occupancy(tokens[i]))
+            i += 1
 
         return result
 
-    def parse_term(self, line):
-        result = self.parse_factor(line)
+    def parse(self, line: str):
+        self._line = line
+        return self.parse_expression()
 
-        while True:
-            op = self.get_next_token(line)
-            if op == '!':
-                result = not result
-            else:
-                self._pos -= 1  # Put back the character if it's not an operator
-                break
+    def get_operator(self):
+        return self._operator
 
-        return result
-
-    def parse_factor(self, line):
-        token = self.get_next_token(line)
-        if token.isdigit():
-            return self.get_occupancy(token)
-        elif token == '(':
-            result = self.parse_expression(line)
-            if self.get_next_token(line) != ')':
-                # Handle mismatched parentheses
-                print("Error: Mismatched parentheses")
-                exit(1)
-            return result
-        else:
-            # Handle unexpected characters
-            print(f"Error: Unexpected character '{token}'")
-            exit(1)
+    def set_operator(self, operator: str):
+        self._operator = operator
 
     def launch_ui(self):
         print("Launching Track Controller UI")
