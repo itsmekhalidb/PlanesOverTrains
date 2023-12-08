@@ -16,7 +16,8 @@ class CTC(object):
         self._trains = [] # list of train objects
         self._stations = {} # dict of stations and their blocks
         self._occupied_blocks = [] # list of occupied blocks
-        self._closed_blocks = [] # list of closed blocks
+        self._closed_blocks = {"green" : [], "red" : []} # list of closed blocks
+        self._commanded_switches = {"green" : {}, "red" : {}} # list of commanded switch positions
         self._total_passengers = 0 # passenger count
         self._seven_hours = timedelta(hours=7)
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
@@ -70,13 +71,13 @@ class CTC(object):
             self._time_scaling = 5
         else:
             self._time_scaling = num
-    def change_block(self, block):
-        if block in self._closed_blocks:
-            self._closed_blocks.remove(block)
-            self.TrackCTRLSignal._track_section_status["Green"][block] = 0
-        elif block not in self._closed_blocks:
-            self._closed_blocks.append(block)
-            self.TrackCTRLSignal._track_section_status["Green"][block] = 1
+    def change_block(self, line, block):
+        if block in self._closed_blocks[line]:
+            self._closed_blocks[line].remove(block)
+            self.TrackCTRLSignal._track_section_status[block] = 0
+        elif block not in self._closed_blocks[line]:
+            self._closed_blocks[line].append(block)
+            self.TrackCTRLSignal._track_section_status[block] = 1
     
     # automatic train schedule function
     def import_schedule(self, doc):
@@ -109,6 +110,10 @@ class CTC(object):
     # track controller interface functions
     def get_sections(self, line):
         return self.TrackCTRLSignal._track_info.get_section_list(line)
+    def get_switches(self, line):
+        return self.TrackCTRLSignal._switch[line]
+    def get_switch_pos(self, line, num):
+        return self.TrackCTRLSignal._switch[line.capitalize()][num]
     def get_blocks(self, line, section):
         return self.TrackCTRLSignal._track_info.get_block_list(line, section)
     def get_stations(self):
@@ -120,21 +125,20 @@ class CTC(object):
             return {}
     def get_block_status(self, block_num):
         return self._track.get_block_status(block_num)
-    def get_occupancy(self):
-        return list(self.TrackCTRLSignal._occupancy["Green"].values()) + list(self._closed_blocks)
+    def get_occupancy(self, line):
+        output = list(self.TrackCTRLSignal._occupancy.values()) + list(self._closed_blocks[line])
+        print(output)
+        return output
     def get_curr_speed(self, train_num):
         speed = self._trains[train_num-1].get_actual_velocity()
         if speed < 1 or speed == None:
             speed = 0
         return speed
-    def update_light_color(self, light_num, status):
-        self._track.update_track(light_num, status)
-    def update_switch_position(self, switch_index):
-        self._track.switch_switch(switch_index)
-    def update_occupancy(self, occupied_block):
-        self._track.update_occupancy(occupied_block)
-    def update_passenger_info(self, station, tickets_sold):
-        self._track.update_tickets(station, tickets_sold)
+    def update_switch(self, line, switch, pos):
+        self._commanded_switches[line][switch] = pos
+    def clear_maintenance(self, line):
+        self._closed_blocks[line] = []
+        self._commanded_switches[line] = {}
     # def update_section_status(self):
     #     self.TrackCTRLSignal._track_section_status = self._closed_blocks
     def update_authorities(self):

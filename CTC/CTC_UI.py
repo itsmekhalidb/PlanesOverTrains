@@ -251,9 +251,9 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
-        self.confirm_close.clicked.connect(lambda:self.change_block(self.section_list.currentText(), self.block_list.currentText()))
+        self.confirm_close.clicked.connect(lambda:self.change_block("green", self.section_list.currentText(), self.block_list.currentText()))
         self.switch_list = QtWidgets.QComboBox(self.green_train_view_page)
-        self.switch_list.setGeometry(QtCore.QRect(415, 500, 90, 31))
+        self.switch_list.setGeometry(QtCore.QRect(415, 490, 90, 31))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.switch_list.setFont(font)
@@ -263,7 +263,7 @@ class CTC_Main_UI(QMainWindow):
         font = QtGui.QFont()
         font.setPointSize(16)
         self.switch_switch = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
-        self.switch_switch.setGeometry(QtCore.QRect(430, 540, 60, 20))
+        self.switch_switch.setGeometry(QtCore.QRect(430, 530, 60, 20))
         self.switch_switch.setObjectName("switch_switch")
         self.switch_switch.setMinimum(0)
         self.switch_switch.setMaximum(1)
@@ -284,7 +284,15 @@ class CTC_Main_UI(QMainWindow):
                 border-radius: 2px;
             }
         """)
-        # self.switch_switch.valueChanged.connect(self.switch_switch_changed)
+        self.switch_list.currentIndexChanged.connect(lambda:self.select_switch("Green", self.switch_list.currentText()))
+        self.switch_switch.valueChanged.connect(lambda:self.change_switch("green", self.switch_list.currentText(), self.switch_switch.value()))
+        self.clear_maint = QtWidgets.QPushButton(self.green_train_view_page)
+        self.clear_maint.setGeometry(QtCore.QRect(425, 580, 81, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.clear_maint.setFont(font)
+        self.clear_maint.setObjectName("clear_maint")
+        self.clear_maint.clicked.connect(lambda:self.clear_maintenance("green"))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
         self.header.raise_()
@@ -308,6 +316,7 @@ class CTC_Main_UI(QMainWindow):
         self.section_list.raise_()
         self.switch_list.raise_()
         self.confirm_close.raise_()
+        self.clear_maint.raise_()
         self.switch_switch.raise_()
         self.view_switcher.addWidget(self.green_train_view_page)
 
@@ -509,7 +518,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_confirm_close.setFont(font)
         self.red_confirm_close.setObjectName("red_confirm_close")
         self.red_confirm_close.clicked.connect(
-            lambda: self.change_block(self.section_list.currentText(), self.block_list.currentText()))
+            lambda: self.change_block("red", self.section_list.currentText(), self.block_list.currentText()))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(),
                          self.arrival_time.time().second())
         self.red_arrival_time_label.raise_()
@@ -573,6 +582,7 @@ class CTC_Main_UI(QMainWindow):
         self.label.setText(_translate("self", "System Throughput: "))
         self.label_2.setText(_translate("self", "Schedule Train"))
         self.block_close_label.setText(_translate("self", "Maintenance Mode"))
+        self.clear_maint.setText(_translate("self", "Clear"))
 
         self.red_switch_auto.setText(_translate("self", "Switch to Automatic"))
         self.red_station_list.setItemText(0, _translate("self", "Destination Station"))
@@ -651,6 +661,7 @@ class CTC_Main_UI(QMainWindow):
             if (self.lock == 0 and self.ctc.TrackCTRLSignal._track_info != {}):
                 self.section_list.addItems(self.initialize_section_list("green"))
                 self.station_list.addItems(list(self.ctc.get_stations()['green']))
+                self.switch_list.addItems(self.initialize_switch_list("Green"))
                 self.lock = 1
 
             # update train info
@@ -683,13 +694,13 @@ class CTC_Main_UI(QMainWindow):
             
             # update occupied blocks
             # Assuming self.ctc.get_occupancy() returns a list of blocks
-            occupancy_list = self.ctc.get_occupancy()
+            occupancy_list_green = self.ctc.get_occupancy("green")
 
             # Make sure the number of rows in the QTableWidget is enough to accommodate the items
-            self.blocks_table.setRowCount(len(occupancy_list))
+            self.blocks_table.setRowCount(len(occupancy_list_green))
 
             # Loop through the list and update the items in the QTableWidget
-            for cntr, block in enumerate(occupancy_list):
+            for cntr, block in enumerate(occupancy_list_green):
                 # Check if the block entry is not empty before adding a row
                 if block:
                     # Cast the block to a string before adding it to the table
@@ -773,7 +784,6 @@ class CTC_Main_UI(QMainWindow):
     # display section names
     def initialize_section_list(self, line):
         return sorted(self.ctc.get_sections(line))
-    
 
     # display block numbers
     def initialize_block_list(self, line, section_name, block_list):
@@ -781,11 +791,29 @@ class CTC_Main_UI(QMainWindow):
         block_list.addItem("Block")
         return self.ctc.get_blocks(line, section_name)
     
+    # initialize switch list
+    def initialize_switch_list(self, line):
+        return sorted(list(self.ctc.get_switches(line).keys()))
     
+    # switch selected
+    def select_switch(self, line, num):
+        if num != "Switch":
+            self.switch_switch.setSliderPosition(self.ctc.get_switch_pos(line, num))
+    
+    # change switch value
+    def change_switch(self, line, num, pos):
+        if num != "Switch" and pos != self.ctc.get_switch_pos(line, num):
+            self.ctc.update_switch(line, num, pos)
+
     # close block
-    def change_block(self, section, block):
+    def change_block(self, line, section, block):
         name = section + block
-        self.ctc.change_block(block)
+        self.ctc.change_block(line, block)
+    
+    # clear maintenance mode
+    def clear_maintenance(self, line):
+        self.ctc.clear_maintenance(line)
+
 
     # handle table clicks
     def handle_table_click(self, index):
