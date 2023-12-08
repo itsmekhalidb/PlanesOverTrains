@@ -90,7 +90,7 @@ class Track_Controller_HW(object):
             send = "1"
             send += self.get_plc_logic().parse()
             print("Serial: " + send)
-            #self.get_ard().write(send.encode('utf-8'))
+            self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -163,6 +163,11 @@ class Track_Controller_HW(object):
             # print("Occ In Statement:" + str(self.get_occupied()))
             #self.send_occupied()
 
+        try:
+            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+        except Exception as e:
+            print(e)
+
         if thread:
             threading.Timer(.1, self.update).start()
 
@@ -178,6 +183,10 @@ class Track_Controller_HW(object):
 
     def get_train_id(self):
         return self._train_ids
+
+    def set_track_section_status(self, blocks: dict):
+        for block in blocks:
+            self.set_occupancy(block, blocks[block])
 
     # used to recieve info from the Ardunio
     def receive(self):
@@ -306,18 +315,11 @@ class Track_Controller_HW(object):
             self._occupied_blocks.remove(block)
         self._occupied_blocks.sort()
 
-    def set_track_section_status(self, blocks: dict):
-        for block in blocks:
-            self.set_occupancy(block, blocks[block])
-
     def get_time(self):
         return self._time
 
     def set_time(self, times):
         self._time = times
-
-    def get_plc(self):  # have not tested this yet
-        print("In plc function")
 
     def get_speed_limit(self, block) -> float:
         return self._green[block][1]

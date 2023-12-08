@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class block_info:
     def __init__(self, filepath: str):
         if filepath == "":
@@ -13,24 +14,25 @@ class block_info:
             print("Loading block info from " + filepath)
             self.block_dict = self.load_block_info(filepath)
 
-
     def load_block_info(self, filepath: str):
         # 1 indicates blocks after count up, 0 indicates count down
         # block 0 is yard
-        # self.switch_list = {"blue" : {"5" : [["6", "11"], [0, 1, 1]]},
-        #     "green" : {"13" : [["1", "12"], [1, 1, 0]],
-        #         "28" : [["29", "150"], [0, 1, -1]],
-        #         "57" : [["0", "58"], [-1, 1, 1]],
-        #         "63" : [["62","0"], [1, -1, -1]],
-        #         "77" : [["101","76"], [1, 1, -1]],
-        #         "85" : [["86","100"], [0, 1, -1]]},
-        #     "red" : {"9" : [["0", "10"], [0, 1, 1]],
-        #         "16" : [["1", "15"], [1, 1, 0]],
-        #         "27" : [["28", "76"], [0, 1, 0]],
-        #         "33" : [["72", "32"], [1, 1, 0]],
-        #         "38" : [["39", "71"], [0, 1, 0]],
-        #         "44" : [["67", "43"], [1, 1, 0]],
-        #         "52" : [["53", "66"], [0, 1, 0]]}}
+        self.switch_list = {"blue": {"5": [["6", "11"]]},
+                            "green": {"13": [["1", "12"]],
+                                      "28": [["150", "29"]],
+                                      "57": [["58", "0"]],
+                                      "63": [["0", "62"]],
+                                      "77": [["76", "101"]],
+                                      "85": [["100", "86"]]},
+                            "red": {"9": [["10", "0"]],
+                                    "16": [["15", "1"]],
+                                    "27": [["76", "28"]],
+                                    "33": [["32", "72"]],
+                                    "38": [["71", "39"]],
+                                    "44": [["43", "67"]],
+                                    "52": [["66", "53"]]}
+                            }
+        """
         self.switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming]}, "name" : "name of switch"}}
             #1 is forward 0 is backward
             #to go from here to there, you will be moving in this direction, you must enter from this direction, name of switch
@@ -65,10 +67,11 @@ class block_info:
                 "66" : {"52" : 0, "name" : "52"},
                 "76" : {"27" : 0, "name" : "27"}}
         }
-        self.light_list = {"blue" : ["5", "6", "11"],
-            "green" : ["1", "12", "29", "63", "76", "77", "85", "100", "101", "150"],
-            "red" : ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
-                "39", "43", "44", "52", "53", "66", "67", "71", "72", "76"]}
+        """
+        self.light_list = {"blue": ["5", "6", "11"],
+                           "green": ["1", "12", "29", "63", "76", "77", "85", "100", "101", "150"],
+                           "red": ["1", "9", "10", "15", "16", "27", "28", "32", "33", "38",
+                                   "39", "43", "44", "52", "53", "66", "67", "71", "72", "76"]}
         df = pd.read_excel(filepath)
         block_dict = {}
 
@@ -92,7 +95,6 @@ class block_info:
                 block_dict[line][block_number] = block_info
             else:
                 block_dict[line] = {block_number: block_info}
-
 
         return block_dict
 
@@ -131,7 +133,7 @@ class block_info:
             if block_info['section'] == section:
                 blocks.append(str(block_number))
         return blocks
-    
+
     # return switch inputs and their respective outputs
     def get_switch_list(self, line):
         return self.switch_list[line]

@@ -82,6 +82,26 @@ void update_blocks(){
   }
 }
 
+bool deMorg(bool value, bool value2, String operation){
+  bool compare1;
+  bool compare2;
+  if(operation = "and"){
+    compare1 = !(value && value2);
+    compare2 = !value || !value2;
+    if(compare1 == compare2){
+      return true;
+    }
+  }
+  else{
+    compare1 = !(value || value2);
+    compare2 = !value && !value2;
+    if(compare1 == compare2){
+      return true;
+    }   
+  }
+  return false;
+}
+
 bool parsePLC(char logic){
   if(logic == 'F'){
     return FED;
@@ -126,24 +146,28 @@ void PLC(){
   }
 
   int indexF = Fsize;
-  int For_and = 0;
+  int for_and = 0;
   bool resultF;
   if(flogic[indexF-1] == '0'){
-    For_and = 0;
+    for_and = 0;
   }
   else if(flogic[indexF-1] == '1'){
-    For_and = 1;
+    for_and = 1;
   }
   indexF--;
   resultF = parsePLC(flogic[indexF-1]);
   indexF--;
   while(indexF > 0){
     char logic = flogic[indexF-1];
-    if(For_and == 0){
-      resultF = resultF || parsePLC(logic);
+    if(for_and == 0){
+      if(deMorg(resultF, parsePLC(logic), "or")){
+        resultF = resultF || parsePLC(logic);
+      } 
     }
-    else if(For_and == 1){
-      resultF = resultF && parsePLC(logic);
+    else if(for_and == 1){
+      if(deMorg(resultF, parsePLC(logic), "and")){
+        resultF = resultF && parsePLC(logic);
+      }
     }
     indexF--;
   }
@@ -159,24 +183,28 @@ void PLC(){
   Serial.print("F28/"+ String(switches[1].value) + " G29/" + String(lights[2].value) + " Z150/" + String(lights[3].value) + "\n");
 
   int indexD = Dsize;
-  int Dor_and = 0;
+  int dor_and = 0;
   bool resultD;
   if(dlogic[indexD-1] == '0'){
-    Dor_and = 0;
+    dor_and = 0;
   }
   else if(dlogic[indexD-1] == '1'){
-    Dor_and = 1;
+    dor_and = 1;
   }
   indexD--;
   resultD = parsePLC(dlogic[indexD-1]);
   indexD--;
   while(indexD > 0){
     char logic = dlogic[indexD-1];
-    if(Dor_and == 0){
-      resultD = resultD || parsePLC(logic);
+    if(dor_and == 0){
+      if(deMorg(resultD, parsePLC(logic), "or")){
+        resultD = resultD || parsePLC(logic);
+      }
     }
-    else if(Dor_and == 1){
-      resultD = resultD && parsePLC(logic);
+    else if(dor_and == 1){
+      if(deMorg(resultD, parsePLC(logic), "and")){
+        resultD = resultD && parsePLC(logic);
+      }
     }
     indexD--;
   }
@@ -192,24 +220,28 @@ void PLC(){
   Serial.print("D13/"+ String(switches[0].value) + " A1/" + String(lights[0].value) + " C12/" + String(lights[1].value) + "\n");
 
   int indexI = Isize;
-  int Ior_and = 0;
+  int ior_and = 0;
   bool resultI;
   if(ilogic[indexI-1] == '0'){
-    Ior_and = 0;
+    ior_and = 0;
   }
   else if(ilogic[indexI-1] == '1'){
-    Ior_and = 1;
+    ior_and = 1;
   }
   indexI--;
   resultI = parsePLC(ilogic[indexI-1]);
   indexI--;
   while(indexI > 0){
     char logic = ilogic[indexI-1];
-    if(Ior_and == 0){
-      resultI = resultI || parsePLC(logic);
+    if(ior_and == 0){
+      if(deMorg(resultI, parsePLC(logic), "or")){
+        resultI = resultI || parsePLC(logic);
+      }
     }
-    else if(Ior_and == 1){
-      resultI = resultI && parsePLC(logic);
+    else if(ior_and == 1){
+      if(deMorg(resultI, parsePLC(logic), "and")){
+        resultI = resultI && parsePLC(logic);
+      }
     }
     indexI--;
   }
