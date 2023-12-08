@@ -248,13 +248,16 @@ class TrainController:
             # print('Speeding up')
             self._decreasing_speed = False
             self.set_service_brake_value(0.000001)
+        if self.get_authority() < ebrake_distance_val and not self._stop:
+            self._emergency_decreasing_speed = True
+            self.set_emergency_brake_status(True)
+        if self.get_authority() > ebrake_distance_val and not self._stop:
+            # print('Speeding up')
+            self._decreasing_speed = False
+            self.set_emergency_brake_status(False)
         self._commanded_power = power if power < 120000 else 120000
         if self._emergency_brake_status or self.get_service_brake_failure_status() or self.get_engine_status() or self.get_signal_pickup_failure():
             self._commanded_power = 0
-        if self._emergency_decreasing_speed:
-            self.set_emergency_brake_status(True)
-        else:
-            self.set_emergency_brake_status(False)
         self.check_and_adjust_velocity()
         if power == 0 and speed < self._current_velocity and not self._stop:
             excess_velocity = self._current_velocity - speed
@@ -335,13 +338,15 @@ class TrainController:
         return self._next_station
 
     def braking_distance(self, velocity: float)->float:
+        # return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/SB_FORCE
         return 0.1 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
 
     def get_station_status(self)->str:
         return self._station_status
 
     def ebrake_distance(self, velocity: float)->float:
-        return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/EB_FORCE
+        return 0.05 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
+        # return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/EB_FORCE
 
     def get_beacon(self)->str:
         return self._beacon
