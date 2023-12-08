@@ -184,12 +184,15 @@ class Track_Controller(object):
     def get_suggested_speed(self, train: int) -> float:
         return self._suggested_speed[train][2]
 
-    def set_railway_crossing(self, crossing, _crossing_lights_gates: int):
-        self._crossing_lights_gates[crossing] = _crossing_lights_gates
+    def set_railway_crossing(self, line, crossing, _crossing_lights_gates: int):
+        self._crossing_lights_gates[line][crossing] = _crossing_lights_gates
         self.track_ctrl_signals._railway_crossing[crossing] = _crossing_lights_gates
 
-    def get_railway_crossing(self, crossing):
-        return self._crossing_lights_gates[crossing]
+    def get_railway_crossing(self, line, crossing):
+        return self._crossing_lights_gates[line][crossing]
+
+    def get_railway_crossings(self, line):
+        return self._crossing_lights_gates[line]
 
     def set_train_info(self, trains):
         self._train_info = trains
