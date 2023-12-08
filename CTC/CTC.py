@@ -83,21 +83,21 @@ class CTC(object):
         return 
 
     # manual train schedule functions
-    def create_schedule(self, station_name, time_in, function, train_index):
+    def create_schedule(self, station_name, time_in, function, train_index, line):
         try:
             if function == 0: # new train
                 temp_trn = Train(True, self.get_highest_train_num())
-                destination_block = min(self._stations['green'][station_name])
+                destination_block = min(self._stations[line][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 time_to_arrival = arrival_datetime - self.get_time()
-                temp_trn.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
+                temp_trn.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, line, self.TrackCTRLSignal)
                 if temp_trn.sched_exists() == 1:
                     self._trains.append(temp_trn)
             elif function == 1: # delete existing schedule
                 return
             elif function == 2: # add a stop
                 train = self._trains[train_index]
-                destination_block = min(self._stations['green'][station_name])
+                destination_block = min(self._stations[line][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 time_to_arrival = arrival_datetime - self.get_time()
                 train.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, self.TrackCTRLSignal)
@@ -245,20 +245,19 @@ class Train(object):
         self._number = num
         
     # create schedule
-    def create_schedule(self, destination_block, starting_block, dest_station, arrival_time, time_to_arrival, api):
-        sched = Schedule(starting_block, destination_block, dest_station, arrival_time, 1, -1, api)
-        print(sched)
+    def create_schedule(self, destination_block, starting_block, dest_station, arrival_time, time_to_arrival, line, api):
+        sched = Schedule(starting_block, destination_block, dest_station, arrival_time, 1, -1, line, api)
         if sched._total_time < time_to_arrival:
             self._schedule.append(sched)
             if self._schedule[-1]._last_block == 0:
                 self._schedule.pop()
-            self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), api)
+            self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), line, api)
         else:
             print("fuck you fucking idiot thats too fucking early it takes", sched._total_time, "to get there")
 
     # create schedule going back to yard
-    def yard_schedule(self, starting_block, last_dir, arr_time, api):
-        sched = Schedule(starting_block, 0, "Yard", arr_time, 0, last_dir, api)
+    def yard_schedule(self, starting_block, last_dir, arr_time, line, api):
+        sched = Schedule(starting_block, 0, "Yard", arr_time, 0, last_dir, line, api)
         self._schedule.append(sched)
 
     # update authority
@@ -306,7 +305,7 @@ class Schedule(object):
     # i_block is starting point
     # o_block is destination
     # tim is arrival time for outbound, departure time for inbound
-    def __init__(self, i_block, o_block, dest_station, tim, outbound, last_dir, api: CTCTrackControllerAPI):
+    def __init__(self, i_block, o_block, dest_station, tim, outbound, last_dir, line, api: CTCTrackControllerAPI):
         self._api = api
         # make route info to station
         self._route_info = {}
@@ -314,21 +313,22 @@ class Schedule(object):
         self._curr_authority = 0
         self._total_time = timedelta()
         self._prev_cum_distance = 0
+        self._line = line
 
         self._blocks_arrs = []
         self._temp_block_arr = []
         self._temp_block_arr.append(0)
-        self._station_info = self._api._track_info.get_station_list()["green"]
+        self._station_info = self._api._track_info.get_station_list()[self._line]
         self._arr_num = 0
 
-        self._switches = self._api._track_info.get_khalids_special_switch_list("green")
+        self._switches = self._api._track_info.get_khalids_special_switch_list(self._line)
         self._switch_states = []
 
         if outbound == 1: # going to station
-            output = self.get_blocks_to_dest("green", o_block, i_block, [])
+            output = self.get_blocks_to_dest(self._line, o_block, i_block, [])
             for block in output[0]:
                 if block != 0:
-                    info = self._api._track_info.get_block_info('green', block)
+                    info = self._api._track_info.get_block_info(self._line, block)
                     # route info stuff
                     if str(block) not in self._route_info: # first appearance of block in this route
                         if block == o_block: # halfway through station block
@@ -358,10 +358,10 @@ class Schedule(object):
             self._last_dir = output[1] # last direction the train is facing, for going back to yard/next station
 
         else: # going to yard
-            output = self.get_blocks_to_yard("green", i_block, i_block, last_dir, [])
+            output = self.get_blocks_to_yard(self._line, i_block, i_block, last_dir, [])
             for block in output:
                 if block != 0:
-                    info = self._api._track_info.get_block_info('green', block)
+                    info = self._api._track_info.get_block_info(self._line, block)
                     if str(block) not in self._route_info: # first appearance of block in this route
                         if block == i_block: # halfway through station block
                             self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
@@ -562,7 +562,7 @@ class Schedule(object):
                 if block_pos == curr_block_pos:
                     res2 += self._route_info[str(curr_block)][0][nonzero_index]
                     if any(block in array for array in self._station_info.values()):
-                        info = self._api._track_info.get_block_info('green', block)
+                        info = self._api._track_info.get_block_info(self._line, block)
                         res2 -= info['length']/2
                 elif block_pos > curr_block_pos:
                     new_nonzero = nonzero_index = next((i for i, value in enumerate(self._route_info[str(block)][0]) if value != 0), None)

@@ -747,8 +747,12 @@ class CTC_Main_UI(QMainWindow):
 
     # confirm button pressed, run checks then call ctc.py function
     def confirm_route(self, station_name, time_in, function, train_index):
+        if self.view_switcher.currentIndex() == 0: 
+            line = "green"
+        else: 
+            line = "red"
         if self.ctc.get_time() < time_in and station_name != "Destination Station" and self.ctc.check_filepath():
-            self.ctc.create_schedule(station_name, time_in, function, train_index)
+            self.ctc.create_schedule(station_name, time_in, function, train_index, line)
         elif not self.ctc.check_filepath():
             print("Track Model data not initialized")
     
