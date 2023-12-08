@@ -27,14 +27,12 @@ class Track_Controller(object):
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "track_controller/PLCgreen1.txt", 'Green 2': "track_controller/PLCgreen2.txt", 'Red 1': "track_controller/PLCred1.txt",
-                           'Red 2': "track_controller/PLCred2.txt"}
+        self._plc_input = {'Green 1': "track_controller/PLCgreen1.txt", 'Green 2': "track_controller/PLCgreen2.txt",
+                           'Red 1': "track_controller/PLCred1.txt", 'Red 2': "track_controller/PLCred2.txt"}
         # time to be displayed on the clock
         self._time = 0
         # startup
         self._startup = 0
-        # filepath
-        self._filepath = ""
         # which plc actions are being taken
         self._operator = "switch"
         #line for parsing
@@ -51,7 +49,7 @@ class Track_Controller(object):
         except Exception as e:
             print("track_controller.py not updating")
 
-    def update(self, thread=True):
+    def update(self, thread=True): #def update(self, thread=False):
         self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
             if self._filepath != "":
@@ -217,13 +215,14 @@ class Track_Controller(object):
     def get_train_out(self):
         return self._train_info
 
-    def parse_expression(self):
-        tokens = self._line.split(" ")
+    def parse_expression(self, line):
+        tokens = line.split(" ")
         result = None
         i = 0
 
         while i < len(tokens)-1:
             if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
+                # print(tokens[i+1])
                 if tokens[i] == "and":
                     result = result and bool(self.get_occupancy(tokens[i+1]))
                     i += 1
@@ -235,13 +234,21 @@ class Track_Controller(object):
                     i += 1
             elif tokens[i].isdigit():
                 result = bool(self.get_occupancy(tokens[i]))
+            elif tokens[i] == "(":
+                j = i + 1
+                temp = ""
+                while tokens[j] != ")":
+                    temp += tokens[j]
+                    temp += " "
+                    j += 1
+                result = self.parse_expression(temp.strip())
             i += 1
 
         return result
 
     def parse(self, line: str):
         self._line = line
-        return self.parse_expression()
+        return self.parse_expression(line)
 
     def get_operator(self):
         return self._operator

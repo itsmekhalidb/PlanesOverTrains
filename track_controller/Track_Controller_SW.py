@@ -955,7 +955,7 @@ class Ui_TrackController_MainUI(QMainWindow):
             try:
                 self.PLC()
             except Exception as e:
-                print("The PLC isnt working dumbfuck")
+                print("its the PLC")
 
 
 
@@ -1079,25 +1079,75 @@ class Ui_TrackController_MainUI(QMainWindow):
                             _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
 
     def PLC(self):
-        if self.wayside_ctrl_comboBox.currentText() == 'Green 1':
-            try:
-                f = open(self.track_controller._plc_input["Green 1"], "r")
-            except Exception as e:
-                print(e)
-            lines = f.readlines()
-            i = 0
-            while i < len(lines) - 1:
+        f = open(self.track_controller._plc_input["Green 1"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                if self.track_controller.get_operator() == "switch":
+                    self.track_controller.set_switch("Green", str(lines[i].strip()),
+                                      self.track_controller.parse(lines[i + 1].strip()))
+                elif self.track_controller.get_operator() == "light":
+                    self.track_controller.set_lights("Green", str(lines[i].strip()),
+                                      self.track_controller.parse(lines[i + 1].strip()))
+                i = i + 1
+            else:
+                self.track_controller.set_operator(lines[i].strip())
+                i = i + 1
+        f.close()
+
+        f = open(self.track_controller._plc_input["Green 2"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
                 if lines[i].strip() != "switch" and lines[i].strip() != "light":
-                    if self.track_controller.get_operator() == "switch":
-                        self.track_controller.set_switch("Green", str(lines[i].strip()),
-                                              self.track_controller.parse(lines[i + 1].strip()))
-                    elif self.track_controller.get_operator() == "light":
-                        self.track_controller.set_lights("Green", str(lines[i].strip()),
-                                              self.track_controller.parse(lines[i + 1].strip()))
-                    i = i + 1
+                        if self.track_controller.get_operator() == "switch":
+                                self.track_controller.set_switch("Green", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "light":
+                                self.track_controller.set_lights("Green", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        i = i + 1
                 else:
-                    self.track_controller.set_operator(lines[i].strip())
-                    i = i + 1
+                        self.track_controller.set_operator(lines[i].strip())
+                        i = i + 1
+        f.close()
+
+        f = open(self.track_controller._plc_input["Red 1"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+                if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                        if self.track_controller.get_operator() == "switch":
+                                self.track_controller.set_switch("Red", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "light":
+                                self.track_controller.set_lights("Red", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        i = i + 1
+                else:
+                        self.track_controller.set_operator(lines[i].strip())
+                        i = i + 1
+        f.close()
+        try:
+                f = open(self.track_controller._plc_input["Red 2"], "r")
+        except Exception as e:
+                print(e)
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+                if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                        if self.track_controller.get_operator() == "switch":
+                                self.track_controller.set_switch("Red", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        elif self.track_controller.get_operator() == "light":
+                                self.track_controller.set_lights("Red", str(lines[i].strip()),
+                                                                 self.track_controller.parse(lines[i + 1].strip()))
+                        i = i + 1
+                else:
+                        self.track_controller.set_operator(lines[i].strip())
+                        i = i + 1
+        f.close()
 
 
     # def PLC(self):

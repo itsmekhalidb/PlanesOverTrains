@@ -63,7 +63,7 @@ class TrackModelUnitTests(unittest.TestCase):
         tc.set_authority(1, 20)
         self.assertEqual(tc.get_authority(1), 20)
 
-    def test_plc(self):
+    def test_green1_plc(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
@@ -85,6 +85,52 @@ class TrackModelUnitTests(unittest.TestCase):
             i = i + 1
 
         self.assertEqual(tc.get_switch("Green", '28'), 1)
+        f.close()
+
+    def test_red1_plc(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy('27', 1)
+        f = open("../track_controller/PLCred1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip()))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip()))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+                i = i + 1
+        self.assertEqual(tc.get_switch("Red", '27'), 1)
+        f.close()
+
+    def test_red2_plc(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy('38', 1)
+        f = open("../track_controller/PLCred2.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip()))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip()))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+                i = i + 1
+        self.assertEqual(tc.get_switch("Red", '38'), 1)
         f.close()
 
 
