@@ -101,8 +101,9 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_3.setMaximum(10)
         self.system_speed_spnbx_3.setMinimum(0)
         self.system_speed_spnbx_3.setValue(1)
-        self.system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
-        self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value(), 0))
+        self.prev_speed = 1
+        # self.system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
+        self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value()))
         self.header = QtWidgets.QLabel(self.green_train_view_page)
         self.header.setGeometry(QtCore.QRect(0, 0, 676, 51))
         font = QtGui.QFont()
@@ -355,9 +356,9 @@ class CTC_Main_UI(QMainWindow):
         self.red_system_speed_spnbx_3.setMaximum(10)
         self.red_system_speed_spnbx_3.setMinimum(0)
         self.red_system_speed_spnbx_3.setValue(1)
-        self.red_system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
+        # self.red_system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
         self.red_system_speed_spnbx_3.valueChanged.connect(
-            lambda: self.change_time_speed(self.red_system_speed_spnbx_3.value(), 0))
+            lambda: self.change_time_speed(self.red_system_speed_spnbx_3.value()))
         self.red_header = QtWidgets.QLabel(self.red_train_view_page)
         self.red_header.setGeometry(QtCore.QRect(0, 0, 676, 51))
         font = QtGui.QFont()
@@ -650,21 +651,21 @@ class CTC_Main_UI(QMainWindow):
                         QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
                         QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
                         QStandardItem(train.get_dest_station()),
-                        QStandardItem(str(self.meters_to_miles(train.get_total_authority())) + " mi"),
-                        QStandardItem(str(self.kmhr_to_mihr(70)) + " mi/hr"), # CHANGE CHANGE CHANGE CHANGE
+                        QStandardItem(str(self.meters_to_miles(train.get_curr_authority())) + " mi"),
+                        QStandardItem(str(0) + " mi/hr"),
                         QStandardItem(str(self.ctc.get_curr_speed(train_num)) + " mi/hr")
                     ]
                     # print(row)
                     self.train_list_2_data.appendRow(row)
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
-                        self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_total_authority())) + " mi")
+                        self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
                         self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mph")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
                         index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
-                        self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_total_authority())) + " mi")
+                        self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_curr_authority())) + " mi")
                         self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
                         self.train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
             
@@ -745,12 +746,16 @@ class CTC_Main_UI(QMainWindow):
     
 
     # change time speed when spinbox changed
-    def change_time_speed(self, speed, screen):
-        self.ctc.set_time_scaling(speed)
-        if screen == 0:
-            self.red_system_speed_spnbx_3.setValue(speed)
-        else:
-            self.system_speed_spnbx_3.setValue(speed)
+    def change_time_speed(self, speed):
+        # only 1, 2, or 10
+        if speed > 2 and speed < 10 and speed > self.prev_speed:
+            speed = 10
+        elif speed > 2 and speed < 10 and speed < self.prev_speed:
+            speed = 2
+        self.ctc.set_time_scaling(speed)            
+        self.red_system_speed_spnbx_3.setValue(speed)
+        self.system_speed_spnbx_3.setValue(speed)
+        self.prev_speed = speed
     
 
     # display section names

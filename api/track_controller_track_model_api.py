@@ -5,7 +5,7 @@ class TrackControllerTrackModelAPI:
     def __init__(self) -> None:
         # Define variable passed between Track Controller and Track Model
         self._train_out = {} # dispatched trains train id : [authority, commanded speed]
-        self._train_in = {} # train id : [actual velocity, occupancy]
+        self._train_in = {} # train id : [actual velocity, occupancy, cum_distance]
         self._train_ids = set() # train ids
         self._train_occupancy = list()
         self._line = "green"  # line
@@ -15,7 +15,7 @@ class TrackControllerTrackModelAPI:
         self._occupancy = {}
         self._lights = {'1': 0, '12': 0, '29': 0, '150': 0, '77': 0, '100': 0, '85': 0, '63': 0, '76': 0, '101': 0}
         self._switches = {'13': 0, '28': 0, '57': 0, '63': 0, '77': 0, '85': 0}
-        self._railway_crossing = {}
+        self._railway_crossing = {'18': 0}
         self._filepath = ""
         self.block_info = {}
 

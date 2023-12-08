@@ -25,21 +25,34 @@ class Ui_MainWindow(QMainWindow):
         super().__init__()
         self.track_model = track_model
         self._filepath = ""
+
+        #MAP
         self.line_picked = ''
         self.block_data = {}
         self.red_data = {}
         self.green_data = {}
         self.occupied_blocks = list()
 
+        #FAILURES
         self.circuit_failure_detected = False
         self.power_failure_detected = False
         self.broken_rail_detected = False
         self.heater_failure_detected = False
+        self.block_clicked = False
+        self.failure_block = {}
+        self.failure_block_selected = 0
 
+        #LIGHTS
         self.light_list = {}
         self.light_status = 0
 
-        self.environment_temp = random.randrange(65,75)
+        #TEMPERATURE CONTROL
+        self.current_temp = 0
+        self.target_temp = 0
+
+
+
+        self.environment_temp = float(random.randrange(65,75))
         self.setupUi()
         self.show()
 
@@ -64,7 +77,7 @@ class Ui_MainWindow(QMainWindow):
         #                                 "color: rgb(255, 255, 255)")
         # self.track_heater.setObjectName("track_heater")
         self.red_button = QtWidgets.QPushButton(self.trackmodel_main)
-        self.red_button.setGeometry(QtCore.QRect(170,10,90,41))
+        self.red_button.setGeometry(QtCore.QRect(140,10,90,41))
         self.red_button.setText("Red Line")
         self.red_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.red_button.clicked.connect(lambda: self.red_clicked())
@@ -74,11 +87,26 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.green_button = QtWidgets.QPushButton(self.trackmodel_main)
-        self.green_button.setGeometry(QtCore.QRect(270,10,90,41))
+        self.green_button.setGeometry(QtCore.QRect(240,10,90,41))
         self.green_button.setText("Green Line")
         self.green_button.setStyleSheet("font: 87 10pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
         self.green_button.clicked.connect(lambda: self.green_clicked())
         self.green_button.setCursor(Qt.PointingHandCursor)
+
+        self.t_direction = QtWidgets.QLabel(self.trackmodel_main)
+        self.t_direction.setGeometry(QtCore.QRect(420,65,300,45))
+        self.t_direction.setText("Direction")
+        self.t_direction.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
+"background-color: rgb(134, 177, 255);\n"
+"border: 2px solid black;")
+        self.t_direction.setAlignment(QtCore.Qt.AlignCenter)
+
+
+        self.direction = QtWidgets.QLabel(self.trackmodel_main)
+        self.direction.setGeometry(QtCore.QRect(420,110,300,60))
+        self.direction.setText("")
+        self.direction.setStyleSheet("font: 87 16pt \"Arial Black\";\n" "background-color: rgb(255,255,255);\n" "border: 2px solid black;\n")
+        self.direction.setAlignment(QtCore.Qt.AlignCenter)
 
         self.red_light = QtWidgets.QLabel(self.trackmodel_main)
         self.red_light.setGeometry(QtCore.QRect(230,550,80,80))
@@ -91,7 +119,7 @@ class Ui_MainWindow(QMainWindow):
 
 
         self.load_file = QtWidgets.QPushButton(self.trackmodel_main, clicked=lambda: self.browse_files())
-        self.load_file.setGeometry(QtCore.QRect(390,10,80,41))
+        self.load_file.setGeometry(QtCore.QRect(340,10,80,41))
         self.load_file.setText("Load File")
         self.load_file.setStyleSheet("background-color: rgb(255,255,255);\n""border: 2px solid black;\n""font: 87 10pt \"Arial Black\";")
         self.load_file.setCursor(Qt.PointingHandCursor)
@@ -376,7 +404,7 @@ class Ui_MainWindow(QMainWindow):
         self.power_failure = QtWidgets.QPushButton(self.trackmodel_main)
         self.power_failure.setGeometry(QtCore.QRect(860, 720, 41, 41))
         self.power_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
-"background-color: rgb(255, 0, 0);\n"
+"background-color: rgba(255, 0, 0,20);\n"
 "border: 1px solid black;\n"
 "color: rgb(255, 255, 255)")
         self.power_failure.setObjectName("power_failure")
@@ -385,7 +413,7 @@ class Ui_MainWindow(QMainWindow):
         self.broken_rail = QtWidgets.QPushButton(self.trackmodel_main)
         self.broken_rail.setGeometry(QtCore.QRect(1100, 790, 41, 41))
         self.broken_rail.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
-"background-color: rgb(255, 0, 0);\n"
+"background-color: rgba(255, 0, 0,20);\n"
 "border: 1px solid black;\n"
 "color: rgb(255, 255, 255)")
         self.broken_rail.setObjectName("broken_rail")
@@ -394,7 +422,7 @@ class Ui_MainWindow(QMainWindow):
         self.circuit_failure = QtWidgets.QPushButton(self.trackmodel_main)
         self.circuit_failure.setGeometry(QtCore.QRect(860, 790, 41, 41))
         self.circuit_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
-"background-color: rgb(255, 0, 0);\n"
+"background-color: rgba(255, 0, 0,20);\n"
 "border: 1px solid black;\n"
 "color: rgb(255, 255, 255)")
         self.circuit_failure.setObjectName("circuit_failure")
@@ -410,14 +438,14 @@ class Ui_MainWindow(QMainWindow):
         self.track_heater = QtWidgets.QPushButton(self.trackmodel_main)
         self.track_heater.setGeometry(QtCore.QRect(1100, 720, 41, 41))
         self.track_heater.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
-"background-color: rgb(255, 0, 0);\n"
+"background-color: rgba(255, 0, 0,20);\n"
 "border: 1px solid black;\n"
 "color: rgb(255, 255, 255)")
         self.track_heater.setObjectName("track_heater")
         self.track_heater.clicked.connect(self.heater_failure_clicked)
 
         self.t_temp_control = QtWidgets.QLabel(self.trackmodel_main)
-        self.t_temp_control.setGeometry(QtCore.QRect(530, 10, 321, 41))
+        self.t_temp_control.setGeometry(QtCore.QRect(490, 10, 165, 41))
         self.t_temp_control.setLayoutDirection(QtCore.Qt.RightToLeft)
         self.t_temp_control.setStyleSheet("font: 87 14pt \"Arial Black\";\n"
 "border: 2px solid black;\n"
@@ -425,10 +453,20 @@ class Ui_MainWindow(QMainWindow):
         self.t_temp_control.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.t_temp_control.setObjectName("t_temp_control")
         self.temp_control = QtWidgets.QDoubleSpinBox(self.trackmodel_main)
-        self.temp_control.setGeometry(QtCore.QRect(780, 10, 71, 41))
+        self.temp_control.setGeometry(QtCore.QRect(665, 10, 71, 41))
         self.temp_control.setStyleSheet("border: 2px solid black;")
         self.temp_control.setObjectName("temp_control")
         self.temp_control.setValue(70)
+        self.temp_control.valueChanged.connect(self.track_heater_control)
+
+        self.heater_temp = QtWidgets.QLabel(self.trackmodel_main)
+        self.heater_temp.setGeometry(QtCore.QRect(755,10,71,41))
+        self.heater_temp.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+"border: 2px solid black;\n"
+"background-color: rgb(255, 255, 255);")
+        self.heater_temp.setAlignment(QtCore.Qt.AlignCenter)
+        self.heater_temp.setText("")
+
 
         self.env_temp = QtWidgets.QLabel(self.trackmodel_main)
         self.env_temp.setGeometry(QtCore.QRect(860,10,150,41))
@@ -542,6 +580,9 @@ class Ui_MainWindow(QMainWindow):
         self.e_temp.raise_()
         self.red_light.raise_()
         self.green_light.raise_()
+        self.heater_temp.raise_()
+        self.direction.raise_()
+        self.t_direction.raise_()
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -551,7 +592,7 @@ class Ui_MainWindow(QMainWindow):
     def update(self):
         _translate = QtCore.QCoreApplication.translate
         self.light_list = self.track_model.get_light_colors()
-        print(self.light_status)
+        self.up_temp()
 
 
         #self.clock.setText(self.track_model.get_time())
@@ -573,6 +614,7 @@ class Ui_MainWindow(QMainWindow):
         self.green_map.setVisible(False)
         self.red_map.setVisible(True)
         self.title.setText("Red Line")
+        self.clear_labels()
 
 
     def green_clicked(self):
@@ -580,6 +622,7 @@ class Ui_MainWindow(QMainWindow):
         self.red_map.setVisible(False)
         self.green_map.setVisible(True)
         self.title.setText("Green Line")
+        self.clear_labels()
 
     def on_button_click(self):
         sender = self.sender()
@@ -599,6 +642,7 @@ class Ui_MainWindow(QMainWindow):
             info = None
 
         if info is not None:
+            self.block_clicked = True
             km_hr = float(info['speed limit'])
             mi_hr = km_hr / 1.60934709
             self.speed_limit.setText(str(round(mi_hr,2)))
@@ -679,7 +723,7 @@ class Ui_MainWindow(QMainWindow):
         self.circuit_failure.setText(_translate("MainWindow", "Off"))
         self.t_heater_fail.setText(_translate("MainWindow", "Track Heater Failure"))
         self.track_heater.setText(_translate("MainWindow", "Off"))
-        self.t_temp_control.setText(_translate("MainWindow", "Track Heater Control"))
+        self.t_temp_control.setText(_translate("MainWindow", "Track Heaters"))
 
     def browse_files(self):
         browse = QFileDialog.getOpenFileName(self.load_file)
@@ -690,6 +734,8 @@ class Ui_MainWindow(QMainWindow):
 
 #Error Detection
     def circuit_failure_clicked(self):
+        if self.block_clicked == False:
+            return
         tof = self.circuit_failure_detected
         if tof == False:
             self.circuit_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
@@ -704,9 +750,11 @@ class Ui_MainWindow(QMainWindow):
 "color: rgb(255, 255, 255)")
             self.circuit_failure.setText("OFF")
         self.circuit_failure_detected = not tof
-        return(self.circuit_failure_detected)
+        self.track_model.set_circuit_failure(self.circuit_failure_detected)
 
     def power_failure_clicked(self):
+        if self.block_clicked == False:
+            return
         tof = self.power_failure_detected
         if tof == False:
             self.power_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
@@ -721,9 +769,11 @@ class Ui_MainWindow(QMainWindow):
                                                "color: rgb(255, 255, 255)")
             self.power_failure.setText("OFF")
         self.power_failure_detected = not tof
-        return(self.power_failure_detected)
+        self.track_model.set_power_failure(self.power_failure_detected)
 
     def broken_rail_clicked(self):
+        if self.block_clicked == False:
+            return
         tof = self.broken_rail_detected
         if tof == False:
             self.broken_rail.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
@@ -738,9 +788,12 @@ class Ui_MainWindow(QMainWindow):
                                                "color: rgb(255, 255, 255)")
             self.broken_rail.setText("OFF")
         self.broken_rail_detected = not tof
-        return(self.broken_rail_detected)
+        self.track_model.set_broken_rail(self.broken_rail_detected)
 
     def heater_failure_clicked(self):
+        if self.block_clicked == False:
+            return
+
         tof = self.heater_failure_detected
         if tof == False:
             self.track_heater.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
@@ -755,7 +808,7 @@ class Ui_MainWindow(QMainWindow):
                                            "color: rgb(255, 255, 255)")
             self.track_heater.setText("OFF")
         self.heater_failure_detected = not tof
-        return (self.heater_failure_detected)
+        self.track_model.set_heater_failure(self.heater_failure_detected)
 
 
 
@@ -787,8 +840,30 @@ class Ui_MainWindow(QMainWindow):
         except Exception as e:
             print(e)
 
+    def up_temp(self):
+        sign = random.choice([-1,1])
+        self.environment_temp += sign * .001
+        self.e_temp.setText(str(format(self.environment_temp,".1f")))
 
+    def track_heater_control(self,value):
+        self.heater_temp.setText(str(value))
 
+    def clear_labels(self):
+        self.station_name.setText("")
+        self.block_length.setText("")
+        self.speed_limit.setText("")
+        self.switch_position.setText("")
+        self.grade.setText("")
+        self.elevation.setText("")
+        self.underground.setText("")
+        self.section.setText("")
+        self.station.setText("")
+        self.block_display.setText("")
+        self.occupancy.setText("")
+        self.green_light.setStyleSheet("background-color: rgba(0,255,0,0);\n" "border:3px solid black;\n")
+        self.red_light.setStyleSheet("background-color: rgba(0,255,0,0);\n" "border:3px solid black;\n")
+        self.direction.setText("")
+        self.heater_temp.setText("")
 
 
 

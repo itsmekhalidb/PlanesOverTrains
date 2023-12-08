@@ -53,12 +53,12 @@ class TrackModel(object):
         self._switch_to = {}
 
 
+
         #Failures
         self._broken_rail = False #broken rail failure
         self._circuit_failure = False #circuit failure
         self._power_failure = False #power failure
-        self._train_engine_failure = False #train engine failure
-        self._brake_failure = False #brake failure
+        self._heater_failure = False
 
         #Controls
         self._temperature = 0 #temperature of cabin
@@ -83,11 +83,8 @@ class TrackModel(object):
         #power failure
         self.set_power_failure(bool(self.get_power_failure()))
 
-        #engine failure
-        self.set_engine_failure(bool(self.get_engine_failure()))
-
-        #brake failure
-        self.set_brake_failure(bool(self.get_brake_failure()))
+        #track heater failure
+        self.set_heater_failure(bool(self.get_heater_failure()))
 
         #---- Inputs from Track Controller ----#
 
@@ -203,9 +200,9 @@ class TrackModel(object):
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].time)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block, self._TrainModels.train_apis[index].cum_distance])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block]
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block,  self._TrainModels.train_apis[index].cum_distance]
         # print(self._current_block)
 
 
@@ -248,6 +245,9 @@ class TrackModel(object):
         except Exception as e:
             print("You must upload the Track Model before dispatching a train")
             print(e)
+
+
+
 
     def get_occupancy(self):
         return self._current_block
@@ -470,6 +470,12 @@ class TrackModel(object):
 
     def get_brake_failure(self) -> bool:
         return self._brake_failure
+
+    def set_heater_failure(self, _heater_failure: bool):
+        self._heater_failure = _heater_failure
+
+    def get_heater_failure(self) -> bool:
+        return self._heater_failure
 
     def launch_ui(self):
         print("Launching Track Model UI")
