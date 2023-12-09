@@ -32,7 +32,7 @@ class block_info:
                                     "44": [["43", "67"]],
                                     "52": [["66", "53"]]}
                             }
-        self.khalids_special_switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction, incoming, switch position]}, "name" : "name of switch"}}
+        self.khalids_special_switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction out, direction in, switch position]}, "name" : "name of switch"}}
             #1 is forward 0 is backward
             # in switch position 0 is left 1 is right
             #to go from here to there, you will be moving in this direction, you must enter from this direction, name of switch
