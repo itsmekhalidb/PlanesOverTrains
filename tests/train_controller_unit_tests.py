@@ -6,16 +6,16 @@ from api.train_model_train_controller_api import TrainModelTrainControllerAPI as
 
 class TrainControllerUnitTests(unittest.TestCase):
 
-    # def test_PI_Controller_Output(self):
-    #     train_sigs = TrainSignals()
-    #     tc = TrainController(train_model_api=train_sigs)
-    #     # Test PI_Controller_Output
-    #     tc.set_authority(50)
-    #     tc._controller.update(80, 30)
-    #     tc._backup_controller.update(80, 40)
-    #     if tc._controller._p_term != tc._backup_controller._p_term:
-    #         tc.set_power()
-    #     self.assertEqual(tc.set_power(), 0, "Power not set correctly")
+    def test_PI_Controller_Output(self):
+        train_sigs = TrainSignals()
+        tc = TrainController(train_model_api=train_sigs)
+        # Test PI_Controller_Output
+        tc.set_authority(50)
+        tc._backup_controller.set_gains(8000, 10)
+        tc._controller.set_gains(7999, 10)
+        if tc._backup_controller.update(24, 50) != tc._controller.update(20, 50):
+            tc.set_power()
+        self.assertEqual(tc.set_power(), 0, "Power not set correctly")
     def testBeacon(self):
         train_sigs = TrainSignals()
         tc = TrainController(train_model_api=train_sigs)
