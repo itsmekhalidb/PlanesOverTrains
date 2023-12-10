@@ -370,7 +370,8 @@ class Schedule(object):
 
         self._blocks_arrs = []
         self._temp_block_arr = []
-        self._temp_block_arr.append(0)
+        self._tracker = 0
+        # self._temp_block_arr.append(0)
         self._station_info = self._api._track_info.get_station_list()[self._line]
         self._arr_num = 0
 
@@ -447,7 +448,7 @@ class Schedule(object):
             self._last_dir = -1 # who cares
 
         self._last_block = next(iter(self._route_info))
-        # print("cool arrays: ", self._blocks_arrs)
+        print("cool arrays: ", self._blocks_arrs)
         # print(self._route_info)
         # print(self._total_time)
 
@@ -578,19 +579,24 @@ class Schedule(object):
     def update_cum_distance(self, cd, curr_block):
         if str(curr_block) in self._route_info:
             # find the index of the first nonzero value in the array
-            nonzero_index = next((i for i, value in enumerate(self._route_info[str(curr_block)][0]) if value != 0), None)
+            nonzero_index = next((i for i, value in enumerate(self._route_info[str(curr_block)][0]) if value != 0), len(self._route_info[str(curr_block)][0]) - 1)
 
             cum_change = cd - self._prev_cum_distance
             self._prev_cum_distance = cd
 
             if cum_change < 0: # moved on to next block
+                self._tracker = 0
                 # find the index of the first nonzero value in the previous block
-                nonzero_index_prev = next((i for i, value in enumerate(self._route_info[str(curr_block-1)][0]) if value != 0), None)
+                nonzero_index_prev = next((i for i, value in enumerate(self._route_info[str(curr_block-1)][0]) if value != 0), len(self._route_info[str(curr_block-1)][0]) - 1)
                 cum_change = 0
                 self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(curr_block-1)][0][nonzero_index_prev]
                 self._route_info[str(curr_block-1)][0][nonzero_index_prev] = 0
-                if any(curr_block in array for array in self._station_info.values()): # if it's a station block and we're past halfway
-                    self._arr_num += 1
+            # if cum_change != 0:
+            #     print(cd, self._api._track_info.get_block_info(self._line, curr_block)['length']/2)
+            if any(curr_block in array for array in self._station_info.values()) and cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0: # if it's a station block and we're past halfway
+                self._tracker = 1
+                self._arr_num += 1
+                # print(self._blocks_arrs[self._arr_num])
 
             self._route_info[str(curr_block)][0][nonzero_index] -= cum_change
             
@@ -612,14 +618,14 @@ class Schedule(object):
             for block in curr_arr:
                 block_pos = curr_arr.index(block)
                 curr_block_pos = curr_arr.index(curr_block)
-                if block_pos == curr_block_pos:
+                if block_pos == curr_block_pos: # block train is on in this stretch between stations
                     res2 += self._route_info[str(curr_block)][0][nonzero_index]
-                    if any(block in array for array in self._station_info.values()):
+                    if any(block in array for array in self._station_info.values()): # if it's a station block
                         info = self._api._track_info.get_block_info(self._line, block)
                         res2 -= info['length']/2
-                elif block_pos > curr_block_pos:
-                    new_nonzero = nonzero_index = next((i for i, value in enumerate(self._route_info[str(block)][0]) if value != 0), None)
-                    if any(block in array for array in self._station_info.values()):
+                elif block_pos > curr_block_pos: # blocks after the one train is on
+                    new_nonzero = next((i for i, value in enumerate(self._route_info[str(block)][0]) if value != 0), len(self._route_info[str(block)][0]) - 1)
+                    if any(block in array for array in self._station_info.values()): # if it's a station block
                         res2 += self._route_info[str(block)][0][new_nonzero]/2
                     else:
                         res2 += self._route_info[str(block)][0][new_nonzero]
@@ -627,5 +633,4 @@ class Schedule(object):
         # stop for red light
         if str(curr_block+1) in self._api._light and self._api._light[str(curr_block+1)] == 1:
             res2 = 0
-
         self._curr_authority = res2
