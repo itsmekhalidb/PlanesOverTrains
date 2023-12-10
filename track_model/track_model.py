@@ -243,7 +243,7 @@ class TrackModel(object):
                 # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
 
 
-                return train.current_block
+            return train.current_block
         except Exception as e:
             print("You must upload the Track Model before dispatching a train")
             print(e)

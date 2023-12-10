@@ -4,6 +4,7 @@ import math
 import random
 import time
 import random as rand
+import traceback
 import numpy as np
 import threading
 
@@ -30,6 +31,7 @@ class TrainModel(object):
         self._time = 0 # time object set to midnight
         self._current_time = self._time
         self._prev_time = self._time
+        self._dt = 0
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "BLUE" # line the train is on
@@ -107,6 +109,9 @@ class TrainModel(object):
 
         # Actual Velocity
         self.calc_actual_velocity()
+
+        # Time since Sim Start
+        # self.dt()
 
         ##################################
         # Input Train Controller Signals #
@@ -230,31 +235,38 @@ class TrainModel(object):
 
     # -- Getters and Setters -- #
     def update_passenger_count(self):
-        # We are at a station
-        if self.get_beacon() != "":
-            self.set_prev_passenger_count(self.get_curr_passenger_count())
-        else:
-            self.set_prev_passenger_count(0)
-        # Make sure we leave with the crew on board
-        if (self.get_line().lower() == "green" and self.get_block() == 63) or (
-                self.get_line().lower() == "red" and self.get_block() == 9):
-            self._track_model_signals.passenger_onboard = 6
-            self._track_model_signals.passenger_departing = 0
-        # Send Passengers Departing when at a stop
-        if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
-            self.set_doors(not self.get_doors())  # Open the doors
-            # Depart all passengers at last stop before yard
-            if (self.get_line().lower() == "green" and self.get_block() == 56) or (
-                    self.get_line().lower() == "red" and self.get_block() == 16):
-                self._track_model_signals.passenger_onboard = 0
-                self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
-            # Pick a random number of passengers to depart and onboard
+        try:
+            # We are at a station
+            if self.get_beacon() != "":
+                self.set_prev_passenger_count(self.get_curr_passenger_count())
             else:
-                self._track_model_signals.passenger_onboard = random.randint(0, self._max_passenger_count)
-                self._track_model_signals.passenger_departing += random.randint(0, self.get_curr_passenger_count())
-        # Close the doors
-        elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
-            self.set_doors(not self.get_doors())
+                self.set_prev_passenger_count(0)
+            # Make sure we leave with the crew on board
+            if (self.get_line().lower() == "green" and self.get_block() == 63) or (
+                    self.get_line().lower() == "red" and self.get_block() == 9):
+                self._track_model_signals.passenger_onboard = 6
+                self._track_model_signals.passenger_departing = 0
+            # Send Passengers Departing when at a stop
+            if not self.get_doors() and (self.get_left_door() or self.get_right_door()):
+                self.set_doors(not self.get_doors())  # Open the doors
+                # Depart all passengers at last stop before yard
+                if (self.get_line().lower() == "green" and self.get_block() == 56) or (
+                        self.get_line().lower() == "red" and self.get_block() == 16):
+                    self._track_model_signals.passenger_onboard = 0
+                    self._track_model_signals.passenger_departing = self.get_prev_passenger_count()
+                # Pick a random number of passengers to depart and onboard
+                else:
+                    self._track_model_signals.passenger_onboard = random.randint(0, self._max_passenger_count)
+                    self._track_model_signals.passenger_departing += random.randint(0, self.get_curr_passenger_count())
+            # Close the doors
+            elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
+                self.set_doors(not self.get_doors())
+            # Reset the departing passengers after 1 hour
+            if self._dt >= 3600.0:
+                self._track_model_signals.passenger_departing = 0
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
 
     def set_track_info(self, _track_info):
         # Check if the info exists
@@ -276,6 +288,19 @@ class TrainModel(object):
             self.set_underground(bool(info["underground"]))
             # Station Side
             self.set_station_side(info["station side"])
+
+    def dt(self) -> float:
+        try:
+            # time since start of simulation
+            self._current_time = self.get_time()
+            self._dt += self._current_time - self._prev_time
+            self._prev_time = self._current_time
+            print(self._current_time - self._prev_time)
+            print(self._dt)
+            return self._dt
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
 
     def set_service_brake_value(self, _service_brake_value: float):
         self._service_brake_value = _service_brake_value
