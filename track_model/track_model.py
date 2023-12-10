@@ -239,6 +239,9 @@ class TrackModel(object):
                 # how to get switch position
                 # pos = self.get_switch_position(self._track_controller_signals._line.capitalize(), '63')) # returns 0 or 1
 
+                # how to set direction
+                # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
+
 
                 return train.current_block
         except Exception as e:
