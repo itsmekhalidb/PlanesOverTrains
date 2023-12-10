@@ -732,6 +732,7 @@ class Ui_MainWindow(QMainWindow):
         self.red_data = self.block_data.get_all_blocks_for_line('red')
         self.green_data = self.block_data.get_all_blocks_for_line('green')
 
+
 #Error Detection
     def circuit_failure_clicked(self):
         if self.block_clicked == False:

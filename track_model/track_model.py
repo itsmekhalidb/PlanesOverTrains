@@ -50,7 +50,8 @@ class TrackModel(object):
         self._train_ids = [] # list of train ids
         self._distance = 0.0
         self.tof = False
-        self._switch_to = {}
+        self._direction = 1 #direction of travel (1=forward, 0=backward)
+        self._switchionary = {}
 
 
 
@@ -68,7 +69,7 @@ class TrackModel(object):
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
         self._ctc_signals = CTCSignal #api from ctc
         self._TrainModels = TrainModels #dictionary api
-        self.block_data = block_info(self._filepath) #block info
+
 
         self.update()
 
@@ -218,22 +219,28 @@ class TrackModel(object):
 
     def update_current_block(self, train):
         # Only Load Track Model if filepath is not empty -- One Time
-        if self.block_data.get_filepath() != "":
-            self._switch_to = self.block_data.get_switch_list(train.line)
+        if self._track_layout.get_filepath() != "":
+            self._switchionary = self._track_layout.get_switchionary(train.line)
+            self._switch_position = self._track_controller_signals._switches[(train.line).capitalize()]
+
+
 
 
         try:
-            if str(train.current_block) in self._switch_position.keys():
-                if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                    print(self._switch_position[str(train.current_block)])
-                    train.cum_distance = 0
-                    train.current_block += 1
+            if train.current_block in self._switchionary.keys() and train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                inc = self._switchionary[train.current_block][1]
+                sw = self._switchionary[train.current_block][3]
+                sw_label = self._switchionary[train.current_block][4]
+                if train.direction == inc and self._switch_position[sw_label] == sw:
+                    next_block = self._switchionary[train.current_block][0]
+                    self._direction = self._switchionary[train.current_block][2]
+                    train.current_block = next_block
 
 
 
-            elif train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                 train.cum_distance = 0
-                train.current_block += 1
+                train.current_block += self._direction
 
 
                 # how to get switch position

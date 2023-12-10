@@ -9,6 +9,7 @@ class block_info:
             self.station_list = {}
             self.switch_list = {}
             self.light_list = {}
+            self.switchionary = {}
         else:
             self.filepath = filepath
             print("Loading block info from " + filepath)
@@ -17,6 +18,37 @@ class block_info:
     def load_block_info(self, filepath: str):
         # 1 indicates blocks after count up, 0 indicates count down
         # block 0 is yard
+
+        #current block: [next block, incoming direction, outgoing direction, switch position required (0 or 1), switch position label]
+        self.switchionary = {
+            "green": {
+                1 : [13, -1, 1, 0, "13"],
+                13: [12, 1, -1, 1, "13"],
+                28: [29, 1, 1, 1, "28"],
+                57: [58, 1, 1, 0, "57"], #if switch position is 1, go back to yard
+                62: [63, 1, 1, 0, "63"],
+                76: [77, 1, 1, 0, "77"],
+                77: [101, -1, 1, 1, "77"],
+                85: [86, 1, 1, 1, "85"],
+                100: [85, 1, -1, 0, "85"],
+                150: [28, 1, -1, 0, "28"]
+            },
+            "red": {
+                9 : [10, 0, 0, 0], #if switch position is 1, go back to yard
+                15: [16, 1, 1, 0],
+                16: [1, 0, 1, 1],
+                27: [28, 1, 1, 1],
+                32: [33, 1, 1, 0],
+                33: [72, 0, 1, 1],
+                38: [39, 1, 1, 1],
+                43: [44, 1, 1, 0],
+                44: [67, 0, 1, 1],
+                52: [53, 1, 1, 1],
+                66: [52, 1, 0, 0],
+                76: [27, 1, 0, 0]
+            }
+        }
+
         self.switch_list = {"blue": {"5": [["6", "11"]]},
                             "green": {"13": [["1", "12"]],
                                       "28": [["150", "29"]],
@@ -34,7 +66,6 @@ class block_info:
                             }
         self.khalids_special_switch_list = { # {"line name" : {"entry block" : {"exit block" : [direction out, direction in, switch position]}, "name" : "name of switch"}}
             #1 is forward 0 is backward
-            # in switch position 0 is left 1 is right
             #to go from here to there, you will be moving in this direction, you must enter from this direction, name of switch
             "blue" :
                 {"5" : {"6" : 1, "11" : 1}},
@@ -137,6 +168,12 @@ class block_info:
 
     def get_khalids_special_switch_list(self, line):
         return self.khalids_special_switch_list[line]
+
+    def get_load(self):
+        return self.loaded
+
+    def get_switchionary(self,line):
+        return self.switchionary[line]
 
     def get_light_list(self, line):
         return self.light_list[line]
