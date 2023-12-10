@@ -31,7 +31,6 @@ class TrainModel(object):
         self._time = 0 # time object set to midnight
         self._current_time = self._time
         self._prev_time = self._time
-        self._dt = 0
         self._block = 0 # current block the train is on
         self._beacon = "" # beacon information
         self._line = "BLUE" # line the train is on
@@ -109,9 +108,6 @@ class TrainModel(object):
 
         # Actual Velocity
         self.calc_actual_velocity()
-
-        # Time since Sim Start
-        # self.dt()
 
         ##################################
         # Input Train Controller Signals #
@@ -261,9 +257,6 @@ class TrainModel(object):
             # Close the doors
             elif self.get_doors() and not (self.get_left_door() or self.get_right_door()):
                 self.set_doors(not self.get_doors())
-            # Reset the departing passengers after 1 hour
-            if self._dt >= 3600.0:
-                self._track_model_signals.passenger_departing = 0
         except Exception as e:
             print(e)
             traceback.print_exc()
@@ -288,19 +281,6 @@ class TrainModel(object):
             self.set_underground(bool(info["underground"]))
             # Station Side
             self.set_station_side(info["station side"])
-
-    def dt(self) -> float:
-        try:
-            # time since start of simulation
-            self._current_time = self.get_time()
-            self._dt += self._current_time - self._prev_time
-            self._prev_time = self._current_time
-            print(self._current_time - self._prev_time)
-            print(self._dt)
-            return self._dt
-        except Exception as e:
-            print(e)
-            traceback.print_exc()
 
     def set_service_brake_value(self, _service_brake_value: float):
         self._service_brake_value = _service_brake_value
