@@ -1,8 +1,8 @@
 switch
     38
-        ( 71 and 38 ) or ( ! 44 and 38 ) or ! ( 38 or 71 )
+        ( 71 and 38 ) or ( ! 44 and 38 ) or ( ! 38 and ! 71 )
     44
-        ! ( 71 and 38 ) and ! ( ! 44 and 38 ) and ( 38 or 71 )
+        ! ( 71 and 38 ) and ( 44 or ! 38 ) and ( 38 or 71 )
     52
         ! 66 or 52
 light

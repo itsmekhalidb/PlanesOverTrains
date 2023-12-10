@@ -1,22 +1,22 @@
 switch
     9
-        0 or !10
+        0 or ! 10
     16
         1 and ! 16
     27
-        ( 76 and 27 ) or ( ! 33 and 27 ) or ! ( 27 or 76 )
+        ( 76 and 27 ) or ( ! 33 and 27 ) or ( ! 27 and ! 76 )
     33
-        ! ( 76 and 27 ) and ! ( ! 33 and 27 ) and ( 27 or 76 )
+        ! ( 76 and 27 ) and ( 33 or ! 27 ) and ( 27 or 76 )
 light
     1
         1 and ! 16
     15
-        15 and ! 16
+        15 and ! 16 and ! 0
     16
         ! 16
     10
         0
     76
-        27 and 76
+        76 and ! 27 and ! 33
     72
-        33 and 76
+        76 and ! 27 and ! 33

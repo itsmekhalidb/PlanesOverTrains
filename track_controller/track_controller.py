@@ -297,7 +297,6 @@ class Track_Controller(object):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
 
-
     def parse_expression(self, line, track):
         tokens = line.split(" ")
         result = None
@@ -305,15 +304,50 @@ class Track_Controller(object):
 
         while i < len(tokens)-1:
             if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
-
                 if tokens[i] == "and":
-                    result = result and bool(self.get_occupied_section(track, tokens[i+1]))
+                    if tokens[i+1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = result and self.parse_expression(temp.strip(), track)
+                        i = j-1
+                    elif tokens[i+1] == "!":
+                        result = result and not bool(self.get_occupied_section(track, tokens[i + 2]))
+                        i += 1
+                    else:
+                        result = result and bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
                 elif tokens[i] == "or":
-                    result = result or bool(self.get_occupied_section(track, tokens[i+1]))
+                    if tokens[i+1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = result or self.parse_expression(temp.strip(), track)
+                        i = j-1
+                    elif tokens[i+1] == "!":
+                        result = result or not bool(self.get_occupied_section(track, tokens[i + 2]))
+                        i += 1
+                    else:
+                        result = result or bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
                 else:
-                    result = not bool(self.get_occupied_section(track, tokens[i+1]))
+                    if tokens[i+1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = not self.parse_expression(temp.strip(), track)
+                        i = j-1
+                    else:
+                        result = not bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
             elif tokens[i].isdigit():
                 result = bool(self.get_occupied_section(track, tokens[i]))
@@ -325,16 +359,12 @@ class Track_Controller(object):
                     temp += " "
                     j += 1
                 result = self.parse_expression(temp.strip(), track)
+                i = j-1
             i += 1
-
         return result
 
     def parse(self, line: str, track):
         return self.parse_expression(line, track)
-
-    def demorg(self, line: str, track):
-        temp_line = "! ( ! ( " + line + " ) )"
-        return self.parse_expression(temp_line, track)
 
     def get_operator(self):
         return self._operator
