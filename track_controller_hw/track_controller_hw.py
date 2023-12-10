@@ -25,7 +25,7 @@ class Track_Controller_HW(object):
         self._green = {}
 
         # plc object
-        self.blue_line_plc = File_Parser("")
+        # self.blue_line_plc = File_Parser("")
 
         # used to make sure plc is loaded
         self._plc_set = False
@@ -35,7 +35,7 @@ class Track_Controller_HW(object):
 
         self._train_ids = {}
         # 0 = red, 1 = green, 2 = super green
-        self._lights = {'A1': 0, 'C12': 0, 'G29': 0, 'Z150': 0}
+        self._lights = {'A1': 0, 'D13': 0, 'F28': 0, 'Z150': 0}
         # plc input
         self._plc_input = ""
         # 0 = right, 1 = left
@@ -90,7 +90,7 @@ class Track_Controller_HW(object):
             send = "1"
             send += self.get_plc_logic().parse()
             print("Serial: " + send)
-            self.get_ard().write(send.encode('utf-8'))
+            #self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -154,7 +154,7 @@ class Track_Controller_HW(object):
             #self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
-        self.set_previous_blocks(self.track_ctrl_signals._occupancy)
+        self.set_previous_blocks(self.track_ctrl_signals._occupancy["Green"])
         # print("Prev:" + str(self.get_previous_blocks()))
         # print("Occ:" + str(self.get_occupied()))
         if self.get_occupied() != self.get_previous_blocks():
@@ -164,7 +164,7 @@ class Track_Controller_HW(object):
             #self.send_occupied()
 
         try:
-            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
+            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["Green"])
         except Exception as e:
             print(e)
 
@@ -181,13 +181,6 @@ class Track_Controller_HW(object):
         print(occupied)
         self.get_ard().write(occupied.encode('utf-8'))
 
-    def get_train_id(self):
-        return self._train_ids
-
-    def set_track_section_status(self, blocks: dict):
-        for block in blocks:
-            self.set_occupancy(block, blocks[block])
-
     # used to recieve info from the Ardunio
     def receive(self):
         try:
@@ -203,12 +196,18 @@ class Track_Controller_HW(object):
                     value = int(value_str)
 
                     # Check if it's a switch or light and call the appropriate set function
-                    if identifier in self._switches:
-                        self.set_switch(value, identifier)
-                    elif identifier in self._lights:
-                        self.set_lights(value, identifier)
+                    if identifier[0] == "0":
+                        if identifier[1:] in self._switches:
+                            self.set_switch(identifier[1:], value)
+                        else:
+                            print(f"Unknown identifier Rest: {identifier}")
+                    elif identifier[0] == "1":
+                        if identifier[1:] in self._lights:
+                            self.set_lights(identifier[1:], value)
+                        else:
+                            print(f"Unknown identifier Rest: {identifier}")
                     else:
-                        print(f"Unknown identifier: {identifier}")
+                        print(f"Unknown identifier First: {identifier}")
 
         except Exception as e:
             print("An error occurred:")
@@ -219,6 +218,10 @@ class Track_Controller_HW(object):
         block_send = "0" + block_number
         self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
+
+    def set_track_section_status(self, blocks):
+        for block in blocks:
+            self.set_occupancy(block, blocks[block])
 
     def get_start_up(self) -> int:
         return self._start_up
@@ -237,49 +240,6 @@ class Track_Controller_HW(object):
 
     def set_plc_logic(self, parse):
         self._plc_logic = parse
-
-    def get_authority_blocks(self):
-        return self._authority_blocks
-
-    def set_authority_blocks(self, train: str, value: float):
-        self._authority_blocks[train] = value
-
-    def get_suggested_speed_blocks(self):
-        return self._suggested_speed_blocks
-
-    def set_suggested_speed_blocks(self, train: str, value: float):
-        self._suggested_speed_blocks[train] = value
-
-    def get_ard(self):
-        return self._ard
-
-    def get_track_section_status(self):
-        return self._track_status
-
-    """ 
-    def set_track_section_status(self, block):
-        self._track_status = block
-        for i in block.keys():
-            self._blue[i][2] = block[i]
-    """
-
-    def get_crossing_lights_gates(self) -> dict:
-        return self._crossing_lights_gates
-
-    def set_crossing_lights_gate(self, light: str, value: int):
-        self._crossing_lights_gates[light] = value
-
-    def get_blue_track(self) -> dict:
-        return self._blue
-
-    def set_blue_track(self, track):
-        self._blue = track
-
-    def get_green_track(self) -> dict:
-        return self._green
-
-    def set_green_track(self, track):
-        self._green = track
 
     def get_block_occupancy(self) -> dict:
         temp = {}
@@ -315,41 +275,35 @@ class Track_Controller_HW(object):
             self._occupied_blocks.remove(block)
         self._occupied_blocks.sort()
 
-    def get_time(self):
-        return self._time
-
-    def set_time(self, times):
-        self._time = times
-
-    def get_speed_limit(self, block) -> float:
-        return self._green[block][1]
-
-    def set_speed_limit(self, block, value: float):
-        self._green[block][1] = value
-
     def get_switch_list(self) -> dict:
         return self._switches
 
-    def get_switch(self, switch) -> int:
+    def get_switch(self, switch):
         return self._switches[switch]
 
-    def set_switch(self, value: int, switch: str):
-        self._switches[switch] = value
-        swit = switch[1:]
-        self.ctc_ctrl_signals._switch[swit] = value
-        self.track_ctrl_signals._switches[swit] = value
+    def set_switch(self, switch, value: int):
+        try:
+            self._switches[switch] = value
+            swit = switch[1:]
+            self.ctc_ctrl_signals._switch["Green"][swit] = value
+            self.track_ctrl_signals._switches["Green"][swit] = value
+        except Exception as e:
+            print("Invalid switch")
 
-    def get_light_list(self) -> dict:
+    def get_lights(self, line):
+        return self._lights[line]
+
+    def get_lights_list(self) -> dict:
         return self._lights
 
-    def get_lights(self, light) -> int:
-        return self._lights[light]
-
-    def set_lights(self, value: int, light: str):
-        self._lights[light] = value
-        swit = light[1:]
-        self.ctc_ctrl_signals._light[swit] = value
-        self.track_ctrl_signals._lights[swit] = value
+    def set_lights(self, light: str, value: int):
+        try:
+            self._lights[light] = value
+            lit = light[1:]
+            self.ctc_ctrl_signals._light["Green"][lit] = value
+            self.track_ctrl_signals._lights["Green"][lit] = value
+        except Exception as e:
+            print("Invalid light")
 
     def get_automatic(self) -> bool:
         return self._automatic
@@ -363,6 +317,54 @@ class Track_Controller_HW(object):
     def set_previous(self, auto: bool):
         self._previous = auto
 
+    def get_authority_blocks(self):
+        return self._authority_blocks
+
+    def set_authority_blocks(self, train: str, value: float):
+        self._authority_blocks[train] = value
+
+    def get_suggested_speed_blocks(self):
+        return self._suggested_speed_blocks
+
+    def set_suggested_speed_blocks(self, train: str, value: float):
+        self._suggested_speed_blocks[train] = value
+
+    def get_ard(self):
+        return self._ard
+
+    def get_track_section_status(self):
+        return self._track_status
+
+    def get_crossing_lights_gates(self) -> dict:
+        return self._crossing_lights_gates
+
+    def set_crossing_lights_gate(self, light: str, value: int):
+        self._crossing_lights_gates[light] = value
+
+    def get_blue_track(self) -> dict:
+        return self._blue
+
+    def set_blue_track(self, track):
+        self._blue = track
+
+    def get_green_track(self) -> dict:
+        return self._green
+
+    def set_green_track(self, track):
+        self._green = track
+
+    def get_time(self):
+        return self._time
+
+    def set_time(self, times):
+        self._time = times
+
+    def get_speed_limit(self, block) -> float:
+        return self._green[block][1]
+
+    def set_speed_limit(self, block, value: float):
+        self._green[block][1] = value
+
     def get_commanded_speed(self) -> float:
         return self._command_speed
 
@@ -370,6 +372,7 @@ class Track_Controller_HW(object):
         self._command_speed = speed
 
     # Testbench
+    """
     def set_authority(self, _authoirty: float):
         self._authority = _authoirty
 
@@ -382,7 +385,7 @@ class Track_Controller_HW(object):
     def get_suggested_speed(self) -> float:
         return self._suggested_speed
 
-    """
+    
     def set_test_speed_limit(self, _test_speed_limit: float):
         self._test_speed_limit = _test_speed_limit
 

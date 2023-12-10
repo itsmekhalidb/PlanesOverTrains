@@ -358,16 +358,18 @@ class Ui_track_controller_mainwindow(QMainWindow):
                 item = str(i) + " " + str(self.track_controller_hw.get_speed_limit(i)) + " mi/hr"
                 self.occupancy_display.addItem(item)
         """
-        for i in self.track_controller_hw.get_light_list():
-            self.select_output.addItem(i)
 
         for i in self.track_controller_hw.get_switch_list():
             self.select_output.addItem(i)
 
+        for i in self.track_controller_hw.get_lights_list():
+            if i not in self.track_controller_hw.get_switch_list():
+                self.select_output.addItem(i)
+
         self.wayside_select.clear()
 
        # self.wayside_select.addItem("Blue")
-        self.wayside_select.addItem("green")
+        self.wayside_select.addItem("Green")
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
@@ -471,7 +473,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
     #     self.track_controller_hw.get_suggested_speed() - self.track_controller_hw.get_speed_limit('B-A1'))
     # except:
     #    print("None")
-
+    """
     def toggle_light(self):
         block = self.selected_output.text()
         if block in self.track_controller_hw.get_light_list():
@@ -506,7 +508,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         elif self.track_controller_hw.get_switch(switch) == 1:
             self.track_controller_hw.set_switch(0, switch)
 
-    """
+    
     def send_lights(self):
         type_output = self.selected_output.text().split(" ")
         value = self.select_output.currentItem().text()
@@ -590,7 +592,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.Select_wayside_label.setText(_translate("track_controller_mainwindow", "Wayside Controller/Line"))
         self.select_output_label.setText(_translate("track_controller_mainwindow", "Select Output"))
         self.selected_output_label.setText(_translate("track_controller_mainwindow", "Selected Output"))
-        self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
+        self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied"))
         #self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
         #self.sys_time_label.setText(_translate("self", "13:24:55"))
 

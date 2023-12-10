@@ -177,9 +177,6 @@ class TrackModel(object):
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
 
-
-
-
         for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
             if index not in self._train_ids:
@@ -239,9 +236,14 @@ class TrackModel(object):
                 train.current_block += 1
 
 
+                # how to get switch position
+                # pos = self.get_switch_position(self._track_controller_signals._line.capitalize(), '63')) # returns 0 or 1
+
+                # how to set direction
+                # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
 
 
-            return train.current_block
+                return train.current_block
         except Exception as e:
             print("You must upload the Track Model before dispatching a train")
             print(e)
@@ -272,7 +274,6 @@ class TrackModel(object):
     def get_switch_to(self) -> {}:
         return self._switch_to
 
-
     def set_block_length(self, _block_length: float):
         self._block_length = _block_length
 
@@ -302,8 +303,12 @@ class TrackModel(object):
     def set_switch_position(self, _switch_position: {}):
         self._switch_position = _switch_position
 
-    def get_switch_position(self) -> {}:
-        return self._switch_position
+    def get_switch_position(self, line, switch) -> int:
+        try:
+            return int(self._switch_position[str(line)][str(switch)])
+        except KeyError:
+            # Handle the case when the color or switch_number is not found
+            print(f"Error: Color '{str(line)}' or switch number '{str(switch)}' not found.")
 
     #Light Colors
     def set_light_colors(self, _light_colors: {}):

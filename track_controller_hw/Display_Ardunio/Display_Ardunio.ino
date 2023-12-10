@@ -180,7 +180,7 @@ void PLC(){
     lights[2].value = 1;
     lights[3].value = 0;
   }
-  Serial.print("F28/"+ String(switches[1].value) + " G29/" + String(lights[2].value) + " Z150/" + String(lights[3].value) + "\n");
+  Serial.print("0F28/"+ String(switches[1].value) + " 1F28/" + String(lights[2].value) + " 1Z150/" + String(lights[3].value) + "\n");
 
   int indexD = Dsize;
   int dor_and = 0;
@@ -217,7 +217,7 @@ void PLC(){
     lights[0].value = 0;
     lights[1].value = 1;
   }
-  Serial.print("D13/"+ String(switches[0].value) + " A1/" + String(lights[0].value) + " C12/" + String(lights[1].value) + "\n");
+  Serial.print("0D13/"+ String(switches[0].value) + " 1A1/" + String(lights[0].value) + " 1D13/" + String(lights[1].value) + "\n");
 
   int indexI = Isize;
   int ior_and = 0;
@@ -246,7 +246,7 @@ void PLC(){
     indexI--;
   }
   switches[2].value = resultI;
-  Serial.print("I57/"+ String(switches[2].value)+ "\n");
+  Serial.print("0I57/"+ String(switches[2].value)+ "\n");
 
   if(light_switch){
     if(lights[index].name == current_block){
@@ -445,7 +445,7 @@ void changeSwitch(){
           lcd1.setCursor(0,2);
           lcd1.print("Switch: Right");
         }
-        Serial.print(current_block + "/"+ String(switches[i].value));
+        Serial.print("0" + current_block + "/"+ String(switches[i].value));
         break;
       }
     }
@@ -467,7 +467,7 @@ void changeLight(){
           digitalWrite(Red_LED, HIGH);
           digitalWrite(green_LED, LOW);  
         }
-        Serial.print(current_block + "/"+ String(lights[i].value));
+        Serial.print("1" + current_block + "/"+ String(lights[i].value));
         break;
       }
     }
@@ -504,9 +504,9 @@ void setup() {
 
   lights[0].name = "A1";
   lights[0].value = 1;
-  lights[1].name = "C12";
+  lights[1].name = "D13";
   lights[1].value = 0;
-  lights[2].name = "G29";
+  lights[2].name = "F28";
   lights[2].value = 0;
   lights[3].name = "Z150";
   lights[3].value = 1;
