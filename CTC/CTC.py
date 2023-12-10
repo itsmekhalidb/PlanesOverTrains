@@ -5,6 +5,9 @@ import threading
 import time
 from typing import Callable
 from datetime import datetime, timedelta
+import tkinter as tk
+from tkinter import filedialog
+import pandas as pd
 
 from api.ctc_track_controller_api import CTCTrackControllerAPI
 from api.ctc_track_model_api import CTCTrackModelAPI
@@ -80,8 +83,32 @@ class CTC(object):
             self.TrackCTRLSignal._track_section_status[block] = 1
     
     # automatic train schedule function
-    def import_schedule(self, doc):
-        return 
+    def import_schedule(self, doc, line):
+        tim = self._time
+        for index, row in doc.iloc[1:].iterrows():
+            station = ""
+            t = timedelta(0)
+            for column, value in row.items():
+                if column == "Line" and value.lower() != line:
+                    break
+                elif column == "Infrastructure":
+                    name = value[9:]
+                    station = self.to_camel_case(name)
+                elif column == "total time to station w/dwell (min)":
+                    t = timedelta(minutes=int(value))
+                    # print(t)
+            if station in self._stations[line].keys():
+                res1 = self.create_schedule(station, tim+t, 0, -1, line)
+                if res1 == 1:
+                    tim += t
+                else:
+                    res2 = self.create_schedule(station, tim+res1+t, 0, -1, line)
+                    if res2 == 1:
+                        tim = tim + t + res1
+                    else:
+                        print("idk time bad no work!")
+
+
 
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index, line):
@@ -91,9 +118,13 @@ class CTC(object):
                 destination_block = min(self._stations[line][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 time_to_arrival = arrival_datetime - self.get_time()
-                temp_trn.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, line, self.TrackCTRLSignal)
+                x = temp_trn.create_schedule(destination_block, 0, station_name, arrival_datetime, time_to_arrival, line, self.TrackCTRLSignal)
                 if temp_trn.sched_exists() == 1:
                     self._trains.append(temp_trn)
+                    return 1
+                else:
+                    return x
+                return 0
             elif function == 1: # delete existing schedule
                 return
             elif function == 2: # add a stop
@@ -124,7 +155,9 @@ class CTC(object):
             print(e)
             return {}
     def get_occupancy(self, line):
-        output = list(self.TrackCTRLSignal._occupancy.values()) + list(self._closed_blocks[line])
+        output = list(self.TrackCTRLSignal._occupancy.values()).extend(list(self._closed_blocks[line]))
+        if output == None:
+            output = []
         return output
     def get_curr_speed(self, train_num):
         speed = self._trains[train_num-1].get_actual_velocity()
@@ -198,6 +231,12 @@ class CTC(object):
             i = i+1
 
 
+    # type conversion functions
+    def to_camel_case(self, variable_name):
+        parts = variable_name.split(' ')
+        camel_case = ' '.join(word.capitalize() for word in parts)
+        return camel_case
+
     # launch ui from launcher
     def launch_ui(self):
         print("Launching CTC UI")
@@ -215,6 +254,7 @@ class Train(object):
     def __init__(self, func : Callable, train_num = -1):
         self._number = train_num # train id number
         self._actual_velocity = 0 # actual velocity of train from train controller (m/s)
+        self._commanded_velocity = -1 # commanded velocity from ui, -1 means don't use
         self._current_block = 0 # current position of train, 0 indicates yard
         self._schedule = [] # object containing train's schedule
     
@@ -224,7 +264,7 @@ class Train(object):
         
     # create schedule
     def create_schedule(self, destination_block, starting_block, dest_station, arrival_time, time_to_arrival, line, api):
-        print(len(self._schedule))
+        # print(len(self._schedule))
         if len(self._schedule) < 1: # first schedule
             sched = Schedule(starting_block, destination_block, dest_station, arrival_time, 1, -1, line, api)
             if sched._total_time < time_to_arrival:
@@ -234,6 +274,7 @@ class Train(object):
                 self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), line, api)
             else:
                 print("fuck you fucking idiot thats too fucking early it takes", sched._total_time, "to get there")
+                return sched._total_time
         else: # adding stops
             self._schedule.pop() # remove schedule going back to yard
             sched = Schedule(int(self._schedule[-1]._last_block), int(destination_block), dest_station, arrival_time, 1, self._schedule[-1]._last_dir, line, api)
@@ -246,9 +287,10 @@ class Train(object):
                 self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), line, api)
             else:
                 print("fuck you fucking idiot thats too fucking early it takes", tiem, "to get there")
+                return tiem
         
-        for s in self._schedule:
-            print(s._route_info)
+        # for s in self._schedule:
+        #     print(s._route_info)
 
     # create schedule going back to yard
     def yard_schedule(self, starting_block, last_dir, arr_time, line, api):
@@ -279,12 +321,17 @@ class Train(object):
         return self._schedule[0].get_departure_time()
     def get_arrival_time(self):
         return self._schedule[0].get_arrival_time()
+    def get_commanded_speed(self):
+        return self._commanded_velocity
     def get_suggested_velocity(self):
         return self._schedule[0].get_curr_sugg_speed(self._current_block)
     def get_dest_station(self):
         return self._schedule[0].get_destination_station()
     def get_curr_auth_speed_info(self):
-        return [self.get_curr_authority(), self._schedule[0].get_curr_sugg_speed(self._current_block)]
+        if self.get_commanded_speed() != -1:
+            return [self.get_curr_authority(), min(self._schedule[0].get_curr_sugg_speed(self._current_block), self.get_commanded_speed())]
+        else:
+            return [self.get_curr_authority(), self._schedule[0].get_curr_sugg_speed(self._current_block)]
     
     # setter functions
     def set_actual_velocity(self, vel):

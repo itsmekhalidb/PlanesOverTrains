@@ -56,7 +56,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.switch_auto.setFont(font)
         self.switch_auto.setObjectName("switch_auto")
-        self.switch_auto.clicked.connect(lambda:self.open_file())
+        self.switch_auto.clicked.connect(lambda:self.open_file("green"))
         self.arrival_time = QtWidgets.QTimeEdit(self.green_train_view_page)
         self.arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.arrival_time.setObjectName("arrival_time")
@@ -251,6 +251,12 @@ class CTC_Main_UI(QMainWindow):
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
         self.confirm_close.clicked.connect(lambda:self.change_block("Green", self.section_list.currentText(), self.block_list.currentText()))
+        self.train_speed_spnbx = QtWidgets.QDoubleSpinBox(self.green_train_view_page)
+        self.train_speed_spnbx.setGeometry(QtCore.QRect(605, 14, 62, 22))
+        self.train_speed_spnbx.setObjectName("train_speed_spnbx")
+        self.train_speed_spnbx.setMaximum(200)
+        self.train_speed_spnbx.setMinimum(-1)
+        self.train_speed_spnbx.setValue(-1)
         self.switch_list = QtWidgets.QComboBox(self.green_train_view_page)
         self.switch_list.setGeometry(QtCore.QRect(415, 490, 90, 31))
         font = QtGui.QFont()
@@ -682,7 +688,7 @@ class CTC_Main_UI(QMainWindow):
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
-                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mph")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mph")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
@@ -694,6 +700,7 @@ class CTC_Main_UI(QMainWindow):
             # update occupied blocks
             # Assuming self.ctc.get_occupancy() returns a list of blocks
             occupancy_list_green = self.ctc.get_occupancy("green")
+            # print(occupancy_list_green)
 
             # Make sure the number of rows in the QTableWidget is enough to accommodate the items
             self.blocks_table.setRowCount(len(occupancy_list_green))
@@ -732,7 +739,7 @@ class CTC_Main_UI(QMainWindow):
     
 
     # open scheduling file
-    def open_file(self):
+    def open_file(self, line):
         # create a Tkinter root window (it will not be shown)
         root = tk.Tk()
         root.withdraw()  # hide the main window
@@ -748,7 +755,7 @@ class CTC_Main_UI(QMainWindow):
             try:
                 doc = pd.read_excel(file_path)
                 print("Successfully imported Excel file")
-                self.ctc.import_schedule(doc)
+                self.ctc.import_schedule(doc, line)
             except Exception as e:
                 print(f"Error reading Excel file: {e}")
         else:
