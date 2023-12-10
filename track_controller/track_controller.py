@@ -24,20 +24,6 @@ class Track_Controller(object):
         self._crossing_lights_gates = {"Green": {'18': 0},
                                        "Red": {'47': 0}}
 
-        self._switch_direction = {"Green": {"13": ["1", "12"],
-                                      "28": ["150", "29"],
-                                      "57": ["58", "0"],
-                                      "63": ["0", "62"],
-                                      "77": ["76", "101"],
-                                      "85": ["100", "86"]},
-                            "Red": {"9": ["10", "0"],
-                                    "16": ["15", "1"],
-                                    "27": ["76", "28"],
-                                    "33": ["32", "72"],
-                                    "38": ["71", "39"],
-                                    "44": ["43", "67"],
-                                    "52": ["66", "53"]}
-                            }
         # if program is in automatic mode
         self._automatic = False
         # commanded speed is speed limit - occupancy
@@ -238,6 +224,80 @@ class Track_Controller(object):
     def get_train_out(self):
         return self._train_info
 
+    def get_occupied_section(self, line, block):
+        occupancy = 0
+        if line == 'Green':
+            if block == '0':
+                return self.get_occupancy(line, 0)
+            elif block == '1':
+                for i in range(1, 13, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '13':
+                for i in range(13, 29, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '18':
+                for i in range(17, 19, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '57':
+                for i in range(29, 58, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '76':
+                for i in range(59, 77, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '77':
+                for i in range(77, 86, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '100':
+                for i in range(86, 101, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '150':
+                for i in range(101, 151, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+        elif line == 'Red':
+            if block == '0':
+                return self.get_occupancy(line, 0)
+            elif block == '1':
+                for i in range(1, 10, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '10':
+                for i in range(10, 16, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '16' or block == '27':
+                for i in range(16, 30, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '33' or block == '38':
+                for i in range(30, 35, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '44' or block == '52':
+                for i in range(35, 53, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '66':
+                for i in range(53, 67, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '71':
+                for i in range(67, 72, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+            elif block == '77':
+                for i in range(72, 78, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
+
+
     def parse_expression(self, line, track):
         tokens = line.split(" ")
         result = None
@@ -245,18 +305,18 @@ class Track_Controller(object):
 
         while i < len(tokens)-1:
             if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
-                # print(tokens[i+1])
+
                 if tokens[i] == "and":
-                    result = result and bool(self.get_occupancy(track, tokens[i+1]))
+                    result = result and bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
                 elif tokens[i] == "or":
-                    result = result or bool(self.get_occupancy(track, tokens[i+1]))
+                    result = result or bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
                 else:
-                    result = not bool(self.get_occupancy(track, tokens[i+1]))
+                    result = not bool(self.get_occupied_section(track, tokens[i+1]))
                     i += 1
             elif tokens[i].isdigit():
-                result = bool(self.get_occupancy(track, tokens[i]))
+                result = bool(self.get_occupied_section(track, tokens[i]))
             elif tokens[i] == "(":
                 j = i + 1
                 temp = ""
@@ -270,17 +330,17 @@ class Track_Controller(object):
         return result
 
     def parse(self, line: str, track):
-        self._line = line
         return self.parse_expression(line, track)
+
+    def demorg(self, line: str, track):
+        temp_line = "! ( ! ( " + line + " ) )"
+        return self.parse_expression(temp_line, track)
 
     def get_operator(self):
         return self._operator
 
     def set_operator(self, operator: str):
         self._operator = operator
-        
-    def get_connection(self, line, switch):
-        return self._switch_direction[line][switch][self._switches[switch]]
 
     def launch_ui(self):
         print("Launching Track Controller UI")

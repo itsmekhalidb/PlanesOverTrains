@@ -67,18 +67,18 @@ class TrackModelUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy('13', 1)
+        tc.set_occupancy("Green",'13', 1)
         f = open("../track_controller/PLCgreen1.txt", "r")
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if tc.get_operator() == "switch":
                     tc.set_switch("Green", str(lines[i].strip()),
-                                  tc.parse(lines[i + 1].strip()))
+                                  tc.parse(lines[i + 1].strip(), "Green"))
                 elif tc.get_operator() == "light":
                     tc.set_lights("Green", str(lines[i].strip()),
-                                  tc.parse(lines[i + 1].strip()))
+                                  tc.parse(lines[i + 1].strip(), "Green"))
                 i = i + 1
             else:
                 tc.set_operator(lines[i].strip())
@@ -91,18 +91,21 @@ class TrackModelUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy('27', 1)
+        tc.set_occupancy("Red", '29', 1)
         f = open("../track_controller/PLCred1.txt", "r")
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if tc.get_operator() == "switch":
                     tc.set_switch("Red", str(lines[i].strip()),
-                                                     tc.parse(lines[i + 1].strip()))
+                                                     tc.demorg(lines[i + 1].strip(), "Red"))
                 elif tc.get_operator() == "light":
                     tc.set_lights("Red", str(lines[i].strip()),
-                                                     tc.parse(lines[i + 1].strip()))
+                                                     tc.demorg(lines[i + 1].strip(), "Red"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Red", str(lines[i].strip()),
+                                            tc.demorg(lines[i + 1].strip(), "Red"))
                 i = i + 1
             else:
                 tc.set_operator(lines[i].strip())
@@ -114,24 +117,30 @@ class TrackModelUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy('38', 1)
+        tc.set_occupancy("Red", '38', 1)
         f = open("../track_controller/PLCred2.txt", "r")
         lines = f.readlines()
         i = 0
         while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
                 if tc.get_operator() == "switch":
                     tc.set_switch("Red", str(lines[i].strip()),
-                                                     tc.parse(lines[i + 1].strip()))
+                                                     tc.parse(lines[i + 1].strip(), "Red"))
+                    print(tc.parse("Red", lines[i + 1].strip()))
                 elif tc.get_operator() == "light":
                     tc.set_lights("Red", str(lines[i].strip()),
-                                                     tc.parse(lines[i + 1].strip()))
+                                                     tc.parse(lines[i + 1].strip(), "Red"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Red", str(lines[i].strip()),
+                                            tc.parse(lines[i + 1].strip(), "Red"))
                 i = i + 1
             else:
                 tc.set_operator(lines[i].strip())
                 i = i + 1
         self.assertEqual(tc.get_switch("Red", '38'), 1)
         f.close()
+
+
 
 
 if __name__ == "__main__":
