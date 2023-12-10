@@ -22,9 +22,11 @@ class CTC(object):
         self._closed_blocks = {"green" : [], "red" : []} # list of closed blocks
         self._commanded_switches = {"green" : {}, "red" : {}} # list of commanded switch positions
         self._total_passengers = 0 # passenger count
+        self._prev_passengers = 0 # passenger count
         self._seven_hours = timedelta(hours=7)
         self._time = datetime.combine(datetime.now().date(), datetime.min.time()) # time object set to midnight
         self._time = self._time + self._seven_hours
+        self._prev_time = self._time
         self._elapsed_time = 0.0 # time in hours since time started
         self._time_scaling = 1 # how fast time is moving
         self._tick_counter = 0 # number of ticks since last second
@@ -38,10 +40,11 @@ class CTC(object):
 
     # getter functions
     def get_throughput(self):
-        if self._elapsed_time > 0:
-            return round(self._total_passengers/self._elapsed_time, 0)
-        else:
-            return 0
+        if self._elapsed_time >= 3600:
+            self._prev_passengers = self._total_passengers
+            self._elapsed_time = 0
+        return round(self._total_passengers - self._prev_passengers, 0)
+
     def get_trains(self):
         return self._trains
     def get_stations_names(self, line):
@@ -186,7 +189,10 @@ class CTC(object):
             else:
                 self._tick_counter -= 10 / self._time_scaling
                 self._time = self._time + timedelta(microseconds=100000 * self._time_scaling)
-                self._elapsed_time = self._elapsed_time + (1 / 3600000 * self._time_scaling)
+                if self._time.second != self._prev_time.second:
+                    # self._elapsed_time += self._elapsed_time + (1 / 3600000 * self._time_scaling)
+                    self._elapsed_time += 1
+                self._prev_time = self._time
                 self.TrackCTRLSignal._time = self._time
 
             self.TrackCTRLSignal._train_out = self.create_departures()
@@ -198,6 +204,11 @@ class CTC(object):
             # self.update_section_status()
             # print(self.TrackCTRLSignal._train_out)
             self.read_train_in()
+
+            # update ticket sales
+            for train in self.TrackModelSignal._ticket_sales:
+                if len(train) > 1:
+                    self._total_passengers = train[1]
 
 
         # Enable Threading
