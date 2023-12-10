@@ -232,15 +232,14 @@ class TrackModel(object):
                 sw = self._switchionary[train.current_block][3]
                 sw_label = self._switchionary[train.current_block][4]
                 if train.direction == inc and self._switch_position[sw_label] == sw:
-                    next_block = self._switchionary[train.current_block][0]
-                    self._direction = self._switchionary[train.current_block][2]
-                    train.current_block = next_block
+                    train.direction = self._switchionary[train.current_block][2]
+                    train.current_block = self._switchionary[train.current_block][0]
 
 
 
             if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                 train.cum_distance = 0
-                train.current_block += self._direction
+                train.current_block += train.direction
 
 
                 # how to get switch position
