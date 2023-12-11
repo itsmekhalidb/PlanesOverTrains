@@ -812,30 +812,34 @@ class Ui_MainWindow(QMainWindow):
         self.track_model.set_heater_failure(self.heater_failure_detected)
 
 
-
     def update_map_occupancy(self, occupied_blocks):
         try:
             if self.line_picked == 'green':
-                for button_id in occupied_blocks:
-                    # print(button_id)
-                    row = button_id // self.green_map.columnCount()
-                    column = (button_id % self.green_map.columnCount())-1
-                    item = QTableWidgetItem()
-                    item.setBackground(QColor(0,255,0))
-                    self.green_map.setItem(row, column, item)
-                    if button_id != 1:
-                        row2 = (button_id-1) // self.green_map.columnCount()
-                        column2 = ((button_id-1) % self.green_map.columnCount())-1
-                        item2 = QTableWidgetItem()
-                        item2.setBackground(QColor(255,255,255))
-                        self.green_map.setItem(row2,column2,item2)
+                for row in range(self.green_map.rowCount()):
+                    for column in range(self.green_map.columnCount()):
+                        button_id = row * self.green_map.columnCount() + column
+                        item = QTableWidgetItem()
+
+                        if button_id in occupied_blocks: # and train in green line
+                                item.setBackground(QColor(0, 255, 0))
+                                self.green_map.setItem(row, column-1, item)
+                        else:
+                                item.setBackground(QColor(255, 255, 255))
+                                self.green_map.setItem(row, column-1, item)
             elif self.line_picked == 'red':
-                for button_id in occupied_blocks:
-                    row = button_id // self.red_map.columnCount()
-                    column = (button_id % self.red_map.columnCount())-1
-                    item = QTableWidgetItem()
-                    item.setBackground(QColor(0,255,0))
-                    self.red_map.setItem(row, column, item)
+                for row in range(self.red_map.rowCount()):
+                    for column in range(self.red_map.columnCount()):
+                        button_id = row * self.red_map.columnCount() + column
+                        item = QTableWidgetItem()
+
+                        # TODO: Deliniate lines so we can't paint green train on red line
+
+                        if button_id in occupied_blocks: # and train in red line
+                                item.setBackground(QColor(0, 255, 0))
+                                self.red_map.setItem(row, column-1, item)
+                        else:
+                                item.setBackground(QColor(255, 255, 255))
+                                self.red_map.setItem(row, column-1, item)
             else:
                 pass
         except Exception as e:
