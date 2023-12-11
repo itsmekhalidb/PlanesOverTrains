@@ -835,7 +835,7 @@ class Ui_MainWindow(QMainWindow):
                         # TODO: Deliniate lines so we can't paint green train on red line
 
                         if button_id in occupied_blocks: # and train in red line
-                                item.setBackground(QColor(0, 255, 0))
+                                item.setBackground(QColor(255, 0, 0))
                                 self.red_map.setItem(row, column-1, item)
                         else:
                                 item.setBackground(QColor(255, 255, 255))
