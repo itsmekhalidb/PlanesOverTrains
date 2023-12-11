@@ -813,37 +813,26 @@ class Ui_MainWindow(QMainWindow):
 
 
     def update_map_occupancy(self, occupied_blocks):
-        try:
-            if self.line_picked == 'green':
-                for row in range(self.green_map.rowCount()):
-                    for column in range(self.green_map.columnCount()):
-                        button_id = row * self.green_map.columnCount() + column
-                        item = QTableWidgetItem()
+            try:
+                map_to_update = self.green_map if self.line_picked == 'green' else self.red_map
+                occupied_color = QColor(0, 255, 0) if self.line_picked == 'green' else QColor(255, 0, 0)
 
-                        if button_id in occupied_blocks: # and train in green line
-                                item.setBackground(QColor(0, 255, 0))
-                                self.green_map.setItem(row, column-1, item)
-                        else:
-                                item.setBackground(QColor(255, 255, 255))
-                                self.green_map.setItem(row, column-1, item)
-            elif self.line_picked == 'red':
-                for row in range(self.red_map.rowCount()):
-                    for column in range(self.red_map.columnCount()):
-                        button_id = row * self.red_map.columnCount() + column
+                for row in range(map_to_update.rowCount()):
+                    for column in range(map_to_update.columnCount()):
+                        button_id = row * map_to_update.columnCount() + column
                         item = QTableWidgetItem()
 
                         # TODO: Deliniate lines so we can't paint green train on red line
 
-                        if button_id in occupied_blocks: # and train in red line
-                                item.setBackground(QColor(255, 0, 0))
-                                self.red_map.setItem(row, column-1, item)
+                        if button_id in occupied_blocks: # and train in map_to_update line
+                            item.setBackground(occupied_color)
+                            map_to_update.setItem(row, column-1, item)
                         else:
-                                item.setBackground(QColor(255, 255, 255))
-                                self.red_map.setItem(row, column-1, item)
-            else:
-                pass
-        except Exception as e:
-            print(e)
+                            item.setBackground(QColor(255, 255, 255))
+                            map_to_update.setItem(row, column-1, item)
+
+            except Exception as e:
+                    print(e)
 
     def up_temp(self):
         sign = random.choice([-1,1])
