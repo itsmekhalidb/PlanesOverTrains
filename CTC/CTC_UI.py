@@ -101,7 +101,6 @@ class CTC_Main_UI(QMainWindow):
         self.system_speed_spnbx_3.setMinimum(0)
         self.system_speed_spnbx_3.setValue(1)
         self.prev_speed = 1
-        # self.system_speed_spnbx_3.setValue(self.ctc.get_time_scaling())
         self.system_speed_spnbx_3.valueChanged.connect(lambda:self.change_time_speed(self.system_speed_spnbx_3.value()))
         self.header = QtWidgets.QLabel(self.green_train_view_page)
         self.header.setGeometry(QtCore.QRect(0, 0, 676, 51))
@@ -150,17 +149,6 @@ class CTC_Main_UI(QMainWindow):
         header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
         self.train_list_2.verticalHeader().setVisible(False)
         self.train_list_2.clicked.connect(self.handle_table_click)
-
-        # data = [ # code to add data
-        #     ["1", "08:00", "10:30", "East Liberty", "890 m", "89 mi/hr", "50 mi/hr"]
-        #     # Add more rows as needed
-        # ]
-
-        # for row_index, row_data in enumerate(data):
-        #     for column_index, cell_data in enumerate(row_data):
-        #         item = QStandardItem(str(cell_data))
-        #         self.train_list_2_data.setItem(row_index, column_index, item)
-
         self.occupied_blocks = QtWidgets.QScrollArea(self.green_train_view_page)
         self.occupied_blocks.setGeometry(QtCore.QRect(514, 320, 161, 281))
         self.occupied_blocks.setWidgetResizable(True)
@@ -196,7 +184,7 @@ class CTC_Main_UI(QMainWindow):
         self.add_stop.hide()
         self.add_stop.clicked.connect(lambda:self.handle_add_stop_click())
         self.back_sched = QtWidgets.QPushButton(self.green_train_view_page)
-        self.back_sched.setGeometry(QtCore.QRect(5, 450, 101, 23))
+        self.back_sched.setGeometry(QtCore.QRect(5, 500, 101, 23))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.back_sched.setFont(font)
@@ -251,12 +239,18 @@ class CTC_Main_UI(QMainWindow):
         self.confirm_close.setFont(font)
         self.confirm_close.setObjectName("confirm_close")
         self.confirm_close.clicked.connect(lambda:self.change_block("Green", self.section_list.currentText(), self.block_list.currentText()))
+        self.train_speed_label = QtWidgets.QTextEdit(self.green_train_view_page)
+        self.train_speed_label.setGeometry(QtCore.QRect(5, 450, 101, 41))
+        self.train_speed_label.setObjectName("train_speed_label")
+        self.train_speed_label.hide()
         self.train_speed_spnbx = QtWidgets.QDoubleSpinBox(self.green_train_view_page)
-        self.train_speed_spnbx.setGeometry(QtCore.QRect(605, 14, 62, 22))
+        self.train_speed_spnbx.setGeometry(QtCore.QRect(25, 470, 62, 22))
         self.train_speed_spnbx.setObjectName("train_speed_spnbx")
         self.train_speed_spnbx.setMaximum(200)
         self.train_speed_spnbx.setMinimum(-1)
         self.train_speed_spnbx.setValue(-1)
+        self.train_speed_spnbx.hide()
+        self.train_speed_spnbx.valueChanged.connect(lambda:self.change_sugg_speed(self.train_speed_spnbx.value()))
         self.switch_list = QtWidgets.QComboBox(self.green_train_view_page)
         self.switch_list.setGeometry(QtCore.QRect(415, 490, 90, 31))
         font = QtGui.QFont()
@@ -264,7 +258,6 @@ class CTC_Main_UI(QMainWindow):
         self.switch_list.setFont(font)
         self.switch_list.setObjectName("switch_list")
         self.switch_list.addItem("Switch")
-        # self.switch_list.currentIndexChanged.connect
         font = QtGui.QFont()
         font.setPointSize(16)
         self.switch_switch = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
@@ -300,6 +293,8 @@ class CTC_Main_UI(QMainWindow):
         self.clear_maint.clicked.connect(lambda:self.clear_maintenance("green"))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(), self.arrival_time.time().second())
         self.arrival_time_label.raise_()
+        self.train_speed_label.raise_()
+        self.train_speed_spnbx.raise_()
         self.header.raise_()
         self.switch_auto.raise_()
         self.station_list.raise_()
@@ -579,6 +574,12 @@ class CTC_Main_UI(QMainWindow):
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Select Arrival Time</span></p>\n"
 "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>"))
+        self.train_speed_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Suggest Speed</span></p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>"))
         self.sys_time_label_3.setText(_translate("self", "13:24:55"))
         self.edit_schedule.setText(_translate("self", "Delete Schedule"))
         self.add_stop.setText(_translate("self", "Add Stop"))
@@ -687,14 +688,26 @@ class CTC_Main_UI(QMainWindow):
                     self.train_list_2_data.appendRow(row)
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                        dep = self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)
+                        arr = self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)
+                        st = train.get_dest_station()
+                        self.train_list_2_data.item(train_nums.index(train_num), 0).setData(dep)
+                        self.train_list_2_data.item(train_nums.index(train_num), 1).setData(arr)
+                        self.train_list_2_data.item(train_nums.index(train_num), 2).setData(st)
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
                         self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_total_authority())) + " mph")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
+                        index1 = self.train_list_2.model().index(train_nums.index(train_num), 1)
+                        index2 = self.train_list_2.model().index(train_nums.index(train_num), 2)
+                        index3 = self.train_list_2.model().index(train_nums.index(train_num), 3)
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
                         index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
+                        self.train_list_2.model().setData(index1, dep)
+                        self.train_list_2.model().setData(index2, arr)
+                        self.train_list_2.model().setData(index3, st)
                         self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_curr_authority())) + " mi")
-                        self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_suggested_velocity())) + " mi/hr")
+                        self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mi/hr")
                         self.train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
             
             # update occupied blocks
@@ -793,6 +806,15 @@ class CTC_Main_UI(QMainWindow):
         self.prev_speed = speed
     
 
+    # change train speed when spinbox changed
+    def change_sugg_speed(self, speed):
+        if speed != -1:
+            print("speed", self.mihr_to_kmhr(speed))
+            self.ctc.set_sugg_speed(self.mihr_to_kmhr(speed), self.train_index)
+        else:
+            self.ctc.set_sugg_speed(speed, self.train_index)
+        
+
     # display section names
     def initialize_section_list(self, line):
         return sorted(self.ctc.get_sections(line))
@@ -829,6 +851,7 @@ class CTC_Main_UI(QMainWindow):
 
     # handle table clicks
     def handle_table_click(self, index):
+        self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
         # index contains information about the clicked cell
         row = index.row()
         column = index.column()
@@ -839,6 +862,8 @@ class CTC_Main_UI(QMainWindow):
             self.edit_schedule.show()
             self.add_stop.show()
             self.back_sched.show()
+            self.train_speed_spnbx.show()
+            self.train_speed_label.show()
 
             self.station_list.hide()
             self.arrival_time_label.hide()
@@ -851,6 +876,8 @@ class CTC_Main_UI(QMainWindow):
         self.edit_schedule.hide()
         self.add_stop.hide()
         self.back_sched.hide()
+        self.train_speed_spnbx.hide()
+        self.train_speed_label.hide()
 
         self.train_list_2.clearSelection()
         
@@ -862,11 +889,12 @@ class CTC_Main_UI(QMainWindow):
     # handle add stop click
     def handle_add_stop_click(self):
         self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
-        print(self.train_index)
         self.label_2.setText("Add Stop")
         self.edit_schedule.hide()
         self.add_stop.hide()
         self.back_sched.hide()
+        self.train_speed_spnbx.hide()
+        self.train_speed_label.hide()
         
         self.back_add.show()
         self.station_list.show()
@@ -881,6 +909,8 @@ class CTC_Main_UI(QMainWindow):
         self.edit_schedule.show()
         self.add_stop.show()
         self.back_sched.show()
+        self.train_speed_spnbx.show()
+        self.train_speed_label.show()
 
         self.back_add.hide()
         self.station_list.hide()
@@ -897,6 +927,8 @@ class CTC_Main_UI(QMainWindow):
         return "{:.2f}".format(meters / 1609.344)
     def kmhr_to_mihr(self, kmhr):
         return "{:.2f}".format(kmhr * 0.621371)
+    def mihr_to_kmhr(self, mihr):
+        return mihr * 1.60934
     def mps_to_mph(self, mps):
         return "{:.2f}".format(mps * 2.23694)
     def datetime_to_qtime(self, dt):

@@ -77,6 +77,8 @@ class CTC(object):
             self._time_scaling = 5
         else:
             self._time_scaling = num
+    def set_sugg_speed(self, speed, train_index):
+        self._trains[train_index].set_commanded_velocity(speed)
     def change_block(self, line, block):
         if block in self._closed_blocks[line]:
             self._closed_blocks[line].remove(block)
@@ -335,6 +337,7 @@ class Train(object):
     def get_dest_station(self):
         return self._schedule[0].get_destination_station()
     def get_curr_auth_speed_info(self):
+        # print("cs:", self.get_commanded_speed())
         output = []
         if self.get_commanded_speed() != -1:
             output = [self.get_curr_authority(), min(self._schedule[0].get_curr_sugg_speed(self._current_block), self.get_commanded_speed())]
@@ -349,6 +352,8 @@ class Train(object):
         self._actual_velocity = vel
     def set_current_block(self, blk):
         self._current_block = blk
+    def set_commanded_velocity(self, speed):
+        self._commanded_velocity = speed
     def set_cum_distance(self, cd):
         # move to next schedule if this one's done
         if self.get_total_authority() <= 0:
@@ -458,6 +463,7 @@ class Schedule(object):
             self._yard_block = 0 # yard, where trains start
             self._last_dir = -1 # who cares
 
+        self._total_time = self._total_time * 1.25
         self._last_block = next(iter(self._route_info))
         # print("cool arrays: ", self._blocks_arrs)
         # print(self._route_info)
@@ -605,7 +611,7 @@ class Schedule(object):
                 # print(self._route_info)
                 # if it's a station block and not the very first block in the schedule if we're going to the yard
             if any(curr_block in array for array in self._station_info.values()) and (curr_block != self._starting_block or self._destination_block != 0):
-                print(self._blocks_arrs[self._arr_num])
+                # print(self._blocks_arrs[self._arr_num])
                 # if we're past halfway
                 if cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0:
                     self._tracker = 1
