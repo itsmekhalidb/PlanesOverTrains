@@ -965,10 +965,7 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_railway.setVisible(bool(self.manual_mode_checkBox.checkState()))
 
         # toggle buttons
-        try:
-            self.ChangeVisibility()
-        except Exception as e:
-            print("it's changeVisibility")
+        self.ChangeVisibility()
 
         # iteration 2 - no system speed
         self.system_speed_label.setVisible(False)
@@ -979,12 +976,6 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.sys_time_label.setText(_translate("self", temp_timestr))
 
         self.changeWayside()
-
-        if self.track_controller.get_automatic():
-            try:
-                self.PLC()
-            except Exception as e:
-                print("its the PLC")
 
     def changeWayside(self):
         _translate = QtCore.QCoreApplication.translate
@@ -1113,91 +1104,7 @@ class Ui_TrackController_MainUI(QMainWindow):
             self.railway_crossing.setText(
                 _translate("self", list(self.track_controller.get_railway_crossings("Red").keys())[0]))
 
-    def PLC(self):
-        f = open(self.track_controller._plc_input["Green 1"], "r")
-        lines = f.readlines()
-        i = 0
-        while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
-                if self.track_controller.get_operator() == "switch":
-                    self.track_controller.set_switch("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "light":
-                    self.track_controller.set_lights("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "railway":
-                    self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
-                                                               self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                i = i + 1
-            else:
-                self.track_controller.set_operator(lines[i].strip())
-                i = i + 1
-        f.close()
 
-        f = open(self.track_controller._plc_input["Green 2"], "r")
-        lines = f.readlines()
-        i = 0
-        while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
-                if self.track_controller.get_operator() == "switch":
-                    self.track_controller.set_switch("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "light":
-                    self.track_controller.set_lights("Green", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "railway":
-                    self.track_controller.set_railway_crossing("Green", str(lines[i].strip()),
-                                                               self.track_controller.parse(
-                                                                   lines[i + 1].strip(), "Green"))
-                i = i + 1
-            else:
-                self.track_controller.set_operator(lines[i].strip())
-                i = i + 1
-        f.close()
-
-        f = open(self.track_controller._plc_input["Red 1"], "r")
-        lines = f.readlines()
-        i = 0
-        while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
-                if self.track_controller.get_operator() == "switch":
-                    self.track_controller.set_switch("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "light":
-                    self.track_controller.set_lights("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "railway":
-                    self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
-                                                               self.track_controller.parse(
-                                                                   lines[i + 1].strip(), "Green"))
-                i = i + 1
-            else:
-                self.track_controller.set_operator(lines[i].strip())
-                i = i + 1
-        f.close()
-        try:
-            f = open(self.track_controller._plc_input["Red 2"], "r")
-        except Exception as e:
-            print(e)
-        lines = f.readlines()
-        i = 0
-        while i < len(lines) - 1:
-            if lines[i].strip() != "switch" and lines[i].strip() != "light":
-                if self.track_controller.get_operator() == "switch":
-                    self.track_controller.set_switch("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "light":
-                    self.track_controller.set_lights("Red", str(lines[i].strip()),
-                                                     self.track_controller.parse(lines[i + 1].strip(), "Green"))
-                elif self.track_controller.get_operator() == "railway":
-                    self.track_controller.set_railway_crossing("Red", str(lines[i].strip()),
-                                                               self.track_controller.parse(
-                                                                   lines[i + 1].strip(), "Green"))
-                i = i + 1
-            else:
-                self.track_controller.set_operator(lines[i].strip())
-                i = i + 1
-        f.close()
 
     # def PLC(self):
     #     self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))

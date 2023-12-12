@@ -58,6 +58,12 @@ class Track_Controller(object):
                 self.ctc_ctrl_signals._track_info = self.track_ctrl_signals._track_info
                 startup = 1
 
+        if self._automatic:
+            try:
+                self.PLC()
+            except Exception as e:
+                print("PLC Error! Please enter manual mode")
+
         try:
             self._occupied_blocks = self.track_ctrl_signals._occupancy
         except Exception as e:
@@ -365,7 +371,93 @@ class Track_Controller(object):
 
     def parse(self, line: str, track):
         return self.parse_expression(line, track)
+    
+    def PLC(self):
+        f = open(self._plc_input["Green 1"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if self.get_operator() == "switch":
+                    self.set_switch("Green", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "light":
+                    self.set_lights("Green", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "railway":
+                    self.set_railway_crossing("Green", str(lines[i].strip()),
+                                                               self.parse(lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                self.set_operator(lines[i].strip())
+                i = i + 1
+        f.close()
 
+        f = open(self._plc_input["Green 2"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if self.get_operator() == "switch":
+                    self.set_switch("Green", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "light":
+                    self.set_lights("Green", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "railway":
+                    self.set_railway_crossing("Green", str(lines[i].strip()),
+                                                               self.parse(
+                                                                   lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                self.set_operator(lines[i].strip())
+                i = i + 1
+        f.close()
+
+        f = open(self._plc_input["Red 1"], "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if self.get_operator() == "switch":
+                    self.set_switch("Red", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "light":
+                    self.set_lights("Red", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "railway":
+                    self.set_railway_crossing("Red", str(lines[i].strip()),
+                                                               self.parse(
+                                                                   lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                self.set_operator(lines[i].strip())
+                i = i + 1
+        f.close()
+        try:
+            f = open(self._plc_input["Red 2"], "r")
+        except Exception as e:
+            print(e)
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light":
+                if self.get_operator() == "switch":
+                    self.set_switch("Red", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "light":
+                    self.set_lights("Red", str(lines[i].strip()),
+                                                     self.parse(lines[i + 1].strip(), "Green"))
+                elif self.get_operator() == "railway":
+                    self.set_railway_crossing("Red", str(lines[i].strip()),
+                                                               self.parse(
+                                                                   lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                self.set_operator(lines[i].strip())
+                i = i + 1
+        f.close()
+    
     def get_operator(self):
         return self._operator
 
