@@ -339,13 +339,13 @@ class TrainController:
 
     def braking_distance(self, velocity: float)->float:
         # return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/SB_FORCE
-        return 0.1 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
+        return 0.3 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
 
     def get_station_status(self)->str:
         return self._station_status
 
     def ebrake_distance(self, velocity: float)->float:
-        return 0.05 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
+        return 0.15 * (self._current_velocity + (self._current_velocity**2/(0.006*9.8)))
         # return .000621371*(.5*TRAIN_MASS*(self._current_velocity*.44704)**2)/EB_FORCE
 
     def get_beacon(self)->str:

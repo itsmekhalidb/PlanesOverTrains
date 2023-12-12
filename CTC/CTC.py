@@ -307,34 +307,27 @@ class Train(object):
     def yard_schedule(self, starting_block, last_dir, arr_time, line, api):
         sched = Schedule(starting_block, 0, "Yard", arr_time, 0, last_dir, line, api)
         self._schedule.append(sched)
-
-    # update authority
-    def update_authority(self, time_scaling):
-        # move to next schedule if this one's done
-        if self.get_total_authority() <= 0:
-            self._schedule.pop(0)
-        print(len(self._schedule))
-        self._schedule[0].update_authority(self._actual_velocity, self._current_block, time_scaling)
         
-    # getter functions
+    # train getter functions
     def get_train_number(self):
         return self._number
+    def sched_exists(self):
+        return len(self._schedule) != 0
+    def get_actual_velocity(self):
+        return self._actual_velocity
+    def get_commanded_speed(self):
+        return self._commanded_velocity
+    # schedule getter functions
     def get_route_info(self):
         return self._schedule[0].get_route_info()
     def get_curr_authority(self):
         return self._schedule[0]._curr_authority
     def get_total_authority(self):
         return self._schedule[0]._total_authority
-    def sched_exists(self):
-        return len(self._schedule) != 0
-    def get_actual_velocity(self):
-        return self._actual_velocity
     def get_departure_time(self):
         return self._schedule[0].get_departure_time()
     def get_arrival_time(self):
         return self._schedule[0].get_arrival_time()
-    def get_commanded_speed(self):
-        return self._commanded_velocity
     def get_suggested_velocity(self):
         return self._schedule[0].get_curr_sugg_speed(self._current_block)
     def get_dest_station(self):
@@ -351,6 +344,10 @@ class Train(object):
     def set_current_block(self, blk):
         self._current_block = blk
     def set_cum_distance(self, cd):
+        # move to next schedule if this one's done
+        if self.get_total_authority() <= 0:
+            self._schedule.pop(0)
+            print(self._schedule[0].get_route_info(), self._current_block)
         self._schedule[0].update_cum_distance(cd, self._current_block)
 
 
@@ -594,7 +591,8 @@ class Schedule(object):
                 self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(self._prev_block)][0][nonzero_index_prev]
                 self._route_info[str(self._prev_block)][0][nonzero_index_prev] = 0
                 # print(self._route_info)
-            if any(curr_block in array for array in self._station_info.values()) and cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0: # if it's a station block and we're past halfway
+                # if it's a station block and we're past halfway
+            if any(curr_block in array for array in self._station_info.values()) and cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0:
                 self._tracker = 1
                 self._arr_num += 1
                 # print(self._blocks_arrs[self._arr_num])

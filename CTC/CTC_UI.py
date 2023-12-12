@@ -688,7 +688,7 @@ class CTC_Main_UI(QMainWindow):
                 else:
                     if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
                         self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
-                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mph")
+                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_total_authority())) + " mph")
                         self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
                         index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
                         index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
