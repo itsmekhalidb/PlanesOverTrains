@@ -111,8 +111,6 @@ class CTC(object):
                     else:
                         print("idk time bad no work!")
 
-
-
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index, line):
         try:
@@ -211,7 +209,6 @@ class CTC(object):
                 if len(train) > 1:
                     self._total_passengers = train[1]
 
-
         # Enable Threading
         if thread:
             threading.Timer(0.01, self.update).start()
@@ -227,6 +224,7 @@ class CTC(object):
                 else:
                     num = train.get_train_number()
                     output[num] = [0, 0]
+            # print(output)
             return output
         except Exception as e:
             traceback.print_exc()
@@ -337,10 +335,14 @@ class Train(object):
     def get_dest_station(self):
         return self._schedule[0].get_destination_station()
     def get_curr_auth_speed_info(self):
+        output = []
         if self.get_commanded_speed() != -1:
-            return [self.get_curr_authority(), min(self._schedule[0].get_curr_sugg_speed(self._current_block), self.get_commanded_speed())]
+            output = [self.get_curr_authority(), min(self._schedule[0].get_curr_sugg_speed(self._current_block), self.get_commanded_speed())]
         else:
-            return [self.get_curr_authority(), self._schedule[0].get_curr_sugg_speed(self._current_block)]
+            output = [self.get_curr_authority(), self._schedule[0].get_curr_sugg_speed(self._current_block)]
+        # print(self._schedule[0])
+        # print(output)
+        return output
     
     # setter functions
     def set_actual_velocity(self, vel):
@@ -350,8 +352,11 @@ class Train(object):
     def set_cum_distance(self, cd):
         # move to next schedule if this one's done
         if self.get_total_authority() <= 0:
-            self._schedule.pop(0)
-            print(self._schedule[0].get_route_info(), self._current_block)
+            # self._schedule.pop(0)
+            temp = self._schedule.pop(0)
+            s = self._schedule[0]
+            # nonzero_index = next((i for i, value in enumerate(s._route_info[str(s._starting_block)][0]) if value != 0), len(s._route_info[str(s._starting_block)][0]) - 1)
+            # s._route_info[str(s._starting_block)][0][nonzero_index] += temp._prev_cum_distance
         self._schedule[0].update_cum_distance(cd, self._current_block)
 
 
@@ -369,6 +374,7 @@ class Schedule(object):
         self._total_time = timedelta()
         self._prev_cum_distance = 0
         self._line = line
+        self._starting_block = i_block
 
         self._blocks_arrs = []
         self._temp_block_arr = []
@@ -377,6 +383,7 @@ class Schedule(object):
         self._station_info = self._api._track_info.get_station_list()[self._line]
         self._prev_block = 0
         self._arr_num = 0
+        self._remaining_auth = 0
 
         self._switches = self._api._track_info.get_khalids_special_switch_list(self._line)
         self._switch_states = []
@@ -421,7 +428,7 @@ class Schedule(object):
                     info = self._api._track_info.get_block_info(self._line, block)
                     if str(block) not in self._route_info: # first appearance of block in this route
                         if block == i_block: # halfway through station block
-                            self._route_info[str(block)] = [[info['length']/2], info['speed limit']]
+                            self._route_info[str(block)] = [[info['length']], info['speed limit']]
                             self._total_authority = self._total_authority + info['length']/2
                             self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
                         else:
@@ -431,7 +438,7 @@ class Schedule(object):
                         # calculate time
                     else: # not the first appearance
                         if block == i_block: # halfway through station block
-                            self._route_info[str(block)][0].append(info['length']/2)
+                            self._route_info[str(block)][0].append(info['length'])
                             self._total_authority = self._total_authority + info['length']/2
                             self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
                         else:
@@ -442,6 +449,7 @@ class Schedule(object):
                     self._route_info[str(block)] = [[1], 100]
                     self._total_authority = self._total_authority + 1
                     self._total_time = self._total_time + timedelta(seconds=.1)
+            self._blocks_arrs.pop(0)
             self._departure_time = tim # train departure time from previous schedule
             self._arrival_time = self._departure_time + self._total_time # calculate train arrival time
             self._destination_block = 0 # train destination from dispatcher
@@ -451,7 +459,7 @@ class Schedule(object):
             self._last_dir = -1 # who cares
 
         self._last_block = next(iter(self._route_info))
-        print("cool arrays: ", self._blocks_arrs)
+        # print("cool arrays: ", self._blocks_arrs)
         # print(self._route_info)
         # print(self._total_time)
 
@@ -595,18 +603,22 @@ class Schedule(object):
                 self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(self._prev_block)][0][nonzero_index_prev]
                 self._route_info[str(self._prev_block)][0][nonzero_index_prev] = 0
                 # print(self._route_info)
-                # if it's a station block and we're past halfway
-            if any(curr_block in array for array in self._station_info.values()) and cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0:
-                self._tracker = 1
-                self._arr_num += 1
-                # print(self._blocks_arrs[self._arr_num])
+                # if it's a station block and not the very first block in the schedule if we're going to the yard
+            if any(curr_block in array for array in self._station_info.values()) and (curr_block != self._starting_block or self._destination_block != 0):
+                print(self._blocks_arrs[self._arr_num])
+                # if we're past halfway
+                if cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0:
+                    self._tracker = 1
+                    self._arr_num += 1
+                    # print(self._blocks_arrs[self._arr_num])
 
             self._route_info[str(curr_block)][0][nonzero_index] -= cum_change
             
-            # print(self._route_info)
+            print(self._route_info)
 
             self.update_authority(curr_block, nonzero_index)
             if (curr_block == self._destination_block):
+                self._remaining_auth = self._total_authority
                 self._total_authority = 0
             self._prev_block = curr_block
 
