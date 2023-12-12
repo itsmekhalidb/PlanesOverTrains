@@ -2,7 +2,7 @@ switch
     63
         ! 0
     77
-        ! 76 and 77
+        ! 76 or 77
     85
         ! 100 or 76
 light

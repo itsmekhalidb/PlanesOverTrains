@@ -284,7 +284,7 @@ class Train(object):
                     self._schedule.pop()
                 self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), line, api)
             else:
-                print("fuck you fucking idiot thats too fucking early it takes", sched._total_time, "to get there")
+                print("Error scheduling train. It takes", sched._total_time, "to get to", dest_station)
                 return sched._total_time
         else: # adding stops
             self._schedule.pop() # remove schedule going back to yard
@@ -297,7 +297,7 @@ class Train(object):
                 self._schedule.append(sched)
                 self.yard_schedule(destination_block, sched.get_last_dir(), sched.get_arrival_time(), line, api)
             else:
-                print("fuck you fucking idiot thats too fucking early it takes", tiem, "to get there")
+                print("Error scheduling train. It takes", tiem, "to get to", dest_station)
                 return tiem
         
         # for s in self._schedule:
@@ -311,8 +311,9 @@ class Train(object):
     # update authority
     def update_authority(self, time_scaling):
         # move to next schedule if this one's done
-        # if self.get_total_authority() <= 0:
-        #     self._schedule.pop(0)
+        if self.get_total_authority() <= 0:
+            self._schedule.pop(0)
+        print(len(self._schedule))
         self._schedule[0].update_authority(self._actual_velocity, self._current_block, time_scaling)
         
     # getter functions
@@ -373,6 +374,7 @@ class Schedule(object):
         self._tracker = 0
         # self._temp_block_arr.append(0)
         self._station_info = self._api._track_info.get_station_list()[self._line]
+        self._prev_block = 0
         self._arr_num = 0
 
         self._switches = self._api._track_info.get_khalids_special_switch_list(self._line)
@@ -585,14 +587,13 @@ class Schedule(object):
             self._prev_cum_distance = cd
 
             if cum_change < 0: # moved on to next block
-                self._tracker = 0
                 # find the index of the first nonzero value in the previous block
-                nonzero_index_prev = next((i for i, value in enumerate(self._route_info[str(curr_block-1)][0]) if value != 0), len(self._route_info[str(curr_block-1)][0]) - 1)
+                self._tracker = 0
+                nonzero_index_prev = next((i for i, value in enumerate(self._route_info[str(self._prev_block)][0]) if value != 0), len(self._route_info[str(self._prev_block)][0]) - 1)
                 cum_change = 0
-                self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(curr_block-1)][0][nonzero_index_prev]
-                self._route_info[str(curr_block-1)][0][nonzero_index_prev] = 0
-            # if cum_change != 0:
-            #     print(cd, self._api._track_info.get_block_info(self._line, curr_block)['length']/2)
+                self._route_info[str(curr_block)][0][nonzero_index] += self._route_info[str(self._prev_block)][0][nonzero_index_prev]
+                self._route_info[str(self._prev_block)][0][nonzero_index_prev] = 0
+                # print(self._route_info)
             if any(curr_block in array for array in self._station_info.values()) and cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0: # if it's a station block and we're past halfway
                 self._tracker = 1
                 self._arr_num += 1
@@ -603,6 +604,9 @@ class Schedule(object):
             # print(self._route_info)
 
             self.update_authority(curr_block, nonzero_index)
+            if (curr_block == self._destination_block):
+                self._total_authority = 0
+            self._prev_block = curr_block
 
     def update_authority(self, curr_block, nonzero_index):
         res1 = 0
