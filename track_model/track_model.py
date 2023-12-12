@@ -141,6 +141,7 @@ class TrackModel(object):
         self._track_controller_signals._train_in = self._current_block
         # print("track model train in " + str(self._track_controller_signals._train_in))
         # get second element of each sublist in the list self._current_block
+        # TODO: needs where clause to only get green/red line blocks
         self._track_controller_signals._occupancy = {"Green": [str(i[1]) for i in self._current_block], "Red": []}
 
         #print("track model train in " + str(self._track_controller_signals._train_in))
@@ -183,7 +184,7 @@ class TrackModel(object):
             if index not in self._train_ids:
                 self._train_ids.append(index)
                 self._TrainModels.train_apis[index] = TrackModelTrainModelAPI()
-                self._TrainModels.train_apis[index].line = 'green'
+                self._TrainModels.train_apis[index].line = 'green' #TODO: read this from self._track_controller_signals._train_ids
                 self._TrainModels.train_apis[index].track_info = self.get_track_layout()
                 self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
             self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
@@ -198,9 +199,9 @@ class TrackModel(object):
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].time)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block, self._TrainModels.train_apis[index].cum_distance])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block, self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block,  self._TrainModels.train_apis[index].cum_distance]
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block,  self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line]
         # print(self._current_block)
 
 

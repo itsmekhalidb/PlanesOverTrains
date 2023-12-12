@@ -598,8 +598,8 @@ class Ui_MainWindow(QMainWindow):
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
         self.occupied_blocks = self.track_model.get_current_block()
-        # Access every first element in each sublist of the list
-        self.occupied_blocks = [i[1] for i in self.occupied_blocks]
+        # Access every first element in each sublist of the list if that line is picked
+        self.occupied_blocks = [i[1] for i in self.occupied_blocks if i[3] == self.line_picked]
         try:
             self.update_map_occupancy(self.occupied_blocks)
         except Exception as e:
@@ -821,8 +821,6 @@ class Ui_MainWindow(QMainWindow):
                     for column in range(map_to_update.columnCount()):
                         button_id = row * map_to_update.columnCount() + column
                         item = QTableWidgetItem()
-
-                        # TODO: Deliniate lines so we can't paint green train on red line
 
                         if button_id in occupied_blocks: # and train in map_to_update line
                             item.setBackground(occupied_color)
