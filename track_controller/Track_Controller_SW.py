@@ -945,8 +945,16 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.PLC_output.clear()
         if self.wayside_ctrl_comboBox.currentText() == 'Green 1' or self.wayside_ctrl_comboBox.currentText() == 'Green 2':
             self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Green"))
+            if self.track_controller.get_automatic():
+                temp = self.track_controller.get_plc_output("Green")
+                for i in range(0, len(temp), 1):
+                    self.PLC_output.addItems(self.track_controller.pop("Green"))
         elif self.wayside_ctrl_comboBox.currentText() == 'Red 1' or self.wayside_ctrl_comboBox.currentText() == 'Red 2':
             self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Red"))
+            if self.track_controller.get_automatic():
+                temp = self.track_controller.get_plc_output("Red")
+                for i in range(0, len(temp), 1):
+                    self.PLC_output.addItems(self.track_controller.pop("Red"))
         self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
 
         # manual mode changes
