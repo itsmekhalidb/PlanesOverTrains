@@ -614,7 +614,7 @@ class Schedule(object):
 
             self._route_info[str(curr_block)][0][nonzero_index] -= cum_change
             
-            print(self._route_info)
+            # print(self._route_info)
 
             self.update_authority(curr_block, nonzero_index)
             if (curr_block == self._destination_block):
