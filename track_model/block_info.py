@@ -23,7 +23,7 @@ class block_info:
         self.switchionary = {
             "green": {
                 1 : [13, -1, 1, 0, "13"],
-                13: [12, 1, -1, 1, "13"],
+                13: [12, -1, -1, 1, "13"],
                 28: [29, 1, 1, 1, "28"],
                 57: [58, 1, 1, 0, "57"], #if switch position is 1, go back to yard
                 62: [63, 1, 1, 0, "63"],
