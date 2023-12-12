@@ -16,6 +16,7 @@ class CTCTrackControllerAPI:
 
         #Track Controller to CTC
         self._train_ids = set() # train ids
+        self._train_lines = list() # train lines
         self._train_in = {}  # train id : [actual velocity (m/s), occupied block, cum_distance]
         self._curr_speed = {}
         self._passenger_onboarding = 0 # tickets sold

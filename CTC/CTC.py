@@ -117,7 +117,7 @@ class CTC(object):
     def create_schedule(self, station_name, time_in, function, train_index, line):
         try:
             if function == 0: # new train
-                temp_trn = Train(True, self.get_highest_train_num())
+                temp_trn = Train(True, self.get_highest_train_num(), line)
                 destination_block = min(self._stations[line][station_name])
                 arrival_datetime = datetime.combine(datetime.now().date(), time_in.time())
                 time_to_arrival = arrival_datetime - self.get_time()
@@ -198,6 +198,7 @@ class CTC(object):
             self.TrackCTRLSignal._train_out = self.create_departures()
             for train in self._trains:
                 self.TrackCTRLSignal._train_ids.add(train.get_train_number())
+                self.TrackCTRLSignal._train_lines.append(train.get_train_line())
 
             # print(self.TrackModelSignal._ticket_sales)
             # update functions
@@ -262,8 +263,9 @@ class CTC(object):
 
 
 class Train(object):
-    def __init__(self, func : Callable, train_num = -1):
+    def __init__(self, func : Callable, train_num = -1, train_line = "green"):
         self._number = train_num # train id number
+        self._line = train_line # line train is on
         self._actual_velocity = 0 # actual velocity of train from train controller (m/s)
         self._commanded_velocity = -1 # commanded velocity from ui, -1 means don't use
         self._current_block = 0 # current position of train, 0 indicates yard
@@ -311,6 +313,8 @@ class Train(object):
     # train getter functions
     def get_train_number(self):
         return self._number
+    def get_train_line(self):
+        return self._line
     def sched_exists(self):
         return len(self._schedule) != 0
     def get_actual_velocity(self):
