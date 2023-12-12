@@ -25,7 +25,7 @@ class Track_Controller(object):
                                        "Red": {'47': 0}}
 
         # if program is in automatic mode
-        self._automatic = False
+        self._automatic = True
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
