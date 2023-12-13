@@ -260,7 +260,7 @@ class CTC_Main_UI(QMainWindow):
         self.switch_list.addItem("Switch")
         font = QtGui.QFont()
         font.setPointSize(16)
-        self.switch_switch = QtWidgets.QSlider(QtCore.Qt.Horizontal, self)
+        self.switch_switch = QtWidgets.QSlider(QtCore.Qt.Horizontal, self.green_train_view_page)
         self.switch_switch.setGeometry(QtCore.QRect(430, 530, 60, 20))
         self.switch_switch.setObjectName("switch_switch")
         self.switch_switch.setMinimum(0)
@@ -351,10 +351,10 @@ class CTC_Main_UI(QMainWindow):
         # self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
         # self.arrival_time.timeChanged.connect(lambda:self.update_not_qtime())
         mode = 0  # mode 0 is new train, 1 is adding a stop, 2 is editing the schedule
-        train_index = -1  # -1 if creating new train, otherwise use train index
-        self.red_confirm.clicked.connect(lambda: self.confirm_route(self.station_list.currentText(),
-                                                                self.qtime_to_datetime(self.arrival_time.time()), mode,
-                                                                train_index))
+        red_train_index = -1  # -1 if creating new train, otherwise use train index
+        self.red_confirm.clicked.connect(lambda: self.confirm_route(self.red_station_list.currentText(),
+                                                                self.qtime_to_datetime(self.red_arrival_time.time()),
+                                                                red_train_index))
         self.red_system_speed_label_3 = QtWidgets.QLabel(self.red_train_view_page)
         self.red_system_speed_label_3.setGeometry(QtCore.QRect(501, 10, 169, 31))
         font = QtGui.QFont()
@@ -519,6 +519,58 @@ class CTC_Main_UI(QMainWindow):
         self.red_confirm_close.setObjectName("red_confirm_close")
         self.red_confirm_close.clicked.connect(
             lambda: self.change_block("Red", self.section_list.currentText(), self.block_list.currentText()))
+        self.red_train_speed_label = QtWidgets.QTextEdit(self.red_train_view_page)
+        self.red_train_speed_label.setGeometry(QtCore.QRect(5, 450, 101, 41))
+        self.red_train_speed_label.setObjectName("red_train_speed_label")
+        self.red_train_speed_label.hide()
+        self.red_train_speed_spnbx = QtWidgets.QDoubleSpinBox(self.red_train_view_page)
+        self.red_train_speed_spnbx.setGeometry(QtCore.QRect(25, 470, 62, 22))
+        self.red_train_speed_spnbx.setObjectName("red_train_speed_spnbx")
+        self.red_train_speed_spnbx.setMaximum(200)
+        self.red_train_speed_spnbx.setMinimum(-1)
+        self.red_train_speed_spnbx.setValue(-1)
+        self.red_train_speed_spnbx.hide()
+        self.red_train_speed_spnbx.valueChanged.connect(lambda:self.change_sugg_speed(self.red_train_speed_spnbx.value()))
+        self.red_switch_list = QtWidgets.QComboBox(self.red_train_view_page)
+        self.red_switch_list.setGeometry(QtCore.QRect(415, 490, 90, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.red_switch_list.setFont(font)
+        self.red_switch_list.setObjectName("red_switch_list")
+        self.red_switch_list.addItem("Switch")
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.red_switch_switch = QtWidgets.QSlider(QtCore.Qt.Horizontal, self.red_train_view_page)
+        self.red_switch_switch.setGeometry(QtCore.QRect(430, 530, 60, 20))
+        self.red_switch_switch.setObjectName("red_switch_switch")
+        self.red_switch_switch.setMinimum(0)
+        self.red_switch_switch.setMaximum(1)
+        self.red_switch_switch.setSliderPosition(0)
+        self.red_switch_switch.setStyleSheet("""
+            QSlider::groove:horizontal {
+                border: 1px solid #bbb;
+                background: white;
+                height: 5px;  /* Adjusted height */
+                border-radius: 2px;
+            }
+
+            QSlider::handle:horizontal {
+                background: #0DA78E;
+                border: 1px solid #0DA78E;
+                width: 20px;  /* Adjusted width */
+                margin: -8px 0;
+                border-radius: 2px;
+            }
+        """)
+        self.red_switch_list.currentIndexChanged.connect(lambda:self.select_switch("Red", self.red_switch_list.currentText()))
+        self.red_switch_switch.valueChanged.connect(lambda:self.change_switch("red", self.red_switch_list.currentText(), self.red_switch_switch.value()))
+        self.red_clear_maint = QtWidgets.QPushButton(self.red_train_view_page)
+        self.red_clear_maint.setGeometry(QtCore.QRect(425, 580, 81, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.red_clear_maint.setFont(font)
+        self.red_clear_maint.setObjectName("clear_maint")
+        self.red_clear_maint.clicked.connect(lambda:self.clear_maintenance("red"))
         not_qtime = time(self.arrival_time.time().hour(), self.arrival_time.time().minute(),
                          self.arrival_time.time().second())
         self.red_arrival_time_label.raise_()
@@ -541,6 +593,11 @@ class CTC_Main_UI(QMainWindow):
         self.red_block_close_label.raise_()
         self.red_section_list.raise_()
         self.red_confirm_close.raise_()
+        self.red_train_speed_label.raise_()
+        self.red_train_speed_spnbx.raise_()
+        self.red_switch_list.raise_()
+        self.red_switch_switch.raise_()
+        self.red_clear_maint.raise_()
         self.view_switcher.addWidget(self.red_train_view_page)
 
         self.setCentralWidget(self.centralwidget)
@@ -604,6 +661,12 @@ class CTC_Main_UI(QMainWindow):
                                                    "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
                                                    "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Select Arrival Time</span></p>\n"
                                                    "<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>"))
+        self.red_train_speed_label.setHtml(_translate("self", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+"<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Suggest Speed</span></p>\n"
+"<p align=\"center\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;\"><br /></p></body></html>"))
         self.red_sys_time_label_3.setText(_translate("self", "13:24:55"))
         self.red_edit_schedule.setText(_translate("self", "Edit Schedule"))
         self.red_add_stop.setText(_translate("self", "Add Stop"))
@@ -611,6 +674,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_label.setText(_translate("self", "System Throughput: "))
         self.red_label_2.setText(_translate("self", "Schedule Train"))
         self.red_block_close_label.setText(_translate("self", "Maintenance Mode"))
+        self.red_clear_maint.setText(_translate("self", "Clear"))
 #         self.red.setText(_translate("self", "Red"))
 #         self.train_label.setItemText(0, _translate("self", "Train #"))
 #         self.block_label.setItemText(0, _translate("self", "Block #"))
@@ -668,70 +732,120 @@ class CTC_Main_UI(QMainWindow):
                 self.section_list.addItems(self.initialize_section_list("green"))
                 self.station_list.addItems(list(self.ctc.get_stations()['green']))
                 self.switch_list.addItems(self.initialize_switch_list("Green"))
+                self.red_section_list.addItems(self.initialize_section_list("red"))
+                self.red_station_list.addItems(list(self.ctc.get_stations()['red']))
+                self.red_switch_list.addItems(self.initialize_switch_list("Red"))
                 self.lock = 1
 
             # update train info
             for train in self.ctc.get_trains():
                 train_num = train.get_train_number()
-                if train_num not in train_nums:
-                    train_nums.append(train_num)
-                    row = [
-                        QStandardItem(str(train_num)),
-                        QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
-                        QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
-                        QStandardItem(train.get_dest_station()),
-                        QStandardItem(str(self.meters_to_miles(train.get_curr_authority())) + " mi"),
-                        QStandardItem(str(0) + " mi/hr"),
-                        QStandardItem(str(self.ctc.get_curr_speed(train_num)) + " mi/hr")
-                    ]
-                    # print(row)
-                    self.train_list_2_data.appendRow(row)
-                else:
-                    if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
-                        dep = self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)
-                        arr = self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)
-                        st = train.get_dest_station()
-                        self.train_list_2_data.item(train_nums.index(train_num), 0).setData(dep)
-                        self.train_list_2_data.item(train_nums.index(train_num), 1).setData(arr)
-                        self.train_list_2_data.item(train_nums.index(train_num), 2).setData(st)
-                        self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
-                        self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_total_authority())) + " mph")
-                        self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
-                        index1 = self.train_list_2.model().index(train_nums.index(train_num), 1)
-                        index2 = self.train_list_2.model().index(train_nums.index(train_num), 2)
-                        index3 = self.train_list_2.model().index(train_nums.index(train_num), 3)
-                        index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
-                        index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
-                        index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
-                        self.train_list_2.model().setData(index1, dep)
-                        self.train_list_2.model().setData(index2, arr)
-                        self.train_list_2.model().setData(index3, st)
-                        self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_curr_authority())) + " mi")
-                        self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mi/hr")
-                        self.train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
+                if train.get_train_line() == "green":
+                    if train_num not in train_nums:
+                        train_nums.append(train_num)
+                        row = [
+                            QStandardItem(str(train_num)),
+                            QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
+                            QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
+                            QStandardItem(train.get_dest_station()),
+                            QStandardItem(str(self.meters_to_miles(train.get_curr_authority())) + " mi"),
+                            QStandardItem(str(0) + " mi/hr"),
+                            QStandardItem(str(self.ctc.get_curr_speed(train_num)) + " mi/hr")
+                        ]
+                        # print(row)
+                        self.train_list_2_data.appendRow(row)
+                    else:
+                        if self.train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                            dep = self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)
+                            arr = self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)
+                            st = train.get_dest_station()
+                            self.train_list_2_data.item(train_nums.index(train_num), 0).setData(dep)
+                            self.train_list_2_data.item(train_nums.index(train_num), 1).setData(arr)
+                            self.train_list_2_data.item(train_nums.index(train_num), 2).setData(st)
+                            self.train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
+                            self.train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_total_authority())) + " mph")
+                            self.train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
+                            index1 = self.train_list_2.model().index(train_nums.index(train_num), 1)
+                            index2 = self.train_list_2.model().index(train_nums.index(train_num), 2)
+                            index3 = self.train_list_2.model().index(train_nums.index(train_num), 3)
+                            index4 = self.train_list_2.model().index(train_nums.index(train_num), 4)
+                            index5 = self.train_list_2.model().index(train_nums.index(train_num), 5)
+                            index6 = self.train_list_2.model().index(train_nums.index(train_num), 6)
+                            self.train_list_2.model().setData(index1, dep)
+                            self.train_list_2.model().setData(index2, arr)
+                            self.train_list_2.model().setData(index3, st)
+                            self.train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_curr_authority())) + " mi")
+                            self.train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mi/hr")
+                            self.train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
+                elif train.get_train_line() == "red":
+                    if train_num not in train_nums:
+                        train_nums.append(train_num)
+                        row = [
+                            QStandardItem(str(train_num)),
+                            QStandardItem(self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)),
+                            QStandardItem(self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)),
+                            QStandardItem(train.get_dest_station()),
+                            QStandardItem(str(self.meters_to_miles(train.get_curr_authority())) + " mi"),
+                            QStandardItem(str(0) + " mi/hr"),
+                            QStandardItem(str(self.ctc.get_curr_speed(train_num)) + " mi/hr")
+                        ]
+                        # print(row)
+                        self.red_train_list_2_data.appendRow(row)
+                    else:
+                        if self.red_train_list_2_data.item(train_nums.index(train_num), 3) != None:
+                            dep = self.leading_zero(train.get_departure_time().hour) + ":" + self.leading_zero(train.get_departure_time().minute)
+                            arr = self.leading_zero(train.get_arrival_time().hour) + ":" + self.leading_zero(train.get_arrival_time().minute)
+                            st = train.get_dest_station()
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 0).setData(dep)
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 1).setData(arr)
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 2).setData(st)
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 3).setData(str(self.meters_to_miles(train.get_curr_authority())) + " mi")
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 4).setData(str(self.kmhr_to_mihr(train.get_total_authority())) + " mph")
+                            self.red_train_list_2_data.item(train_nums.index(train_num), 5).setData(str(self.kmhr_to_mihr(self.ctc.get_curr_speed(train_num))) + " mph")
+                            index1 = self.red_train_list_2.model().index(train_nums.index(train_num), 1)
+                            index2 = self.red_train_list_2.model().index(train_nums.index(train_num), 2)
+                            index3 = self.red_train_list_2.model().index(train_nums.index(train_num), 3)
+                            index4 = self.red_train_list_2.model().index(train_nums.index(train_num), 4)
+                            index5 = self.red_train_list_2.model().index(train_nums.index(train_num), 5)
+                            index6 = self.red_train_list_2.model().index(train_nums.index(train_num), 6)
+                            self.red_train_list_2.model().setData(index1, dep)
+                            self.red_train_list_2.model().setData(index2, arr)
+                            self.red_train_list_2.model().setData(index3, st)
+                            self.red_train_list_2.model().setData(index4, str(self.meters_to_miles(train.get_curr_authority())) + " mi")
+                            self.red_train_list_2.model().setData(index5, str(self.kmhr_to_mihr(train.get_curr_auth_speed_info()[1])) + " mi/hr")
+                            self.red_train_list_2.model().setData(index6, str(self.mps_to_mph(self.ctc.get_curr_speed(train_num))) + " mi/hr")
             
             # update occupied blocks
-            # Assuming self.ctc.get_occupancy() returns a list of blocks
             occupancy_list_green = self.ctc.get_occupancy("green")
+            occupancy_list_red = self.ctc.get_occupancy("red")
             # print(occupancy_list_green)
 
-            # Make sure the number of rows in the QTableWidget is enough to accommodate the items
+            # make sure the number of rows in the QTableWidget is enough to accommodate the items
             self.blocks_table.setRowCount(len(occupancy_list_green))
+            self.red_blocks_table.setRowCount(len(occupancy_list_red))
 
-            # Loop through the list and update the items in the QTableWidget
+            # loop through the list and update the items in the QTableWidget
             for cntr, block in enumerate(occupancy_list_green):
-                # Check if the block entry is not empty before adding a row
+                # check if the block entry is not empty before adding a row
                 if block:
-                    # Cast the block to a string before adding it to the table
+                    # cast the block to a string before adding it to the table
                     item = QTableWidgetItem(str(block))
                     self.blocks_table.setItem(cntr, 0, item)
+            # same for red line
+            for cntr, block in enumerate(occupancy_list_red):
+                if block:
+                    item = QTableWidgetItem(str(block))
+                    self.red_blocks_table.setItem(cntr, 0, item)
 
-            # Hide the vertical header (row labels)
+            # hide the vertical header (row labels)
             self.blocks_table.verticalHeader().setVisible(False)
+            self.red_blocks_table.verticalHeader().setVisible(False)
             
             # update throughput
-            tp = "Throughput " + str(self.ctc.get_throughput()) + " people/hr"
+            tp = "Throughput " + str(self.ctc.get_throughput()) + " people"
+            red_tp = "Throughput " + str(self.ctc.get_throughput()) + " people"
             self.label.setText(tp)
+            self.red_label.setText(red_tp)
 
 
     def _handler(self):
@@ -859,7 +973,7 @@ class CTC_Main_UI(QMainWindow):
         # check if the click is within valid row and column ranges
         if 0 <= row < self.train_list_2.model().rowCount() and 0 <= column < self.train_list_2.model().columnCount():
             self.label_2.setText("Modify Schedule")
-            self.edit_schedule.show()
+            # self.edit_schedule.show()
             self.add_stop.show()
             self.back_sched.show()
             self.train_speed_spnbx.show()
@@ -906,7 +1020,7 @@ class CTC_Main_UI(QMainWindow):
     def handle_back_add_click(self):
         self.train_index = -1
         self.label_2.setText("Modify Schedule")
-        self.edit_schedule.show()
+        # self.edit_schedule.show()
         self.add_stop.show()
         self.back_sched.show()
         self.train_speed_spnbx.show()

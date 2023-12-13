@@ -18,7 +18,6 @@ class CTC(object):
         # -- CTC Variables -- #
         self._trains = [] # list of train objects
         self._stations = {} # dict of stations and their blocks
-        self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = {"green" : [], "red" : []} # list of closed blocks
         self._commanded_switches = {"green" : {}, "red" : {}} # list of commanded switch positions
         self._total_passengers = 0 # passenger count
@@ -480,6 +479,7 @@ class Schedule(object):
     # get blocks between yard and station
     def get_blocks_to_dest(self, line, dest_block, curr_block = 0, result = [], dir = 1):
         # block arr stuff
+        print(curr_block, dir)
         self._temp_block_arr.append(curr_block)
         if any(curr_block in array for array in self._station_info.values()):
             self._blocks_arrs.append(self._temp_block_arr)
