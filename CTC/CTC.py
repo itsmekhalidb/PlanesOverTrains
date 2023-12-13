@@ -285,7 +285,6 @@ class Train(object):
         
     # create schedule
     def create_schedule(self, destination_block, starting_block, dest_station, arrival_time, time_to_arrival, line, api):
-        # print(len(self._schedule))
         if len(self._schedule) < 1: # first schedule
             sched = Schedule(starting_block, destination_block, dest_station, arrival_time, 1, -1, line, api)
             if sched._total_time < time_to_arrival:
