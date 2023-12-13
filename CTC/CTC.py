@@ -18,7 +18,6 @@ class CTC(object):
         # -- CTC Variables -- #
         self._trains = [] # list of train objects
         self._stations = {} # dict of stations and their blocks
-        self._occupied_blocks = [] # list of occupied blocks
         self._closed_blocks = {"green" : [], "red" : []} # list of closed blocks
         self._commanded_switches = {"green" : {}, "red" : {}} # list of commanded switch positions
         self._total_passengers = 0 # passenger count
@@ -207,6 +206,7 @@ class CTC(object):
             for train in self._trains:
                 self.TrackCTRLSignal._train_ids.add(train.get_train_number())
                 self.TrackCTRLSignal._train_lines.append(train.get_train_line())
+            self.TrackCTRLSignal._maintenance_switch = self._commanded_switches
 
             # print(self.TrackModelSignal._ticket_sales)
             # update functions
@@ -402,7 +402,7 @@ class Schedule(object):
         self._switch_states = []
 
         if outbound == 1: # going to station
-            output = self.get_blocks_to_dest(self._line, o_block, i_block, [])
+            output = self.get_blocks_to_dest(self._line, o_block, i_block, [], 1)
             for block in output[0]:
                 if block != 0:
                     info = self._api._track_info.get_block_info(self._line, block)
@@ -506,8 +506,8 @@ class Schedule(object):
                             else:
                                 next_block = curr_block-1
                 # self._switch_states.append([options["name"], ) # for forks at red line
-            else: # more than one option
-                if line == "green": # only multiple options for the one going to yard, don't go to yard
+            else: # more than one option, should never hit
+                if line == "green": # only multiple options for the one going to yard
                     for entry in options:
                         if entry != "name" and entry != "0":
                             next_block = int(entry)
