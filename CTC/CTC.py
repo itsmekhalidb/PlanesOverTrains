@@ -663,5 +663,5 @@ class Schedule(object):
         
         # stop for red light
         if str(curr_block+1) in self._api._light[self._line.capitalize()] and self._api._light[self._line.capitalize()][str(curr_block+1)] == 1:
-            res2 = 0
+            res2 = self._route_info[str(curr_block)][0][nonzero_index]
         self._curr_authority = res2
