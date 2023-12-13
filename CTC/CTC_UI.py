@@ -329,7 +329,7 @@ class CTC_Main_UI(QMainWindow):
         font.setPointSize(12)
         self.red_switch_auto.setFont(font)
         self.red_switch_auto.setObjectName("red_switch_auto")
-        self.red_switch_auto.clicked.connect(lambda: self.open_file())
+        self.red_switch_auto.clicked.connect(lambda: self.open_file("red"))
         self.red_arrival_time = QtWidgets.QTimeEdit(self.red_train_view_page)
         self.red_arrival_time.setGeometry(QtCore.QRect(15, 430, 81, 22))
         self.red_arrival_time.setObjectName("red_arrival_time")
