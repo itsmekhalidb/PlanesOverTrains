@@ -80,12 +80,15 @@ class CTC(object):
     def set_sugg_speed(self, speed, train_index):
         self._trains[train_index].set_commanded_velocity(speed)
     def change_block(self, line, block):
-        if block in self._closed_blocks[line]:
-            self._closed_blocks[line].remove(block)
-            self.TrackCTRLSignal._track_section_status[block] = 0
-        elif block not in self._closed_blocks[line]:
-            self._closed_blocks[line].append(block)
-            self.TrackCTRLSignal._track_section_status[block] = 1
+        l_line = line.lower()
+        if block in self._closed_blocks[l_line] and block in self.TrackCTRLSignal._track_section_status[line]:
+            self._closed_blocks[l_line].remove(block)
+            self.TrackCTRLSignal._track_section_status[line][block] = 0
+        elif block in self._closed_blocks[l_line] and block not in self.TrackCTRLSignal._track_section_status[line]:
+            self.TrackCTRLSignal._track_section_status[line][block] = 1
+        elif block not in self._closed_blocks[l_line]:
+            self._closed_blocks[l_line].append(block)
+            self.TrackCTRLSignal._track_section_status[line][block] = 1
     
     # automatic train schedule function
     def import_schedule(self, doc, line):
@@ -127,7 +130,6 @@ class CTC(object):
                     return 1
                 else:
                     return x
-                return 0
             elif function == 1: # delete existing schedule
                 return
             elif function == 2: # add a stop
@@ -158,7 +160,13 @@ class CTC(object):
             print(e)
             return {}
     def get_occupancy(self, line):
-        output = list(self.TrackCTRLSignal._occupancy.values()).extend(list(self._closed_blocks[line]))
+        output = []
+        num = 1
+        for train in self.TrackCTRLSignal._train_in:
+            if train[3] == line:
+                output.append("Train " + str(num) + ": " + str(train[1]))
+            num += 1
+        output.extend(self._closed_blocks[line])
         if output == None:
             output = []
         return output
