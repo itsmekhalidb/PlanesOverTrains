@@ -4,7 +4,7 @@ switch
     28
         ! 150 or 13
     57
-        57
+        57 and 57
 light
     1
         ! 1 or 13

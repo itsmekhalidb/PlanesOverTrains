@@ -860,7 +860,6 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self._handler()
 
-        self.track_controller.set_automatic(True)
 
     def _handler(self):
         self.timer = QTimer()
@@ -943,18 +942,20 @@ class Ui_TrackController_MainUI(QMainWindow):
 
         self.occupied_blocks.clear()
         self.PLC_output.clear()
-        if self.wayside_ctrl_comboBox.currentText() == 'Green 1' or self.wayside_ctrl_comboBox.currentText() == 'Green 2':
-            self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Green"))
+        try:
+            if self.wayside_ctrl_comboBox.currentText() == 'Green 1' or self.wayside_ctrl_comboBox.currentText() == 'Green 2':
+                self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Green"))
+            elif self.wayside_ctrl_comboBox.currentText() == 'Red 1' or self.wayside_ctrl_comboBox.currentText() == 'Red 2':
+                self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Red"))
+        except Exception as e:
+            print(e)
+        try:
             if self.track_controller.get_automatic():
-                temp = self.track_controller.get_plc_output("Green")
+                temp = self.track_controller.get_plc_output(self.wayside_ctrl_comboBox.currentText())
                 for i in range(0, len(temp), 1):
-                    self.PLC_output.addItems(self.track_controller.pop("Green"))
-        elif self.wayside_ctrl_comboBox.currentText() == 'Red 1' or self.wayside_ctrl_comboBox.currentText() == 'Red 2':
-            self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Red"))
-            if self.track_controller.get_automatic():
-                temp = self.track_controller.get_plc_output("Red")
-                for i in range(0, len(temp), 1):
-                    self.PLC_output.addItems(self.track_controller.pop("Red"))
+                    self.PLC_output.addItem(self.track_controller.pop(self.wayside_ctrl_comboBox.currentText()))
+        except Exception as e:
+            print(e)
         self.track_controller.set_automatic(not bool(self.manual_mode_checkBox.checkState()))
 
         # manual mode changes
@@ -975,18 +976,25 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.toggle_light_11.setVisible(bool(self.manual_mode_checkBox.checkState()))
         self.toggle_railway.setVisible(bool(self.manual_mode_checkBox.checkState()))
 
+        #adjust UI based on wayside controller
+        try:
+            self.changeWayside()
+        except Exception as e:
+            print(e)
         # toggle buttons
-        self.ChangeVisibility()
+        try:
+            self.ChangeVisibility()
+        except Exception as e:
+            print(e)
 
         # iteration 2 - no system speed
         self.system_speed_label.setVisible(False)
         self.system_speed_spinBox.setVisible(False)
-        # self.sys_time_label.setVisible(False)
+        self.sys_time_label.setVisible(False)
 
         # iteration 3 - shhh dont tell anyone
         self.sys_time_label.setText(_translate("self", temp_timestr))
 
-        self.changeWayside()
 
     def changeWayside(self):
         _translate = QtCore.QCoreApplication.translate
@@ -1114,8 +1122,6 @@ class Ui_TrackController_MainUI(QMainWindow):
                 _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
             self.railway_crossing.setText(
                 _translate("self", list(self.track_controller.get_railway_crossings("Red").keys())[0]))
-
-
 
     # def PLC(self):
     #     self.sect_A_occ = bool(self.track_controller.get_occupancy('1') or self.track_controller.get_occupancy('2') or self.track_controller.get_occupancy('3'))

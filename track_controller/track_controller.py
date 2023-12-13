@@ -32,8 +32,8 @@ class Track_Controller(object):
         self._plc_input = {'Green 1': "track_controller/PLCgreen1.txt", 'Green 2': "track_controller/PLCgreen2.txt",
                            'Red 1': "track_controller/PLCred1.txt", 'Red 2': "track_controller/PLCred2.txt"}
         # lists of PLC operations that were performed
-        self._plc_output = {'Green': [""],
-                            'Red': [""]}
+        self._plc_output = {'Green 1': [""], 'Green 2': [""],
+                            'Red 1': [""], 'Red 2': [""]}
         # time to be displayed on the clock
         self._time = 0
         # startup
@@ -112,7 +112,6 @@ class Track_Controller(object):
             self.set_occupancy("Green", block, blocks["Green"][block])
         for block in blocks["Red"].keys():
             self.set_occupancy("Red", block, blocks["Red"][block])
-
 
     def get_track(self) -> dict:
         return self._track
@@ -391,7 +390,7 @@ class Track_Controller(object):
                 elif self.get_operator() == "railway":
                     self.set_railway_crossing("Green", str(lines[i].strip()),
                                                                self.parse(lines[i + 1].strip(), "Green"))
-                self._plc_output["Green"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
+                self._plc_output["Green 1"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
                                                " has been set to " + str(self.parse(lines[i + 1].strip(), "Green"))))
                 i = i + 2
             else:
@@ -414,8 +413,8 @@ class Track_Controller(object):
                     self.set_railway_crossing("Green", str(lines[i].strip()),
                                                                self.parse(
                                                                    lines[i + 1].strip(), "Green"))
-                    self._plc_output["Green"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
-                                                   " has been set to " + str(self.parse(lines[i + 1].strip(), "Green"))))
+                self._plc_output["Green 2"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
+                                               " has been set to " + str(self.parse(lines[i + 1].strip(), "Green"))))
                 i = i + 2
             else:
                 self.set_operator(lines[i].strip())
@@ -437,7 +436,7 @@ class Track_Controller(object):
                     self.set_railway_crossing("Red", str(lines[i].strip()),
                                                                self.parse(
                                                                    lines[i + 1].strip(), "Red"))
-                self._plc_output["Red"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
+                self._plc_output["Red 1"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
                                                      " has been set to " + str(self.parse(lines[i + 1].strip(), "Red"))))
                 i = i + 2
             else:
@@ -462,7 +461,7 @@ class Track_Controller(object):
                     self.set_railway_crossing("Red", str(lines[i].strip()),
                                               self.parse(
                                                   lines[i + 1].strip(), "Red"))
-                self._plc_output["Red"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
+                self._plc_output["Red 2"].append(str("" + self.get_operator().capitalize() + " at block " + lines[i] +
                                                    " has been set to " + str(self.parse(lines[i + 1].strip(), "Red"))))
                 i = i + 2
             else:
