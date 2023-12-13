@@ -1037,7 +1037,8 @@ class Ui_TrackController_MainUI(QMainWindow):
                 _translate("self", list(self.track_controller.get_lights("Green").keys())[6]))
             self.traffic_light_label_4.setText(
                 _translate("self", list(self.track_controller.get_lights("Green").keys())[7]))
-            self.traffic_light_label_5.setText(_translate("self", "NULL"))
+            self.traffic_light_label_5.setText(
+                _translate("self", list(self.track_controller.get_lights("Green").keys())[8]))
             self.traffic_light_label_6.setText(_translate("self", "NULL"))
             self.traffic_light_label_7.setText(_translate("self", "NULL"))
             self.traffic_light_label_8.setText(_translate("self", "NULL"))
