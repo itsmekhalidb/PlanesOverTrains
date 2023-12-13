@@ -401,7 +401,7 @@ class Schedule(object):
         self._switch_states = []
 
         if outbound == 1: # going to station
-            output = self.get_blocks_to_dest(self._line, o_block, i_block, [])
+            output = self.get_blocks_to_dest(self._line, o_block, i_block, [], 1)
             for block in output[0]:
                 if block != 0:
                     info = self._api._track_info.get_block_info(self._line, block)
@@ -479,7 +479,6 @@ class Schedule(object):
     # get blocks between yard and station
     def get_blocks_to_dest(self, line, dest_block, curr_block = 0, result = [], dir = 1):
         # block arr stuff
-        print(curr_block, dir)
         self._temp_block_arr.append(curr_block)
         if any(curr_block in array for array in self._station_info.values()):
             self._blocks_arrs.append(self._temp_block_arr)

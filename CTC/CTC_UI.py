@@ -414,7 +414,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_train_list_2_data.setHorizontalHeaderItem(4, QStandardItem("Current Authority"))
         self.red_train_list_2_data.setHorizontalHeaderItem(5, QStandardItem("Suggested Speed"))
         self.red_train_list_2_data.setHorizontalHeaderItem(6, QStandardItem("Current Speed"))
-        self.red_train_list_2.setModel(self.train_list_2_data)
+        self.red_train_list_2.setModel(self.red_train_list_2_data)
         red_header = self.red_train_list_2.horizontalHeader()
         red_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)  # Automatically adjust column size
         red_header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
@@ -842,8 +842,8 @@ class CTC_Main_UI(QMainWindow):
             self.red_blocks_table.verticalHeader().setVisible(False)
             
             # update throughput
-            tp = "Throughput " + str(self.ctc.get_throughput()) + " people"
-            red_tp = "Throughput " + str(self.ctc.get_throughput()) + " people"
+            tp = "Throughput: " + str(self.ctc.get_throughput()) + " people"
+            red_tp = "Throughput: " + str(self.ctc.get_throughput()) + " people"
             self.label.setText(tp)
             self.red_label.setText(red_tp)
 
