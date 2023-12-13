@@ -83,6 +83,11 @@ class Track_Controller(object):
         except Exception as e:
             print("Cannot update track section status")
 
+        try:
+            self.set_maintanence_switch(self.ctc_ctrl_signals._maintenance_switch)
+        except Exception as e:
+            print(e)
+
         # CTC Office Outputs
         try:
             self.ctc_ctrl_signals._occupancy = self._occupied_blocks
@@ -136,11 +141,12 @@ class Track_Controller(object):
         return self._occupied_blocks[line]
 
     def set_occupancy(self, line, block, value: int):
-        if value == 1:
-            self._occupied_blocks[line].append(block)
-        else:
+        if self._occupied_blocks[line].count(block) == 0 and value == 1:
+                self._occupied_blocks[line].append(block)
+        elif self._occupied_blocks[line].count(block) > 0 and value == 0:
             self._occupied_blocks[line].remove(block)
         self._occupied_blocks[line].sort()
+        print(self._occupied_blocks[line])
 
     def get_speed_limit(self, block) -> float:
         return self._track.get_block_info('green', block)['speed limit']
@@ -484,6 +490,13 @@ class Track_Controller(object):
     def set_operator(self, operator: str):
         self._operator = operator
 
+    def set_maintanence_switch(self, switches):
+        for switch in switches["green"].keys():
+            self.set_switch("Green", switch, switches["green"][switch])
+        for switch in switches["red"].keys():
+            self.set_switch("Red", switch, switches["red"][switch])
+
+
     def launch_ui(self):
         print("Launching Track Controller UI")
         try:
@@ -496,3 +509,5 @@ class Track_Controller(object):
         except:
             print("An error occurred:")
             traceback.print_exc()
+
+
