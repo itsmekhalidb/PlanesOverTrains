@@ -29,7 +29,7 @@ class Track_Controller(object):
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "track_controller/PLCgreen1.txt", 'Green 2': "track_controller/PLCgreen2.txt",
+        self._plc_input = {'Green 1': "track_controller/dummyPlug.txt", 'Green 2': "track_controller/PLCgreen2.txt",
                            'Red 1': "track_controller/PLCred1.txt", 'Red 2': "track_controller/PLCred2.txt"}
         # lists of PLC operations that were performed
         self._plc_output = {'Green 1': [""], 'Green 2': [""],
