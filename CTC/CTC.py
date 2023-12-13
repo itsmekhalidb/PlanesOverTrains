@@ -206,6 +206,7 @@ class CTC(object):
             for train in self._trains:
                 self.TrackCTRLSignal._train_ids.add(train.get_train_number())
                 self.TrackCTRLSignal._train_lines.append(train.get_train_line())
+            self.TrackCTRLSignal._maintenance_switch = self._commanded_switches
 
             # print(self.TrackModelSignal._ticket_sales)
             # update functions
@@ -505,8 +506,8 @@ class Schedule(object):
                             else:
                                 next_block = curr_block-1
                 # self._switch_states.append([options["name"], ) # for forks at red line
-            else: # more than one option
-                if line == "green": # only multiple options for the one going to yard, don't go to yard
+            else: # more than one option, should never hit
+                if line == "green": # only multiple options for the one going to yard
                     for entry in options:
                         if entry != "name" and entry != "0":
                             next_block = int(entry)
