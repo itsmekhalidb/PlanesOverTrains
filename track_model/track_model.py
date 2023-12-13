@@ -44,6 +44,7 @@ class TrackModel(object):
         self._block_length = 0.0 #block length
         self._local_time = 0
         self._time = time.time()
+        self._dt = 0
         self._current_time = self._time
         self._prev_time = self._time
         self._train_models = TrainModels.train_apis # dictionary of train model apis
@@ -174,7 +175,9 @@ class TrackModel(object):
         self.set_line(self._track_controller_signals._line)
         # self._train_models[1].line = self.get_line()
 
-
+        #dt
+        if not isinstance(self._track_controller_signals._time, int):
+            self.calc_dt(self._track_controller_signals._time.timestamp())
 
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
@@ -200,13 +203,13 @@ class TrackModel(object):
                 #print("train " + str(index) + " authority = " + str(self._TrainModels.train_apis[index].authority))
             except Exception as e:
                 print("waiting for departure... ")
-            self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].time)
+            self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block, self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].current_block, self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._train_models[index].current_block,  self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line]
-        # print(self._current_block)
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].current_block,  self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line]
+            # print(self._current_block)
 
 
         #Enable threading
@@ -215,11 +218,13 @@ class TrackModel(object):
 
 
     #---- Getters & Setters ----#
-    def update_traveled_distance(self, velocity, time):
+    def calc_dt(self, time):
         self._current_time = time
-        dt = self._current_time - self._prev_time
-        dist_traveled = velocity * dt
+        self._dt = self._current_time - self._prev_time
         self._prev_time = self._current_time
+
+    def update_traveled_distance(self, velocity):
+        dist_traveled = velocity * self._dt
         return abs(dist_traveled)
 
     def update_current_block(self, train):
