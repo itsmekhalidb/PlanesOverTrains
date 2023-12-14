@@ -45,6 +45,15 @@ class TrackModelUnitTests(unittest.TestCase):
         tc.set_track_section_status({"Green": {'23': 0}, "Red": {}})
         self.assertEqual(tc.get_occupancy("Green", '23'), 0)
 
+    def test_maintanence_switch(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_maintanence_switch({"green": {'13': 1}, "red": {}})
+        self.assertEqual(tc.get_switch("Green", '13'), 1)
+        tc.set_maintanence_switch({"green": {'13': 0}, "red": {}})
+        self.assertEqual(tc.get_switch("Green", '13'), 0)
+
     def test_railway_crossing(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
