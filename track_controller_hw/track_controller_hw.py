@@ -18,8 +18,6 @@ class Track_Controller_HW(object):
         # green line track
         self._green = {}
 
-        # plc object
-        # self.blue_line_plc = File_Parser("")
 
         # used to make sure plc is loaded
         self._plc_set = False
@@ -51,7 +49,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
         # serial port connection object
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -64,6 +62,8 @@ class Track_Controller_HW(object):
         self._suggested_speed = 0
         # self._test_speed_limit = 0
         self._track_status = False
+
+        self._occupancy_timer = 0
         # self._passengers = 0
 
         # signals from the APIs to get/set
@@ -77,90 +77,67 @@ class Track_Controller_HW(object):
 
     # Variables
     def update(self, thread=True):
-        # Interal inputs
 
+        # sends PLC to Arduino after 100 cycles
         if self.get_start_up() == 100:
             #self.get_plc_logic().parse()
             send = "1"
             send += self.get_plc_logic().parse()
+            send += "\n"
             print("Serial: " + send)
-            #self.get_ard().write(send.encode('utf-8'))
+            self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
 
-        # CTC Office Inputs
-        # self.set_authority(self.ctc_ctrl_signals._authority) #TODO need to get from individual Train ID
-        # self.set_suggested_speed(self.ctc_ctrl_signals._suggested_speed)
-        #        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
-
-        # CTC Office Outputs
-        #        self.ctc_ctrl_signals._passenger_onboarding = self.get_passengers()
-        # self.ctc_ctrl_signals._occupancy = self.get_occupied
         self.set_time(self.ctc_ctrl_signals._time)
 
-        # Track Model Inputs
-        #        self.set_broken_rail(self.track_ctrl_signals._broken_rail)
-        #        self.set_engine_failure(self.track_ctrl_signals._engine_failure)
-        #        self.set_circuit_failure(self.track_ctrl_signals._circuit_failure)
-        #        self.set_power_failure(self.track_ctrl_signals._power_failure)
-        # self.set_blue_track(self.track_ctrl_signals._blue)
-        # wait until we have things connected to mess around with this
-        # self.set_blue_track(self.track_ctrl_signals._green)
-        # self.set_green_track(self.track_ctrl_signals._green)
-
-        # Track Model Outputs
-        # self.track_ctrl_signals._authority = self.get_authority()
-        # self.track_ctrl_signals._commanded_speed = self.get_commanded_speed()
-        """
-        for i in self.ctc_ctrl_signals._train_info:
-            self._suggested_speed_blocks.clear()
-            self._suggested_speed_blocks[i] = self.ctc_ctrl_signals._train_info[i][1]
-            self._authority_blocks.clear()
-            self._authority_blocks[i] = self.ctc_ctrl_signals._train_info[i][2]
-        """
-        # for i in self._lights.keys():
-        #     self.track_ctrl_signals._blue[i][5] = self.get_lights(i)
-        # for i in self._switches.keys():
-        #     self.track_ctrl_signals._blue[i][4] = self.get_switch(i)
-        # for i in self._crossing_lights_gates.keys():
-        #     self.track_ctrl_signals._blue[i][3] = self.get_railway_crossing(i)
-        #
-
         # used to recieve info from the Ardunio
+        self.receive()
 
-        #self.receive()
-
-
+        #sets the automatic variable
         self.set_previous(self.get_automatic())
 
         # checks to see if in automatic or in manual mode -if in automatic -> run PLC
         if self.get_automatic() and self.get_plc_set():
             send_string = "1"
             send_string += self.get_plc_logic().parse()
+            send_string += "\n"
             print("Serial: " + send_string)
-            #self.get_ard().write(send_string.encode('utf-8'))
+            self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
-        self.set_previous_blocks(self.track_ctrl_signals._occupancy["Green"])
 
+        #sent block occupancy from Track Model
+        self.set_previous_blocks(self.track_ctrl_signals._occupancy["Green"])
+        self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
+        self.set_occupied(self.get_previous_blocks())
+        self.get_previous_blocks().sort()
+
+        if self.get_occupancy_timer() != 10:
+            self.set_occupancy_timer(self.get_occupancy_timer() + 1)
+        elif self.get_occupancy_timer() == 10:
+            self.send_occupied()
+            self.set_occupancy_timer(0)
+        """"
         try:
+            #for maintance mode in CTC
             self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
         except Exception as e:
             print(e)
-        #print("Prev:" + str(self.get_previous_blocks()))
-        #print("Occ:" + str(self.get_occupied()))
-        if self.get_occupied() != self.get_previous_blocks():
-            # print("Changes Occupancy")
-            self.set_occupied(self.get_previous_blocks())
-            # print("Occ In Statement:" + str(self.get_occupied()))
-            #self.send_occupied()
+        print("Prev:" + str(self.get_previous_blocks()))
+        print("Occ:" + str(self.get_occupied()))
 
+        # checks to see if occupancy changed, if it did then send new occupancy to Arduino
+        if self.get_occupied() != self.get_previous_blocks():
+            self.set_occupied(self.get_previous_blocks())
+            self.send_occupied()
+        """
+        #sends Occupancy from CTC
         self.ctc_ctrl_signals._occupancy["Green"] = self._occupied_blocks
 
         if thread:
             threading.Timer(.1, self.update).start()
-
 
     def send_occupied(self):
         occupied = "2"
@@ -176,7 +153,7 @@ class Track_Controller_HW(object):
             if self.get_ard().inWaiting() > 0:
                 data_bytes = self.get_ard().readline()
                 data_str = data_bytes.decode('utf-8').strip()
-                print(f"From Serial: {data_str}")
+                #print(f"From Serial: {data_str}")
                 commands = data_str.split()
 
                 for command in commands:
@@ -204,9 +181,15 @@ class Track_Controller_HW(object):
 
     # send which block should be displayed in ardunio
     def select_block(self, block_number):
-        block_send = "0" + block_number
+        block_send = "0" + block_number + "\n"
         self.get_ard().write(block_send.encode('utf-8'))
         print(block_send)
+
+    def get_occupancy_timer(self):
+        return self._occupancy_timer
+
+    def set_occupancy_timer(self, occupancy_time):
+        self._occupancy_timer = occupancy_time
 
     def set_track_section_status(self, blocks):
         for block in blocks:
@@ -315,6 +298,7 @@ class Track_Controller_HW(object):
     def set_previous(self, auto: bool):
         self._previous = auto
 
+    #Testbench Varibales Below(Not in use)
     def get_authority_blocks(self):
         return self._authority_blocks
 
@@ -338,12 +322,6 @@ class Track_Controller_HW(object):
 
     def set_crossing_lights_gate(self, light: str, value: int):
         self._crossing_lights_gates[light] = value
-
-    def get_blue_track(self) -> dict:
-        return self._blue
-
-    def set_blue_track(self, track):
-        self._blue = track
 
     def get_green_track(self) -> dict:
         return self._green
@@ -369,8 +347,6 @@ class Track_Controller_HW(object):
     def set_commanded_speed(self, speed: float):
         self._command_speed = speed
 
-    # Testbench
-    """
     def set_authority(self, _authoirty: float):
         self._authority = _authoirty
 
@@ -413,7 +389,6 @@ class Track_Controller_HW(object):
 
     def get_power_failure(self) -> bool:
         return self._power_failure
-    """
 
     # used to launch UI from launcher
     def launch_ui(self):
