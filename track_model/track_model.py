@@ -198,6 +198,8 @@ class TrackModel(object):
                 self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
             self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
             self._ctc_signals._ticket_sales[index][1] = self._TrainModels.train_apis[index].passenger_departing
+            self.set_onboarding(self._TrainModels.train_apis[index].passenger_departing)
+            self.set_offboarding(self._TrainModels.train_apis[index].passenger_onboard)
             try:
                 self._TrainModels.train_apis[index].authority = self._train_model_signals[index+1][0]
                 self._TrainModels.train_apis[index].cmd_speed = self._train_model_signals[index+1][1]
@@ -245,6 +247,8 @@ class TrackModel(object):
                 sw_label = self._switchionary[train.current_block][4]
                 if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1:
                     train.current_block = 151
+                if train.current_block == 9 and train.direction != inc and self._switch_position[sw_label] == 1:
+                    train.curr_block = 77
                 if train.direction == inc and self._switch_position[sw_label] == sw:
                     # print(self._switchionary[train.current_block][0])
                     train.direction = self._switchionary[train.current_block][2]
@@ -252,7 +256,7 @@ class TrackModel(object):
                     train.current_block = self._switchionary[train.current_block][0]
                     train.cum_distance = 0
 
-            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151:
+            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151 or train.current_block != 9:
                 if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                     train.cum_distance = 0
                     # print(train.current_block)

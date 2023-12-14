@@ -25,6 +25,9 @@ class Ui_MainWindow(QMainWindow):
         super().__init__()
         self.track_model = track_model
         self._filepath = ""
+        self.train_api = TrackModelTrainModelAPI
+        self.offboarding = 0
+        self.onboarding = 0
 
         #MAP
         self.line_picked = ''
@@ -36,7 +39,7 @@ class Ui_MainWindow(QMainWindow):
 
 
         #FAILURES
-        self.circuit_failure_detected = False
+        self.circuit_failure_detected = {}
         self.power_failure_detected = False
         self.broken_rail_detected = False
         self.heater_failure_detected = False
@@ -51,6 +54,7 @@ class Ui_MainWindow(QMainWindow):
         self.current_temp = 0
         self.target_temp = 0
         self.block_heaters = {}
+        self.heater_values = {}
 
         #TIME
         self.elapsed_time = 0
@@ -491,6 +495,37 @@ class Ui_MainWindow(QMainWindow):
         self.e_temp.setText(str(self.environment_temp))
 
 
+
+        self.offboard_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.offboard_display.setGeometry(QtCore.QRect(950,130,70,41))
+        self.offboard_display.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+"border: 2px solid black;\n"
+"background-color: rgb(255, 255, 255);")
+        self.offboard_display.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.t_off = QtWidgets.QLabel(self.trackmodel_main)
+        self.t_off.setGeometry(QtCore.QRect(750,130,190,41))
+        self.t_off.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+"border: 2px solid black;\n"
+"background-color: rgb(255, 255, 255);")
+        self.t_off.setAlignment(QtCore.Qt.AlignCenter)
+        self.t_off.setText("Passengers Offboarding")
+
+        self.onboard_display = QtWidgets.QLabel(self.trackmodel_main)
+        self.onboard_display.setGeometry(QtCore.QRect(330,130,70,41))
+        self.onboard_display.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+                                            "border: 2px solid black;\n"
+                                            "background-color: rgb(255, 255, 255);")
+        self.onboard_display.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.t_on = QtWidgets.QLabel(self.trackmodel_main)
+        self.t_on.setGeometry(QtCore.QRect(130, 130, 190, 41))
+        self.t_on.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+                                 "border: 2px solid black;\n"
+                                 "background-color: rgb(255, 255, 255);")
+        self.t_on.setAlignment(QtCore.Qt.AlignCenter)
+        self.t_on.setText("Passengers Onboarding")
+
         self.red_map = QtWidgets.QTableWidget(self.trackmodel_main)
         self.red_map.setRowCount(13)
         self.red_map.setColumnCount(13)
@@ -501,8 +536,13 @@ class Ui_MainWindow(QMainWindow):
         self.red_map.verticalHeader().setVisible(False)
         for i in range(13):
             for j in range(13):
-                if i * 13 + j + 1 > 76:
+                if i * 13 + j + 1 > 77:
                     break
+                elif i * 13 + j + 1 == 77:
+                    yard = QPushButton("", self.trackmodel_main)
+                    yard.setFlat(True)
+                    yard.setStyleSheet("background-color: rgba(0, 0, 0, 0); border: none;")
+                    self.red_map.setCellWidget(i,j,yard)
                 else:
                     button_text = f'{i * 13 + j + 1}'
                     button = QPushButton(button_text, self.trackmodel_main)
@@ -608,6 +648,8 @@ class Ui_MainWindow(QMainWindow):
         self.up_temp()
         self.temp_control_availability()
         self.dir = self.track_model.get_direction()
+        self.offboard_display.setText(str(self.track_model.get_offboarding()))
+        self.onboard_display.setText(str(self.track_model.get_onboarding()))
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
         self.occupied_blocks = self.track_model.get_current_block()
@@ -675,6 +717,17 @@ class Ui_MainWindow(QMainWindow):
                                                "border: 1px solid black;\n"
                                                "color: rgb(255, 255, 255)")
                 self.circuit_failure.setText("ON")
+            if self.failure_states[self.block_number][1] == 0:
+                    self.power_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+                                                       "background-color: rgb(255, 0, 0);\n"
+                                                       "border: 1px solid black;\n"
+                                                       "color: rgb(255, 255, 255)")
+                    self.power_failure.setText("OFF")
+            else:
+                    self.power_failure.setStyleSheet("font: 87 10pt \"Arial Black\";\n"
+                                                       "background-color: rgb(0, 255, 0);\n"
+                                                       "border: 1px solid black;\n"
+                                                       "color: rgb(255, 255, 255)")
 
             km_hr = float(info['speed limit'])
             mi_hr = km_hr / 1.60934709
@@ -905,6 +958,7 @@ class Ui_MainWindow(QMainWindow):
 
     def track_heater_control(self,value):
         self.heater_temp.setText(str(value))
+        self.heater_values[self.block_number] = value
 
 
     def clear_labels(self):
