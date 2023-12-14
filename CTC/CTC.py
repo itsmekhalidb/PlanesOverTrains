@@ -80,14 +80,15 @@ class CTC(object):
         self._trains[train_index].set_commanded_velocity(speed)
     def change_block(self, line, block):
         l_line = line.lower()
-        if block in self._closed_blocks[l_line] and block in self.TrackCTRLSignal._track_section_status[line]:
+        if block in self._closed_blocks[l_line]: #and self.TrackCTRLSignal._track_section_status.count(block):
             self._closed_blocks[l_line].remove(block)
-            self.TrackCTRLSignal._track_section_status[line][block] = 0
-        elif block in self._closed_blocks[l_line] and block not in self.TrackCTRLSignal._track_section_status[line]:
-            self.TrackCTRLSignal._track_section_status[line][block] = 1
+            # self.TrackCTRLSignal._track_section_status[line][block] = 0
+        # elif block in self._closed_blocks[l_line] and block not in self.TrackCTRLSignal._track_section_status:
+            # self.TrackCTRLSignal._track_section_status[line][block] = 1
         elif block not in self._closed_blocks[l_line]:
             self._closed_blocks[l_line].append(block)
-            self.TrackCTRLSignal._track_section_status[line][block] = 1
+            # self.TrackCTRLSignal._track_section_status[line][block] = 1
+        self.TrackCTRLSignal._track_section_status = self._closed_blocks
     
     # automatic train schedule function
     def import_schedule(self, doc, line):

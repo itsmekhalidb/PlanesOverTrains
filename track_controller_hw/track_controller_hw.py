@@ -164,7 +164,7 @@ class Track_Controller_HW(object):
             #self.send_occupied()
 
         try:
-            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["Green"])
+            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
         except Exception as e:
             print(e)
 
@@ -221,7 +221,7 @@ class Track_Controller_HW(object):
 
     def set_track_section_status(self, blocks):
         for block in blocks:
-            self.set_occupancy(block, blocks[block])
+            self.set_occupancy(block, blocks.count(block))
 
     def get_start_up(self) -> int:
         return self._start_up
@@ -269,9 +269,10 @@ class Track_Controller_HW(object):
         return temp
 
     def set_occupancy(self, block, value: int):
-        if value == 1:
+        if self._occupied_blocks.count(block) < 1 and value == 1:
             self._occupied_blocks.append(block)
-        else:
+        elif self._occupied_blocks.count(block) > 0 and value == 0:
+            print("removing block " + block)
             self._occupied_blocks.remove(block)
         self._occupied_blocks.sort()
 
