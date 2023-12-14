@@ -243,6 +243,8 @@ class TrackModel(object):
                 inc = self._switchionary[train.current_block][1]
                 sw = self._switchionary[train.current_block][3]
                 sw_label = self._switchionary[train.current_block][4]
+                if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1:
+                    train.current_block = 151
                 if train.direction == inc and self._switch_position[sw_label] == sw:
                     # print(self._switchionary[train.current_block][0])
                     train.direction = self._switchionary[train.current_block][2]
@@ -279,6 +281,8 @@ class TrackModel(object):
 
     def get_current_block(self) -> list:
         return self._current_block
+
+
 
 
 

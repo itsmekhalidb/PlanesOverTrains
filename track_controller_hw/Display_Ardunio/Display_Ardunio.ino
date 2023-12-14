@@ -12,10 +12,6 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-//String commanded[150];
-
-
-int blue[13] = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 String current_block = "F28";
 
@@ -26,19 +22,19 @@ const int SWITCHNUMBER = 3;
 char flogic[50];
 char dlogic[50];
 char ilogic[50];
-int Fsize = 0;
-int Dsize = 0;
-int Isize = 0;
+int fsize = 0;
+int dsize = 0;
+int isize = 0;
 
 
 bool manual = true;
 bool switch_change = true;
 bool light_change = true;
 
-bool FED = false;
-bool ABC = false;
-bool ZYX = false;
-bool I = false;
+bool fed_section = false;
+bool abc_section = false;
+bool zyx_section = false;
+bool i_section = false;
 
 String boolean_logic = "";
 
@@ -48,11 +44,6 @@ int Red_LED = 3;
 int green_LED = 4;
 int Crossing_LED = 5;
 
-struct Block{
-  String name;
-  int occupancy;
-  int commanded;
-};
 
 struct Light{
   String name;
@@ -67,26 +58,30 @@ struct Switch{
 Light lights[LIGHTNUMBER];
 Switch switches[SWITCHNUMBER];
 
-void transmit(){
-  Serial.print("Hello");
-}
-
 void update_blocks(){
+  bool zyx_temp = false;
+  bool abc_temp = false;
+  bool fed_temp = false;
+  bool i_temp = false;
   for(int i = 144; i < 150; i++){
-    ZYX = ZYX || bool(green[i]);
+    zyx_temp = zyx_temp || bool(green[i]);
   }
   for(int i = 0; i < 12; i++){
-    ABC = ABC || bool(green[i]);
+    abc_temp = abc_temp || bool(green[i]);
   }
   for(int i = 12; i < 28; i++){
-    FED = FED || bool(green[i]);
+    fed_temp = fed_temp || bool(green[i]);
   }
   for(int i =40; i < 57; i++){
-    I = I || bool(green[i]);
+    i_temp = i_temp || bool(green[i]);
   }
+  fed_section = fed_temp;
+  abc_section = abc_temp;
+  zyx_section = zyx_temp;
+  i_section = i_temp;
 }
 
-bool deMorg(bool value, bool value2, String operation){
+bool demorgan_law(bool value, bool value2, String operation){
   bool compare1;
   bool compare2;
   if(operation = "and"){
@@ -106,37 +101,37 @@ bool deMorg(bool value, bool value2, String operation){
   return false;
 }
 
-bool parsePLC(char logic){
+bool parse_plc(char logic){
   if(logic == 'F'){
-    return FED;
+    return fed_section;
   }
   else if(logic == 'A'){
-    return ABC;
+    return abc_section;
   }
   else if(logic == 'Z'){
-    return ZYX;
+    return zyx_section;
   }
   else if(logic == 'I'){
-    return I;
+    return i_section;
   }
   else if(logic == 'f'){
-    return !FED;
+    return !fed_section;
   }
   else if(logic == 'a'){
-    return !ABC;
+    return !abc_section;
   }
   else if(logic == 'z'){
-    return !ZYX;
+    return !zyx_section;
   }
   else if(logic == 'i'){
-    return !I;
+    return !i_section;
   }
   else{
     return false;
   }
 }
 
-void PLC(){
+void plc(){
   int prev_value_switch = 0;
   int prev_value_light = 0;
   int light_index = 0;
@@ -158,34 +153,34 @@ void PLC(){
     }  
   }
 
-  int indexF = Fsize;
+  int index_f = fsize;
   int for_and = 0;
-  bool resultF;
-  if(flogic[indexF-1] == '0'){
+  bool result_f;
+  if(flogic[index_f-1] == '0'){
     for_and = 0;
   }
-  else if(flogic[indexF-1] == '1'){
+  else if(flogic[index_f-1] == '1'){
     for_and = 1;
   }
-  indexF--;
-  resultF = parsePLC(flogic[indexF-1]);
-  indexF--;
-  while(indexF > 0){
-    char logic = flogic[indexF-1];
+  index_f--;
+  result_f = parse_plc(flogic[index_f-1]);
+  index_f--;
+  while(index_f > 0){
+    char logic = flogic[index_f-1];
     if(for_and == 0){
-      if(deMorg(resultF, parsePLC(logic), "or")){
-        resultF = resultF || parsePLC(logic);
+      if(demorgan_law(result_f, parse_plc(logic), "or")){
+        result_f = result_f || parse_plc(logic);
       } 
     }
     else if(for_and == 1){
-      if(deMorg(resultF, parsePLC(logic), "and")){
-        resultF = resultF && parsePLC(logic);
+      if(demorgan_law(result_f, parse_plc(logic), "and")){
+        result_f = result_f && parse_plc(logic);
       }
     }
-    indexF--;
+    index_f--;
   }
-  switches[1].value = resultF;
-  if(resultF == 0){
+  switches[1].value = result_f;
+  if(result_f == 0){
     lights[2].value = 0;
     lights[3].value = 1;
   }
@@ -195,36 +190,34 @@ void PLC(){
   }
   Serial.print("0F28/"+ String(switches[1].value) + " 1F28/" + String(lights[2].value) + " 1Z150/" + String(lights[3].value) + "\n");
 
-  int indexD = Dsize;
+  int index_d = dsize;
   int dor_and = 0;
-  bool resultD;
-  if(dlogic[indexD-1] == '0'){
+  bool result_d;
+  if(dlogic[index_d-1] == '0'){
     dor_and = 0;
   }
-  else if(dlogic[indexD-1] == '1'){
+  else if(dlogic[index_d-1] == '1'){
     dor_and = 1;
   }
-  indexD--;
-  resultD = parsePLC(dlogic[indexD-1]);
-  indexD--;
-  while(indexD > 0){
-    char logic = dlogic[indexD-1];
+  index_d--;
+  result_d = parse_plc(dlogic[index_d-1]);
+  index_d--;
+  while(index_d > 0){
+    char logic = dlogic[index_d-1];
     if(dor_and == 0){
-      if(deMorg(resultD, parsePLC(logic), "or")){
-        resultD = resultD || parsePLC(logic);
+      if(demorgan_law(result_d, parse_plc(logic), "or")){
+        result_d = result_d || parse_plc(logic);
       }
     }
     else if(dor_and == 1){
-      if(deMorg(resultD, parsePLC(logic), "and")){
-        resultD = resultD && parsePLC(logic);
+      if(demorgan_law(result_d, parse_plc(logic), "and")){
+        result_d = result_d && parse_plc(logic);
       }
     }
-    indexD--;
+    index_d--;
   }
-  lcd1.setCursor(0,1);
-  lcd1.print(String(resultD));
-  switches[0].value = resultD;
-  if(resultD == 0){
+  switches[0].value = result_d;
+  if(result_d == 0){
     lights[0].value = 1;
     lights[1].value = 0;
   }
@@ -234,33 +227,33 @@ void PLC(){
   }
   Serial.print("0D13/"+ String(switches[0].value) + " 1A1/" + String(lights[0].value) + " 1D13/" + String(lights[1].value) + "\n");
 
-  int indexI = Isize;
+  int index_i = isize;
   int ior_and = 0;
-  bool resultI;
-  if(ilogic[indexI-1] == '0'){
+  bool result_i;
+  if(ilogic[index_i-1] == '0'){
     ior_and = 0;
   }
-  else if(ilogic[indexI-1] == '1'){
+  else if(ilogic[index_i-1] == '1'){
     ior_and = 1;
   }
-  indexI--;
-  resultI = parsePLC(ilogic[indexI-1]);
-  indexI--;
-  while(indexI > 0){
-    char logic = ilogic[indexI-1];
+  index_i--;
+  result_i = parse_plc(ilogic[index_i-1]);
+  index_i--;
+  while(index_i > 0){
+    char logic = ilogic[index_i-1];
     if(ior_and == 0){
-      if(deMorg(resultI, parsePLC(logic), "or")){
-        resultI = resultI || parsePLC(logic);
+      if(demorgan_law(result_i, parse_plc(logic), "or")){
+        result_i = result_i || parse_plc(logic);
       }
     }
     else if(ior_and == 1){
-      if(deMorg(resultI, parsePLC(logic), "and")){
-        resultI = resultI && parsePLC(logic);
+      if(demorgan_law(result_i, parse_plc(logic), "and")){
+        result_i = result_i && parse_plc(logic);
       }
     }
-    indexI--;
+    index_i--;
   }
-  switches[2].value = resultI;
+  switches[2].value = result_i;
   Serial.print("0I57/"+ String(switches[2].value)+ "\n");
 
   if(light_here && switch_here){
@@ -286,7 +279,7 @@ void PLC(){
   }
 }
 
-void populateLogic(String expression) {
+void populate_logic(String expression) {
   // Default result if expression is not recognized
   // Iterate through the characters in the expression
   
@@ -297,29 +290,29 @@ void populateLogic(String expression) {
     if(index == 0){
       if(currentChar == 'D'){
         switch_type = 0;
-        Dsize = 0;
+        dsize = 0;
       }
       else if(currentChar == 'E'){
         switch_type = 1;
-        Fsize = 0;
+        fsize = 0;
       }
       else if(currentChar == 'J'){
         switch_type = 2;
-        Isize = 0;
+        isize = 0;
       }
     }
     else{
       if(switch_type == 0){
-        dlogic[Dsize] = currentChar;
-        Dsize++;
+        dlogic[dsize] = currentChar;
+        dsize++;
       }
       else if(switch_type == 1){
-        flogic[Fsize] = currentChar;
-        Fsize++;
+        flogic[fsize] = currentChar;
+        fsize++;
       }
       else if(switch_type == 2){
-        ilogic[Isize] = currentChar;
-        Isize++;
+        ilogic[isize] = currentChar;
+        isize++;
       }
     }
     index++;
@@ -327,26 +320,26 @@ void populateLogic(String expression) {
 }
 
 
-void PLCSplit(String incoming) {
+void plc_split(String incoming) {
   // Split the string by space
-  int spaceIndex = incoming.indexOf(' ');
+  int space_index = incoming.indexOf(' ');
 
-  while (spaceIndex != -1) {
+  while (space_index != -1) {
     // Find the position of the first space
-    spaceIndex = incoming.indexOf(' ');
+    space_index = incoming.indexOf(' ');
 
     // Extract the substring before the space
-    String token = incoming.substring(0, spaceIndex);
+    String token = incoming.substring(0, space_index);
 
-    populateLogic(token);
+    populate_logic(token);
     // Remove the processed part (including the space)
-    incoming = incoming.substring(spaceIndex + 1);
+    incoming = incoming.substring(space_index + 1);
 
     // Find the position of the next space
-    spaceIndex = incoming.indexOf(' ');
+    space_index = incoming.indexOf(' ');
   }
   
-  populateLogic(incoming);
+  populate_logic(incoming);
 }
 
 void display_block(String block_number){
@@ -389,7 +382,7 @@ void display_block(String block_number){
 }
 
 
-void Receiver(){
+void receiver(){
   if (Serial.available() > 0) {
     incomingData = Serial.readStringUntil('\n');
   }
@@ -403,7 +396,7 @@ void Receiver(){
   }
   else if(detect.equals("1")){
     boolean_logic = incomingData.substring(1,incomingData.length());
-    PLCSplit(boolean_logic);
+    plc_split(boolean_logic);
   }
 
   //read the block occupancy -- PLC
@@ -433,20 +426,20 @@ void Receiver(){
       occupancy = occupancy.substring(space + 1);     
     }
    // display_block(current_block);
-   // lcd1.setCursor(0,2);
-   // lcd1.print(String(green[76]));
   }
+  lcd1.setCursor(0,1);
+  lcd1.print(String(incomingData));
   incomingData = "";
 }
 
-void autoManual(){
+void auto_manual(){
   int reading = digitalRead(6);
   if (reading == 0) {
     manual = !manual;
   }
 }
 
-void changeSwitch(){
+void change_switch(){
   int reading = digitalRead(7);
   if (reading == 0){
     for(int i = 0; i < SWITCHNUMBER; i++){
@@ -472,7 +465,7 @@ void changeSwitch(){
   }
 }
 
-void changeLight(){
+void change_light(){
   int reading = digitalRead(8);
   if (reading == 0) {
     for(int i = 0; i < LIGHTNUMBER; i++){
@@ -494,7 +487,7 @@ void changeLight(){
   }
 }
 
-void crossingLights(){
+void crossing_lights(){
   if(green[18] == 1){
     digitalWrite(Crossing_LED, HIGH);
   }
@@ -542,13 +535,13 @@ void setup() {
 
 void loop() {
   
-  Receiver();
+  receiver();
   update_blocks();
-  crossingLights();
-  autoManual(); 
+  crossing_lights();
+  auto_manual(); 
   if(!manual){
-    changeSwitch();
-    changeLight();
+    change_switch();
+    change_light();
     lcd1.setCursor(0,3);
     lcd1.print("      ");
     lcd1.setCursor(0,3);
@@ -560,9 +553,8 @@ void loop() {
     lcd1.setCursor(0,3);
     lcd1.print("Auto");
     lcd1.setCursor(0,0);
-    PLC();
+    plc();
   }
   delay(500);
 
-  //transmit(); 
 }
