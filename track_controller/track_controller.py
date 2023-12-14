@@ -29,8 +29,8 @@ class Track_Controller(object):
         # commanded speed is speed limit - occupancy
         self._command_speed = {}
         # dict of wayside controllers and their associated PLC files
-        self._plc_input = {'Green 1': "track_controller/dummyPlug.txt", 'Green 2': "track_controller/PLCgreen2.txt",
-                           'Red 1': "track_controller/PLCred1.txt", 'Red 2': "track_controller/PLCred2.txt"}
+        self._plc_input = {'Green 1': "../track_controller/dummyPlug.txt", 'Green 2': "../track_controller/PLCgreen2.txt",
+                           'Red 1': "../track_controller/PLCred1.txt", 'Red 2': "../track_controller/PLCred2.txt"}
         # lists of PLC operations that were performed
         self._plc_output = {'Green 1': [""], 'Green 2': [""],
                             'Red 1': [""], 'Red 2': [""]}
@@ -65,7 +65,7 @@ class Track_Controller(object):
             try:
                 self.PLC()
             except Exception as e:
-                print("PLC Error! Please enter manual mode")
+                print(e)
 
         try:
             self.set_occupied_blocks(self.track_ctrl_signals._occupancy)
@@ -140,8 +140,6 @@ class Track_Controller(object):
             for i in self._occupied_blocks[lines]:
                 self.set_occupancy(lines, i, max(blocks[lines].count(i),
                                                  self.ctc_ctrl_signals._track_section_status[lines.lower()].count(i)))
-                print(self.ctc_ctrl_signals._track_section_status[lines.lower()])
-                print(self._occupied_blocks["Green"])
 
     def get_occupied_blocks(self, line) -> list:
         return self._occupied_blocks[line]
