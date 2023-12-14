@@ -536,8 +536,13 @@ class Ui_MainWindow(QMainWindow):
         self.red_map.verticalHeader().setVisible(False)
         for i in range(13):
             for j in range(13):
-                if i * 13 + j + 1 > 76:
+                if i * 13 + j + 1 > 77:
                     break
+                elif i * 13 + j + 1 == 77:
+                    yard = QPushButton("", self.trackmodel_main)
+                    yard.setFlat(True)
+                    yard.setStyleSheet("background-color: rgba(0, 0, 0, 0); border: none;")
+                    self.red_map.setCellWidget(i,j,yard)
                 else:
                     button_text = f'{i * 13 + j + 1}'
                     button = QPushButton(button_text, self.trackmodel_main)

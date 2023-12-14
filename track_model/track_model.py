@@ -247,6 +247,8 @@ class TrackModel(object):
                 sw_label = self._switchionary[train.current_block][4]
                 if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1:
                     train.current_block = 151
+                if train.current_block == 9 and train.direction != inc and self._switch_position[sw_label] == 1:
+                    train.curr_block = 77
                 if train.direction == inc and self._switch_position[sw_label] == sw:
                     # print(self._switchionary[train.current_block][0])
                     train.direction = self._switchionary[train.current_block][2]
@@ -254,7 +256,7 @@ class TrackModel(object):
                     train.current_block = self._switchionary[train.current_block][0]
                     train.cum_distance = 0
 
-            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151:
+            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151 or train.current_block != 9:
                 if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                     train.cum_distance = 0
                     # print(train.current_block)
