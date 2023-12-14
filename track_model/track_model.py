@@ -142,8 +142,8 @@ class TrackModel(object):
         self._track_controller_signals._train_in = self._current_block
         # print("track model train in " + str(self._track_controller_signals._train_in))
         # get second element of each sublist in the list self._current_block
-        # TODO: needs where clause to only get green/red line blocks
-        self._track_controller_signals._occupancy = {"Green": [str(i[1]) for i in self._current_block], "Red": []}
+        self._track_controller_signals._occupancy = {"Green": [str(i[1]) for i in self._current_block if i[3] == 'green'],
+                                                     "Red": [str(i[1]) for i in self._current_block if i[3] == 'red']}
 
         #print("track model train in " + str(self._track_controller_signals._train_in))
 
@@ -185,8 +185,6 @@ class TrackModel(object):
         # Make a train dictionary out of the train ids and train lines
         # NOTE: you can make this self. if you want but not necessary
         train_dict = {train_id: train_line for train_id, train_line in zip(self._track_controller_signals._train_ids, self._track_controller_signals._train_lines)}
-
-        print("train dict: " + str(train_dict))
 
         for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
@@ -246,14 +244,16 @@ class TrackModel(object):
                 sw = self._switchionary[train.current_block][3]
                 sw_label = self._switchionary[train.current_block][4]
                 if train.direction == inc and self._switch_position[sw_label] == sw:
+                    # print(self._switchionary[train.current_block][0])
                     train.direction = self._switchionary[train.current_block][2]
                     train.current_block = self._switchionary[train.current_block][0]
-
-
+                    train.cum_distance = 0
 
             if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
                 train.cum_distance = 0
+                # print(train.current_block)
                 train.current_block += train.direction
+                # print(train.current_block)
 
 
                 # how to get switch position

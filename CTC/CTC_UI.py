@@ -425,6 +425,8 @@ class CTC_Main_UI(QMainWindow):
         red_header.setSectionResizeMode(6, QHeaderView.ResizeToContents)
         self.red_train_list_2.verticalHeader().setVisible(False)
         self.red_train_list_2.clicked.connect(self.handle_table_click)
+        self.red_train_list_2.selectionModel().selectionChanged.connect(self.handle_deselect)
+        self.red_train_list_2.setSelectionBehavior(QTableView.SelectRows)
 
         # data = [ # code to add data
         #     ["1", "08:00", "10:30", "East Liberty", "890 m", "89 mi/hr", "50 mi/hr"]
@@ -477,6 +479,14 @@ class CTC_Main_UI(QMainWindow):
         self.red_back_sched.setObjectName("red_back_sched")
         self.red_back_sched.hide()
         self.red_back_sched.clicked.connect(lambda: self.handle_back_sched_click())
+        self.red_back_add = QtWidgets.QPushButton(self.red_train_view_page)
+        self.red_back_add.setGeometry(QtCore.QRect(5, 490, 101, 23))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.red_back_add.setFont(font)
+        self.red_back_add.setObjectName("red_back_add")
+        self.red_back_add.hide()
+        self.red_back_add.clicked.connect(lambda:self.handle_back_add_click())
         self.red_label = QtWidgets.QLabel(self.red_train_view_page)
         self.red_label.setGeometry(QtCore.QRect(182, 611, 351, 31))
         font = QtGui.QFont()
@@ -588,6 +598,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_edit_schedule.raise_()
         self.red_add_stop.raise_()
         self.red_back_sched.raise_()
+        self.red_back_add.raise_()
         self.red_label.raise_()
         self.red_label_2.raise_()
         self.red_block_close_label.raise_()
@@ -671,6 +682,7 @@ class CTC_Main_UI(QMainWindow):
         self.red_edit_schedule.setText(_translate("self", "Edit Schedule"))
         self.red_add_stop.setText(_translate("self", "Add Stop"))
         self.red_back_sched.setText(_translate("self", "Back"))
+        self.red_back_add.setText(_translate("self", "Back"))
         self.red_label.setText(_translate("self", "System Throughput: "))
         self.red_label_2.setText(_translate("self", "Schedule Train"))
         self.red_block_close_label.setText(_translate("self", "Maintenance Mode"))
@@ -966,13 +978,133 @@ class CTC_Main_UI(QMainWindow):
 
     # handle table clicks
     def handle_table_click(self, index):
-        self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
-        # index contains information about the clicked cell
-        row = index.row()
-        column = index.column()
+        # determine line
+        if self.view_switcher.currentIndex() == 0: 
+            self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
+            # index contains information about the clicked cell
+            row = index.row()
+            column = index.column()
+            print(row, column)
 
-        # check if the click is within valid row and column ranges
-        if 0 <= row < self.train_list_2.model().rowCount() and 0 <= column < self.train_list_2.model().columnCount():
+            # check if the click is within valid row and column ranges
+            if 0 <= row < self.train_list_2.model().rowCount() and 0 <= column < self.train_list_2.model().columnCount():
+                self.label_2.setText("Modify Schedule")
+                # self.edit_schedule.show()
+                # self.add_stop.show()
+                self.back_sched.show()
+                self.train_speed_spnbx.show()
+                self.train_speed_label.show()
+
+                self.station_list.hide()
+                self.arrival_time_label.hide()
+                self.arrival_time.hide()
+                self.confirm.hide()
+        else:
+            self.red_train_index = [index.row() for index in self.red_train_list_2.selectionModel().selectedRows()][0]
+            # index contains information about the clicked cell
+            row = index.row()
+            column = index.column()
+
+            # check if the click is within valid row and column ranges
+            if 0 <= row < self.red_train_list_2.model().rowCount() and 0 <= column < self.red_train_list_2.model().columnCount():
+                self.label_2.setText("Modify Schedule")
+                # self.red_edit_schedule.show()
+                # self.red_add_stop.show()
+                self.red_back_sched.show()
+                self.red_train_speed_spnbx.show()
+                self.red_train_speed_label.show()
+
+                self.red_station_list.hide()
+                self.red_arrival_time_label.hide()
+                self.red_arrival_time.hide()
+                self.red_confirm.hide()
+
+    # handle deselecting table
+    def handle_deselect(self, selected, deselected):
+        if deselected:
+            self.red_label_2.setText("Schedule Train")
+            self.red_edit_schedule.hide()
+            self.red_add_stop.hide()
+            self.red_back_sched.hide()
+            self.red_train_speed_spnbx.hide()
+            self.red_train_speed_label.hide()
+
+            self.red_train_list_2.clearSelection()
+            
+            self.red_station_list.show()
+            self.red_arrival_time_label.show()
+            self.red_arrival_time.show()
+            self.red_confirm.show()
+
+    # handle back schedule clicks
+    def handle_back_sched_click(self):
+        # determine line
+        if self.view_switcher.currentIndex() == 0: 
+            self.label_2.setText("Schedule Train")
+            self.edit_schedule.hide()
+            self.add_stop.hide()
+            self.back_sched.hide()
+            self.train_speed_spnbx.hide()
+            self.train_speed_label.hide()
+
+            self.train_list_2.clearSelection()
+            
+            self.station_list.show()
+            self.arrival_time_label.show()
+            self.arrival_time.show()
+            self.confirm.show()
+        else:
+            self.red_label_2.setText("Schedule Train")
+            self.red_edit_schedule.hide()
+            self.red_add_stop.hide()
+            self.red_back_sched.hide()
+            self.red_train_speed_spnbx.hide()
+            self.red_train_speed_label.hide()
+
+            self.red_train_list_2.clearSelection()
+            
+            self.red_station_list.show()
+            self.red_arrival_time_label.show()
+            self.red_arrival_time.show()
+            self.red_confirm.show()
+    
+    # handle add stop click
+    def handle_add_stop_click(self):
+        # determine line
+        if self.view_switcher.currentIndex() == 0: 
+            self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
+            self.label_2.setText("Add Stop")
+            self.edit_schedule.hide()
+            self.add_stop.hide()
+            self.back_sched.hide()
+            self.train_speed_spnbx.hide()
+            self.train_speed_label.hide()
+            
+            self.back_add.show()
+            self.station_list.show()
+            self.arrival_time_label.show()
+            self.arrival_time.show()
+            self.confirm.show()
+        else:
+            self.red_train_index = [index.row() for index in self.red_train_list_2.selectionModel().selectedRows()][0]
+            self.red_label_2.setText("Add Stop")
+            self.red_edit_schedule.hide()
+            self.red_add_stop.hide()
+            self.red_back_sched.hide()
+            self.red_train_speed_spnbx.hide()
+            self.red_train_speed_label.hide()
+            
+            self.red_back_add.show()
+            self.red_station_list.show()
+            self.red_arrival_time_label.show()
+            self.red_arrival_time.show()
+            self.red_confirm.show()
+    
+    # handle back add clicks
+    def handle_back_add_click(self):
+        # determine line
+        if self.view_switcher.currentIndex() == 0: 
+            self.train_index = -1
             self.label_2.setText("Modify Schedule")
             # self.edit_schedule.show()
             self.add_stop.show()
@@ -980,62 +1112,30 @@ class CTC_Main_UI(QMainWindow):
             self.train_speed_spnbx.show()
             self.train_speed_label.show()
 
+            self.back_add.hide()
             self.station_list.hide()
             self.arrival_time_label.hide()
             self.arrival_time.hide()
             self.confirm.hide()
+        else:
+            self.red_train_index = -1
+            self.red_label_2.setText("Modify Schedule")
+            # self.edit_schedule.show()
+            self.red_add_stop.show()
+            self.red_back_sched.show()
+            self.red_train_speed_spnbx.show()
+            self.red_train_speed_label.show()
 
-    # handle back schedule clicks
-    def handle_back_sched_click(self):
-        self.label_2.setText("Schedule Train")
-        self.edit_schedule.hide()
-        self.add_stop.hide()
-        self.back_sched.hide()
-        self.train_speed_spnbx.hide()
-        self.train_speed_label.hide()
-
-        self.train_list_2.clearSelection()
-        
-        self.station_list.show()
-        self.arrival_time_label.show()
-        self.arrival_time.show()
-        self.confirm.show()
-    
-    # handle add stop click
-    def handle_add_stop_click(self):
-        self.train_index = [index.row() for index in self.train_list_2.selectionModel().selectedRows()][0]
-        self.label_2.setText("Add Stop")
-        self.edit_schedule.hide()
-        self.add_stop.hide()
-        self.back_sched.hide()
-        self.train_speed_spnbx.hide()
-        self.train_speed_label.hide()
-        
-        self.back_add.show()
-        self.station_list.show()
-        self.arrival_time_label.show()
-        self.arrival_time.show()
-        self.confirm.show()
-    
-    # handle back add clicks
-    def handle_back_add_click(self):
-        self.train_index = -1
-        self.label_2.setText("Modify Schedule")
-        # self.edit_schedule.show()
-        self.add_stop.show()
-        self.back_sched.show()
-        self.train_speed_spnbx.show()
-        self.train_speed_label.show()
-
-        self.back_add.hide()
-        self.station_list.hide()
-        self.arrival_time_label.hide()
-        self.arrival_time.hide()
-        self.confirm.hide()
+            self.red_back_add.hide()
+            self.red_station_list.hide()
+            self.red_arrival_time_label.hide()
+            self.red_arrival_time.hide()
+            self.red_confirm.hide()
 
     # update notqtime
     def update_not_qtime(self):
         self._not_qtime = self.qtime_to_datetime(self.arrival_time.time())
+        self._red_not_qtime = self.qtime_to_datetime(self.red_arrival_time.time())
 
     # unit conversion functions
     def meters_to_miles(self, meters):

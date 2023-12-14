@@ -472,8 +472,8 @@ class Schedule(object):
 
         self._total_time = self._total_time * 1.25
         self._last_block = next(iter(self._route_info))
-        # print("cool arrays: ", self._blocks_arrs)
-        # print(self._route_info)
+        print("cool arrays: ", self._blocks_arrs)
+        print(self._route_info)
         # print(self._total_time)
 
     # get blocks between yard and station
@@ -505,15 +505,21 @@ class Schedule(object):
                             else:
                                 next_block = curr_block-1
                 # self._switch_states.append([options["name"], ) # for forks at red line
-            else: # more than one option, should never hit
-                if line == "green": # only multiple options for the one going to yard
+            else: # more than one option
+                if line == "green": # only multiple options for the one going to yard, should never hit
                     for entry in options:
                         if entry != "name" and entry != "0":
                             next_block = int(entry)
                             dir = options[entry][0]
                             break
-                elif line == "red":
-                    print("meow")
+                elif line == "red": # for deciding jughandles, never take going to destination
+                    # hardcoded jughandles
+                    if curr_block == 33:
+                        next_block = 34
+                        dir = 1
+                    elif curr_block == 44:
+                        next_block = 45
+                        dir = 1
 
             result = self.get_blocks_to_dest(line, dest_block, next_block, result, dir)
             result[0].append(curr_block)
@@ -533,7 +539,7 @@ class Schedule(object):
     def get_blocks_to_yard(self, line, curr_block, starting_block, dir, result = []):
         # block arr stuff
         self._temp_block_arr.append(curr_block)
-        if any(curr_block in array for array in self._station_info.values()):
+        if any(curr_block in array for array in self._station_info.values()) or curr_block == 0:
             self._blocks_arrs.append(self._temp_block_arr)
             self._temp_block_arr = []
             self._temp_block_arr.append(curr_block)
@@ -563,8 +569,28 @@ class Schedule(object):
                             next_block = int(entry)
                             dir = options[entry][0]
                             break
-                elif line == "red":
-                    print("meow")
+                elif line == "red": # for deciding jughandles
+                    # hardcoded jughandles
+                    if dir == 0:
+                        if curr_block == 33:
+                            x = []
+                            x = self.get_blocks_to_dest(line, 76, 72, x, 1)
+                            result.extend(x[0])
+                            next_block = 32
+                            dir = 0
+                        elif curr_block == 44:
+                            x = []
+                            x = self.get_blocks_to_dest(line, 71, 67, x, 1)
+                            result.extend(x[0])
+                            next_block = 43
+                            dir = 0
+                    else:
+                        if curr_block == 33:
+                            next_block = 34
+                            dir = 1
+                        elif curr_block == 44:
+                            next_block = 45
+                            dir = 1
 
             result = self.get_blocks_to_yard(line, next_block, starting_block, dir, result)
             result.append(curr_block)
@@ -646,6 +672,7 @@ class Schedule(object):
         # add authorities in this array
         if self._arr_num < len(self._blocks_arrs):
             curr_arr = self._blocks_arrs[self._arr_num]
+            # print(curr_arr, curr_block, self._route_info[str(curr_block)])
             for block in curr_arr:
                 block_pos = curr_arr.index(block)
                 curr_block_pos = curr_arr.index(curr_block)
