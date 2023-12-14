@@ -251,22 +251,24 @@ class TrackModel(object):
                     train.current_block = self._switchionary[train.current_block][0]
                     train.cum_distance = 0
 
-            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                train.cum_distance = 0
-                # print(train.current_block)
-                train.current_block += train.direction
-                # print(train.current_block)
+            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151:
+                if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                    train.cum_distance = 0
+                    # print(train.current_block)
+                    train.current_block += train.direction
+                    # print(train.current_block)
 
 
-                # how to get switch position
-                # pos = self.get_switch_position(self._track_controller_signals._line.capitalize(), '63')) # returns 0 or 1
+                    # how to get switch position
+                    # pos = self.get_switch_position(self._track_controller_signals._line.capitalize(), '63')) # returns 0 or 1
 
-                # how to set direction
-                # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
+                    # how to set direction
+                    # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
 
 
             return train.current_block
         except Exception as e:
+            traceback.print_exc()
             print("You must upload the Track Model before dispatching a train")
             print(e)
 
