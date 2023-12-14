@@ -443,6 +443,8 @@ class Schedule(object):
                             self._route_info[str(block)] = [[info['length']], info['speed limit']]
                             self._total_authority = self._total_authority + info['length']/2
                             self._total_time = self._total_time + timedelta(hours=((info['length']/2000)/info['speed limit']))
+                        # elif self._line == "red" and block:
+                            
                         else:
                             self._route_info[str(block)] = [[info['length']], info['speed limit']]
                             self._total_authority = self._total_authority + info['length']
@@ -645,8 +647,9 @@ class Schedule(object):
                 self._route_info[str(self._prev_block)][0][nonzero_index_prev] = 0
                 # print(self._route_info)
                 # if it's a station block and not the very first block in the schedule if we're going to the yard
-            if any(curr_block in array for array in self._station_info.values()) and (curr_block != self._starting_block or self._destination_block != 0):
+            if any(curr_block in array for array in self._station_info.values()) and (curr_block != self._starting_block or (curr_block == self._starting_block and nonzero_index != 0) or self._destination_block != 0):
                 # if we're past halfway
+                # print(cd, self._api._track_info.get_block_info(self._line, curr_block)['length']/2, self._tracker)
                 if cd >= self._api._track_info.get_block_info(self._line, curr_block)['length']/2 and self._tracker == 0:
                     self._tracker = 1
                     self._arr_num += 1
