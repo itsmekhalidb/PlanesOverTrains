@@ -1106,8 +1106,8 @@ class Ui_TrackController_MainUI(QMainWindow):
             self.switch_position_right_2.setText(_translate("self", "10"))
             self.switch_position_left_3.setText(_translate("self", "28"))
             self.switch_position_right_3.setText(_translate("self", "76"))
-            self.switch_position_left_4.setText(_translate("self", "32"))
-            self.switch_position_right_4.setText(_translate("self", "72"))
+            self.switch_position_left_4.setText(_translate("self", "72"))
+            self.switch_position_right_4.setText(_translate("self", "32"))
             self.switch_label_1.setText(
                 _translate("self", list(self.track_controller.get_switch_list("Red").keys())[0]))
             self.switch_label_2.setText(
@@ -1148,6 +1148,7 @@ class Ui_TrackController_MainUI(QMainWindow):
                 _translate("self", list(self.track_controller.get_switch_list("Red").keys())[5]))
             self.switch_label_3.setText(
                 _translate("self", list(self.track_controller.get_switch_list("Red").keys())[6]))
+            self.switch_label_4.setText(_translate("self", "NULL"))
             self.railway_crossing.setText(
                 _translate("self", list(self.track_controller.get_railway_crossings("Red").keys())[0]))
 

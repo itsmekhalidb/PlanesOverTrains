@@ -290,15 +290,15 @@ class Track_Controller(object):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '16' or block == '27':
-                for i in range(16, 30, 1):
+                for i in range(16, 33, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '33' or block == '38':
-                for i in range(30, 35, 1):
+                for i in range(33, 44, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '44' or block == '52':
-                for i in range(35, 53, 1):
+                for i in range(44, 53, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '47':
