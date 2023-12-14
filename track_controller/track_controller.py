@@ -54,7 +54,7 @@ class Track_Controller(object):
         except Exception as e:
             print("track_controller.py not updating")
 
-    def update(self, thread=True): #def update(self, thread=False):
+    def update(self, thread=False): #def update(self, thread=False):
         self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
             if self._filepath != "":
@@ -255,15 +255,15 @@ class Track_Controller(object):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '18':
-                for i in range(17, 19, 1):
+                for i in range(16, 20, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '57':
-                for i in range(29, 58, 1):
+                for i in range(29, 63, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
-            elif block == '76':
-                for i in range(59, 77, 1):
+            elif block == '63' or block == '76':
+                for i in range(63, 77, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
             elif block == '77':

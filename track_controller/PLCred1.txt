@@ -9,14 +9,14 @@ switch
         33 and ( ! 76 or 27 )
 light
     1
-        ! 1 or 16
+        1 or ! 16
     15
-        ! 15 or 16
+        15 or ! 16
     16
         ! 16 and ! 16
     10
         1 and 1
     76
-        27 or 33
+        ! 27 and ! 33
     72
-        33 or 27
+        ! 33 and ! 27

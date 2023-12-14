@@ -63,11 +63,92 @@ class TrackModelUnitTests(unittest.TestCase):
         tc.set_authority(1, 20)
         self.assertEqual(tc.get_authority(1), 20)
 
-    def test_green1_plc(self):
+    def test_green1_plc_switch(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
         tc.set_occupancy("Green",'13', 1)
+        f = open("../track_controller/PLCgreen1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Green", str(lines[i].strip()),
+                                            tc.parse(lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+            i = i + 1
+
+        self.assertEqual(tc.get_switch("Green", '28'), 1)
+        f.close()
+
+    def test_green1_plc_light(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy("Green",'13', 1)
+        f = open("../track_controller/PLCgreen1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Green", str(lines[i].strip()),
+                                            tc.parse(lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+            i = i + 1
+
+        self.assertEqual(tc.get_light("Green", '28'), 0)
+        f.close()
+
+    def test_green1_plc_railway(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy("Green",'17', 1)
+        f = open("../track_controller/PLCgreen1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Green", str(lines[i].strip()),
+                                            tc.parse(lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+            i = i + 1
+
+        self.assertEqual(tc.get_railway_crossing("Green", '18'), 1)
+        f.close()
+
+    def test_green2_plc_switch(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy("Green",'63', 1)
         f = open("../track_controller/PLCgreen1.txt", "r")
         lines = f.readlines()
         i = 0
@@ -84,14 +165,38 @@ class TrackModelUnitTests(unittest.TestCase):
                 tc.set_operator(lines[i].strip())
             i = i + 1
 
-        self.assertEqual(tc.get_switch("Green", '28'), 1)
+        self.assertEqual(tc.get_switch("Green", '63'), 0)
+        f.close()
+
+    def test_green2_plc_light(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy("Green",'77', 1)
+        f = open("../track_controller/PLCgreen1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Green", str(lines[i].strip()),
+                                  tc.parse(lines[i + 1].strip(), "Green"))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+            i = i + 1
+
+        self.assertEqual(tc.get_light("Green", '76'), 0)
         f.close()
 
     def test_red1_plc_switch(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy("Red", '1', 1)
+        tc.set_occupancy("Red", '32', 1)
         f = open("../track_controller/PLCred1.txt", "r")
         lines = f.readlines()
         i = 0
@@ -110,14 +215,14 @@ class TrackModelUnitTests(unittest.TestCase):
             else:
                 tc.set_operator(lines[i].strip())
             i = i + 1
-        self.assertEqual(tc.get_switch("Red", '16'), 1)
+        self.assertEqual(tc.get_switch("Red", '33'), 0)
         f.close()
 
     def test_red1_plc_light(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy("Red", '27', 1)
+        tc.set_occupancy("Red", '16', 1)
         f = open("../track_controller/PLCred1.txt", "r")
         lines = f.readlines()
         i = 0
@@ -136,7 +241,7 @@ class TrackModelUnitTests(unittest.TestCase):
             else:
                 tc.set_operator(lines[i].strip())
             i = i + 1
-        self.assertEqual(tc.get_light("Red", '76'), 0)
+        self.assertEqual(tc.get_light("Red", '1'), 0)
         f.close()
 
     def test_red2_plc(self):
@@ -165,6 +270,31 @@ class TrackModelUnitTests(unittest.TestCase):
         self.assertEqual(tc.get_switch("Red", '38'), 1)
         f.close()
 
+    def test_red2_plc_light(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_occupancy("Red", '45', 1)
+        f = open("../track_controller/PLCred1.txt", "r")
+        lines = f.readlines()
+        i = 0
+        while i < len(lines) - 1:
+            if lines[i].strip() != "switch" and lines[i].strip() != "light" and lines[i].strip() != "railway":
+                if tc.get_operator() == "switch":
+                    tc.set_switch("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip(), "Red"))
+                elif tc.get_operator() == "light":
+                    tc.set_lights("Red", str(lines[i].strip()),
+                                                     tc.parse(lines[i + 1].strip(), "Red"))
+                elif tc.get_operator() == "railway":
+                    tc.set_railway_crossing("Red", str(lines[i].strip()),
+                                            tc.parse(lines[i + 1].strip(), "Red"))
+                i = i + 1
+            else:
+                tc.set_operator(lines[i].strip())
+            i = i + 1
+        self.assertEqual(tc.get_light("Red", '67'), 0)
+        f.close()
 
 
 
