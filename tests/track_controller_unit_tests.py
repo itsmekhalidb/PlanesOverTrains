@@ -215,7 +215,7 @@ class TrackModelUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_occupancy("Red", '75', 1)
+        tc.set_occupancy("Red", '9', 1)
         f = open("../track_controller/PLCred1.txt", "r")
         lines = f.readlines()
         i = 0
@@ -234,7 +234,7 @@ class TrackModelUnitTests(unittest.TestCase):
             else:
                 tc.set_operator(lines[i].strip())
             i = i + 1
-        self.assertEqual(tc.get_switch("Red", '27'), 0)
+        self.assertEqual(tc.get_switch("Red", '9'), 1)
         f.close()
 
     def test_red1_plc_light(self):

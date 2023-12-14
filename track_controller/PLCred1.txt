@@ -1,6 +1,6 @@
 switch
     9
-        1 or ! 10
+        1 and ! 10
     16
         ( 1 and ! 16 ) or ( 16 and ! 151 )
     27
