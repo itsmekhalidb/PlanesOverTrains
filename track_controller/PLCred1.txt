@@ -2,7 +2,7 @@ switch
     9
         151 or ! 10
     16
-        1 and ! 16
+        ( 1 and ! 16 ) or ( 16 and ! 151 )
     27
         ( 76 and 27 ) or ( ! 33 and 27 ) or ( ! 27 and ! 76 )
     33
