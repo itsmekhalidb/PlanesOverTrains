@@ -2,6 +2,7 @@ import threading
 import math
 import time
 import traceback
+import datetime
 
 import numpy as np
 from api.train_model_train_controller_api import TrainModelTrainControllerAPI
@@ -151,14 +152,14 @@ class TrainController:
             self._current_velocity = c
 
     def set_internal_lights(self):
-        if not self.get_auto_status():
+        if self.get_auto_status():
             if self._underground_status or self.get_time_of_day():
                 self._internal_lights_on = True
             else:
                 self._internal_lights_on = False
 
     def set_external_lights(self):
-        if not self.get_auto_status():
+        if self.get_auto_status():
             if self._underground_status or self.get_time_of_day():
                 self._external_lights_on = True
             else:
@@ -355,8 +356,8 @@ class TrainController:
         return self._time
 
     def get_time_of_day(self)->bool:
-        hour = self.get_time()//3600
-        return hour >= NIGHT + 12 or hour <= DAY
+        ts = datetime.datetime.fromtimestamp(self.get_time())
+        return ts.hour >= NIGHT + 12 or ts.hour < DAY
 
     def set_station_side(self):
         if self._side == "Left": # and self.get_actual_velocity() <= 0.00001:
