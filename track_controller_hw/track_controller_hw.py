@@ -15,12 +15,6 @@ class Track_Controller_HW(object):
 
     def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
 
-        # 2 = Occupancy(1 = occupied, 0 = not occupied(defualt)), 1 = Speed Limit,
-        self._blue = {'A1': {1: 50, 2: 0}, 'A2': {1: 50, 2: 0}, 'A3': {1: 50, 2: 0}, 'A4': {1: 50, 2: 0},
-                      'A5': {1: 50, 2: 0}, 'B6': {1: 50, 2: 0}, 'B7': {1: 50, 2: 0}, 'B8': {1: 50, 2: 0},
-                      'B9': {1: 50, 2: 0}, 'B10': {1: 50, 2: 0}, 'C11': {1: 50, 2: 0}, 'C12': {1: 50, 2: 0},
-                      'C13': {1: 50, 2: 0}, 'C14': {1: 50, 2: 0}, 'C15': {1: 50, 2: 0}}
-
         # green line track
         self._green = {}
 
@@ -86,7 +80,7 @@ class Track_Controller_HW(object):
         # Interal inputs
 
         if self.get_start_up() == 100:
-            self.get_plc_logic().parse()
+            #self.get_plc_logic().parse()
             send = "1"
             send += self.get_plc_logic().parse()
             print("Serial: " + send)
@@ -136,13 +130,7 @@ class Track_Controller_HW(object):
         # used to recieve info from the Ardunio
 
         #self.receive()
-        """
-        if self.get_automatic() != self.get_previous():
-            if not self.get_automatic():
-                self.get_ard().write("3".encode('utf-8'))
-            else:
-                self.get_ard().write("4".encode('utf-8'))
-        """
+
 
         self.set_previous(self.get_automatic())
 
@@ -155,30 +143,31 @@ class Track_Controller_HW(object):
             self.set_plc_set(False)
 
         self.set_previous_blocks(self.track_ctrl_signals._occupancy["Green"])
-        # print("Prev:" + str(self.get_previous_blocks()))
-        # print("Occ:" + str(self.get_occupied()))
+
+        try:
+            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
+        except Exception as e:
+            print(e)
+        #print("Prev:" + str(self.get_previous_blocks()))
+        #print("Occ:" + str(self.get_occupied()))
         if self.get_occupied() != self.get_previous_blocks():
             # print("Changes Occupancy")
             self.set_occupied(self.get_previous_blocks())
             # print("Occ In Statement:" + str(self.get_occupied()))
             #self.send_occupied()
 
-        try:
-            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
-        except Exception as e:
-            print(e)
+        self.ctc_ctrl_signals._occupancy["Green"] = self._occupied_blocks
 
         if thread:
             threading.Timer(.1, self.update).start()
 
-    #   def get_passengers(self):
-    #       return self._passengers
 
     def send_occupied(self):
         occupied = "2"
         for i in self.get_occupied():
             occupied += " " + str(i)
         print(occupied)
+        occupied += "\n"
         self.get_ard().write(occupied.encode('utf-8'))
 
     # used to recieve info from the Ardunio
@@ -271,10 +260,18 @@ class Track_Controller_HW(object):
     def set_occupancy(self, block, value: int):
         if self._occupied_blocks.count(block) < 1 and value == 1:
             self._occupied_blocks.append(block)
+            print("Add Occupied")
         elif self._occupied_blocks.count(block) > 0 and value == 0:
-            print("removing block " + block)
             self._occupied_blocks.remove(block)
+            print("Remove Occupied")
+        if self._previous_blocks.count(block) < 1 and value == 1:
+            self._previous_blocks.append(block)
+            print("Add Previous")
+        elif self._previous_blocks.count(block) > 0 and value == 0:
+            self._previous_blocks.remove(block)
+            print("Add Previous")
         self._occupied_blocks.sort()
+        self._previous_blocks.sort()
 
     def get_switch_list(self) -> dict:
         return self._switches

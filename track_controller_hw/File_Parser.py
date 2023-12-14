@@ -33,6 +33,8 @@ class File_Parser():
                 string_to_send += "D"
             elif words[0] == "F28":
                 string_to_send += "E"
+            elif words[0] == "I57":
+                string_to_send += "J"
             elif words[0] == "#":
                 continue
             elif words[0] == "BLO":
@@ -43,6 +45,8 @@ class File_Parser():
                         string_to_send += "a"
                     elif words[2] == "ZYX":
                         string_to_send += "z"
+                    elif words[2] == "I":
+                        string_to_send += "i"
                     else:
                         raise ValueError("Incorrect File Format: Word[2]")
                 elif words[1] == "FED":
@@ -51,6 +55,8 @@ class File_Parser():
                     string_to_send += "A"
                 elif words[1] == "ZYX":
                     string_to_send += "Z"
+                elif words[1] == "I":
+                    string_to_send += "I"
                 else:
                     raise ValueError("Incorrect File Format: Word[1]")
             elif words[0] == "OPP":

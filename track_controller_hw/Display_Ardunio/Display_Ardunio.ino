@@ -5,12 +5,12 @@
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
 
-int green[150] = {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0};
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 //String commanded[150];
 
@@ -38,8 +38,9 @@ bool light_change = true;
 bool FED = false;
 bool ABC = false;
 bool ZYX = false;
+bool I = false;
 
-String boolean_logic = "DFAZ0 EFAZ1";
+String boolean_logic = "";
 
 
 int Detect_LED = 2;
@@ -80,6 +81,9 @@ void update_blocks(){
   for(int i = 12; i < 28; i++){
     FED = FED || bool(green[i]);
   }
+  for(int i =40; i < 57; i++){
+    I = I || bool(green[i]);
+  }
 }
 
 bool deMorg(bool value, bool value2, String operation){
@@ -112,6 +116,9 @@ bool parsePLC(char logic){
   else if(logic == 'Z'){
     return ZYX;
   }
+  else if(logic == 'I'){
+    return I;
+  }
   else if(logic == 'f'){
     return !FED;
   }
@@ -121,27 +128,33 @@ bool parsePLC(char logic){
   else if(logic == 'z'){
     return !ZYX;
   }
+  else if(logic == 'i'){
+    return !I;
+  }
   else{
     return false;
   }
 }
 
 void PLC(){
-  int prev_value = 0;
-  int index = 0;
-  bool light_switch = false;
+  int prev_value_switch = 0;
+  int prev_value_light = 0;
+  int light_index = 0;
+  int switch_index = 0;
+  bool light_here = false;
+  bool switch_here = false;
   for(int i = 0; i < SWITCHNUMBER; i++){
     if(current_block == switches[i].name){
-      prev_value = switches[i].value;
-      index = i;
-      light_switch = false;
+      prev_value_switch = switches[i].value;
+      switch_index = i;
+      switch_here= true;
     }
   }
   for(int i = 0; i < LIGHTNUMBER; i++){
     if(current_block == lights[i].name){
-      prev_value = lights[i].value;
-      index = i;
-      light_switch = true;
+      prev_value_light = lights[i].value;
+      light_index = i;
+      light_here = true;
     }  
   }
 
@@ -208,6 +221,8 @@ void PLC(){
     }
     indexD--;
   }
+  lcd1.setCursor(0,1);
+  lcd1.print(String(resultD));
   switches[0].value = resultD;
   if(resultD == 0){
     lights[0].value = 1;
@@ -248,16 +263,23 @@ void PLC(){
   switches[2].value = resultI;
   Serial.print("0I57/"+ String(switches[2].value)+ "\n");
 
-  if(light_switch){
-    if(lights[index].name == current_block){
-      if(lights[index].value != prev_value){
+  if(light_here && switch_here){
+    if(lights[light_index].name == current_block && switches[switch_index].name == current_block){
+      if(lights[light_index].value != prev_value_light || switches[switch_index].value != prev_value_switch){
         display_block(current_block);
       }
     }
   }
-  else if(!light_switch){
-    if(switches[index].name == current_block){
-      if(switches[index].value != prev_value){
+  else if(light_here){
+    if(lights[light_index].name == current_block){
+      if(lights[light_index].value != prev_value_light){
+        display_block(current_block);
+      }
+    }
+  }
+  else if(switch_here){
+    if(switches[switch_index].name == current_block){
+      if(switches[switch_index].value != prev_value_switch){
         display_block(current_block);
       }
     }
@@ -414,8 +436,6 @@ void Receiver(){
    // lcd1.setCursor(0,2);
    // lcd1.print(String(green[76]));
   }
-  lcd1.setCursor(0,1);
-  lcd1.print(String(incomingData));
   incomingData = "";
 }
 
