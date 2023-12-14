@@ -56,7 +56,8 @@ class Ui_MainWindow(QMainWindow):
         self.elapsed_time = 0
         self.start_time = 0
 
-
+        #DIRECTION
+        self.dir = 1
 
         self.environment_temp = float(random.randrange(65,75))
         self.setupUi()
@@ -606,6 +607,7 @@ class Ui_MainWindow(QMainWindow):
         self.light_list = self.track_model.get_light_colors()
         self.up_temp()
         self.temp_control_availability()
+        self.dir = self.track_model.get_direction()
         #self.clock.setText(self.track_model.get_time())
         self.track_model.set_filepath(self._filepath)
         self.occupied_blocks = self.track_model.get_current_block()
@@ -638,6 +640,7 @@ class Ui_MainWindow(QMainWindow):
     def on_button_click(self):
         sender = self.sender()
         bnum = int(sender.text())
+
 
 
         if self.line_picked == 'red' and self.red_data != {}:
@@ -693,6 +696,14 @@ class Ui_MainWindow(QMainWindow):
             else:
                 self.station_name.setText("")
                 self.station.setText("")
+
+            if bnum in self.occupied_blocks:
+                if self.dir == 1:
+                    self.direction.setText("Forward")
+                elif self.dir == -1:
+                    self.direction.setText("Backward")
+            else:
+                self.direction.setText("")
 
             if int(sender.text()) in self.occupied_blocks:
                 self.occupancy.setText("Yes")
@@ -765,7 +776,7 @@ class Ui_MainWindow(QMainWindow):
 
 
 #Error Detection
-    def circuit_failure_clicked(self,bnum):
+    def circuit_failure_clicked(self):
 #         if self.block_clicked == False:
 #             return
 #         tof = self.circuit_failure_detected
@@ -783,7 +794,7 @@ class Ui_MainWindow(QMainWindow):
 # "color: rgb(255, 255, 255)")
 #             self.circuit_failure.setText("OFF")
 #         self.circuit_failure_detected = not tof
-        self.failure_states[bnum][0] = 1
+        self.failure_states[self.block_number][0] = 1
         self.track_model.set_circuit_failure(self.circuit_failure_detected)
 
     def power_failure_clicked(self):
@@ -866,6 +877,7 @@ class Ui_MainWindow(QMainWindow):
                     for column in range(map_to_update.columnCount()):
                         button_id = row * map_to_update.columnCount() + column
                         item = QTableWidgetItem()
+
 
                         if button_id == 151:
                             break

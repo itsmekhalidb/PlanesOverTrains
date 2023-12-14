@@ -239,23 +239,33 @@ class TrackModel(object):
 
 
         try:
-            if train.current_block in self._switchionary.keys() and train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                inc = self._switchionary[train.current_block][1]
-                sw = self._switchionary[train.current_block][3]
-                sw_label = self._switchionary[train.current_block][4]
-                if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1:
-                    train.current_block = 151
-                if train.direction == inc and self._switch_position[sw_label] == sw:
-                    # print(self._switchionary[train.current_block][0])
-                    train.direction = self._switchionary[train.current_block][2]
-                    train.current_block = self._switchionary[train.current_block][0]
-                    train.cum_distance = 0
+            print(train.current_block)
+            if train.line == "green" and train.current_block == 151:
+                return train.current_block
+            elif train.line == "red" and train.current_block == 77:
+                return train.current_block
+            else:
+                if train.current_block in self._switchionary.keys() and train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                    inc = self._switchionary[train.current_block][1]
+                    sw = self._switchionary[train.current_block][3]
+                    sw_label = self._switchionary[train.current_block][4]
+                    if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1 or train.current_block == None:
+                        train.current_block = 151
+                    if train.direction == inc and self._switch_position[sw_label] == sw:
+                        # print(self._switchionary[train.current_block][0])
+                        train.direction = self._switchionary[train.current_block][2]
+                        self._direction = train.direction
+                        train.current_block = self._switchionary[train.current_block][0]
+                        train.cum_distance = 0
 
-            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                train.cum_distance = 0
-                # print(train.current_block)
-                train.current_block += train.direction
-                # print(train.current_block)
+                if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                    train.cum_distance = 0
+                    # print(train.current_block)
+                    train.current_block += train.direction
+                    # print(train.current_block)
+
+
+
 
 
                 # how to get switch position
@@ -282,7 +292,8 @@ class TrackModel(object):
     def get_current_block(self) -> list:
         return self._current_block
 
-
+    def get_direction(self) -> int:
+        return self._direction
 
 
 
