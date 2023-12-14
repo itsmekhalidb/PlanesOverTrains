@@ -18,7 +18,6 @@ class Track_Controller_HW(object):
         # green line track
         self._green = {}
 
-
         # used to make sure plc is loaded
         self._plc_set = False
 
@@ -49,7 +48,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
         # serial port connection object
-        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -84,8 +83,8 @@ class Track_Controller_HW(object):
             send = "1"
             send += self.get_plc_logic().parse()
             send += "\n"
-            print("Serial: " + send)
-            self.get_ard().write(send.encode('utf-8'))
+            #print("Serial: " + send)
+            #self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -93,7 +92,7 @@ class Track_Controller_HW(object):
         self.set_time(self.ctc_ctrl_signals._time)
 
         # used to recieve info from the Ardunio
-        self.receive()
+        #self.receive()
 
         #sets the automatic variable
         self.set_previous(self.get_automatic())
@@ -103,8 +102,8 @@ class Track_Controller_HW(object):
             send_string = "1"
             send_string += self.get_plc_logic().parse()
             send_string += "\n"
-            print("Serial: " + send_string)
-            self.get_ard().write(send_string.encode('utf-8'))
+            #print("Serial: " + send_string)
+            #self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
 
@@ -117,7 +116,7 @@ class Track_Controller_HW(object):
         if self.get_occupancy_timer() != 10:
             self.set_occupancy_timer(self.get_occupancy_timer() + 1)
         elif self.get_occupancy_timer() == 10:
-            self.send_occupied()
+            #self.send_occupied()
             self.set_occupancy_timer(0)
 
 
