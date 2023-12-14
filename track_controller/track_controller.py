@@ -68,9 +68,9 @@ class Track_Controller(object):
                 print("PLC Error! Please enter manual mode")
 
         try:
-            self._occupied_blocks = self.track_ctrl_signals._occupancy
+            self.set_occupied_blocks(self.track_ctrl_signals._occupancy)
         except Exception as e:
-            print("Cannot update occupied blocks")
+            print("occupied blocks")
 
         # CTC Office Inputs
         try:
@@ -81,12 +81,12 @@ class Track_Controller(object):
         try:
             self.set_track_section_status(self.ctc_ctrl_signals._track_section_status)
         except Exception as e:
-            print("Cannot update track section status")
+            print("track section status")
 
         try:
             self.set_maintanence_switch(self.ctc_ctrl_signals._maintenance_switch)
         except Exception as e:
-            print(e)
+            print("maintanence switch")
 
         # CTC Office Outputs
         try:
@@ -113,10 +113,10 @@ class Track_Controller(object):
             threading.Timer(0.1, self.update).start()
 
     def set_track_section_status(self, blocks):
-        for block in blocks["Green"].keys():
-            self.set_occupancy("Green", block, blocks["Green"][block])
-        for block in blocks["Red"].keys():
-            self.set_occupancy("Red", block, blocks["Red"][block])
+        for block in blocks["green"]:
+            self.set_occupancy("Green", block, blocks["green"].count(block))
+        for block in blocks["red"]:
+            self.set_occupancy("Red", block, blocks["red"].count(block))
 
     def get_track(self) -> dict:
         return self._track
@@ -133,24 +133,28 @@ class Track_Controller(object):
             temp.update({x: self.get_occupancy(line, x)})
         return temp
 
-    # def set_occupied_blocks(self, blocks):
-    #     for i in self._occupied_blocks.keys():
-    #         self._occupied_blocks[i] = blocks[i]
+    def set_occupied_blocks(self, blocks):
+        for lines in blocks:
+            for j in blocks[lines]:
+                self.set_occupancy(lines, j, 1)
+            for i in self._occupied_blocks[lines]:
+                self.set_occupancy(lines, i, max(blocks[lines].count(i),
+                                                 self.ctc_ctrl_signals._track_section_status[lines.lower()].count(i)))
+                print(self.ctc_ctrl_signals._track_section_status[lines.lower()])
+                print(self._occupied_blocks["Green"])
 
     def get_occupied_blocks(self, line) -> list:
         return self._occupied_blocks[line]
 
     def set_occupancy(self, line, block, value: int):
         if self._occupied_blocks[line].count(block) == 0 and value == 1:
-                self._occupied_blocks[line].append(block)
+            self._occupied_blocks[line].append(block)
         elif self._occupied_blocks[line].count(block) > 0 and value == 0:
             self._occupied_blocks[line].remove(block)
         self._occupied_blocks[line].sort()
-        print(self._occupied_blocks[line])
 
     def get_speed_limit(self, block) -> float:
         return self._track.get_block_info('green', block)['speed limit']
-
 
     def get_switch_list(self, line) -> dict:
         return self._switches[line]
@@ -299,6 +303,10 @@ class Track_Controller(object):
                 for i in range(35, 53, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
                 return occupancy
+            elif block == '47':
+                for i in range(45, 49, 1):
+                    occupancy = occupancy or self.get_occupancy(line, str(i))
+                return occupancy
             elif block == '66':
                 for i in range(53, 67, 1):
                     occupancy = occupancy or self.get_occupancy(line, str(i))
@@ -378,9 +386,80 @@ class Track_Controller(object):
             i += 1
         return result
 
+    def demorgans_expression(self, line, track):
+        tokens = line.split(" ")
+        result = None
+        i = 0
+
+        while i < len(tokens) - 1:
+            if tokens[i] == "and" or tokens[i] == "or" or tokens[i] == "!":
+                if tokens[i] == "and":
+                    if tokens[i + 1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = result or self.parse_expression(temp.strip(), track)
+                        i = j - 1
+                    elif tokens[i + 1] == "!":
+                        result = result or bool(self.get_occupied_section(track, tokens[i + 2]))
+                        i += 1
+                    else:
+                        result = result or not bool(self.get_occupied_section(track, tokens[i + 1]))
+                    i += 1
+                elif tokens[i] == "or":
+                    if tokens[i + 1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = result and self.parse_expression(temp.strip(), track)
+                        i = j - 1
+                    elif tokens[i + 1] == "!":
+                        result = result and bool(self.get_occupied_section(track, tokens[i + 2]))
+                        i += 1
+                    else:
+                        result = result and not bool(self.get_occupied_section(track, tokens[i + 1]))
+                    i += 1
+                else:
+                    if tokens[i + 1] == "(":
+                        j = i + 2
+                        temp = ""
+                        while tokens[j] != ")":
+                            temp += tokens[j]
+                            temp += " "
+                            j += 1
+                        result = self.parse_expression(temp.strip(), track)
+                        i = j - 1
+                    else:
+                        result = bool(self.get_occupied_section(track, tokens[i + 1]))
+                    i += 1
+            elif tokens[i].isdigit():
+                result = not bool(self.get_occupied_section(track, tokens[i]))
+            elif tokens[i] == "(":
+                j = i + 1
+                temp = ""
+                while tokens[j] != ")":
+                    temp += tokens[j]
+                    temp += " "
+                    j += 1
+                result = self.parse_expression(temp.strip(), track)
+                i = j - 1
+            i += 1
+        return result
+
     def parse(self, line: str, track):
-        return self.parse_expression(line, track)
-    
+        temp1 = self.parse_expression(line, track)
+        temp2 = not self.demorgans_expression(line, track)
+        if temp1 == temp2:
+            return temp1 and temp2
+        else:
+            return temp1 or temp2
+
     def PLC(self):
         f = open(self._plc_input["Green 1"], "r")
         lines = f.readlines()

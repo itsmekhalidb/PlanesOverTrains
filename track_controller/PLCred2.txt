@@ -11,10 +11,11 @@ light
     67
         44 and 71
     52
-        ! 52
+        ! 52 and ! 52
     53
         52 and ! 53
     66
         52 and ! 66
 railway
     47
+        47 and 47

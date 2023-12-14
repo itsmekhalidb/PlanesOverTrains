@@ -956,7 +956,8 @@ class CTC_Main_UI(QMainWindow):
     # close block
     def change_block(self, line, section, block):
         name = section + block
-        self.ctc.change_block(line, block)
+        if block != "Block":
+            self.ctc.change_block(line, block)
     
     # clear maintenance mode
     def clear_maintenance(self, line):
