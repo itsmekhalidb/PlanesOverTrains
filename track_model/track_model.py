@@ -186,12 +186,15 @@ class TrackModel(object):
         # NOTE: you can make this self. if you want but not necessary
         train_dict = {train_id: train_line for train_id, train_line in zip(self._track_controller_signals._train_ids, self._track_controller_signals._train_lines)}
 
+        print("train dict: " + str(train_dict))
+
         for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
             if index not in self._train_ids:
                 self._train_ids.append(index)
                 self._TrainModels.train_apis[index] = TrackModelTrainModelAPI()
                 self._TrainModels.train_apis[index].line = train_dict[i]
+                self._TrainModels.train_apis[index].current_block = 63 if train_dict[i].lower() == "green" else 9
                 self._TrainModels.train_apis[index].track_info = self.get_track_layout()
                 self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
             self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
