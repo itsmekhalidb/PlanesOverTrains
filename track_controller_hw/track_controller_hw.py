@@ -49,7 +49,7 @@ class Track_Controller_HW(object):
 
         self._occupied_blocks = []
         # serial port connection object
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
         # Testbench Variables
         # self._broken_rail = False  # ebrake failure
@@ -85,7 +85,7 @@ class Track_Controller_HW(object):
             send += self.get_plc_logic().parse()
             send += "\n"
             print("Serial: " + send)
-            #self.get_ard().write(send.encode('utf-8'))
+            self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -93,7 +93,7 @@ class Track_Controller_HW(object):
         self.set_time(self.ctc_ctrl_signals._time)
 
         # used to recieve info from the Ardunio
-        #self.receive()
+        self.receive()
 
         #sets the automatic variable
         self.set_previous(self.get_automatic())
@@ -104,7 +104,7 @@ class Track_Controller_HW(object):
             send_string += self.get_plc_logic().parse()
             send_string += "\n"
             print("Serial: " + send_string)
-            #self.get_ard().write(send_string.encode('utf-8'))
+            self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
 
@@ -117,8 +117,18 @@ class Track_Controller_HW(object):
         if self.get_occupancy_timer() != 10:
             self.set_occupancy_timer(self.get_occupancy_timer() + 1)
         elif self.get_occupancy_timer() == 10:
-            #self.send_occupied()
+            self.send_occupied()
             self.set_occupancy_timer(0)
+
+
+        try:
+            self.track_ctrl_signals._train_ids = self.ctc_ctrl_signals._train_ids
+            self.track_ctrl_signals._train_lines = self.ctc_ctrl_signals._train_lines
+            self.track_ctrl_signals._train_out = self.ctc_ctrl_signals._train_out
+            self.ctc_ctrl_signals._train_in = self.track_ctrl_signals._train_in
+            self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
+        except Exception as e:
+            print("Cannot pass train info")
         """"
         try:
             #for maintance mode in CTC
@@ -132,10 +142,10 @@ class Track_Controller_HW(object):
         if self.get_occupied() != self.get_previous_blocks():
             self.set_occupied(self.get_previous_blocks())
             self.send_occupied()
-        """
+        
         #sends Occupancy from CTC
         self.ctc_ctrl_signals._occupancy["Green"] = self._occupied_blocks
-
+        """
         if thread:
             threading.Timer(.1, self.update).start()
 
@@ -320,6 +330,27 @@ class Track_Controller_HW(object):
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
 
+    def set_train_out(self, trains: dict):
+        self._train_info = trains
+
+    def get_train_out(self):
+        return self._train_info
+
+    def set_authority(self, train: int, authority: int):
+        self._train_info[train][0] = authority
+
+    def get_authority(self, train: int) -> int:
+        return self._train_info[train][0]
+
+    def set_suggested_speed(self, train: int, _suggested_speed: int):
+        self._train_info[train][1] = _suggested_speed
+
+    def get_suggested_speed(self, train: int) -> float:
+        return self._train_info[train][1]
+
+    def get_crossing_lights_gates_select(self, value):
+        return self._crossing_lights_gates[value]
+
     def set_crossing_lights_gate(self, light: str, value: int):
         self._crossing_lights_gates[light] = value
 
@@ -347,19 +378,6 @@ class Track_Controller_HW(object):
     def set_commanded_speed(self, speed: float):
         self._command_speed = speed
 
-    def set_authority(self, _authoirty: float):
-        self._authority = _authoirty
-
-    def get_authority(self) -> float:
-        return self._authority
-
-    def set_suggested_speed(self, _suggested_speed: float):
-        self._suggested_speed = _suggested_speed
-
-    def get_suggested_speed(self) -> float:
-        return self._suggested_speed
-
-    
     def set_test_speed_limit(self, _test_speed_limit: float):
         self._test_speed_limit = _test_speed_limit
 

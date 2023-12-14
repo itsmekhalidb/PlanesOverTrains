@@ -248,6 +248,7 @@ class TrackModel(object):
                 if train.direction == inc and self._switch_position[sw_label] == sw:
                     # print(self._switchionary[train.current_block][0])
                     train.direction = self._switchionary[train.current_block][2]
+                    self._direction = train.direction
                     train.current_block = self._switchionary[train.current_block][0]
                     train.cum_distance = 0
 
@@ -284,7 +285,8 @@ class TrackModel(object):
     def get_current_block(self) -> list:
         return self._current_block
 
-
+    def get_direction(self) -> int:
+        return self._direction
 
 
 

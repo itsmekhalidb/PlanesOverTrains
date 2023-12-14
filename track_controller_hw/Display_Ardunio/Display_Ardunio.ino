@@ -427,8 +427,8 @@ void receiver(){
     }
    // display_block(current_block);
   }
-  lcd1.setCursor(0,1);
-  lcd1.print(String(incomingData));
+  //lcd1.setCursor(0,1);
+  //lcd1.print(String(incomingData));
   incomingData = "";
 }
 
