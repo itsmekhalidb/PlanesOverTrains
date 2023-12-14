@@ -646,6 +646,7 @@ class Schedule(object):
         # add authorities in this array
         if self._arr_num < len(self._blocks_arrs):
             curr_arr = self._blocks_arrs[self._arr_num]
+            print(curr_arr, curr_block)
             for block in curr_arr:
                 block_pos = curr_arr.index(block)
                 curr_block_pos = curr_arr.index(curr_block)
