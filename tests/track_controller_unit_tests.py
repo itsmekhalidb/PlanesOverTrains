@@ -63,6 +63,15 @@ class TrackModelUnitTests(unittest.TestCase):
         tc.set_authority(1, 20)
         self.assertEqual(tc.get_authority(1), 20)
 
+    def test_suggested_speed(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_train_out({1: [0, 50]})
+        self.assertEqual(tc.get_suggested_speed(1), 50)
+        tc.set_suggested_speed(1, 20)
+        self.assertEqual(tc.get_suggested_speed(1), 20)
+
     def test_green1_plc_switch(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()

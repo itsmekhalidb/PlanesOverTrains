@@ -54,7 +54,7 @@ class Track_Controller(object):
         except Exception as e:
             print("track_controller.py not updating")
 
-    def update(self, thread=False): #def update(self, thread=False):
+    def update(self, thread=True): #def update(self, thread=False):
         self._filepath = self.track_ctrl_signals._filepath
         if self._startup == 0:
             if self._filepath != "":
@@ -201,11 +201,11 @@ class Track_Controller(object):
     def get_authority(self, train: int) -> int:
         return self._train_info[train][0]
 
-    def set_suggested_speed(self, _suggested_speed: int, train: int):
-        self._train_info[train][2] = _suggested_speed
+    def set_suggested_speed(self, train: int, _suggested_speed: int):
+        self._train_info[train][1] = _suggested_speed
 
     def get_suggested_speed(self, train: int) -> float:
-        return self._suggested_speed[train][2]
+        return self._train_info[train][1]
 
     def set_railway_crossing(self, line, crossing, _crossing_lights_gates):
         self._crossing_lights_gates[line][crossing] = _crossing_lights_gates
