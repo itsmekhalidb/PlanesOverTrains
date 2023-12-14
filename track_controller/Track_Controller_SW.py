@@ -969,9 +969,15 @@ class Ui_TrackController_MainUI(QMainWindow):
         self.occupied_blocks.clear()
         self.PLC_output.clear()
         if self.wayside_ctrl_comboBox.currentText() == 'Green 1' or self.wayside_ctrl_comboBox.currentText() == 'Green 2':
-            self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Green"))
+            for i in self.track_controller.get_occupied_blocks("Green"):
+                if i == "None":
+                    i = "Yard"
+                self.occupied_blocks.addItem(i)
         elif self.wayside_ctrl_comboBox.currentText() == 'Red 1' or self.wayside_ctrl_comboBox.currentText() == 'Red 2':
-            self.occupied_blocks.addItems(self.track_controller.get_occupied_blocks("Red"))
+            for i in self.track_controller.get_occupied_blocks("Red"):
+                if i == "None":
+                    i = "Yard"
+                self.occupied_blocks.addItem(i)
 
         # if self.track_controller.get_automatic():
         #     self.PLC_output.addItems(self.track_controller.get_plc_output(self.wayside_ctrl_comboBox.currentText()))
