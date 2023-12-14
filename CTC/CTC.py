@@ -513,6 +513,7 @@ class Schedule(object):
                             dir = options[entry][0]
                             break
                 elif line == "red": # for deciding jughandles, never take going to destination
+                    print("meow")
                     # hardcoded jughandles
                     if curr_block == 33:
                         next_block = 34
@@ -570,6 +571,7 @@ class Schedule(object):
                             dir = options[entry][0]
                             break
                 elif line == "red": # for deciding jughandles
+                    print("meow")
                     # hardcoded jughandles
                     if dir == 0:
                         if curr_block == 33:
