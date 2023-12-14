@@ -86,7 +86,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
     def setupUi(self):
         self.setObjectName("track_controller_mainwindow")
-        self.resize(727, 538)
+        self.resize(500, 538)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
@@ -187,7 +187,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         item = QtWidgets.QListWidgetItem()
         self.select_output.addItem(item)
         self.wayside_select = QtWidgets.QComboBox(self.centralwidget)
-        self.wayside_select.setGeometry(QtCore.QRect(260, 130, 231, 25))
+        self.wayside_select.setGeometry(QtCore.QRect(60, 130, 231, 25))
         self.wayside_select.setEditable(True)
         self.wayside_select.setObjectName("wayside_select")
         self.wayside_select.addItem("")
@@ -205,7 +205,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         #self.manual_mode_on.setAlignment(QtCore.Qt.AlignCenter)
         #self.manual_mode_on.setObjectName("manual_mode_on")
         self.load_plc_label = QtWidgets.QLabel(self.centralwidget)
-        self.load_plc_label.setGeometry(QtCore.QRect(500, 60, 91, 31))
+        self.load_plc_label.setGeometry(QtCore.QRect(300, 60, 91, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -217,7 +217,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.load_plc_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.load_plc_label.setObjectName("load_plc_label")
         self.selected_output = QtWidgets.QLineEdit(self.centralwidget)
-        self.selected_output.setGeometry(QtCore.QRect(260, 490, 211, 25))
+        self.selected_output.setGeometry(QtCore.QRect(60, 490, 211, 25))
         self.selected_output.setText("")
         self.selected_output.setObjectName("selected_output")
         self.show_ard_light = QtWidgets.QPushButton(self, clicked=lambda: self.toggle_light())
@@ -263,10 +263,10 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.plc_output_label.setObjectName("plc_output_label")
         self.load_plc_button = QtWidgets.QPushButton(self,
                                                      clicked=lambda: self.browse_files())
-        self.load_plc_button.setGeometry(QtCore.QRect(600, 60, 93, 28))
+        self.load_plc_button.setGeometry(QtCore.QRect(400, 60, 93, 28))
         self.load_plc_button.setObjectName("load_plc_button")
         self.Select_wayside_label = QtWidgets.QLabel(self.centralwidget)
-        self.Select_wayside_label.setGeometry(QtCore.QRect(260, 100, 231, 27))
+        self.Select_wayside_label.setGeometry(QtCore.QRect(60, 100, 231, 27))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -290,7 +290,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.select_output_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.select_output_label.setObjectName("select_output_label")
         self.selected_output_label = QtWidgets.QLabel(self.centralwidget)
-        self.selected_output_label.setGeometry(QtCore.QRect(260, 460, 198, 27))
+        self.selected_output_label.setGeometry(QtCore.QRect(60, 460, 198, 27))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -408,7 +408,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
         #self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
 
         # self.command_drop.setVisible(False)
-
+        self.plc_output.setVisible(False)
+        self.plc_output_label.setVisible(False)
         if not self.track_controller_hw.get_automatic():
             self.show_ard_light.setVisible(True)
             self.show_ard_switch.setVisible(True)

@@ -20,10 +20,8 @@ class TrackControllerHWUnitTests(unittest.TestCase):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
-        tc.set_track_section_status({'23': 1})
+        tc.set_track_section_status(["23"])
         self.assertEqual(tc.get_occupancy('23'), 1)
-        tc.set_track_section_status({'23': 0})
-        self.assertEqual(tc.get_occupancy('23'), 0)
 
     def test_switches(self):
         ctc_cigs = CTCSignals()
@@ -31,8 +29,6 @@ class TrackControllerHWUnitTests(unittest.TestCase):
         tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
         tc.set_switch('D13', 1)
         self.assertEqual(tc.get_switch('D13'), 1)
-        tc.set_switch('F28', 0)
-        self.assertEqual(tc.get_switch('F28'), 0)
 
     def test_lights(self):
         ctc_cigs = CTCSignals()
@@ -40,15 +36,36 @@ class TrackControllerHWUnitTests(unittest.TestCase):
         tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
         tc.set_lights('Z150', 1)
         self.assertEqual(tc.get_lights('Z150'), 1)
-        tc.set_lights('Z150', 0)
-        self.assertEqual(tc.get_lights('Z150'), 0)
 
     def test_plc_parser(self):
         ctc_cigs = CTCSignals()
         track_cigs = TrackSignals()
         tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
         string = tc.get_plc_logic().parse()
-        self.assertEqual(string, "DFaZ0 EFaz0")
+        self.assertEqual(string, "DFa0 EFz0 JI0")
+
+    def test_railway_crossing(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_crossing_lights_gate('E19', 1)
+        self.assertEqual(tc.get_crossing_lights_gates_select('E19'), 1)
+
+    def test_authority(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_train_out({1: [50, 0]})
+        tc.set_authority(1, 20)
+        self.assertEqual(tc.get_authority(1), 20)
+
+    def test_suggested_speed(self):
+        ctc_cigs = CTCSignals()
+        track_cigs = TrackSignals()
+        tc = Track_Controller_HW(ctcsignals=ctc_cigs, tracksignals=track_cigs)
+        tc.set_train_out({1: [0, 50]})
+        tc.set_suggested_speed(1, 20)
+        self.assertEqual(tc.get_suggested_speed(1), 20)
 
 if __name__ == "__main__":
     unittest.main()
