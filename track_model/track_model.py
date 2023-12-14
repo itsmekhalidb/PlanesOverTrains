@@ -195,6 +195,7 @@ class TrackModel(object):
                 self._TrainModels.train_apis[index] = TrackModelTrainModelAPI()
                 self._TrainModels.train_apis[index].line = train_dict[i]
                 self._TrainModels.train_apis[index].current_block = 63 if train_dict[i].lower() == "green" else 9
+                self._TrainModels.train_apis[index].direction = 1 if train_dict[i].lower() == "green" else -1
                 self._TrainModels.train_apis[index].track_info = self.get_track_layout()
                 self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
             self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
