@@ -204,8 +204,9 @@ class CTC(object):
 
             self.TrackCTRLSignal._train_out = self.create_departures()
             for train in self._trains:
-                self.TrackCTRLSignal._train_ids.add(train.get_train_number())
-                self.TrackCTRLSignal._train_lines.append(train.get_train_line())
+                if train.get_train_number() not in self.TrackCTRLSignal._train_ids:
+                    self.TrackCTRLSignal._train_ids.add(train.get_train_number())
+                    self.TrackCTRLSignal._train_lines.append(train.get_train_line())
             self.TrackCTRLSignal._maintenance_switch = self._commanded_switches
 
             # print(self.TrackModelSignal._ticket_sales)
