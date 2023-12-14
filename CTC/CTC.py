@@ -112,8 +112,6 @@ class CTC(object):
                     res2 = self.create_schedule(station, tim+res1+t, 0, -1, line)
                     if res2 == 1:
                         tim = tim + t + res1
-                    else:
-                        print("idk time bad no work!")
 
     # manual train schedule functions
     def create_schedule(self, station_name, time_in, function, train_index, line):
