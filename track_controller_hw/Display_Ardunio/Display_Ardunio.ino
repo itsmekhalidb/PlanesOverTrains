@@ -5,6 +5,7 @@
 LiquidCrystal_I2C lcd1(0x20, 20, 4);
 String incomingData;
 
+//occupancy for green line
 int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -12,13 +13,14 @@ int green[150] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-
+// current block of HW
 String current_block = "F28";
 
 
 const int LIGHTNUMBER = 4;
 const int SWITCHNUMBER = 3;
 
+//holds logic for the switches to run plc
 char flogic[50];
 char dlogic[50];
 char ilogic[50];
@@ -58,6 +60,7 @@ struct Switch{
 Light lights[LIGHTNUMBER];
 Switch switches[SWITCHNUMBER];
 
+//updates the section status for each block boolean
 void update_blocks(){
   bool zyx_temp = false;
   bool abc_temp = false;
@@ -81,6 +84,7 @@ void update_blocks(){
   i_section = i_temp;
 }
 
+//takes the boolean operator and performs demorgan on the value
 bool demorgan_law(bool value, bool value2, String operation){
   bool compare1;
   bool compare2;
@@ -101,6 +105,7 @@ bool demorgan_law(bool value, bool value2, String operation){
   return false;
 }
 
+//track section based on plc input
 bool parse_plc(char logic){
   if(logic == 'F'){
     return fed_section;
@@ -131,6 +136,7 @@ bool parse_plc(char logic){
   }
 }
 
+//sets switches and lights based on boolean arrays
 void plc(){
   int prev_value_switch = 0;
   int prev_value_light = 0;
@@ -165,7 +171,7 @@ void plc(){
   index_f--;
   result_f = parse_plc(flogic[index_f-1]);
   index_f--;
-  while(index_f > 0){
+  while(index_f > 0){ //boolean logic loop
     char logic = flogic[index_f-1];
     if(for_and == 0){
       if(demorgan_law(result_f, parse_plc(logic), "or")){
@@ -188,7 +194,7 @@ void plc(){
     lights[2].value = 1;
     lights[3].value = 0;
   }
-  Serial.print("0F28/"+ String(switches[1].value) + " 1F28/" + String(lights[2].value) + " 1Z150/" + String(lights[3].value) + "\n");
+  Serial.print("0F28/"+ String(switches[1].value) + " 1F28/" + String(lights[2].value) + " 1Z150/" + String(lights[3].value) + "\n"); // Sends to SW UI
 
   int index_d = dsize;
   int dor_and = 0;
@@ -202,10 +208,10 @@ void plc(){
   index_d--;
   result_d = parse_plc(dlogic[index_d-1]);
   index_d--;
-  while(index_d > 0){
+  while(index_d > 0){ //boolean logic loop
     char logic = dlogic[index_d-1];
     if(dor_and == 0){
-      if(demorgan_law(result_d, parse_plc(logic), "or")){
+      if(demorgan_law(result_d, parse_plc(logic), "or")){ /
         result_d = result_d || parse_plc(logic);
       }
     }
@@ -225,7 +231,7 @@ void plc(){
     lights[0].value = 0;
     lights[1].value = 1;
   }
-  Serial.print("0D13/"+ String(switches[0].value) + " 1A1/" + String(lights[0].value) + " 1D13/" + String(lights[1].value) + "\n");
+  Serial.print("0D13/"+ String(switches[0].value) + " 1A1/" + String(lights[0].value) + " 1D13/" + String(lights[1].value) + "\n"); // Sends to SW UI
 
   int index_i = isize;
   int ior_and = 0;
@@ -239,7 +245,7 @@ void plc(){
   index_i--;
   result_i = parse_plc(ilogic[index_i-1]);
   index_i--;
-  while(index_i > 0){
+  while(index_i > 0){ //boolean logic loop
     char logic = ilogic[index_i-1];
     if(ior_and == 0){
       if(demorgan_law(result_i, parse_plc(logic), "or")){
@@ -254,8 +260,9 @@ void plc(){
     index_i--;
   }
   switches[2].value = result_i;
-  Serial.print("0I57/"+ String(switches[2].value)+ "\n");
+  Serial.print("0I57/"+ String(switches[2].value)+ "\n"); //Sends to the UI
 
+//checks to see if block currently has value changed - update the HW UI
   if(light_here && switch_here){
     if(lights[light_index].name == current_block && switches[switch_index].name == current_block){
       if(lights[light_index].value != prev_value_light || switches[switch_index].value != prev_value_switch){
@@ -279,10 +286,9 @@ void plc(){
   }
 }
 
+//populates the switch logc to be run continuously in plc function
 void populate_logic(String expression) {
-  // Default result if expression is not recognized
-  // Iterate through the characters in the expression
-  
+
   int index = 0;
   int switch_type = -1;
   while(expression.length() > index){
@@ -319,7 +325,7 @@ void populate_logic(String expression) {
   }  
 }
 
-
+// splits the PLC from serial income into switches
 void plc_split(String incoming) {
   // Split the string by space
   int space_index = incoming.indexOf(' ');
@@ -342,6 +348,7 @@ void plc_split(String incoming) {
   populate_logic(incoming);
 }
 
+//display for each block
 void display_block(String block_number){
   lcd1.clear();
   digitalWrite(Red_LED, LOW);
@@ -349,7 +356,6 @@ void display_block(String block_number){
   lcd1.setCursor(0,0);
   lcd1.print("Block #: " + block_number);
   lcd1.setCursor(0,1);
-    //lcd1.print("Commanded Speed: " + commanded[atoi(block_number)]);
   for(int i = 0; i < LIGHTNUMBER; i++){
     if(lights[i].name == block_number){
       if(lights[i].value == 1){
@@ -381,7 +387,7 @@ void display_block(String block_number){
   }
 }
 
-
+//all functions come from serial
 void receiver(){
   if (Serial.available() > 0) {
     incomingData = Serial.readStringUntil('\n');
@@ -389,7 +395,7 @@ void receiver(){
   
   String detect = incomingData.substring(0,1);
 
-//display each block
+//display each switch/light block from UI
   if(detect.equals("0")){
     current_block = incomingData.substring(1,incomingData.length());
     display_block(current_block);
@@ -399,39 +405,28 @@ void receiver(){
     plc_split(boolean_logic);
   }
 
-  //read the block occupancy -- PLC
+  //read the block occupancy for the PLC to set sections
   else if(detect.equals("2")){
     for(int i = 0; i < 150; i++){
       green[i] = 0;
     }
     String occupancy = incomingData.substring(2, incomingData.length());
-   // lcd1.print(occupancy.length());
     while(occupancy.length() > 0){  
       int space = occupancy.indexOf(" ");
       if(space == -1){
         int num = occupancy.substring(0, occupancy.length()).toInt();
-        //if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, occupancy.length()))){
-        //  display_block(current_block);
-        //}
-        //lcd1.setCursor(0,1);
-        //lcd1.print(String(num));
         green[num-1] = 1;
         break;
       }
       int num = occupancy.substring(0, space).toInt();
       green[num-1] = 1;
-      //if(current_block.substring(1, current_block.length()).equals(occupancy.substring(0, space))){
-      //  display_block(current_block);
-      //}
       occupancy = occupancy.substring(space + 1);     
     }
-   // display_block(current_block);
   }
-  //lcd1.setCursor(0,1);
-  //lcd1.print(String(incomingData));
   incomingData = "";
 }
 
+// checks if in auto or manual mode
 void auto_manual(){
   int reading = digitalRead(6);
   if (reading == 0) {
@@ -439,6 +434,7 @@ void auto_manual(){
   }
 }
 
+//mnaual mode changes for switch
 void change_switch(){
   int reading = digitalRead(7);
   if (reading == 0){
@@ -458,13 +454,14 @@ void change_switch(){
           lcd1.setCursor(0,2);
           lcd1.print("Switch: Right");
         }
-        Serial.print("0" + current_block + "/"+ String(switches[i].value));
+        Serial.print("0" + current_block + "/"+ String(switches[i].value)); //sends to SW UI
         break;
       }
     }
   }
 }
 
+//manual mode change lights
 void change_light(){
   int reading = digitalRead(8);
   if (reading == 0) {
@@ -480,13 +477,15 @@ void change_light(){
           digitalWrite(Red_LED, HIGH);
           digitalWrite(green_LED, LOW);  
         }
-        Serial.print("1" + current_block + "/"+ String(lights[i].value));
+        Serial.print("1" + current_block + "/"+ String(lights[i].value)); //sends to SW UI
         break;
       }
     }
   }
 }
 
+
+//crossing lights set
 void crossing_lights(){
   if(green[18] == 1){
     digitalWrite(Crossing_LED, HIGH);
@@ -498,7 +497,6 @@ void crossing_lights(){
 
 
     
-
 void setup() {
   Serial.begin(9600);
   lcd1.init();
@@ -511,10 +509,7 @@ void setup() {
   pinMode(7, INPUT_PULLUP);
   pinMode(8, INPUT_PULLUP);
 
- // for (int i = 0; i < 13; i++) {
-  //  commanded[i] = "0"; // Initialize each string as empty
-  //}
-
+  //sets lights in green 1 wayside
   lights[0].name = "A1";
   lights[0].value = 1;
   lights[1].name = "D13";
@@ -533,6 +528,7 @@ void setup() {
   display_block(current_block);
 }
 
+//loops through the functions
 void loop() {
   
   receiver();
