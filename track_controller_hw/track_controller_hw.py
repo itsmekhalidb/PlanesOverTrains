@@ -15,17 +15,13 @@ class Track_Controller_HW(object):
 
     def __init__(self, ctcsignals: CTCTrackControllerAPI, tracksignals: TrackControllerTrackModelAPI):
 
-        # green line track
-        self._green = {}
-
         # used to make sure plc is loaded
         self._plc_set = False
 
         # time
         self._time = 0
 
-        self._train_ids = {}
-        # 0 = red, 1 = green, 2 = super green
+        # 0 = red, 1 = green
         self._lights = {'A1': 0, 'D13': 0, 'F28': 0, 'Z150': 0}
         # plc input
         self._plc_input = ""
@@ -35,56 +31,49 @@ class Track_Controller_HW(object):
         self._crossing_lights_gates = {'E19': 0}
         # if program is in automatic mode
         self._automatic = True
-
+        # see if automatic was selected in last cycle
         self._previous = False
-        # commanded speed is speed limit - occupancy
-        self._command_speed = 0  # {'A1': {1: 50}, 'A2': {1: 50}, 'A3': {1: 50}, 'A4': {1: 50},
-        # 'A5': {1: 50}, 'B6': {1: 50}, 'B7': {1: 50}, 'B8': {1: 50},
-        # 'B9': {1: 50}, 'B10': {1: 50}, 'C11': {1: 50}, 'C12': {1: 50},
-        # 'C13': {1: 50}, 'C14': {1: 50}, 'C15': {1: 50}}
 
-        # list of occupied blocks to show on UI
+        # list of occupied blocks to show on Track Model-> UI don't use this variable anymore
         self._previous_blocks = []
 
         self._occupied_blocks = []
         # serial port connection object
-        #self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
+        self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
 
-        # Testbench Variables
-        # self._broken_rail = False  # ebrake failure
-        # self._engine_failure = False  # train engine failure
-        # self._circuit_failure = False  # service brake failure
-        # self._power_failure = False  # signal pickup failure
+        # Testbench
         self._authority = 0
         self._authority_blocks = {}
         self._suggested_speed_blocks = {}
         self._suggested_speed = 0
+        self._train_ids = {}
+        self._green = {}
+        self._command_speed = 0
         # self._test_speed_limit = 0
+
         self._track_status = False
 
         self._occupancy_timer = 0
-        # self._passengers = 0
 
-        # signals from the APIs to get/set
-        self.ctc_ctrl_signals = ctcsignals
-        self.track_ctrl_signals = tracksignals
         self._start_up = 0
         self._plc_logic = File_Parser(
             os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "track_controller_hw", "PLC1.txt")))
 
         self.update()
 
+        # signals from the APIs to get/set
+        self.ctc_ctrl_signals = ctcsignals
+        self.track_ctrl_signals = tracksignals
+
     # Variables
     def update(self, thread=True):
 
-        # sends PLC to Arduino after 100 cycles
+        # sends PLC to Arduino after 100 cycles only once(waits for Arduino to update)
         if self.get_start_up() == 100:
-            #self.get_plc_logic().parse()
             send = "1"
             send += self.get_plc_logic().parse()
             send += "\n"
-            #print("Serial: " + send)
-            #self.get_ard().write(send.encode('utf-8'))
+            self.get_ard().write(send.encode('utf-8'))
             self.set_start_up(self.get_start_up() + 1)
         self.set_start_up(self.get_start_up() + 1)
         self.set_commanded_speed(self.get_commanded_speed())
@@ -92,9 +81,9 @@ class Track_Controller_HW(object):
         self.set_time(self.ctc_ctrl_signals._time)
 
         # used to recieve info from the Ardunio
-        #self.receive()
+        self.receive()
 
-        #sets the automatic variable
+        # sets the automatic variable
         self.set_previous(self.get_automatic())
 
         # checks to see if in automatic or in manual mode -if in automatic -> run PLC
@@ -102,24 +91,23 @@ class Track_Controller_HW(object):
             send_string = "1"
             send_string += self.get_plc_logic().parse()
             send_string += "\n"
-            #print("Serial: " + send_string)
-            #self.get_ard().write(send_string.encode('utf-8'))
+            self.get_ard().write(send_string.encode('utf-8'))
             self.set_plc_set(False)
 
-
-        #sent block occupancy from Track Model
+        # sent block occupancy from Track Model
         self.set_previous_blocks(self.track_ctrl_signals._occupancy["Green"])
         self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
         self.set_occupied(self.get_previous_blocks())
         self.get_previous_blocks().sort()
 
+        # every ten cycles, the code will send occupancy to Arduino
         if self.get_occupancy_timer() != 10:
             self.set_occupancy_timer(self.get_occupancy_timer() + 1)
         elif self.get_occupancy_timer() == 10:
-            #self.send_occupied()
+            self.send_occupied()
             self.set_occupancy_timer(0)
 
-
+        # sending suggested speed and authority -> don't touch
         try:
             self.track_ctrl_signals._train_ids = self.ctc_ctrl_signals._train_ids
             self.track_ctrl_signals._train_lines = self.ctc_ctrl_signals._train_lines
@@ -128,23 +116,7 @@ class Track_Controller_HW(object):
             self.ctc_ctrl_signals._filepath = self.track_ctrl_signals._filepath
         except Exception as e:
             print("Cannot pass train info")
-        """"
-        try:
-            #for maintance mode in CTC
-            self.set_track_section_status(self.ctc_ctrl_signals._track_section_status["green"])
-        except Exception as e:
-            print(e)
-        print("Prev:" + str(self.get_previous_blocks()))
-        print("Occ:" + str(self.get_occupied()))
 
-        # checks to see if occupancy changed, if it did then send new occupancy to Arduino
-        if self.get_occupied() != self.get_previous_blocks():
-            self.set_occupied(self.get_previous_blocks())
-            self.send_occupied()
-        
-        #sends Occupancy from CTC
-        self.ctc_ctrl_signals._occupancy["Green"] = self._occupied_blocks
-        """
         if thread:
             threading.Timer(.1, self.update).start()
 
@@ -152,7 +124,6 @@ class Track_Controller_HW(object):
         occupied = "2"
         for i in self.get_occupied():
             occupied += " " + str(i)
-        print(occupied)
         occupied += "\n"
         self.get_ard().write(occupied.encode('utf-8'))
 
@@ -162,7 +133,6 @@ class Track_Controller_HW(object):
             if self.get_ard().inWaiting() > 0:
                 data_bytes = self.get_ard().readline()
                 data_str = data_bytes.decode('utf-8').strip()
-                #print(f"From Serial: {data_str}")
                 commands = data_str.split()
 
                 for command in commands:
@@ -252,16 +222,12 @@ class Track_Controller_HW(object):
     def set_occupancy(self, block, value: int):
         if self._occupied_blocks.count(block) < 1 and value == 1:
             self._occupied_blocks.append(block)
-            print("Add Occupied")
         elif self._occupied_blocks.count(block) > 0 and value == 0:
             self._occupied_blocks.remove(block)
-            print("Remove Occupied")
         if self._previous_blocks.count(block) < 1 and value == 1:
             self._previous_blocks.append(block)
-            print("Add Previous")
         elif self._previous_blocks.count(block) > 0 and value == 0:
             self._previous_blocks.remove(block)
-            print("Add Previous")
         self._occupied_blocks.sort()
         self._previous_blocks.sort()
 
@@ -307,7 +273,15 @@ class Track_Controller_HW(object):
     def set_previous(self, auto: bool):
         self._previous = auto
 
-    #Testbench Varibales Below(Not in use)
+    def get_ard(self):
+        return self._ard
+
+    def set_train_out(self, trains: dict):
+        self._train_info = trains
+
+    # Testbench Varibales Below(Not in use unless if we are using them in Unit Test)
+    # ################################################################################################################
+    # ################################################################################################################
     def get_authority_blocks(self):
         return self._authority_blocks
 
@@ -320,17 +294,11 @@ class Track_Controller_HW(object):
     def set_suggested_speed_blocks(self, train: str, value: float):
         self._suggested_speed_blocks[train] = value
 
-    def get_ard(self):
-        return self._ard
-
     def get_track_section_status(self):
         return self._track_status
 
     def get_crossing_lights_gates(self) -> dict:
         return self._crossing_lights_gates
-
-    def set_train_out(self, trains: dict):
-        self._train_info = trains
 
     def get_train_out(self):
         return self._train_info
