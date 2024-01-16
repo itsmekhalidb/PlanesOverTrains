@@ -897,6 +897,7 @@ class Ui_MainWindow(QMainWindow):
                     self.commanded_speed_spnbx.setVisible(False)  # commanded speed
                     self.doubleSpinBox_3.setEnabled(False)  # ki
                     self.doubleSpinBox_2.setEnabled(False)  # kp
+                    self.checkBox_12.setChecked(True)
 
             else:
                     self.slider.setEnabled(True)  # service brake
@@ -952,6 +953,7 @@ class Ui_MainWindow(QMainWindow):
         #service brake failure
         self.brake_fail_on.setVisible(bool(self.train_controller.get_service_brake_failure_status()))
         self.brake_fail_off.setVisible(not bool(self.train_controller.get_service_brake_failure_status()))
+        self.slider.setValue(self.train_controller.get_service_brake_value()*100)
         #train engine failure status
         self.engine_fail_on.setVisible(bool(self.train_controller.get_engine_status()))
         self.engine_fail_off.setVisible(not bool(self.train_controller.get_engine_status()))
@@ -960,10 +962,10 @@ class Ui_MainWindow(QMainWindow):
         self.signal_fail_on.setVisible(bool(self.train_controller.get_signal_pickup_failure()))
         self.signal_fail_off.setVisible(not bool(self.train_controller.get_signal_pickup_failure()))
         #speed limit
-        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(round(self.train_controller.get_maximum_velocity()*2.23694,3))))
+        self.external_lights_label_9.setText(str("Speed Limit (mph): " + str(round(self.train_controller.get_maximum_velocity(),3))))
         #commanded speed
         if self.train_controller.get_auto_status():
-                self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity()*2.23694,3))))
+                self.external_lights_label_10.setText(str("Com. Speed (mph): " + str(round(self.train_controller.get_commanded_velocity(),3))))
         else:
                 self.external_lights_label_10.setText(str("Com. Speed (mph): "))
         comspeed = self.commanded_speed_spnbx.value()
@@ -980,7 +982,7 @@ class Ui_MainWindow(QMainWindow):
         self.train_controller.set_ki(ki)
         # self.doubleSpinBox_3.setValue(float(self.train_controller.get_ki()))
         #actual speed
-        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round((self.train_controller.get_current_velocity()*2.23694),3))))
+        self.external_lights_label_11.setText(str("Actual Speed (mph): " + str(round((self.train_controller.get_current_velocity()* 2.23694),3))))
         #commanded power
         self.external_lights_label_12.setText(str("Commanded Power (kW): " + str(round(self.train_controller.get_commanded_power()/1000,3))))
         #authority
@@ -988,7 +990,7 @@ class Ui_MainWindow(QMainWindow):
         #actual velocity
         # self.actual_velocity_label.setText(str("Actual Velocity: " + str(self.train_controller.get_current_velocity())));
         #train line
-        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line())))
+        self.title_label.setText(str("Train Line: " + str(self.train_controller.get_train_line().upper())))
         #underground
         #self.underground_label.setText(str("Underground: " + str(self.train_controller.get_underground_status())))
         #ebrake clicked

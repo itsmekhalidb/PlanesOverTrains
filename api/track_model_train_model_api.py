@@ -17,8 +17,9 @@ class TrackModelTrainModelAPI:
         self.time = 0
         self.filepath = ""
         self.track_info = block_info(self.filepath)
-        self.current_block = 63
+        self.current_block = 0
         self.cum_distance = 0
+        self.direction = 1 # 1 is forward, 0 is backward
 
 
 class Trainz:

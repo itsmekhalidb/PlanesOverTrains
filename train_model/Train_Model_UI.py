@@ -769,10 +769,10 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 # self.force_info_label_2.setText(str(self.train_model.get_force()) + " N")
 
                 # Title
-                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+                self.title_label.setText(str(self.train_model.get_line().upper() + " Line"))
 
                 # Mass
-                self.mass_label.setText(str("Mass: " + str(self.train_model.get_total_mass()) + " kg"))
+                self.mass_label.setText(str("Mass: " + str(round(self.train_model.get_total_mass(),2)) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(str("Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
@@ -812,10 +812,10 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.force_info_label_2.setItem(0, 1, cmd_pwr)
 
                 # Title
-                self.title_label.setText(str(self.train_model.get_line() + " Line"))
+                self.title_label.setText(str(self.train_model.get_line().upper() + " Line"))
 
                 # Mass
-                self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(self.train_model.get_total_mass()) + " kg"))
+                self.mass_label.setText(_translate("TrainModel_MainUI", "Mass: " + str(round(self.train_model.get_total_mass(),2)) + " kg"))
 
                 # Passenger Count
                 self.passenger_label.setText(_translate("TrainModel_MainUI", "Passengers Onboard: " + str(self.train_model.get_curr_passenger_count())))
@@ -824,7 +824,7 @@ class Ui_TrainModel_MainUI(QMainWindow):
                 self.temperature_label.setText(str("Car Temp.: " + str(round(self.train_model.get_temperature(),0)) + "°F"))
 
                 # Commanded Velocity
-                self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 2.23694, 3)) + " mph"))
+                self.vcmd_info_label.setText(str("CMD Speed: " + str(round(self.train_model.get_cmd_speed() * 0.621371, 3)) + " mph"))
 
                 # Station Info
                 self.next_station_infobox.setItem(0, 0, QtWidgets.QTableWidgetItem("Current Station:"))

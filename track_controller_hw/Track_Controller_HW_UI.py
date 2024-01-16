@@ -27,12 +27,8 @@ class Ui_track_controller_mainwindow(QMainWindow):
     def __init__(self, track_controller_hw: Track_Controller_HW) -> None:
         super().__init__()
         self.track_controller_hw = track_controller_hw
-        # self._light = False
-        # self._switch = False
-        # self._command = False
         self._previous = ""
         self._send_bits = ""
-        # self._ard = serial.Serial(port='COM5', baudrate=9600, timeout=.1)
         self.setupUi()
         self.show()
         self.change = True
@@ -43,25 +39,6 @@ class Ui_track_controller_mainwindow(QMainWindow):
     def get_previous_show(self) -> str:
         return self._previous
 
-    """
-    def set_light_show(self, l: bool):
-        self._light = l
-
-    def get_light_show(self) -> bool:
-        return self._light
-
-    def set_switch_show(self, l: bool):
-        self._switch = l
-
-    def get_switch_show(self) -> bool:
-        return self._switch
-
-    def set_command_show(self, l: bool):
-        self._command = l
-
-    def get_command_show(self) -> bool:
-        return self._command
-"""
 
     def get_send_bits(self) -> str:
         return self._send_bits
@@ -80,13 +57,13 @@ class Ui_track_controller_mainwindow(QMainWindow):
         browse = QFileDialog.getOpenFileName(self.load_plc_button)
         print(browse[0])
         data = File_Parser(browse[0])
-        self.track_controller_hw.set_blue_plc(data)
+        self.track_controller_hw.set_plc_logic(data)
         self.track_controller_hw.set_plc_set(True)
         print("Test End")
 
     def setupUi(self):
         self.setObjectName("track_controller_mainwindow")
-        self.resize(727, 538)
+        self.resize(500, 538)
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.title_label = QtWidgets.QLabel(self.centralwidget)
@@ -110,71 +87,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
                                           "background-color: rgb(255, 255, 255);")
         self.sys_time_label.setObjectName("sys_time_label")
         self.title_label.setObjectName("title_label")
-        #self.system_speed_spnbx = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        #self.system_speed_spnbx.setGeometry(QtCore.QRect(634, 14, 62, 22))
-        #self.system_speed_spnbx.setObjectName("system_speed_spnbx")
-        #self.system_speed_label = QtWidgets.QLabel(self.centralwidget)
-        #self.system_speed_label.setGeometry(QtCore.QRect(498, 10, 201, 31))
-        #font = QtGui.QFont()
-        #font.setPointSize(10)
-        #font.setBold(True)
-        #font.setWeight(75)
-        #self.system_speed_label.setFont(font)
-        #self.system_speed_label.setAutoFillBackground(False)
-        #self.system_speed_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-        #                                      "border: 1px solid black;")
-        #self.system_speed_label.setObjectName("system_speed_label")
-        self.manual_mode_check = QtWidgets.QCheckBox(self.centralwidget)
-        self.manual_mode_check.setEnabled(True)
-        self.manual_mode_check.setGeometry(QtCore.QRect(210, 62, 14, 15))
-        self.manual_mode_check.setObjectName("manual_mode_check")
-        self.ebrake_fail_on = QtWidgets.QLabel(self.centralwidget)
-        self.ebrake_fail_on.setEnabled(True)
-        self.ebrake_fail_on.setGeometry(QtCore.QRect(176, 60, 25, 17))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.ebrake_fail_on.setFont(font)
-        self.ebrake_fail_on.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                          "background-color: rgb(0, 170, 0);")
-        self.ebrake_fail_on.setAlignment(QtCore.Qt.AlignCenter)
-        self.ebrake_fail_on.setObjectName("ebrake_fail_on")
-        self.manual_mode_label = QtWidgets.QLabel(self.centralwidget)
-        self.manual_mode_label.setGeometry(QtCore.QRect(8, 56, 198, 27))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.manual_mode_label.setFont(font)
-        self.manual_mode_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                             "border: 1px solid black;\n"
-                                             "")
-        # self.manual_mode_label_1 = QtWidgets.QLabel(self.centralwidget)
-        # self.manual_mode_label_1.setGeometry(QtCore.QRect(10, 90, 231, 27))
-        # font = QtGui.QFont()
-        # font.setPointSize(10)
-        # font.setBold(True)
-        # font.setWeight(75)
-        # self.manual_mode_label_1.setFont(font)
-        # self.manual_mode_label_1.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-        #                                      "border: 1px solid black;\n"
-        #                                      "")
-        # self.manual_mode_label_1.setText("Crossing Lights")
-        self.manual_mode_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.manual_mode_label.setObjectName("manual_mode_label")
-        self.manual_mode_off = QtWidgets.QLabel(self.centralwidget)
-        self.manual_mode_off.setEnabled(True)
-        self.manual_mode_off.setGeometry(QtCore.QRect(150, 60, 31, 21))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.manual_mode_off.setFont(font)
-        self.manual_mode_off.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                           "background-color: rgb(170, 0, 0);")
-        self.manual_mode_off.setAlignment(QtCore.Qt.AlignCenter)
-        self.manual_mode_off.setObjectName("manual_mode_off")
+
         self.select_output = QtWidgets.QListWidget(self.centralwidget)
         self.select_output.setGeometry(QtCore.QRect(260, 200, 231, 231))
         self.select_output.setObjectName("select_output")
@@ -187,25 +100,13 @@ class Ui_track_controller_mainwindow(QMainWindow):
         item = QtWidgets.QListWidgetItem()
         self.select_output.addItem(item)
         self.wayside_select = QtWidgets.QComboBox(self.centralwidget)
-        self.wayside_select.setGeometry(QtCore.QRect(260, 130, 231, 25))
+        self.wayside_select.setGeometry(QtCore.QRect(60, 130, 231, 25))
         self.wayside_select.setEditable(True)
         self.wayside_select.setObjectName("wayside_select")
         self.wayside_select.addItem("")
         self.wayside_select.addItem("")
-        self.manual_mode_on = QtWidgets.QLabel(self.centralwidget)
-        self.manual_mode_on.setEnabled(True)
-        self.manual_mode_on.setGeometry(QtCore.QRect(180, 60, 25, 21))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        font.setBold(True)
-        font.setWeight(75)
-        self.manual_mode_on.setFont(font)
-        self.manual_mode_on.setStyleSheet("color: rgb(255, 255, 255);\n"
-                                          "background-color: rgb(0, 170, 0);")
-        self.manual_mode_on.setAlignment(QtCore.Qt.AlignCenter)
-        self.manual_mode_on.setObjectName("manual_mode_on")
         self.load_plc_label = QtWidgets.QLabel(self.centralwidget)
-        self.load_plc_label.setGeometry(QtCore.QRect(500, 60, 91, 31))
+        self.load_plc_label.setGeometry(QtCore.QRect(300, 60, 91, 31))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -217,7 +118,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.load_plc_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.load_plc_label.setObjectName("load_plc_label")
         self.selected_output = QtWidgets.QLineEdit(self.centralwidget)
-        self.selected_output.setGeometry(QtCore.QRect(260, 490, 211, 25))
+        self.selected_output.setGeometry(QtCore.QRect(60, 490, 211, 25))
         self.selected_output.setText("")
         self.selected_output.setObjectName("selected_output")
         self.show_ard_light = QtWidgets.QPushButton(self, clicked=lambda: self.toggle_light())
@@ -228,24 +129,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.show_ard_switch.setGeometry(QtCore.QRect(600, 490, 93, 28))
         self.show_ard_switch.setObjectName("show_ard")
         self.show_ard_switch.setText("Change Switch")
-        """
-        self.command_spin = QtWidgets.QSpinBox(self,
-                                               valueChanged=lambda: self.track_controller_hw.set_commanded_speed(
-                                                   self.command_spin.value()))
-        self.command_spin.setGeometry(QtCore.QRect(170, 490, 42, 22))
-        self.command_spin.setObjectName("command_spin")
-        self.command_label = QtWidgets.QLabel(self.centralwidget)
-        self.command_label.setGeometry(QtCore.QRect(110, 460, 121, 27))
-        self.command_label.setObjectName("command_label")
-        self.command_label.setText("Commanded")
-        self.command_label.setFont(font)
-        self.command_label.setStyleSheet("background-color: rgb(255, 255, 255);\n"
-                                         "border: 1px solid black;\n"
-                                         "")
-        self.command_drop = QtWidgets.QComboBox(self.centralwidget)
-        self.command_drop.setGeometry(QtCore.QRect(100, 490, 61, 25))
-        self.command_drop.setObjectName("command_drop")
-        """
+
         self.plc_output = QtWidgets.QListWidget(self.centralwidget)
         self.plc_output.setGeometry(QtCore.QRect(520, 190, 191, 261))
         self.plc_output.setObjectName("plc_output")
@@ -263,10 +147,10 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.plc_output_label.setObjectName("plc_output_label")
         self.load_plc_button = QtWidgets.QPushButton(self,
                                                      clicked=lambda: self.browse_files())
-        self.load_plc_button.setGeometry(QtCore.QRect(600, 60, 93, 28))
+        self.load_plc_button.setGeometry(QtCore.QRect(400, 60, 93, 28))
         self.load_plc_button.setObjectName("load_plc_button")
         self.Select_wayside_label = QtWidgets.QLabel(self.centralwidget)
-        self.Select_wayside_label.setGeometry(QtCore.QRect(260, 100, 231, 27))
+        self.Select_wayside_label.setGeometry(QtCore.QRect(60, 100, 231, 27))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -290,7 +174,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.select_output_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.select_output_label.setObjectName("select_output_label")
         self.selected_output_label = QtWidgets.QLabel(self.centralwidget)
-        self.selected_output_label.setGeometry(QtCore.QRect(260, 460, 198, 27))
+        self.selected_output_label.setGeometry(QtCore.QRect(60, 460, 198, 27))
         font = QtGui.QFont()
         font.setPointSize(10)
         font.setBold(True)
@@ -316,20 +200,12 @@ class Ui_track_controller_mainwindow(QMainWindow):
                                            "")
         self.occupancy_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.occupancy_label.setObjectName("occupancy_label")
-        self.testbench_button = QtWidgets.QPushButton(self,
-                                                      clicked=lambda: self.open_window())
-        self.testbench_button.setGeometry(QtCore.QRect(10, 480, 81, 31))
-        self.testbench_button.setObjectName("testbench_button")
+
         self.title_label.raise_()
-#        self.system_speed_label.raise_()
-#        self.system_speed_spnbx.raise_()
-        self.manual_mode_check.raise_()
-        self.ebrake_fail_on.raise_()
-        self.manual_mode_label.raise_()
-        self.manual_mode_off.raise_()
+
         self.select_output.raise_()
         self.wayside_select.raise_()
-        self.manual_mode_on.raise_()
+
         self.load_plc_label.raise_()
         self.selected_output.raise_()
         self.plc_output.raise_()
@@ -340,7 +216,6 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.selected_output_label.raise_()
         self.occupancy_display.raise_()
         self.occupancy_label.raise_()
-        self.testbench_button.raise_()
         self.sys_time_label.raise_()
         self.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(self)
@@ -352,19 +227,17 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.select_output.clear()
         self._handler()
-        """
-        for i in self.track_controller_hw.get_green_track():
-            if self.track_controller_hw.get_occupancy(i) == 1:
-                item = str(i) + " " + str(self.track_controller_hw.get_speed_limit(i)) + " mi/hr"
-                self.occupancy_display.addItem(item)
-        """
-        for i in self.track_controller_hw.get_light_list():
+
+        for i in self.track_controller_hw.get_switch_list():
             self.select_output.addItem(i)
+
+        for i in self.track_controller_hw.get_lights_list():
+            if i not in self.track_controller_hw.get_switch_list():
+                self.select_output.addItem(i)
 
         self.wayside_select.clear()
 
-       # self.wayside_select.addItem("Blue")
-        self.wayside_select.addItem("green")
+        self.wayside_select.addItem("Green")
 
     def update(self):
         _translate = QtCore.QCoreApplication.translate
@@ -383,38 +256,25 @@ class Ui_track_controller_mainwindow(QMainWindow):
 
         self.plc_output.clear()
 
-        """
-        if self.wayside_select.currentText() == "green" and not self.change:
-            self.select_output.clear()
-            for i in range(55, 121):
-                self.select_output.addItem(self.track_controller_hw.get_green_track())
-            self.change = True
-        """
 
         self.occupancy_display.clear()
-        self.occupancy_display.addItems(self.track_controller_hw.get_occupied_blocks())
+        try:
+            for i in self.track_controller_hw.get_occupied():
+                if i is not None:
+                    self.occupancy_display.addItem(str(i))
+        except Exception as e:
+            print("An error occurred:")
+            traceback.print_exc()
 
-        self.track_controller_hw.set_automatic(not self.manual_mode_check.checkState())
-
-        # self.command_drop.setVisible(False)
-
+        self.plc_output.setVisible(False)
+        self.plc_output_label.setVisible(False)
         if not self.track_controller_hw.get_automatic():
             self.show_ard_light.setVisible(True)
             self.show_ard_switch.setVisible(True)
-            # self.command_label.setVisible(True)
-            # self.command_spin.setVisible(True)
-            # self.command_drop.setVisible(True)
+
         else:
             self.show_ard_light.setVisible(False)
             self.show_ard_switch.setVisible(False)
-            # self.command_label.setVisible(False)
-            # self.command_spin.setVisible(False)
-            # self.track_controller_hw.set_commanded_speed(self.command_spin.value())
-
-        self.load_plc_button.setVisible(not bool(self.manual_mode_check.checkState()))
-        # label visibility
-        self.manual_mode_off.setVisible(not bool(self.manual_mode_check.checkState()))
-        self.manual_mode_on.setVisible(bool(self.manual_mode_check.checkState()))
 
         try:
             block_number = self.select_output.currentItem().text()
@@ -422,129 +282,10 @@ class Ui_track_controller_mainwindow(QMainWindow):
             if self.get_previous_show() != block_number:
                 self.set_previous_show(block_number)
                 self.track_controller_hw.select_block(block_number)
-                # self.track_controller_hw.send_update(block_number)
         except Exception as e:
             print("An error occurred:")
             traceback.print_exc()
 
-    """
-        try:
-            if self.select_output.currentItem().text() == "Hello":
-                print("Value is None")
-            else:
-                value = self.select_output.currentItem().text()
-                self.selected_output.setText(value)
-                type_output = self.selected_output.text().split(" ")
-
-                if self.get_previous_show() != value:
-                    self.set_previous_show(value)
-                    if type_output[0] == "Light":
-                        self.send_lights()
-                        #  self.set_light_show(True)
-                        #  self.set_switch_show(False)
-                        #  self.set_command_show(False)
-                    elif type_output[0] == "Switch":
-                        self.send_switch()
-                        #  self.set_light_show(False)
-                        # self.set_switch_show(True)
-                        # self.set_command_show(False)
-                    elif type_output[0] == "Commanded":
-                        self.send_command(True)
-                        # self.set_light_show(False)
-                        # self.set_switch_show(False)
-                        # self.set_command_show(True)
-        except:
-            print("Non Value")
-    """
-
-    # try:
-    # self.track_controller_hw.set_commanded_speed(
-    #     self.track_controller_hw.get_suggested_speed() - self.track_controller_hw.get_speed_limit('B-A1'))
-    # except:
-    #    print("None")
-
-    def toggle_light(self):
-        block = self.selected_output.text()
-        if block in self.track_controller_hw.get_light_list():
-            color = self.track_controller_hw.get_lights(block)
-            if color == 0:
-                self.change_light(1, block)
-            elif color == 1:
-                self.change_light(0, block)
-            self.track_controller_hw.send_update(block)
-        else:
-            print("No Light")
-
-    def toggle_switch(self):
-        block = self.selected_output.text()
-        if block in self.track_controller_hw.get_switch_list():
-            self.change_switch(block)
-            self.track_controller_hw.send_update(block)
-        else:
-            print("No Switch")
-
-    def change_light(self, i: int, light: str):
-        if i == 0:
-            self.track_controller_hw.set_lights(0, light)
-        elif i == 1:
-            self.track_controller_hw.set_lights(1, light)
-        elif i == 2:
-            self.track_controller_hw.set_lights(2, light)
-
-    def change_switch(self, switch: str):
-        if self.track_controller_hw.get_switch(switch) == 0:
-            self.track_controller_hw.set_switch(1, switch)
-        elif self.track_controller_hw.get_switch(switch) == 1:
-            self.track_controller_hw.set_switch(0, switch)
-
-    """
-    def send_lights(self):
-        type_output = self.selected_output.text().split(" ")
-        value = self.select_output.currentItem().text()
-        if type_output[0] == "Light":
-            print("Light")
-            send = "1001" + str(self.track_controller_hw.get_lights(value)) + str(type_output[1])
-            self.get_ard().write(send.encode('utf-8'))
-
-    
-    def send_command(self, value: bool):
-        type_output = self.selected_output.text().split(" ")
-        if type_output[0] == "Commanded":
-            print("Commanded")
-            if value:
-                com = self.track_controller_hw.get_suggested_speed() - self.track_controller_hw.get_speed_limit('B-A1')
-            else:
-                com = self.track_controller_hw.get_commanded_speed()
-            send = "11000" + str(com)
-            self.get_ard().write(send.encode('utf-8'))
-
-    def send_switch(self):
-        type_output = self.selected_output.text().split(" ")
-        value = self.select_output.currentItem().text()
-        if type_output[0] == "Switch":
-            print("Switch")
-            if self.track_controller_hw.get_switch(value) == 0:
-                send = "10100" + str(type_output[1]) + " => B"
-                self.get_ard().write(send.encode('utf-8'))
-            elif self.track_controller_hw.get_switch(value) == 1:
-                send = "10100" + str(type_output[1]) + " => C"
-                self.get_ard().write(send.encode('utf-8'))
-                
-    def toggle(self):
-        type_output = self.selected_output.text().split(" ")
-        if type_output[0] == "Light":
-            if self.track_controller_hw.get_lights(self.selected_output.text()) == 0:
-                self.change_light(1, self.selected_output.text())
-                self.send_lights()
-            elif self.track_controller_hw.get_lights(self.selected_output.text()) == 1:
-                self.change_light(0, self.selected_output.text())
-                self.send_lights()
-        elif type_output[0] == "Switch":
-            self.change_switch(self.selected_output.text())
-            self.send_switch()
-        elif type_output[0] == "Commanded":
-            self.send_command(False)
-    """
 
     def _handler(self):
         self.timer = QTimer()
@@ -556,11 +297,7 @@ class Ui_track_controller_mainwindow(QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("track_controller_mainwindow", "Track Controller Hardware"))
         self.title_label.setText(_translate("track_controller_mainwindow", "Wayside Controller - Hardware"))
-       # self.system_speed_label.setText(_translate("track_controller_mainwindow", " System Speed"))
-        self.manual_mode_check.setText(_translate("track_controller_mainwindow", "Manual Mode"))
-        self.ebrake_fail_on.setText(_translate("track_controller_mainwindow", "ON"))
-        self.manual_mode_label.setText(_translate("track_controller_mainwindow", "Manual Mode"))
-        self.manual_mode_off.setText(_translate("track_controller_mainwindow", "OFF"))
+
         __sortingEnabled = self.select_output.isSortingEnabled()
         self.select_output.setSortingEnabled(False)
         item = self.select_output.item(0)
@@ -574,16 +311,14 @@ class Ui_track_controller_mainwindow(QMainWindow):
         self.select_output.setSortingEnabled(__sortingEnabled)
         self.wayside_select.setItemText(0, _translate("track_controller_mainwindow", "Blue 1"))
         self.wayside_select.setItemText(1, _translate("track_controller_mainwindow", "Blue 2"))
-        self.manual_mode_on.setText(_translate("track_controller_mainwindow", "ON"))
         self.load_plc_label.setText(_translate("track_controller_mainwindow", "PLC"))
         self.plc_output_label.setText(_translate("track_controller_mainwindow", "PLC Output"))
         self.load_plc_button.setText(_translate("track_controller_mainwindow", "Load PLC"))
         self.Select_wayside_label.setText(_translate("track_controller_mainwindow", "Wayside Controller/Line"))
         self.select_output_label.setText(_translate("track_controller_mainwindow", "Select Output"))
         self.selected_output_label.setText(_translate("track_controller_mainwindow", "Selected Output"))
-        self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied- Limit"))
-        self.testbench_button.setText(_translate("track_controller_mainwindow", "Testbench"))
-        #self.sys_time_label.setText(_translate("self", "13:24:55"))
+        self.occupancy_label.setText(_translate("track_controller_mainwindow", "Blocks Occupied"))
+
 
 
 if __name__ == "__main__":
@@ -591,9 +326,4 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     e = Ui_track_controller_mainwindow(Track_Controller_HW(CTCTrackControllerAPI, TrackControllerTrackModelAPI))
-    # track_controller_mainwindow = QtWidgets.QMainWindow()
-    # track_controller_hw = Track_Controller_HW()
-    # ui = Ui_track_controller_mainwindow(track_controller_hw)
-    # ui.setupUi(track_controller_mainwindow)
-    # track_controller_mainwindow.show()
     sys.exit(app.exec_())

@@ -1,0 +1,19 @@
+switch
+    13
+        ! 1 or 13
+    28
+        ! 150 or 13
+    57
+        57 and 57
+light
+    1
+        ! 1 or 13
+    13
+        1 and ! 13
+    28
+        150 and ! 13
+    150
+        ! 150 or 13
+railway
+    18
+        18 and 18

@@ -19,8 +19,8 @@ class TrackModel(object):
     def __init__(self, TrainModels: Trainz, trackCtrlSignal: TrackControllerTrackModelAPI, CTCSignal: CTCTrackModelAPI):
         #--Track Model Variables--
 
-        self._switch_position = False #if train is switching tracks
-        self._light_colors = "" #color of signal lights
+        self._switch_position = {} #if train is switching tracks
+        self._light_colors = {} #color of signal lights
         self._authority = 0.0 #how far train is permitted to travel
         self._gate_control = False #controls railway crossing gate
         self._commanded_speed = 0.0 #speed commanded by CTC
@@ -44,20 +44,23 @@ class TrackModel(object):
         self._block_length = 0.0 #block length
         self._local_time = 0
         self._time = time.time()
+        self._dt = 0
         self._current_time = self._time
         self._prev_time = self._time
         self._train_models = TrainModels.train_apis # dictionary of train model apis
         self._train_ids = [] # list of train ids
         self._distance = 0.0
-        self._switching = int
         self.tof = False
+        self._direction = 1 #direction of travel (1=forward, 0=backward)
+        self._switchionary = {}
+
+
 
         #Failures
         self._broken_rail = False #broken rail failure
         self._circuit_failure = False #circuit failure
         self._power_failure = False #power failure
-        self._train_engine_failure = False #train engine failure
-        self._brake_failure = False #brake failure
+        self._heater_failure = False
 
         #Controls
         self._temperature = 0 #temperature of cabin
@@ -67,6 +70,7 @@ class TrackModel(object):
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
         self._ctc_signals = CTCSignal #api from ctc
         self._TrainModels = TrainModels #dictionary api
+
 
         self.update()
 
@@ -81,19 +85,18 @@ class TrackModel(object):
         #power failure
         self.set_power_failure(bool(self.get_power_failure()))
 
-        #engine failure
-        self.set_engine_failure(bool(self.get_engine_failure()))
-
-        #brake failure
-        self.set_brake_failure(bool(self.get_brake_failure()))
+        #track heater failure
+        self.set_heater_failure(bool(self.get_heater_failure()))
 
         #---- Inputs from Track Controller ----#
 
         #switch position
-        self.set_switch_position(self.get_switch_position())
+        self.set_switch_position(self._track_controller_signals._switches)
+
 
         #light colors
-        self.set_light_colors(self.get_light_colors())
+        self.set_light_colors(self._track_controller_signals._lights)
+
 
         #authority
         # self.set_authority(self._track_controller_signals._authority)
@@ -139,7 +142,8 @@ class TrackModel(object):
         self._track_controller_signals._train_in = self._current_block
         # print("track model train in " + str(self._track_controller_signals._train_in))
         # get second element of each sublist in the list self._current_block
-        self._track_controller_signals._occupancy = [i[1] for i in self._current_block]
+        self._track_controller_signals._occupancy = {"Green": [str(i[1]) for i in self._current_block if i[3] == 'green'],
+                                                     "Red": [str(i[1]) for i in self._current_block if i[3] == 'red']}
 
         #print("track model train in " + str(self._track_controller_signals._train_in))
 
@@ -171,19 +175,31 @@ class TrackModel(object):
         self.set_line(self._track_controller_signals._line)
         # self._train_models[1].line = self.get_line()
 
-
+        #dt
+        if not isinstance(self._track_controller_signals._time, int):
+            self.calc_dt(self._track_controller_signals._time.timestamp())
 
         # update train model signals
         self._train_model_signals = self._track_controller_signals._train_out #dictionary of apis to train model
+
+        # Make a train dictionary out of the train ids and train lines
+        # NOTE: you can make this self. if you want but not necessary
+        train_dict = {train_id: train_line for train_id, train_line in zip(self._track_controller_signals._train_ids, self._track_controller_signals._train_lines)}
 
         for i in self._track_controller_signals._train_ids:
             index = int(i) - 1
             if index not in self._train_ids:
                 self._train_ids.append(index)
                 self._TrainModels.train_apis[index] = TrackModelTrainModelAPI()
-                self._TrainModels.train_apis[index].line = 'green'
+                self._TrainModels.train_apis[index].line = train_dict[i]
+                self._TrainModels.train_apis[index].current_block = 63 if train_dict[i].lower() == "green" else 9
+                self._TrainModels.train_apis[index].direction = 1 if train_dict[i].lower() == "green" else -1
                 self._TrainModels.train_apis[index].track_info = self.get_track_layout()
+                self._ctc_signals._ticket_sales.append([index, self._TrainModels.train_apis[index].passenger_departing])
             self._TrainModels.train_apis[index].time = self._track_controller_signals._time.timestamp() #TODO: Change this to an internal function get_time()
+            self._ctc_signals._ticket_sales[index][1] = self._TrainModels.train_apis[index].passenger_departing
+            self.set_onboarding(self._TrainModels.train_apis[index].passenger_departing)
+            self.set_offboarding(self._TrainModels.train_apis[index].passenger_onboard)
             try:
                 self._TrainModels.train_apis[index].authority = self._train_model_signals[index+1][0]
                 self._TrainModels.train_apis[index].cmd_speed = self._train_model_signals[index+1][1]
@@ -193,12 +209,11 @@ class TrackModel(object):
                 print("waiting for departure... ")
             self._TrainModels.train_apis[index].cum_distance += self.update_traveled_distance(self._TrainModels.train_apis[index].actual_velocity)
             self._TrainModels.train_apis[index].current_block = self.update_current_block(self._TrainModels.train_apis[index])
-            # self._track_controller_signals.actual_velocity = self._train_models[index].actual_velocity
             if index + 1 > len(self._current_block):
-                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity * 0.277778, self._train_models[index].current_block])
+                self._current_block.append([self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].current_block, self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line])
             else:
-                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity * 0.277778, self._train_models[index].current_block]
-        # print(self._current_block)
+                self._current_block[index] = [self._TrainModels.train_apis[index].actual_velocity, self._TrainModels.train_apis[index].current_block,  self._TrainModels.train_apis[index].cum_distance, self._TrainModels.train_apis[index].line]
+            # print(self._current_block)
 
 
         #Enable threading
@@ -207,61 +222,63 @@ class TrackModel(object):
 
 
     #---- Getters & Setters ----#
-    def update_traveled_distance(self, velocity):
-        self._current_time = time.time()
-        dt = self._current_time - self._prev_time
-        dist_traveled = velocity * dt
+    def calc_dt(self, time):
+        self._current_time = time
+        self._dt = self._current_time - self._prev_time
         self._prev_time = self._current_time
+
+    def update_traveled_distance(self, velocity):
+        dist_traveled = velocity * self._dt
         return abs(dist_traveled)
 
     def update_current_block(self, train):
-        try:
-            # if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-            #     train.cum_distance = 0
-            #     # if self._switching ==
-            #     return train.current_block + 1
-            # return train.current_block
-            if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
-                train.cum_distance = 0
+        # Only Load Track Model if filepath is not empty -- One Time
+        if self._track_layout.get_filepath() != "":
+            self._switchionary = self._track_layout.get_switchionary(train.line)
+            self._switch_position = self._track_controller_signals._switches[(train.line).capitalize()]
 
-                # for switch_blocks in self._switching.keys():
-                #     if self._current_block == int(switch_blocks):
-                #         if switch_blocks == 13:
-                #             if self._switching[switch_blocks] == 1:
-                #                 self._current_block = 12
-                if 63 <= train.current_block < 100 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 100:
-                    train.current_block = 85
-                    self.tof = True
-                    return train.current_block
-                elif 85 <= train.current_block > 77 and self.tof == True:
-                    return train.current_block - 1
-                elif train.current_block == 77 and self.tof == True:
-                    train.current_block = 101
-                    self.tof = False
-                    return train.current_block
-                elif 101 <= train.current_block < 150 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 150 and self.tof == False:
-                    train.current_block = 28
-                    self.tof = True
-                    return train.current_block
-                elif 28 >= train.current_block > 1 and self.tof == True:
-                    return train.current_block - 1
-                elif train.current_block == 1 and self.tof == True:
-                    train.current_block = 13
-                    self.tof = False
-                    return train.current_block
-                elif 63 > train.current_block >= 13 and self.tof == False:
-                    return train.current_block + 1
-                elif train.current_block == 63 and self.tof == False:
-                    train.current_block = 0
+
+
+
+        try:
+            if train.current_block in self._switchionary.keys() and train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                inc = self._switchionary[train.current_block][1]
+                sw = self._switchionary[train.current_block][3]
+                sw_label = self._switchionary[train.current_block][4]
+                if train.current_block == 57 and train.direction == inc and self._switch_position[sw_label] == 1:
+                    train.current_block = 151
+                if train.current_block == 9 and train.direction != inc and self._switch_position[sw_label] == 1:
+                    train.curr_block = 77
+                if train.direction == inc and self._switch_position[sw_label] == sw:
+                    # print(self._switchionary[train.current_block][0])
+                    train.direction = self._switchionary[train.current_block][2]
+                    self._direction = train.direction
+                    train.current_block = self._switchionary[train.current_block][0]
+                    train.cum_distance = 0
+
+            if train.current_block is not None and train.cum_distance <= 0 or train.current_block != 151 or train.current_block != 9:
+                if train.cum_distance > train.track_info.get_block_info(train.line, train.current_block)['length']:
+                    train.cum_distance = 0
+                    # print(train.current_block)
+                    train.current_block += train.direction
+                    # print(train.current_block)
+
+
+                    # how to get switch position
+                    # pos = self.get_switch_position(self._track_controller_signals._line.capitalize(), '63')) # returns 0 or 1
+
+                    # how to set direction
+                    # self._TrainModels.train_apis[index].direction = 0 or 1 # 1 is forward, 0 is backward
+
 
             return train.current_block
         except Exception as e:
+            traceback.print_exc()
             print("You must upload the Track Model before dispatching a train")
             print(e)
+
+
+
 
     def get_occupancy(self):
         return self._current_block
@@ -272,11 +289,10 @@ class TrackModel(object):
     def get_current_block(self) -> list:
         return self._current_block
 
-    def set_switching(self, _switching: int):
-        self._switching = _switching
+    def get_direction(self) -> int:
+        return self._direction
 
-    def get_switching(self) -> int:
-        return self._switching
+
 
     #Line
     def set_line(self, _line: str):
@@ -284,6 +300,11 @@ class TrackModel(object):
     def get_line(self) -> str:
         return self._line
 
+    def set_switch_to(self, _switch_to: {}):
+        self._switch_to = _switch_to
+
+    def get_switch_to(self) -> {}:
+        return self._switch_to
 
     def set_block_length(self, _block_length: float):
         self._block_length = _block_length
@@ -311,17 +332,21 @@ class TrackModel(object):
         return self._speed_limit
 
     #Switch Position
-    def set_switch_position(self, _switch_position: bool):
+    def set_switch_position(self, _switch_position: {}):
         self._switch_position = _switch_position
 
-    def get_switch_position(self) -> bool:
-        return self._switch_position
+    def get_switch_position(self, line, switch) -> int:
+        try:
+            return int(self._switch_position[str(line)][str(switch)])
+        except KeyError:
+            # Handle the case when the color or switch_number is not found
+            print(f"Error: Color '{str(line)}' or switch number '{str(switch)}' not found.")
 
     #Light Colors
-    def set_light_colors(self, _light_colors: str):
+    def set_light_colors(self, _light_colors: {}):
         self._light_colors = _light_colors
 
-    def get_light_colors(self) -> str:
+    def get_light_colors(self) -> {}:
         return self._light_colors
 
     #Gate Control
@@ -482,6 +507,12 @@ class TrackModel(object):
 
     def get_brake_failure(self) -> bool:
         return self._brake_failure
+
+    def set_heater_failure(self, _heater_failure: bool):
+        self._heater_failure = _heater_failure
+
+    def get_heater_failure(self) -> bool:
+        return self._heater_failure
 
     def launch_ui(self):
         print("Launching Track Model UI")
